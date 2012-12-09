@@ -1,10 +1,14 @@
-from ConfigParser import ConfigParser
 from os.path import exists, dirname, join, expanduser, isdir
 from os import makedirs
 from errno import EEXIST
 from logging import getLogger
 from sys import version_info
 from tranny.exceptions import ConfigError
+
+try:
+    from configparser import ConfigParser, NoOptionError, NoSectionError
+except ImportError:
+    from ConfigParser import ConfigParser, NoOptionError, NoSectionError
 
 if version_info >= (3, 2):
     def mkdirp(path):
@@ -74,6 +78,29 @@ class Configuration(ConfigParser):
     def find_sections(self, prefix):
         sections = [section for section in self.sections() if section.startswith(prefix)]
         return sections
+
+    @property
+    def rss_feeds(self):
+        return map(self.get_feed_config, self.find_sections("rss_"))
+
+    def get_feed_config(self, section, def_interval=300):
+        try:
+            name = self.get(section, "name")
+        except NoOptionError:
+            name = section.split("_", 1)[1]
+        try:
+            interval = self.getint(section, "interval")
+        except NoOptionError:
+            interval = def_interval
+        rss_conf = {
+            'name': name,
+            'interval': interval,
+            'enabled': self.getboolean(section, "enabled"),
+            'url': self.get(section, "url")
+        }
+        return rss_conf
+
+
 
 
 

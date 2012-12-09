@@ -1,11 +1,9 @@
-from logging import getLogger, basicConfig
-from tranny import config
+#!/usr/bin/env python
+from logging import  basicConfig
+from tranny import config, Tranny
 
-def main():
-    log = getLogger("tranny.main")
-    log.info("Tranny initializing")
-
-if __name__ == "__main__":
-    log_level = config.getint('log', 'level')
-    basicConfig(level=log_level)
-    main()
+log_level = config.getint('log', 'level')
+basicConfig(level=log_level)
+tr = Tranny()
+tr.init()
+tr.run_forever()

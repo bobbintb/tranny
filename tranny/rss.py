@@ -1,6 +1,7 @@
 from time import time
 from logging import getLogger
 from feedparser import parse as parse
+from tranny.net import download
 
 class RSSFeed(object):
 
@@ -30,3 +31,5 @@ class RSSFeed(object):
         for entry in feed['entries']:
             release_name = entry['title']
             print(release_name)
+            if release_name == "Whisker.Wars.S02E03.HDTV.x264-YesTV":
+                download(release_name, entry['link'])
