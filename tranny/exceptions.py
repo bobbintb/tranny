@@ -5,3 +5,6 @@ class BotchedTranny(Exception):
 class ConfigError(BotchedTranny):
     """ Application configuration error """
     pass
+
+class InvalidResponse(BotchedTranny):
+    pass
