@@ -1,7 +1,8 @@
 from time import time, sleep
 from logging import getLogger
-from tranny.confinguration import Configuration
+from tranny.configuration import Configuration
 from tranny.rss import RSSFeed
+from tranny import db
 
 config = None
 if not config:
@@ -19,8 +20,8 @@ class Tranny:
         self.log = getLogger("tranny.main")
         self.log.info("Tranny initializing")
 
-
     def init(self):
+        db.init_db()
         self.feeds = [RSSFeed(**feed) for feed in config.rss_feeds]
 
     def run_forever(self):
@@ -28,6 +29,8 @@ class Tranny:
         while running:
             for feed in self.feeds:
                 try:
-                    was_updated = feed.update()
+                    for release in feed.find_matches():
+                        self.log.info("Matched release: {0}".format(release))
                 except Exception as err:
                     self.log.exception("Error updated feed", err)
+

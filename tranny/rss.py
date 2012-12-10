@@ -1,7 +1,7 @@
 from time import time
 from logging import getLogger
 from feedparser import parse as parse
-from tranny.net import download
+from tranny.parser import match_release
 
 class RSSFeed(object):
 
@@ -16,20 +16,17 @@ class RSSFeed(object):
         self.log = getLogger('tranny.rss.{0}'.format(name))
         self.log.info("Initialized RSS Feed")
 
-    def update(self):
+    def find_matches(self):
         t0 = time()
         delta = t0 - self.last_update
         if not delta > self.interval:
-            return False
+            return []
         self.last_update = t0
-        self.parse()
-        self.log.debug("Updated Feed")
-        return True
+        return self.parse()
 
     def parse(self):
         feed = parse(self.url)
         for entry in feed['entries']:
             release_name = entry['title']
-            print(release_name)
-            if release_name == "Whisker.Wars.S02E03.HDTV.x264-YesTV":
-                download(release_name, entry['link'])
+            if match_release(release_name):
+                yield release_name
