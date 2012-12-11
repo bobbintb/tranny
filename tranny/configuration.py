@@ -4,7 +4,7 @@ from errno import EEXIST
 from logging import getLogger
 from sys import version_info
 from tranny.exceptions import ConfigError
-from tranny.parser import normalize
+
 try:
     from configparser import ConfigParser, NoOptionError, NoSectionError
 except ImportError:
@@ -55,13 +55,13 @@ class Configuration(ConfigParser):
         # No configs were found
         return False
 
-    def create_dirs(self):
+    def create_dirs(self, path="~/.tranny"):
         """ Initialize a users config directory by creating the prerequisite directories.
 
         :return:
         :rtype:
         """
-        config_path = expanduser("~/.tranny")
+        config_path = expanduser(path)
         if not exists(config_path):
             mkdirp(config_path)
             self.log.info("Create new configuration path: {0}".format(config_path))
@@ -100,14 +100,30 @@ class Configuration(ConfigParser):
         }
         return rss_conf
 
-    def get_fetch_list(self, section=None, key_name="shows"):
+    def build_regex_fetch_list(self, section=None, key_name="shows"):
+        """
+        unused?
+
+        :param section:
+        :type section:
+        :param key_name:
+        :type key_name:
+        :return:
+        :rtype:
+        """
+        from tranny.parser import normalize
         if section:
-            name_list = [normalize(name) for name in self.get(section, key_name)]
+            name_list = [normalize(name) for name in self.get(section, key_name).split(",")]
         else:
-            name_list = [self.get_fetch_list(s, key_name) for s in self.find_sections("section_")]
+            name_list = [self.build_regex_fetch_list(s, key_name) for s in self.find_sections("section_")]
         return name_list
 
-
+    @staticmethod
+    def get_unique_section_name(section_name, sep="_"):
+        try:
+            return sep.join(section_name.split(sep)[1:])
+        except Exception:
+            return section_name
 
 
 

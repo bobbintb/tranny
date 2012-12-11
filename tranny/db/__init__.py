@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 datastore = None
 
 def init_db():
