@@ -37,3 +37,4 @@ virtenv
 test_data
 *.torrent
 tranny.ini
+*.db
