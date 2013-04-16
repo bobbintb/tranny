@@ -23,6 +23,10 @@ matches.
 - Support for handling "Proper" releases
 - Global ignore patterns
 - Tested only on linux currently, however it should work equally well on osx/bsd/win. Please let me know.
+- Unlimited number of watch folders which can individually be configured with their own section
+- Downloading over any number of RSS feeds
+    - Each Feed is able to have custom settings applied such as minimum refresh intervals.
+- Persistent download history
 
 ## Requirements
 
@@ -65,6 +69,10 @@ You can now start the daemon process like so
         - [weechat](http://www.weechat.org/)
         - [irssi](http://www.irssi.org/)
         - [mIRC](http://www.mirc.com/)
+- RDBMS datastore backend
+    - [postgres]()
+    - [MySQL](http://www.mysql.com/)
+
 
 
 ## Possible Features
