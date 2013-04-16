@@ -1,12 +1,13 @@
-from os.path import exists, dirname, join, expanduser, isdir
+from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs
 from errno import EEXIST
 from logging import getLogger
 from sys import version_info
+from parser import parse_release
 from tranny.exceptions import ConfigError
 
 try:
-    from configparser import ConfigParser, NoOptionError, NoSectionError
+    from configparser import ConfigParser, NoOptionError, NoSectionError, Error
 except ImportError:
     from ConfigParser import ConfigParser, NoOptionError, NoSectionError
 
@@ -23,6 +24,7 @@ else:
             else:
                 raise
 
+
 class Configuration(ConfigParser):
     def __init__(self):
         ConfigParser.__init__(self)
@@ -30,6 +32,29 @@ class Configuration(ConfigParser):
 
     def rules(self):
         pass
+
+    def get_default(self, section, option, default=False, cast=None):
+        """ Fetch a config value from the database with an optional default value to use
+        if the config does not exist.
+
+        :param section:
+        :type section: str
+        :param option:
+        :type option: str
+        :param default:
+        :type default: str, int
+        :param cast:
+        :type cast: callable
+        :return:
+        :rtype: value
+        """
+        try:
+            value = self.get(section, option)
+        except (NoSectionError, NoOptionError):
+            value = default
+        if cast and callable(cast):
+            return cast(value)
+        return value
 
     def find_config(self, config_name="tranny.ini"):
         """ Attempt to find a configuration file to load. This function first attempts
@@ -112,6 +137,7 @@ class Configuration(ConfigParser):
         :rtype:
         """
         from tranny.parser import normalize
+
         if section:
             name_list = [normalize(name) for name in self.get(section, key_name).split(",")]
         else:
@@ -125,6 +151,23 @@ class Configuration(ConfigParser):
         except Exception:
             return section_name
 
+    def get_download_path(self, section, release_name):
+        dl_path = abspath(self.get("section_{0}".format(section), "dl_path"))
+        if not exists(dl_path):
+            raise IOError("Invalid download path root: {0}".format(dl_path))
+        dir_name = parse_release(release_name)
+        full_dl_path = join(dl_path, dir_name)
+        if not exists(full_dl_path):
+            makedirs(full_dl_path)
+        return full_dl_path
+
+    def get_db_path(self):
+        """ Get the path to the history db used by the shelve module
+
+        :return:
+        :rtype:
+        """
+        return abspath(join(dirname(dirname(__file__)), "history.db"))
 
 
 

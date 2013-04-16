@@ -3,22 +3,51 @@ from logging import getLogger
 from requests import get, RequestException
 from tranny.exceptions import InvalidResponse
 
+log = getLogger("tranny.net")
+
+
 def download(release_name, url, dest_path="./", extension=".torrent"):
-    log = getLogger("tranny.net.download")
+    """ Download a file to a local file path
+
+    :param release_name:
+    :type release_name:
+    :param url:
+    :type url:
+    :param dest_path:
+    :type dest_path:
+    :param extension:
+    :type extension:
+    :return:
+    :rtype:
+    """
+    log.debug("Downloading release [{0}]: {1}".format(release_name, url))
     file_path = join(dest_path, release_name) + extension
     dl_ok = False
+    response = fetch_url(url)
+    if response:
+        with open(file_path, 'wb') as torrent_file:
+            torrent_file.write(response)
+        dl_ok = True
+    return dl_ok
+
+
+def fetch_url(url):
+    """ Fetch and return data contained at the url provided
+
+    :param url: URL to fetch
+    :type url: basestring
+    :return: HTTP response body
+    :rtype: basestring, None
+    """
+    response = None
     try:
         response = get(url)
         response.raise_for_status()
         if not response.content:
             raise InvalidResponse("Empty response body")
     except (RequestException, InvalidResponse) as err:
-        log.error(err.message)
+        log.exception(err.message)
     else:
-        with open(file_path, 'wb') as torrent_file:
-            torrent_file.write(response.content)
-        dl_ok = True
+        response = response.content
     finally:
-        return dl_ok
-
-
+        return response

@@ -2,9 +2,10 @@ from time import time
 from logging import getLogger
 from feedparser import parse as parse
 from tranny.parser import match_release
+from tranny.net import download, fetch_url
+
 
 class RSSFeed(object):
-
     # Timestamp of last successful update
     last_update = 0
 
@@ -28,5 +29,15 @@ class RSSFeed(object):
         feed = parse(self.url)
         for entry in feed['entries']:
             release_name = entry['title']
-            if match_release(release_name):
-                yield release_name
+            section = match_release(release_name)
+            if section:
+                torrent_data = self.download(entry['link'])
+                if not torrent_data:
+                    self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                    continue
+
+                yield str(release_name), torrent_data, section
+
+    def download(self, url):
+        torrent_data = fetch_url(url)
+        return torrent_data
