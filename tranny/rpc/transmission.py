@@ -1,9 +1,10 @@
 from logging import getLogger
+from base64 import b64encode
 
 log = getLogger("rpc.transmission")
 
 try:
-    from transmissionrpc import Client
+    from transmissionrpc import Client, TransmissionError
     from transmissionrpc.constants import DEFAULT_PORT
 except ImportError, err:
     log.error("""Please install the transmission python library available at
@@ -27,7 +28,16 @@ class TransmissionClient(object):
         self.log = log
 
     def add(self, data, download_dir=None):
-        res = self.client.add(data, download_dir=download_dir)
+        try:
+            encoded_data = b64encode(data)
+            res = self.client.add(encoded_data, download_dir=download_dir)
+        except TransmissionError, err:
+            if "duplicate torrent" in err._message:
+                self.log.warning("Tried to add duplicate torrent file")
+                return True
+            self.log.exception(err)
+            return False
+
         return res
 
     def add_uri(self, uri):

@@ -12,16 +12,18 @@ class GherkinStore(DbfilenameShelf):
         if not filename:
             filename = config.get_db_path()
         DbfilenameShelf.__init__(self, filename, flag, protocol, writeback)
-        self.log = log = getLogger("db.gherkin")
+        self.log = getLogger("db.gherkin")
 
-    def add(self, release_name, section=None, source=None, timestamp=None):
+    def add(self, release_key, section=None, source=None, timestamp=None):
         if not timestamp:
             timestamp = time()
-        self[release_name] = {
+
+        self[release_key] = {
             'ctime': timestamp,
             'section': section,
             'source': source
         }
+        self.log.debug("Added key to the gherkin datastore: {0}".format(release_key))
 
     def size(self):
         return len(self)

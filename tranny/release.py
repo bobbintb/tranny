@@ -1,4 +1,8 @@
 from time import time
+from collections import namedtuple
+
+TorrentData = namedtuple("TorrentData", ['release_name', "torrent_data", "section"])
+
 
 class Release(object):
     def __init__(self, release_name):

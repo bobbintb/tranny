@@ -1,3 +1,4 @@
 transmissionrpc
 feedparser
 requests
+watchdog

@@ -7,9 +7,9 @@ from parser import parse_release
 from tranny.exceptions import ConfigError
 
 try:
-    from configparser import ConfigParser, NoOptionError, NoSectionError, Error
+    from configparser import RawConfigParser, NoOptionError, NoSectionError, Error
 except ImportError:
-    from ConfigParser import ConfigParser, NoOptionError, NoSectionError
+    from ConfigParser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
 if version_info >= (3, 2):
     def mkdirp(path):

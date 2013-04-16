@@ -1,11 +1,12 @@
 from os.path import exists
 from os import remove
 from unittest import TestCase, main
-from tranny.db.pickle import PickleDB
+from tranny.db.gherkin import GherkinStore
+
 
 class NetTest(TestCase):
     def setUpClass(cls):
-        cls.db = PickleDB("./test.db")
+        cls.db = GherkinStore("./test.db")
 
     def test_add(self):
         self.db.add()

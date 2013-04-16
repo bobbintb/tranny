@@ -1,3 +1,4 @@
+from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
 from logging import getLogger
 
@@ -8,7 +9,8 @@ pattern_season = [
 ]
 
 pattern_release = [
-    compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I)
+    compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I),
+    compile(r"^(?P<name>.+?)\b(19\d{2}|20[12]\d)")
 ]
 
 
@@ -22,11 +24,23 @@ def clean_split(string):
 
 
 def find_config_section(release_name, prefix="section_"):
+    """ Attempt to find the configuration section the release provided matches with.
+
+    :param release_name:
+    :type release_name: str
+    :param prefix:
+    :type prefix: str
+    :return:
+    :rtype: str, bool
+    """
     from tranny import config
 
+    if is_ignored(release_name):
+        return False
     sections = config.find_sections(prefix)
     for section in sections:
-        for key_type in ("hd", "sd", "any"):
+        quality = find_quality(release_name)
+        for key_type in [quality, "any"]:
             key = "shows_{0}".format(key_type)
             if not config.has_option(section, key):
                 # Ignore undefined sections
@@ -39,8 +53,60 @@ def find_config_section(release_name, prefix="section_"):
     return False
 
 
-def is_ignored(release_name):
+def is_ignored(release_name, section_name="ignore"):
+    """ Check if the release should be ignored no matter what other conditions are matched
+
+    :param release_name: Release name to match against
+    :type release_name: str
+    :return: Ignored status
+    :rtype: bool
+    """
+    from tranny import config
+
+    release_name = release_name.lower()
+    for key in config.options(section_name):
+        try:
+            value = config.get(section_name, key)
+        except (NoSectionError, NoOptionError):
+            continue
+        if key.startswith("string"):
+            if value.lower() in release_name:
+                log.debug("Matched string ignore pattern {0} {1}".format(key, release_name))
+                return True
+        elif key.startswith("rx"):
+            if match(value, release_name, I):
+                log.debug("Matched regex ignore pattern {0} {1}".format(key, release_name))
+                return True
+        else:
+            log.warning("Invalid ignore configuration key found: {0}".format(key))
     return False
+
+
+# (?!.*(720|1080)p).+?\.HDTV.(XviD|x264)
+def _is_hd(release_name):
+    """ Determine if a release is classified as high-definition
+
+    :param release_name: release name to parse
+    :type release_name: basestring
+    :return: high-def status
+    :rtype: bool
+    """
+    if "720" in release_name or "1080" in release_name:
+        return True
+    return False
+
+
+def _is_sd(release_name):
+    if "HDTV" in release_name:
+        return True
+    return False
+
+
+def find_quality(release_name):
+    if _is_hd(release_name):
+        return "hd"
+    else:
+        return "sd"
 
 
 def parse_season(release_name):
