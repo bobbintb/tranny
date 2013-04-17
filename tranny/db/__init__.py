@@ -1,4 +1,5 @@
 from tranny import parser
+from tranny.util import contains
 
 
 def generate_release_key(release_name):
@@ -15,12 +16,15 @@ def generate_release_key(release_name):
         return False
     name = name.lower()
     try:
-        season, episode = parser.parse_season(release_name)
+        info = parser.parse_release_info(release_name)
     except TypeError:
-        # Doesnt contain season/episode identifiers, treat as movie
+        # No release info parsed use default value for key: name
         pass
     else:
-        if season and episode:
-            name = "{0}-{1}_{2}".format(name, season, episode)
+        if info:
+            if contains(info, ["season", "episode"]):
+                name = "{0}-{1}_{2}".format(name, info['season'], info['episode'])
+            elif contains(info, ["year", "day", "month"]):
+                name = "{0}-{1}_{2}_{3}".format(name, info['year'], info['month'], info['day'])
     finally:
-        return str(name)
+        return name

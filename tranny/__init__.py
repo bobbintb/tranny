@@ -18,6 +18,11 @@ datastore = None
 config = None
 watcher = None
 wait_time = 1
+
+# Running services
+services = []
+
+# Running RSS Feeds
 feeds = []
 
 log = getLogger("tranny.main")
@@ -53,12 +58,64 @@ def _init_watcher():
 
 
 def start():
-    global config, feeds, watcher
+    global config, feeds, watcher, datastore, client, services
 
+    if not config:
+        # Load the config from disk
+        config = Configuration()
+        config.initialize()
+    _init_logging()
     if not watcher:
         # Setup watch dirs to start monitoring
         watcher = _init_watcher()
-    feeds = [RSSFeed(**feed) for feed in config.rss_feeds]
+
+    if not datastore:
+        # Setup the configured datastore
+        if config.get("db", "type") == "memory":
+            from tranny.db.mem import MemoryStore as Datastore
+        else:
+            from tranny.db.gherkin import GherkinStore as Datastore
+        datastore = Datastore()
+        log.debug("Loaded {0} cached entries".format(datastore.size()))
+
+    if not client:
+        # Setup backend client connection
+        client = _init_client()
+    feeds = [RSSFeed(config, feed_section) for feed_section in config.find_sections("rss_")]
+    service_list = [section for section in config.find_sections("service_") if config.getboolean(section, "enabled")]
+    for service_name in service_list:
+        from tranny.service.broadcastthenet import BroadcastTheNet
+
+        service = BroadcastTheNet(config, service_name)
+        services.append(service)
+
+
+def update_services(services):
+    for service in services:
+        try:
+            for torrent in service.find_matches():
+                dl_path = config.get_download_path(torrent.section, torrent.release_name)
+                res = client.add(torrent.torrent_data, download_dir=dl_path)
+                if res:
+                    log.info("Added release: {0}".format(torrent.release_name))
+                    release_key = db.generate_release_key(torrent.release_name)
+                    datastore.add(release_key, section=torrent.section, source=service.name)
+        except Exception as err:
+            log.exception("Error updating service")
+
+
+def update_rss(feeds):
+    for feed in feeds:
+        try:
+            for torrent in feed.find_matches():
+                dl_path = config.get_download_path(torrent.section, torrent.release_name)
+                res = client.add(torrent.torrent_data, download_dir=dl_path)
+                if res:
+                    log.info("Added release: {0}".format(torrent.release_name))
+                    release_key = db.generate_release_key(torrent.release_name)
+                    datastore.add(release_key, section=torrent.section, source=feed.name)
+        except Exception as err:
+            log.exception("Error updating feed")
 
 
 def run_forever():
@@ -66,39 +123,16 @@ def run_forever():
     running = True
     try:
         while running:
-            for feed in feeds:
-                try:
-                    for torrent in feed.find_matches():
-                        dl_path = config.get_download_path(torrent.section, torrent.release_name)
-                        res = client.add(torrent.torrent_data, download_dir=dl_path)
-                        if res:
-                            log.info("Added release: {0}".format(torrent.release_name))
-                            release_key = db.generate_release_key(torrent.release_name)
-                            datastore.add(release_key, section=torrent.section, source=feed.name)
-                except Exception as err:
-                    log.exception("Error updating feed")
+            update_services(services)
+            update_rss(feeds)
     except:
         log.info("Exiting")
         datastore.sync()
         watcher.stop()
 
 
-if not config:
-    # Load the config from disk
-    config = Configuration()
-    config.initialize()
 
-_init_logging()
 
-if not datastore:
-    # Setup the configured datastore
-    if config.get("db", "type") == "memory":
-        from tranny.db.mem import MemoryStore as Datastore
-    else:
-        from tranny.db.gherkin import GherkinStore as Datastore
-    datastore = Datastore()
-    log.debug("Loaded {0} cached entries".format(datastore.size()))
 
-if not client:
-    # Setup backend client connection
-    client = _init_client()
+
+

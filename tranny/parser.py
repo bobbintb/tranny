@@ -1,22 +1,25 @@
 from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
 from logging import getLogger
+from tranny.util import contains
 
 log = getLogger(__name__)
 
-pattern_season = [
-    compile(r"\bS?(?P<s>\d+)[xe](?P<e>\d+)\b", I)
+pattern_info = [
+    compile(r"\b(?P<year>(19|20)\d{2}).(?P<month>\d{1,2}).(?P<day>\d{1,2})", I),
+    compile(r"\bS?(?P<season>\d+)[xe](?P<episode>\d+)\b", I)
 ]
 
 pattern_release = [
     compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I),
-    compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})")
+    compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})"),
+
 ]
 
 
 def normalize(name):
     normalized = '.'.join(clean_split(name))
-    return normalized
+    return str(normalized)
 
 
 def clean_split(string):
@@ -109,16 +112,43 @@ def find_quality(release_name):
         return "sd"
 
 
-def parse_season(release_name):
-    for pattern in pattern_season:
+def parse_release_info(release_name):
+    """ Parse release info out of the release name.
+
+    :param release_name:
+    :type release_name:
+    :return:
+    :rtype:
+    """
+    for pattern in pattern_info:
         match = pattern.search(release_name, I)
-        if match:
-            values = match.groupdict()
-            return int(values['s']), int(values['e'])
+        if not match:
+            continue
+        values = match.groupdict()
+        info = {}
+        if contains(values, ["year", "month", "day"]):
+            info = {
+                'year': values['year'],
+                'month': values['month'].zfill(2),
+                'day': values['day'].zfill(2)
+            }
+        elif contains(values, ["season", "episode"]):
+            info = {
+                'season': int(values['season']),
+                'episode': int(values['episode'])
+            }
+        return info
     return False
 
 
 def parse_release(release_name):
+    """ Fetch just the release name title from the release name provided
+
+    :param release_name: A full release string: Conan.2013.04.15.Chelsea.Handler.HDTV.x264-2HD
+    :type release_name: str, unicode
+    :return: Normalized release name found or False on no match
+    :rtype: str, bool
+    """
     for pattern in pattern_release:
         match = pattern.search(release_name)
         if match:
@@ -127,6 +157,13 @@ def parse_release(release_name):
 
 
 def match_release(release_name):
+    """ Match a release to a section. Return the section found.
+
+    :param release_name:
+    :type release_name:
+    :return: Matched release section
+    :rtype: str, bool
+    """
     log.debug("Finding Match: {0}".format(release_name))
     section = find_config_section(release_name)
     return section
