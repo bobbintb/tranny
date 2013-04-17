@@ -29,6 +29,7 @@ log = getLogger("tranny.main")
 
 
 def _init_logging():
+    """ Setup the logger service """
     if config.getboolean("log", "enable"):
         basicConfig(
             level=config.get_default('log', 'level', 10, int),
@@ -38,6 +39,11 @@ def _init_logging():
 
 
 def _init_client():
+    """ Initialize the torrent client being used to handle the torrent data retreived.
+
+    :return:
+    :rtype: TransmissionClient
+    """
     enabled_client = config.get_default("general", "client", "transmission").lower()
     if enabled_client == "transmission":
         from tranny.rpc.transmission import TransmissionClient as rpc_client
@@ -58,6 +64,7 @@ def _init_watcher():
 
 
 def start():
+    """ Start up all the backend services of the application """
     global config, feeds, watcher, datastore, client, services
 
     if not config:
@@ -91,6 +98,13 @@ def start():
 
 
 def update_services(services):
+    """ Update the provided services
+
+    :param services: List of services
+    :type services: TorrentProvider[]
+    :return:
+    :rtype:
+    """
     for service in services:
         try:
             for torrent in service.find_matches():
@@ -105,6 +119,11 @@ def update_services(services):
 
 
 def update_rss(feeds):
+    """ Update the provided RSS feeds
+
+    :param feeds: Feeds to update
+    :type feeds: TorrentProvider[]
+    """
     for feed in feeds:
         try:
             for torrent in feed.find_matches():
@@ -119,6 +138,7 @@ def update_rss(feeds):
 
 
 def run_forever():
+    """ Run the server under a basic event loop """
     global feeds, config, watcher
     running = True
     try:
@@ -126,6 +146,8 @@ def run_forever():
             update_services(services)
             update_rss(feeds)
     except:
+        pass
+    finally:
         log.info("Exiting")
         datastore.sync()
         watcher.stop()

@@ -2,3 +2,4 @@ transmissionrpc
 feedparser
 requests
 watchdog
+jsonrpclib

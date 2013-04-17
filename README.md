@@ -11,7 +11,7 @@ This tool will attempt to automate repetative downloading tasks as efficiently a
 means that there will be support for loading clients from many different sources without loading
 any duplicates.
 
-## Features
+## Implemented Features
 
 - Support for transmission daemon
 - Auto sorting of releases into the correct destination folders based on the name of the torrent. For example
@@ -27,53 +27,38 @@ matches.
 - Downloading over any number of RSS feeds
     - Each Feed is able to have custom settings applied such as minimum refresh intervals.
 - Persistent download history
-
-## Requirements
-
-- [Python 2.6/2.7](http://www.python.org/download/) - If you do not use the directory watch feature, it will
-probably run on python3 as well.
-- [Transmission](http://www.transmissionbt.com/)
-- [watchdog](https://pypi.python.org/pypi/watchdog)
-- [transmissionrpc](https://bitbucket.org/blueluna/transmissionrpc/wiki/Home)
-- [requests](http://docs.python-requests.org/en/latest/)
-- [feedparser](https://code.google.com/p/feedparser/)
+- Easily extendable service providers to allow for custom providers to be used
 
 ## Setup
 
-Its recommeneded to use a virtualenv to install if possible. Ill outline its usable below.
+For more in depth ways to start the service please see the [setup docs](docs/setup.md).
 
-    $ git clone git://github.com/leighmacdonald/tranny.git
-    $ cd tranny
-    $ virtualenv virtenv
-    $ source virtenv/bin/activate
-    $ pip install -r requirements.txt
-    $ cp tranny_dist.ini tranny.ini
+## Services Available
 
-From this point you will want to take a moment and setup your configuration file.
+Each site has its own method of provided updated release information. Tranny aims to
+support as many as possible. Outlined below is the current state of backend service
+providers and torrent sites which are supported.
 
-    $ vim tranny.ini
-
-You can now start the daemon process like so
-
-    $ python tranny-daemon.py
-
+- generic - Fetch releases over RSS (revtt,scc,tl,etc...)
+- [BTN](https://broadcasthe.net) - Accesses the site over their [JSON-RPC API](http://btnapps.net/docs.php)
 
 ## Planned Features
+
+These are the features i am planning to implement. If you have features you would like to see implemented
+please dont hesitate to contact me.
 
 - Alternate torrent client support
     - [rTorrent](http://libtorrent.rakshasa.no/)
     - [deluge](http://deluge-torrent.org/)
-- IRC download sources
+- IRC service providers
     - Simple internal IRC client
     - IRC Client scripts to interface with tranny
         - [weechat](http://www.weechat.org/)
         - [irssi](http://www.irssi.org/)
         - [mIRC](http://www.mirc.com/)
 - RDBMS datastore backend
-    - [postgres]()
+    - [postgres](http://www.postgresql.org/)
     - [MySQL](http://www.mysql.com/)
-
-
 
 ## Possible Features
 
