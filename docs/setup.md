@@ -38,8 +38,8 @@ Create your own config based of the example provided
 From this point you will want to take a moment and setup your configuration file. You should enable
 all the services you want to now. For more info check out the following setup doc pages:
 
-    - [RSS Setup](docs/config_rss.md)
-    - [BTN API](docs/config_service_btn.md)
+- [RSS Setup](docs/config_rss.md)
+- [BTN API](docs/config_service_btn.md)
 
     $ $EDITOR tranny.ini
 
