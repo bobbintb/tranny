@@ -10,7 +10,7 @@ pattern_season = [
 
 pattern_release = [
     compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I),
-    compile(r"^(?P<name>.+?)\b(19\d{2}|20[12]\d)")
+    compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})")
 ]
 
 

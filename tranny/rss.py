@@ -47,21 +47,34 @@ class RSSFeed(object):
         """
         feed = parse(self.url)
         for entry in feed['entries']:
-            release_name = entry['title']
-            release_key = generate_release_key(release_name)
-            if release_key in self.datastore:
-                if self.config.get_default("general", "fetch_proper", True, bool):
-                    if not ".proper." in release_name.lower():
-                        # Skip releases unless they are considered proper's
-                        continue
-            section = match_release(release_name)
-            if section:
-                torrent_data = self.download(entry['link'])
-                if not torrent_data:
-                    self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
+            try:
+                release_name = entry['title']
+                release_key = generate_release_key(release_name)
+                if not release_key:
                     continue
+                if release_key in self.datastore:
+                    if self.config.get_default("general", "fetch_proper", True, bool):
+                        if not ".proper." in release_name.lower():
+                            # Skip releases unless they are considered proper's
+                            self.log.debug(
+                                "Skipped previously downloaded release ({0}): {1}".format(
+                                    release_key,
+                                    release_name
 
-                yield TorrentData(str(release_name), torrent_data, section)
+                                )
+                            )
+                            continue
+
+                section = match_release(release_name)
+                if section:
+                    torrent_data = self.download(entry['link'])
+                    if not torrent_data:
+                        self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                        continue
+
+                    yield TorrentData(str(release_name), torrent_data, section)
+            except Exception as err:
+                self.log.error(err)
 
     def download(self, url):
         torrent_data = fetch_url(url)

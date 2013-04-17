@@ -5,10 +5,11 @@ def generate_release_key(release_name):
     """ Generate a key suitable for using as a database key value
 
     :param release_name: Release name to generate a key from
-    :type release_name: str
+    :type release_name: str, unicode
     :return: Database suitable key name
     :rtype: str
     """
+    release_name = parser.normalize(release_name)
     name = parser.parse_release(release_name)
     if not name:
         return False
