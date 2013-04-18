@@ -8,7 +8,7 @@ from tranny import config
 
 
 class GherkinStore(DbfilenameShelf):
-    def __init__(self, filename=None, flag='c', protocol=None, writeback=False):
+    def __init__(self, filename=None, flag='c', protocol=None, writeback=True):
         if not filename:
             filename = config.get_db_path()
         DbfilenameShelf.__init__(self, filename, flag, protocol, writeback)

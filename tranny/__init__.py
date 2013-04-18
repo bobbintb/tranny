@@ -50,12 +50,14 @@ def init_client():
     :return:
     :rtype: TransmissionClient
     """
-    enabled_client = config.get_default("general", "client", "transmission").lower()
-    if enabled_client == "transmission":
-        from tranny.rpc.transmission import TransmissionClient as rpc_client
-    else:
-        raise ConfigError("Invalid client type supplied: {0}".format(enabled_client))
-    client = rpc_client(config)
+    global client
+    if not client:
+        enabled_client = config.get_default("general", "client", "transmission").lower()
+        if enabled_client == "transmission":
+            from tranny.rpc.transmission import TransmissionClient as rpc_client
+        else:
+            raise ConfigError("Invalid client type supplied: {0}".format(enabled_client))
+        client = rpc_client(config)
     return client
 
 
@@ -92,6 +94,7 @@ def start():
 
     init_config()
     init_logging()
+    init_datastore()
     init_watcher()
     init_client()
 
@@ -120,7 +123,7 @@ def update_services(services):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = db.generate_release_key(torrent.release_name)
-                    _datastore.add(release_key, section=torrent.section, source=service.name)
+                    datastore.add(release_key, section=torrent.section, source=service.name)
         except Exception as err:
             log.exception("Error updating service")
 
