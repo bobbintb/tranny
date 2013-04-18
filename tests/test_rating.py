@@ -11,15 +11,14 @@ from tranny import rating
 class TestRating(unittest.TestCase):
     title_a = "The Mask"
 
-    def test_get_imdb_score(self):
-        score = rating.get_imdb_score(self.title_a)
-        self.assertTrue(score > 2.0)
+    def test_imdb_score(self):
+        self.assertTrue(rating._imdb_score(self.title_a) > 2.0)
+        self.assertEqual(0, rating._imdb_score(self.title_a, min_votes=9999900))
 
-    def test_get_tmdb_score(self):
-        score = rating.get_tmdb_score(self.title_a)
-        self.assertTrue(score > 2.0)
+    def test_tmdb_score(self):
+        self.assertTrue(rating._tmdb_score(self.title_a) > 2.0)
+        self.assertEqual(0, rating._imdb_score(self.title_a, min_votes=9999900))
 
-    def test_get_score(self):
-        score = rating.get_score(self.title_a)
-        self.assertTrue(score > 2.0)
+    def test_score(self):
+        self.assertTrue(rating.score(self.title_a) > 2.0)
 
