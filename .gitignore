@@ -38,3 +38,4 @@ test_data
 *.torrent
 tranny.ini
 *.db
+test_config.ini

@@ -13,7 +13,7 @@ except ImportError, err:
 
 
 class TransmissionClient(object):
-    _config_key = "transmisttion"
+    _config_key = "transmission"
 
     def __init__(self, config, host=None, port=None, user=None, password=None):
         if not host:
