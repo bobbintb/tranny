@@ -13,7 +13,6 @@ pattern_info = [
 pattern_release = [
     compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I),
     compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})"),
-
 ]
 
 

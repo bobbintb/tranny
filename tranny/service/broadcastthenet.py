@@ -2,7 +2,7 @@ import socket
 from time import time
 from jsonrpclib import Server
 from jsonrpclib.jsonrpc import ProtocolError
-from parser import match_release
+from tranny.parser import match_release
 from tranny.provider import TorrentProvider
 from tranny.release import TorrentData
 from tranny.db import generate_release_key

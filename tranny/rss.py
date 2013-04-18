@@ -1,4 +1,3 @@
-from time import time
 from logging import getLogger
 from feedparser import parse as parse
 from .provider import TorrentProvider

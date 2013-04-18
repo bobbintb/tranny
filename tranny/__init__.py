@@ -1,9 +1,6 @@
-from time import time, sleep
 from logging import getLogger, basicConfig
-from base64 import b64encode
 from exceptions import ConfigError
 from rpc.transmission import TransmissionClient
-from transmissionrpc import TransmissionError
 from tranny.watch import FileWatchService
 from tranny.configuration import Configuration
 from tranny.rss import RSSFeed
@@ -28,7 +25,16 @@ feeds = []
 log = getLogger("tranny.main")
 
 
-def _init_logging():
+def init_config(config_file=None):
+    global config
+
+    if not config:
+        config = Configuration()
+        config.initialize(config_file)
+    return config
+
+
+def init_logging():
     """ Setup the logger service """
     if config.getboolean("log", "enable"):
         basicConfig(
@@ -38,7 +44,7 @@ def _init_logging():
         )
 
 
-def _init_client():
+def init_client():
     """ Initialize the torrent client being used to handle the torrent data retreived.
 
     :return:
@@ -53,28 +59,21 @@ def _init_client():
     return client
 
 
-def _init_watcher():
+def init_watcher():
     """ Start configured services
 
     :return:
     :rtype: FileWatchService
     """
-    watcher = FileWatchService(config)
+    global watcher
+
+    if not watcher:
+        watcher = FileWatchService(config)
     return watcher
 
 
-def start():
-    """ Start up all the backend services of the application """
-    global config, feeds, watcher, datastore, client, services
-
-    if not config:
-        # Load the config from disk
-        config = Configuration()
-        config.initialize()
-    _init_logging()
-    if not watcher:
-        # Setup watch dirs to start monitoring
-        watcher = _init_watcher()
+def init_datastore():
+    global datastore
 
     if not datastore:
         # Setup the configured datastore
@@ -84,10 +83,18 @@ def start():
             from tranny.db.gherkin import GherkinStore as Datastore
         datastore = Datastore()
         log.debug("Loaded {0} cached entries".format(datastore.size()))
+    return datastore
 
-    if not client:
-        # Setup backend client connection
-        client = _init_client()
+
+def start():
+    """ Start up all the backend services of the application """
+    global config, feeds, services
+
+    init_config()
+    init_logging()
+    init_watcher()
+    init_client()
+
     feeds = [RSSFeed(config, feed_section) for feed_section in config.find_sections("rss_")]
     service_list = [section for section in config.find_sections("service_") if config.getboolean(section, "enabled")]
     for service_name in service_list:
@@ -113,7 +120,7 @@ def update_services(services):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = db.generate_release_key(torrent.release_name)
-                    datastore.add(release_key, section=torrent.section, source=service.name)
+                    _datastore.add(release_key, section=torrent.section, source=service.name)
         except Exception as err:
             log.exception("Error updating service")
 

@@ -3,6 +3,7 @@ from os import remove
 from unittest import TestCase, main
 from tranny import net
 
+
 class NetTest(TestCase):
     def setUp(self):
         self.url_ok = "http://mirror.centos.org/centos/6.3/isos/x86_64/CentOS-6.3-x86_64-bin-DVD1to2.torrent"
@@ -18,6 +19,7 @@ class NetTest(TestCase):
     def test_download_fail(self):
         status = net.download("bs_name", "http://bs.url.com/blah.torrent", "./")
         self.assertFalse(status)
+
 
 if __name__ == '__main__':
     main()
