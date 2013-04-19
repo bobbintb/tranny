@@ -49,7 +49,20 @@ class TransmissionClient(object):
         return torrent_info
 
     def list(self):
+        """ Get a list of currently loaded torrents from the client
+
+        :return:
+        :rtype:
+        """
         return self.client.list()
 
     def remove(self, torrent_id):
+        """ Remove a torrent from the backend client via its torrentID supplied by the
+        torrent daemon
+
+        :param torrent_id: TorrentID provided by transmission
+        :type torrent_id: int
+        :return:
+        :rtype:
+        """
         return self.client.remove(torrent_id)

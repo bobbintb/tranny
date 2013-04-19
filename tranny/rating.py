@@ -1,3 +1,7 @@
+"""
+Provides a basic api for looking up media information using any installed and
+configured services.
+"""
 try:
     import configparser  # py3
 except ImportError:
@@ -51,6 +55,14 @@ def score(title, min_votes=0, precision=1):
 
 
 def _imdb_info(title):
+    """ Search IMDB for the title provided. Return the 1st match returned making
+    the assumption its accurate
+
+    :param title: Name of the show/movie to lookup
+    :type title: str
+    :return: Info about the title
+    :rtype: dict
+    """
     i = imdb.IMDb()
     search_result = i.search_movie(title, results=1)
     if not search_result:
@@ -61,6 +73,16 @@ def _imdb_info(title):
 
 
 def _imdb_score(title, min_votes=0):
+    """ Get the IMDB score for the title provided. If the minimum number of votes
+    is greater than 0 and the vote count is less than that number, 0 will be returned
+
+    :param title: Name of the show/movie to lookup
+    :type title: str
+    :param min_votes: Minimum required votes to allow the score to be used
+    :type min_votes: int
+    :return: IMDB score
+    :rtype: float
+    """
     info = _imdb_info(title)
     if info:
         if min_votes and info['votes'] < min_votes:
@@ -70,6 +92,14 @@ def _imdb_score(title, min_votes=0):
 
 
 def _tmdb_info(title):
+    """ Search themoviedb for the title provided. Return the 1st match returned making
+    the assumption its accurate
+
+    :param title: Media name to lookup
+    :type title: str
+    :return: Info about the title
+    :rtype: dict
+    """
     result = False
     search_result = tmdb.Movies(title, limit=True)
     for movie in search_result.iter_results():
@@ -79,6 +109,16 @@ def _tmdb_info(title):
 
 
 def _tmdb_score(title, min_votes=0):
+    """ Get themoviedb score for the title provided. If the minimum number of votes
+    is greater than 0 and the vote count is less than that number, 0 will be returned
+
+    :param title: Name of the show/movie to lookup
+    :type title: str
+    :param min_votes: Minimum required votes to allow the score to be used
+    :type min_votes: int
+    :return: themoviedb score
+    :rtype: float
+    """
     info = _tmdb_info(title)
     if info:
         if min_votes and info['votes'] < min_votes:
