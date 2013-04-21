@@ -4,10 +4,11 @@ A shelve / pickle backed datastore for release history
 from logging import getLogger
 from shelve import DbfilenameShelf
 from time import time
+from tranny.db import Datastore
 from tranny import config
 
 
-class GherkinStore(DbfilenameShelf):
+class GherkinStore(Datastore, DbfilenameShelf):
     def __init__(self, filename=None, flag='c', protocol=None, writeback=True):
         if not filename:
             filename = config.get_db_path()

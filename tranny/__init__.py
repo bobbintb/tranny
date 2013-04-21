@@ -1,6 +1,6 @@
 from logging import getLogger, basicConfig
 from exceptions import ConfigError
-from rpc.transmission import TransmissionClient
+from client.transmission import TransmissionClient
 from tranny.watch import FileWatchService
 from tranny.configuration import Configuration
 from tranny.rss import RSSFeed
@@ -59,7 +59,7 @@ def init_client():
     if not client:
         enabled_client = config.get_default("general", "client", "transmission").lower()
         if enabled_client == "transmission":
-            from tranny.rpc.transmission import TransmissionClient as rpc_client
+            from tranny.client.transmission import TransmissionClient as rpc_client
         else:
             raise ConfigError("Invalid client type supplied: {0}".format(enabled_client))
         client = rpc_client(config)
@@ -86,6 +86,8 @@ def init_datastore():
         # Setup the configured datastore
         if config.get("db", "type") == "memory":
             from tranny.db.mem import MemoryStore as Datastore
+        elif config.get("db", "type") == "sqlite":
+            from tranny.db.sqlite import SQLiteStore as Datastore
         else:
             from tranny.db.gherkin import GherkinStore as Datastore
         datastore = Datastore()

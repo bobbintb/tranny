@@ -1,9 +1,11 @@
+from collections import namedtuple
 import re
 from logging import getLogger
 import httplib
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from tranny import TrannyException
+from tranny.client import ClientProvider
 
 
 class uTorrentException(TrannyException):
@@ -19,7 +21,10 @@ class url_args(dict):
         return "&".join(["{0}={1}".format(k, v) for k, v in self.items()])
 
 
-class UTorrentClient(object):
+UTSetting = namedtuple("UTSetting", ["name", "int", "str", "access"])
+
+
+class UTorrentClient(ClientProvider):
     """
     A basic uTorrent WebUI API client
     """
@@ -128,3 +133,40 @@ class UTorrentClient(object):
             version = response["build"]
             self.version = version
         return self.version
+
+    def list(self):
+        torrent_list = self._fetch(args={"list": 1})
+        return torrent_list
+
+    def _action(self, action, args=None):
+        full_args = {'action': action}
+        if args:
+            full_args.update(args)
+        return self._fetch(args=full_args)
+
+    def get_settings(self, key=None):
+        value = self._action("getsettings")
+        settings = {}
+        for args in value['settings']:
+            settings[args[0]] = UTSetting(*args)
+        if key:
+            return settings[key]
+        return settings
+
+    def set_setting(self, settings):
+        """
+
+        :param settings:
+        :type settings: dict
+        :return:
+        :rtype:
+        """
+        for setting, value in settings.items():
+            self.log.debug("Updating setting: {} = {}".format(setting, value))
+            self._action("setsetting", args={"s": setting, "v": value})
+
+    def add(self, data, download_dir=None):
+        if download_dir:
+            self.set_setting({"dir_active_download": download_dir})
+        pass
+

@@ -1,5 +1,6 @@
 from logging import getLogger
 from base64 import b64encode
+from tranny.client import ClientProvider
 
 log = getLogger("rpc.transmission")
 
@@ -12,7 +13,7 @@ except ImportError, err:
     raise SystemExit(err)
 
 
-class TransmissionClient(object):
+class TransmissionClient(ClientProvider):
     _config_key = "transmission"
 
     def __init__(self, config, host=None, port=None, user=None, password=None):

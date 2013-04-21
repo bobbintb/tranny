@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from logging import getLogger, basicConfig
+from logging import getLogger
 from os import getpid, unlink, listdir
 from os.path import exists, join, dirname
 import signal
@@ -62,7 +62,11 @@ def handle_sighup(signum, stack):
 
 
 def main():
-    basicConfig()
+    """ Do it.
+
+    :return:
+    :rtype:
+    """
     try:
         signal.signal(signal.SIGHUP, handle_sighup)
     except (RuntimeError, ValueError):
@@ -75,7 +79,7 @@ def main():
         tranny.run_forever()
     except ProcessRunning as msg:
         do_cleanup = False
-        log.error(msg.message)
+        print(msg.message)
     finally:
         if do_cleanup:
             pid_cleanup()

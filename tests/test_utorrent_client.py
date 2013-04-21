@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 from os.path import join, dirname
 from tranny import init_config
-from tranny.rpc.utorrent import UTorrentClient
+from tranny.client.utorrent import UTorrentClient
 from tests import get_fixture
 
 config = init_config(get_fixture("test_config.ini"))
@@ -19,6 +19,10 @@ class UTorrentClientTest(TestCase):
     def test_get_version(self):
         version = self.client.get_version()
         self.assertTrue(version)
+
+    def test_get_settings(self):
+        settings = self.client.get_settings()
+        self.assertTrue(settings)
 
 
 if __name__ == '__main__':

@@ -102,6 +102,9 @@ class BroadcastTheNet(TorrentProvider):
                 release_key = generate_release_key(release_name)
                 if not release_key:
                     continue
+                section = match_release(release_name)
+                if not section:
+                    continue
                 if release_key in self.datastore:
                     if self.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
@@ -113,11 +116,9 @@ class BroadcastTheNet(TorrentProvider):
                                 )
                             )
                             continue
-                section = match_release(release_name)
-                if section:
-                    dl_url = self.get_torrent_url(entry['TorrentID'])
-                    torrent_data = self._download_url(dl_url)
-                    if not torrent_data:
-                        self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
-                        continue
-                    yield TorrentData(str(release_name), torrent_data, section)
+                dl_url = self.get_torrent_url(entry['TorrentID'])
+                torrent_data = self._download_url(dl_url)
+                if not torrent_data:
+                    self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                    continue
+                yield TorrentData(str(release_name), torrent_data, section)

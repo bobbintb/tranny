@@ -2,6 +2,14 @@ from tranny import parser
 from tranny.util import contains
 
 
+class Datastore(object):
+    def add(self, release_key, section=None, source=None):
+        raise NotImplementedError("add() not implemented")
+
+    def size(self):
+        raise NotImplementedError("size() not implemented")
+
+
 def generate_release_key(release_name):
     """ Generate a key suitable for using as a database key value
 

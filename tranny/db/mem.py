@@ -3,9 +3,10 @@ Basic in-memory volatile data store
 """
 from logging import getLogger
 from time import time
+from tranny.db import Datastore
 
 
-class MemoryStore(dict):
+class MemoryStore(Datastore, dict):
     def __init__(self, **kwargs):
         super(MemoryStore, self).__init__(**kwargs)
         self.log = getLogger("db.mem")

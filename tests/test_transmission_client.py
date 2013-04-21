@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 from os.path import join, dirname
 
-from tranny.rpc.transmission import TransmissionClient
+from tranny.client.transmission import TransmissionClient
 
 
 class TransmissionClientTest(TestCase):
