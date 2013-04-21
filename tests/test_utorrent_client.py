@@ -24,6 +24,10 @@ class UTorrentClientTest(TestCase):
         settings = self.client.get_settings()
         self.assertTrue(settings)
 
+    def test_add(self):
+        torrent_data = open(self.test_file_1, "rb").read()
+        self.assertTrue(self.client.add(torrent_data))
+
 
 if __name__ == '__main__':
     main()

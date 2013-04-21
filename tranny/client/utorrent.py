@@ -168,5 +168,21 @@ class UTorrentClient(ClientProvider):
     def add(self, data, download_dir=None):
         if download_dir:
             self.set_setting({"dir_active_download": download_dir})
-        pass
+        url = "http://{0}:{1}{2}/?action=add-file&token={3}".format(
+            self.host, self.port, self._url_prefix, self.token
+        )
+        response = self._session.post(
+            url,
+            auth=HTTPBasicAuth(self.user, self.password),
+            files={'torrent_file': ('torrent_file.torrent', data)}
+        )
+        if response.status_code != httplib.OK:
+
+            self.log.error("Got invalid request from client: {0}".format(response.json.error))
+        else:
+            try:
+                self.log.warning(response.json['error'])
+            except KeyError:
+                pass
+        return response.status_code == httplib.OK
 
