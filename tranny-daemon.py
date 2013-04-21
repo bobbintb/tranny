@@ -69,7 +69,7 @@ def main():
     """
     try:
         signal.signal(signal.SIGHUP, handle_sighup)
-    except (RuntimeError, ValueError):
+    except (RuntimeError, AttributeError):
         log.warning("Failed to register process signal handler, process reloading will not be available")
 
     do_cleanup = True

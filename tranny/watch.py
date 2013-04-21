@@ -1,4 +1,4 @@
-from ConfigParser import NoOptionError
+from ConfigParser import NoOptionError, NoSectionError
 from logging import getLogger
 from os.path import exists, isdir, dirname, basename, splitext
 from watchdog.events import FileSystemEventHandler
@@ -29,8 +29,10 @@ class FileWatchService(FileSystemEventHandler):
             try:
                 section_name = config.get_default(section, "section", False)
                 watch_path = config.get(section, "path")
-            except NoOptionError:
-                self.log.warning("Failed to get dl_path key for watch section {0}. Does not exist".format(
+                if not exists(watch_path):
+                    self.log.warn("Watch path does not exist {0}".format(watch_path))
+            except (NoOptionError, NoSectionError):
+                self.log.warn("Failed to get dl_path key for watch section {0}. Does not exist".format(
                     section
                 ))
                 continue

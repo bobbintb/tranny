@@ -4,3 +4,5 @@ requests
 watchdog
 jsonrpclib
 imdbpy
+six
+pathtools
