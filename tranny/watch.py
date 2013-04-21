@@ -68,7 +68,6 @@ class FileWatchService(FileSystemEventHandler):
             self.client.add(open(event.src_path).read(), download_dir=dl_path)
             self.datastore.add(release_key, section=section, source="watch_{0}".format(section))
 
-
     def stop(self):
         self._observer.stop()
         self._observer.join()

@@ -24,7 +24,7 @@ def process_running(pid_val):
     :rtype: bool
     """
     #return any([pid for pid in listdir('/proc') if pid.isdigit() and int(pid) == pid_val])
-    return int(pid_val) in psutil.get_lid_list()
+    return int(pid_val) in psutil.get_pid_list()
 
 
 def pid_check():
