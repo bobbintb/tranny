@@ -39,3 +39,4 @@ test_data
 tranny.ini
 *.db
 test_config.ini
+*.pid

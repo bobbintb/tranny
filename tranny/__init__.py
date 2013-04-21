@@ -25,12 +25,13 @@ feeds = []
 log = getLogger("tranny.main")
 
 
-def init_config(config_file=None):
+def init_config(config_file=None, reload_config=False):
     global config
 
-    if not config:
+    if not config or reload_config:
         config = Configuration()
         config.initialize(config_file)
+        log.info("Initialized configuration")
     return config
 
 
@@ -90,14 +91,22 @@ def init_datastore():
 
 def start():
     """ Start up all the backend services of the application """
-    global config, feeds, services
-
     init_config()
     init_logging()
     init_datastore()
     init_watcher()
     init_client()
+    reload_conf()
 
+
+def reload_conf():
+    """ Reload all services with new configuration settings
+
+    :return:
+    :rtype:
+    """
+    global config, feeds, services
+    init_config()
     feeds = [RSSFeed(config, feed_section) for feed_section in config.find_sections("rss_")]
     service_list = [section for section in config.find_sections("service_") if config.getboolean(section, "enabled")]
     for service_name in service_list:
