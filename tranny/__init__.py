@@ -25,6 +25,10 @@ feeds = []
 log = getLogger("tranny.main")
 
 
+class TrannyException(Exception):
+    pass
+
+
 def init_config(config_file=None, reload_config=False):
     global config
 
