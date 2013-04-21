@@ -20,6 +20,10 @@ probably run on python3 as well. The libraries below are all required. The pip i
 Its recommeneded to use a virtualenv to install if possible. Ill outline how to install
 using it below.
 
+### Windows System Prep
+
+
+
 Checkout the sources
 
     $ git clone git://github.com/leighmacdonald/tranny.git

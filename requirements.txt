@@ -4,5 +4,6 @@ requests
 watchdog
 jsonrpclib
 imdbpy
+psutil
 six
 pathtools

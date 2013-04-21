@@ -3,6 +3,7 @@ from logging import getLogger
 from os import getpid, unlink, listdir
 from os.path import exists, join, dirname
 import signal
+import psutil
 import tranny
 
 PID_FILE_NAME = join(dirname(__file__), "tranny.pid")
@@ -22,7 +23,8 @@ def process_running(pid_val):
     :return: Process running status
     :rtype: bool
     """
-    return any([pid for pid in listdir('/proc') if pid.isdigit() and int(pid) == pid_val])
+    #return any([pid for pid in listdir('/proc') if pid.isdigit() and int(pid) == pid_val])
+    return int(pid_val) in psutil.get_lid_list()
 
 
 def pid_check():
