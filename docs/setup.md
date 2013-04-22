@@ -5,7 +5,10 @@ configuring different services to fetch from.
 
 ## Requirements
 
-- [Transmission](http://www.transmissionbt.com/)
+One of the following torrent clients configured for remote API access:
+- [Transmission](http://www.transmissionbt.com/) (jsonrpc)
+- [uTorrent 3.x](http://www.utorrent.com/) (webui)
+
 - [Python 2.6/2.7](http://www.python.org/download/) - If you do not use the directory watch feature, it will
 probably run on python3 as well. The libraries below are all required. The pip installer will
  take care of installing them if you are using a virtualenv though.
@@ -20,22 +23,44 @@ probably run on python3 as well. The libraries below are all required. The pip i
 Its recommeneded to use a virtualenv to install if possible. Ill outline how to install
 using it below.
 
-### Windows System Prep
-
-
-
 Checkout the sources
 
     $ git clone git://github.com/leighmacdonald/tranny.git
     $ cd tranny
 
-Setup virtualenv and install the dependencied using pip for the application
+### Unix System Prep
 
-    $ virtualenv virtenv
-    $ source virtenv/bin/activate
-    $ pip install -r requirements.txt
+If you are using a Unix like system (linux,osx,bsd,solaris) you should use these steps, for windows users
+please see below.
 
-Create your own config based of the example provided
+Install virtualenv with your package manager if its not already installed. Install the
+dependencies using pip and the dependencies which are listed under the requirements.txt file.
+
+    $ virtualenv virtenv # Create virtualenv for tranny
+    $ source virtenv/bin/activate # Activate new interpreter on your path
+    $ pip install -r requirements.txt # Install required dependencies
+
+### Windows System Prep
+
+Below are links to installers for some of the libraries required. Make sure you choose the
+correct one for your python version. Sticking with CPython 2.7 would be considered best for now.
+
+- [distribute](http://www.lfd.uci.edu/~gohlke/pythonlibs/#distribute)
+- [pip](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pip)
+- [psutil](http://www.lfd.uci.edu/~gohlke/pythonlibs/#psutil)
+
+The following libraries are installed using pip as they are not available from the site above. You can
+install them like so: `pip install package_name`
+
+- [six](https://pypi.python.org/pypi/six)
+- [pathtools](http://pythonhosted.org/pathtools/)
+
+A precompiled installer for pyimdb 32bit python 2.7.
+- [imdbpy](http://iweb.dl.sourceforge.net/project/imdbpy/IMDbPY/4.9/IMDbPY-win32-py2.7-4.9.exe)
+
+### Common configuration setup
+
+Create your own config based of the example provided and rename it to `tranny.ini`.
 
     $ cp tranny_dist.ini tranny.ini
 
@@ -45,11 +70,17 @@ all the services you want to now. For more info check out the following setup do
 - [RSS Setup](config_rss.md)
 - [BTN API](config_service_btn.md)
 
-    $ $EDITOR tranny.ini
+Using the editor of your choice, configure any options desired in your new configration.
 
-You can now start the daemon process like so
+    $ vim tranny.ini
+
+You can now start the daemon process like so.
 
     $ python tranny-daemon.py
+
+I recommend running it like this for a while so you can monitor it for any issues that
+arrise. Once you are confident in how its working you can proceed to enable it to start
+automaically at boot as a daemon.
 
 ## Auto Start On Boot
 
@@ -76,3 +107,6 @@ the file as `/etc/supervisor.d/tranny.ini` or append this config to the standard
     redirect_stderr=true
     user=user
 
+### Windows
+
+todo

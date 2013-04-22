@@ -33,9 +33,12 @@ class TransmissionClient(ClientProvider):
             encoded_data = b64encode(data)
             res = self.client.add(encoded_data, download_dir=download_dir)
         except TransmissionError, err:
-            if "duplicate torrent" in err._message:
-                self.log.warning("Tried to add duplicate torrent file")
-                return True
+            try:
+                if "duplicate torrent" in err._message:
+                    self.log.warning("Tried to add duplicate torrent file")
+                    return True
+            except AttributeError:
+                pass
             self.log.exception(err)
             return False
 
