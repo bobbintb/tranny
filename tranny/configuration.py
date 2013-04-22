@@ -169,6 +169,18 @@ class Configuration(ConfigParser):
         """
         return abspath(join(dirname(dirname(__file__)), "history.db"))
 
+    def get_proxies(self):
+        proxies = {}
+        try:
+            if self.getboolean("proxy", "enabled"):
+                proxy = self.get("proxy", "server")
+                if proxy:
+                    proxies['http'] = proxy
+                    proxies['https'] = proxy
+        except (NoSectionError, NoOptionError):
+            pass
+        finally:
+            return proxies
 
 
 

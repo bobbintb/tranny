@@ -61,6 +61,7 @@ class UTorrentClient(ClientProvider):
             password = config.get_default(self._config_key, "password", None)
         self.password = password
         self._session = Session()
+        self.config = config
         version = self.get_version()
         self.log.info("Connected to uTorrent build {0}".format(version))
 
@@ -88,7 +89,11 @@ class UTorrentClient(ClientProvider):
             full_args.update(args)
         if full_args:
             url = "{0}?{1}".format(url, full_args)
-        result = self._session.get(url, auth=HTTPBasicAuth(self.user, self.password))
+        result = self._session.get(
+            url,
+            auth=HTTPBasicAuth(self.user, self.password),
+            proxies=self.config.get_proxies()
+        )
         if result.status_code == httplib.MULTIPLE_CHOICES:  # 300
             if resend:
                 raise InvalidToken("Unable to fetch new AuthToken")
@@ -174,7 +179,8 @@ class UTorrentClient(ClientProvider):
         response = self._session.post(
             url,
             auth=HTTPBasicAuth(self.user, self.password),
-            files={'torrent_file': ('torrent_file.torrent', data)}
+            files={'torrent_file': ('torrent_file.torrent', data)},
+            proxies=self.config.get_proxies()
         )
         if response.status_code != httplib.OK:
 

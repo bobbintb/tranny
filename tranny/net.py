@@ -42,7 +42,10 @@ def fetch_url(url, auth=None, json=True):
     response = None
     try:
         log.debug("Fetching url: {0}".format(url))
-        response = get(url, auth=auth)
+        from tranny import config
+
+        proxies = config.get_proxies()
+        response = get(url, auth=auth, proxies=proxies)
         response.raise_for_status()
         if not response.content:
             raise InvalidResponse("Empty response body")
