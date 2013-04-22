@@ -63,7 +63,7 @@ class SQLiteStore(Datastore):
         query = """
             INSERT INTO
             history ( release_key, section, source, timestamp )
-            values  (?, ?, ?, now)
+            values  (?, ?, ?, "now")
         """
         with self._db:
             self._db.execute(query, (release_key, section, source))
