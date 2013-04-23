@@ -1,4 +1,3 @@
-from tranny import parser
 from tranny.util import contains
 
 
@@ -18,6 +17,8 @@ def generate_release_key(release_name):
     :return: Database suitable key name
     :rtype: str
     """
+    from tranny import parser
+
     release_name = parser.normalize(release_name)
     name = parser.parse_release(release_name)
     if not name:

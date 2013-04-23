@@ -1,9 +1,9 @@
 from logging import getLogger
 from feedparser import parse as parse
-from .provider import TorrentProvider
-from .parser import match_release
-from .db import generate_release_key
-from .release import TorrentData
+from tranny.provider import TorrentProvider
+from tranny.parser import match_release
+from tranny.db import generate_release_key
+from tranny.release import TorrentData
 
 
 class RSSFeed(TorrentProvider):
@@ -43,7 +43,7 @@ class RSSFeed(TorrentProvider):
                                 )
                             )
                             continue
-                section = match_release(release_name)
+                section = match_release(self.config, release_name)
                 if section:
                     torrent_data = self._download_url(entry['link'])
                     if not torrent_data:

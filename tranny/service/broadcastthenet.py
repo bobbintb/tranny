@@ -102,7 +102,7 @@ class BroadcastTheNet(TorrentProvider):
                 release_key = generate_release_key(release_name)
                 if not release_key:
                     continue
-                section = match_release(release_name)
+                section = match_release(self.config, release_name)
                 if not section:
                     continue
                 if release_key in self.datastore:

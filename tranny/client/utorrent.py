@@ -28,9 +28,9 @@ class UTorrentClient(ClientProvider):
     """
     A basic uTorrent WebUI API client
     """
+    version = None
     _config_key = "utorrent"
     _url_prefix = "/gui"
-    version = None
     _token = False
 
     def __init__(self, config, host=None, port=None, user=None, password=None):
@@ -172,7 +172,9 @@ class UTorrentClient(ClientProvider):
 
     def add(self, data, download_dir=None):
         if download_dir:
+            old_dir = self.get_settings("dir_active_download")
             self.set_setting({"dir_active_download": download_dir})
+            new_dir = self.get_settings("dir_active_download").str
         url = "http://{0}:{1}{2}/?action=add-file&token={3}".format(
             self.host, self.port, self._url_prefix, self.token
         )

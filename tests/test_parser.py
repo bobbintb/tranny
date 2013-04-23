@@ -2,7 +2,7 @@ from unittest import main
 from tests import TrannyTestCase, get_fixture
 from tranny import parser, init_config
 
-init_config(get_fixture("test_config.ini"))
+config = init_config(get_fixture("test_config.ini"))
 
 
 class ReleaseTest(TrannyTestCase):
@@ -33,13 +33,34 @@ class ReleaseTest(TrannyTestCase):
 
     def test_match_release(self):
         test_data = [
+            ["movies", "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC"],
             ["tv", self.release_a],
             [False, self.release_b],
             ["tv", self.release_c],
-            [False, self.release_d]
+            [False, self.release_d],
+
         ]
         for expected, release_name in test_data:
-            self.assertEqual(expected, parser.match_release(release_name))
+            self.assertEqual(expected, parser.match_release(config, release_name))
+
+    def test_find_date(self):
+        test_data = [
+            [False, self.release_a],
+            [2010, self.release_d]
+        ]
+        for expected, release_name in test_data:
+            self.assertEqual(expected, parser.find_year(release_name), release_name)
+
+    def test_is_movie(self):
+        test_data = [
+            [False, self.release_a],
+            [False, self.release_b],
+            [False, self.release_c],
+            [True, self.release_d],
+            [True, "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC"]
+        ]
+        for expected, release_name in test_data:
+            self.assertEqual(expected, parser.is_movie(release_name), release_name)
 
 
 if __name__ == '__main__':

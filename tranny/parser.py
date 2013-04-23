@@ -1,7 +1,9 @@
 from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
+from datetime import date
 from logging import getLogger
 from tranny.util import contains
+from tranny import rating
 
 log = getLogger(__name__)
 
@@ -15,6 +17,10 @@ pattern_release = [
     compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})"),
 ]
 
+pattern_date = [
+    compile(r"(?P<year>(19|20)\d{2})")
+]
+
 
 def normalize(name):
     normalized = '.'.join(clean_split(name))
@@ -25,7 +31,134 @@ def clean_split(string):
     return [p for p in string.replace(".", " ").split(" ") if p]
 
 
-def find_config_section(release_name, prefix="section_"):
+def valid_year(config, release_name, none_is_cur_year=True, section_name="section_movies"):
+    """ Check if a release name is too new
+
+    :param none_is_cur_year: If no year is found, assume current year
+    :type none_is_cur_year: bool
+    :param config:
+    :type config: tranny.configuration.Configuration
+    :param release_name:
+    :type release_name:
+    :param section_name:
+    :type section_name:
+    :return:
+    :rtype:
+    """
+    release_year = find_year(release_name)
+    if not release_year and none_is_cur_year:
+        release_year = date.today().year
+    elif not release_year:
+        log.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
+        return False
+    try:
+        year_min = config.get_default(section_name, "year_min", 0, int)
+    except (NoOptionError, NoSectionError, ValueError):
+        year_min = 0
+    if year_min and release_year < year_min:
+        # Too old
+        return False
+    try:
+        year_max = config.get_default(section_name, "year_max", 0, int)
+    except (NoOptionError, NoSectionError, ValueError):
+        year_max = 0
+
+    if year_max and release_year > year_max:
+        # Too new
+        return False
+    return True
+
+
+def valid_score(config, release_name, section_name="section_movies"):
+    release_name = parse_release(release_name)
+    try:
+        score_min = config.get_default(section_name, "score_min", 0, int)
+    except (NoOptionError, NoSectionError, ValueError):
+        score_min = 0
+    try:
+        score_max = config.get_default(section_name, "score_max", 0, int)
+    except (NoOptionError, NoSectionError, ValueError):
+        score_max = 0
+    if not (score_min and score_max and release_name):
+        return False
+    try:
+        score_votes = config.get_default(section_name, "score_votes", 0, int)
+    except (NoOptionError, NoSectionError, ValueError):
+        score_votes = 0
+    found_score = rating.score(release_name, min_votes=score_votes)
+    return bool(found_score)
+
+
+def is_movie(release_name, strict=True):
+    """ Check the release to see if its a movie.
+
+    :param release_name:
+    :type release_name:
+    :return:
+    :rtype:
+    """
+    release_name = release_name.lower()
+
+    # Remove obvious non-movies
+    if any([n in release_name for n in ["hdtv"]]):
+        return False
+
+    title = parse_release(release_name)
+
+    # Add a year to the name, helps with imdb quite a bit
+    year = find_year(release_name)
+    if year:
+        title = "{0}.{1}".format(title, year)
+    info = rating.imdb_info(title)
+    if info:
+        try:
+            kind = info['kind']
+        except KeyError:
+            pass
+        else:
+            if kind in ["tv series"]:
+                return False
+            elif kind in ["movie", "video movie"]:
+                return True
+    log.warning("Skipped release due to inability to determine type: {0}".format(release_name))
+    return False
+
+
+def valid_movie(config, release_name, section_name="section_movies"):
+    """
+
+    :param config:
+    :type config: tranny.configuration.Configuration
+    :param release_name:
+    :type release_name:
+    :return:
+    :rtype:
+    """
+    if not is_movie(release_name):
+        return False
+    if not valid_year(config, release_name, section_name=section_name):
+        return False
+    if not valid_score(config, release_name, section_name=section_name):
+        return False
+    return True
+
+
+def valid_tv(config, release_name, section_name="section_tv"):
+    quality = find_quality(release_name)
+    for key_type in [quality, "any"]:
+        key = "shows_{0}".format(key_type)
+        if not config.has_option(section_name, key):
+            # Ignore undefined sections
+            continue
+        patterns = config.build_regex_fetch_list(section_name, key)
+        for pattern in patterns:
+            if match(pattern, release_name, I):
+                section_name = config.get_unique_section_name(section_name)
+                return section_name
+    return False
+
+
+def find_config_section(config, release_name, prefix="section_"):
     """ Attempt to find the configuration section the release provided matches with.
 
     :param release_name:
@@ -35,27 +168,20 @@ def find_config_section(release_name, prefix="section_"):
     :return:
     :rtype: str, bool
     """
-    from tranny import config
-
-    if is_ignored(release_name):
+    if is_ignored(config, release_name):
         return False
     sections = config.find_sections(prefix)
     for section in sections:
-        quality = find_quality(release_name)
-        for key_type in [quality, "any"]:
-            key = "shows_{0}".format(key_type)
-            if not config.has_option(section, key):
-                # Ignore undefined sections
-                continue
-            patterns = config.build_regex_fetch_list(section, key)
-            for pattern in patterns:
-                if match(pattern, release_name, I):
-                    section_name = config.get_unique_section_name(section)
-                    return section_name
+        if section.lower() == "section_movies":
+            if valid_movie(config, release_name):
+                return section
+        elif section.lower() == "section_tv":
+            if valid_tv(config, release_name):
+                return section
     return False
 
 
-def is_ignored(release_name, section_name="ignore"):
+def is_ignored(config, release_name, section_name="ignore"):
     """ Check if the release should be ignored no matter what other conditions are matched
 
     :param release_name: Release name to match against
@@ -63,8 +189,6 @@ def is_ignored(release_name, section_name="ignore"):
     :return: Ignored status
     :rtype: bool
     """
-    from tranny import config
-
     release_name = release_name.lower()
     for key in config.options(section_name):
         try:
@@ -111,6 +235,19 @@ def find_quality(release_name):
         return "sd"
 
 
+def find_year(release_name):
+    for pattern in pattern_date:
+        match = pattern.search(release_name, I)
+        if not match:
+            continue
+        values = match.groupdict()
+        try:
+            return int(values['year'])
+        except KeyError:
+            pass
+    return False
+
+
 def parse_release_info(release_name):
     """ Parse release info out of the release name.
 
@@ -143,7 +280,7 @@ def parse_release_info(release_name):
 def parse_release(release_name):
     """ Fetch just the release name title from the release name provided
 
-    :param release_name: A full release string: Conan.2013.04.15.Chelsea.Handler.HDTV.x264-2HD
+    :param release_name: A full release string Conan.2013.04.15.Chelsea.Handler.HDTV.x264-2HD
     :type release_name: str, unicode
     :return: Normalized release name found or False on no match
     :rtype: str, bool
@@ -155,14 +292,22 @@ def parse_release(release_name):
     return False
 
 
-def match_release(release_name):
+def match_release(config, release_name):
     """ Match a release to a section. Return the section found.
 
+    :param config: App configuration instance
+    :type config: tranny.configuration.Configuration
     :param release_name:
     :type release_name:
     :return: Matched release section
     :rtype: str, bool
     """
     log.debug("Finding Match: {0}".format(release_name))
-    section = find_config_section(release_name)
+    section = find_config_section(config, release_name)
+    if section == "movies":
+        pass
+    elif section == "tv":
+        pass
+    else:
+        pass
     return section

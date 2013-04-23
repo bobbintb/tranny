@@ -1,5 +1,5 @@
 from os.path import exists, dirname, join, expanduser, isdir, abspath
-from os import makedirs
+from os import makedirs, mkdir
 from errno import EEXIST
 from logging import getLogger
 from sys import version_info
@@ -152,13 +152,17 @@ class Configuration(ConfigParser):
             return section_name
 
     def get_download_path(self, section, release_name):
-        dl_path = abspath(self.get("section_{0}".format(section), "dl_path"))
-        if not exists(dl_path):
-            raise IOError("Invalid download path root: {0}".format(dl_path))
+        dl_path = self.get(section, "dl_path")
+        #if not exists(dl_path):
+        #    raise IOError("Invalid download path root: {0}".format(dl_path))
         dir_name = parse_release(release_name)
         full_dl_path = join(dl_path, dir_name)
         if not exists(full_dl_path):
-            makedirs(full_dl_path)
+            try:
+                mkdir(full_dl_path)
+            except OSError:
+                # Cant create presumably remote directory?
+                pass
         return full_dl_path
 
     def get_db_path(self):

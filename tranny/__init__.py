@@ -1,11 +1,11 @@
 from logging import getLogger, basicConfig
 from exceptions import ConfigError
 from client.transmission import TransmissionClient
-from tranny.watch import FileWatchService
 from tranny.configuration import Configuration
-from tranny.rss import RSSFeed
-from tranny.net import download, fetch_url
 from tranny import db
+from tranny.service.rss import RSSFeed
+from tranny.net import download, fetch_url
+from tranny.watch import FileWatchService
 
 # Current run state
 running = False
@@ -27,6 +27,10 @@ log = getLogger("tranny.main")
 
 class TrannyException(Exception):
     pass
+
+
+def get_config():
+    return init_config()
 
 
 def init_config(config_file=None, reload_config=False):
@@ -59,10 +63,12 @@ def init_client():
     if not client:
         enabled_client = config.get_default("general", "client", "transmission").lower()
         if enabled_client == "transmission":
-            from tranny.client.transmission import TransmissionClient as rpc_client
+            from tranny.client.transmission import TransmissionClient as TorrentClient
+        elif enabled_client == "utorrent":
+            from tranny.client.utorrent import UTorrentClient as TorrentClient
         else:
             raise ConfigError("Invalid client type supplied: {0}".format(enabled_client))
-        client = rpc_client(config)
+        client = TorrentClient(config)
     return client
 
 
@@ -113,6 +119,13 @@ def reload_conf():
     """
     global config, feeds, services
     init_config()
+    try:
+        tmdb_api_key = config.get("themoviedb", "api_key")
+        from tranny import tmdb
+
+        tmdb.configure(tmdb_api_key)
+    except:
+        pass
     feeds = [RSSFeed(config, feed_section) for feed_section in config.find_sections("rss_")]
     service_list = [section for section in config.find_sections("service_") if config.getboolean(section, "enabled")]
     for service_name in service_list:

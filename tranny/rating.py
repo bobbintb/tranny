@@ -6,17 +6,20 @@ try:
     import configparser  # py3
 except ImportError:
     import ConfigParser as configparser
-from tranny import config
+
+from tranny import db
 
 # Config section names
 _tmdb_section = "themoviedb"
 _imdb_section = "imdb"
 
+_imdb_cache = {}
+
 # Try and load imdb
 try:
     import imdb
 
-    _imdb_enabled = config.getboolean(_imdb_section, "enable")
+    _imdb_enabled = True
 except (ImportError, configparser.Error):
     imdb, _imdb_enabled = False, False
 
@@ -24,9 +27,7 @@ except (ImportError, configparser.Error):
 try:
     from tranny import tmdb
 
-    _tmdb_enabled = config.getboolean(_tmdb_section, "enable")
-    _tmdb_api_key = config.get(_tmdb_section, "api_key")
-    tmdb.configure(_tmdb_api_key)
+    _tmdb_enabled = True
 except (ImportError, configparser.Error):
     tmdb, _tmdb_enabled = False, False
 
@@ -54,7 +55,7 @@ def score(title, min_votes=0, precision=1):
     return round(sum(score) / float(len(score)), precision)
 
 
-def _imdb_info(title):
+def imdb_info(title):
     """ Search IMDB for the title provided. Return the 1st match returned making
     the assumption its accurate
 
@@ -63,12 +64,18 @@ def _imdb_info(title):
     :return: Info about the title
     :rtype: dict
     """
+    try:
+        if title in _imdb_cache:
+            return _imdb_cache[title]
+    except:
+        pass
     i = imdb.IMDb()
     search_result = i.search_movie(title, results=1)
     if not search_result:
         return None
     result = search_result[0]
     i.update(result)
+    _imdb_cache[title] = result
     return result
 
 
@@ -83,7 +90,7 @@ def _imdb_score(title, min_votes=0):
     :return: IMDB score
     :rtype: float
     """
-    info = _imdb_info(title)
+    info = imdb_info(title)
     if info:
         if min_votes and info['votes'] < min_votes:
             return 0
@@ -91,7 +98,7 @@ def _imdb_score(title, min_votes=0):
     return 0
 
 
-def _tmdb_info(title):
+def tmdb_info(title):
     """ Search themoviedb for the title provided. Return the 1st match returned making
     the assumption its accurate
 
@@ -119,7 +126,7 @@ def _tmdb_score(title, min_votes=0):
     :return: themoviedb score
     :rtype: float
     """
-    info = _tmdb_info(title)
+    info = tmdb_info(title)
     if info:
         if min_votes and info['votes'] < min_votes:
             return 0
