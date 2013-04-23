@@ -17,16 +17,29 @@ class TransmissionClient(ClientProvider):
     _config_key = "transmission"
 
     def __init__(self, config, host=None, port=None, user=None, password=None):
+        self.log = log
         if not host:
             host = config.get_default(self._config_key, "host", "localhost")
+        self.host = host
         if not port:
             port = config.get_default(self._config_key, "port", DEFAULT_PORT, int)
+        self.port = port
         if not user:
             user = config.get_default(self._config_key, "user", None)
+        self.user = user
         if not password:
             password = config.get_default(self._config_key, "password", None)
-        self.client = Client(host, port=port, user=user, password=password)
-        self.log = log
+        self.password = password
+        self.connect()
+
+    def connect(self):
+        try:
+            self.client = Client(self.host, port=self.port, user=self.user, password=self.password)
+        except TransmissionError as err:
+            if err.original.code == 111:
+                self.log.error("Failed to connect to transmission-daemon, is it running?")
+            else:
+                self.log.exception("Error connecting to transmission server")
 
     def add(self, data, download_dir=None):
         try:
@@ -70,4 +83,4 @@ class TransmissionClient(ClientProvider):
         :return:
         :rtype:
         """
-        return self.client.remove(torrent_id)
+        return self.client.remove_torrent(torrent_id)
