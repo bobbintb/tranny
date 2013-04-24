@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from logging import getLogger
+import time
 from os import getpid, unlink, listdir
 from os.path import exists, join, dirname
 import signal
@@ -88,5 +89,22 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if sys.argv[1] == "-p":
+        from tests import lsprofcalltree
+        import cProfile
+
+        profileFileName = 'profiles/main_' + time.strftime('%Y%m%d_%H%M%S') + '.profile'
+
+        profile = cProfile.Profile()
+        profile.run('main()')
+        kProfile = lsprofcalltree.KCacheGrind(profile)
+        kFile = open(profileFileName, 'w+')
+        kProfile.output(kFile)
+        kFile.close()
+
+        profile.print_stats()
+    else:
+        main()
 

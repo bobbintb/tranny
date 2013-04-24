@@ -8,6 +8,9 @@ class Datastore(object):
     def size(self):
         raise NotImplementedError("size() not implemented")
 
+    def sync(self):
+        return True
+
 
 def generate_release_key(release_name):
     """ Generate a key suitable for using as a database key value

@@ -1,4 +1,5 @@
 from logging import getLogger, basicConfig
+from time import sleep
 from exceptions import ConfigError
 from client.transmission import TransmissionClient
 from tranny.configuration import Configuration
@@ -183,6 +184,7 @@ def run_forever():
         while running:
             update_services(services)
             update_rss(feeds)
+            sleep(1)
     except:
         pass
     finally:
