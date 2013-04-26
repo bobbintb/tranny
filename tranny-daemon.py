@@ -91,7 +91,7 @@ def main():
 if __name__ == "__main__":
     import sys
 
-    if sys.argv[1] == "-p":
+    if len(sys.argv) >= 2 and sys.argv[1] == "-p":
         from tests import lsprofcalltree
         import cProfile
 

@@ -95,9 +95,11 @@ def init_datastore():
             from tranny.db.mem import MemoryStore as Datastore
         elif config.get("db", "type") == "sqlite":
             from tranny.db.sqlite import SQLiteStore as Datastore
+        elif config.get("db", "type") == "mysql":
+            from tranny.db.mysql import MySQLStore as Datastore
         else:
             from tranny.db.gherkin import GherkinStore as Datastore
-        datastore = Datastore()
+        datastore = Datastore(config)
         log.debug("Loaded {0} cached entries".format(datastore.size()))
     return datastore
 

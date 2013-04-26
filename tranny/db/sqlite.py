@@ -10,13 +10,17 @@ class SQLiteStore(Datastore):
     SQLite based history storage service
     """
 
-    def __init__(self):
+    def __init__(self, config=None):
+        self.config = config
+        self.log = getLogger("db.sqlite")
+        self._connect()
+        if not "history" in self._table_list():
+            self._init_db()
+
+    def _connect(self):
         file_name = config.get_default("sqlite", "db", "history.sqlite")
         full_path = abspath(join(dirname(dirname(dirname(__file__))), file_name))
         self._db = connect(full_path)
-        self.log = getLogger("db.sqlite")
-        if not "history" in self._table_list():
-            self._init_db()
 
     def __contains__(self, release_key):
         """ Provides support for the in keyword:
@@ -56,8 +60,8 @@ class SQLiteStore(Datastore):
                 PRIMARY KEY ("release_key" ASC)
             );
         """
-        with self._db:
-            self._db.executescript(query)
+        with self._db as cur:
+            cur.execute(query)
 
     def add(self, release_key, section=None, source=None):
         query = """
@@ -65,10 +69,11 @@ class SQLiteStore(Datastore):
             history ( release_key, section, source, timestamp )
             values  (?, ?, ?, "now")
         """
-        with self._db:
-            self._db.execute(query, (release_key, section, source))
+        with self._db as cur:
+            cur.execute(query, (release_key, section, source))
 
     def size(self):
         query = "SELECT count(*) as total FROM history"
-        for row in self._db.execute(query):
-            return row[0]
+        with self._db as cur:
+            for row in cur.execute(query):
+                return row[0]

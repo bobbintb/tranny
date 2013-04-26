@@ -7,3 +7,4 @@ imdbpy
 psutil
 six
 pathtools
+oursql
