@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width"/>
-    <title>Foundation 4</title>
+    <title>Tranny</title>
 
     <link rel="stylesheet" href="{{ url_for("webui.static", filename="css/normalize.css") }}"/>
     <link rel="stylesheet" href="{{ url_for("webui.static", filename="css/app.css") }}"/>
@@ -16,8 +16,14 @@
 </head>
 <body>
 
-<p>moo</p>
-<button class="button small round">meow</button>
+    {% include "top_bar.html" %}
+
+    <div class="row">
+        <div class="large-12 columns">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
 
 <script src="{{ url_for("webui.static", filename="js/vendor/jquery.js") }}"></script>
 <script src="{{ url_for("webui.static", filename="js/foundation/foundation.js") }}"></script>
@@ -33,7 +39,7 @@
 {#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.reveal.js") }}"></script>#}
 {#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.section.js") }}"></script>#}
 {#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.tooltips.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.topbar.js") }}"></script>#}
+<script src="{{ url_for("webui.static", filename="js/foundation/foundation.topbar.js") }}"></script>
 <script>
     jQuery(document).foundation();
 </script>

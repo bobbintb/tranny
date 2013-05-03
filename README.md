@@ -59,9 +59,3 @@ please dont hesitate to contact me.
 - RDBMS datastore backend
     - [postgres](http://www.postgresql.org/)
     - [MySQL](http://www.mysql.com/)
-
-## Possible Features
-
-- User interfaces:
-    - Simple WebUI
-    - Simple QT Interface

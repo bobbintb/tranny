@@ -18,7 +18,7 @@ class BroadcastTheNet(TorrentProvider):
         self._api_token = config.get(self._config_section, "api_token")
         url = config.get(self._config_section, "url")
         self.api = Server(uri=url)
-        self.log.info("Initialized BTN service")
+        self.log.info("Initialized BTN provider")
 
     def __call__(self, method, args=None):
         """ Make a API call to the JSON-RPC server. This method will inject the API key into the request

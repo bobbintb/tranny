@@ -11,6 +11,9 @@ class Datastore(object):
     def sync(self):
         return True
 
+    def fetch_newest(self, limit=25):
+        raise NotImplementedError("fetch_newest() not implemented")
+
 
 def generate_release_key(release_name):
     """ Generate a key suitable for using as a database key value

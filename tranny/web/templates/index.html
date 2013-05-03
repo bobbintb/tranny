@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-6 columns">
+            <h3><small>Most recent matched downloads</small></h3>
+            {% for rls in newest %}
+                <div>
+                    {{ rls.release_key }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="large-6 columns">
+            <h3><small>Provider Rankings</small></h3>
+        </div>
+    </div>
+{% endblock %}
