@@ -1,6 +1,6 @@
 import unittest
 from tests import TrannyTestCase, get_fixture
-from tranny.service.broadcastthenet import BroadcastTheNet
+from tranny.provider.broadcastthenet import BroadcastTheNet
 from tranny import init_config
 
 try:

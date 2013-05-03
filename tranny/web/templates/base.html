@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Foundation 4</title>
+
+    <link rel="stylesheet" href="{{ url_for("webui.static", filename="css/normalize.css") }}"/>
+    <link rel="stylesheet" href="{{ url_for("webui.static", filename="css/app.css") }}"/>
+
+    <script src="{{ url_for("webui.static", filename="js/vendor/custom.modernizr.js") }}"></script>
+
+</head>
+<body>
+
+<p>moo</p>
+<button class="button small round">meow</button>
+
+<script src="{{ url_for("webui.static", filename="js/vendor/jquery.js") }}"></script>
+<script src="{{ url_for("webui.static", filename="js/foundation/foundation.js") }}"></script>
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.alerts.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.clearing.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.cookie.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.dropdown.js") }}"></script>#}
+<script src="{{ url_for("webui.static", filename="js/foundation/foundation.forms.js") }}"></script>
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.joyride.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.magellan.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.orbit.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.placeholder.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.reveal.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.section.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.tooltips.js") }}"></script>#}
+{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.topbar.js") }}"></script>#}
+<script>
+    jQuery(document).foundation();
+</script>
+</body>
+</html>

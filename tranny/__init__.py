@@ -4,9 +4,10 @@ from exceptions import ConfigError
 from client.transmission import TransmissionClient
 from tranny.configuration import Configuration
 from tranny import db
-from tranny.service.rss import RSSFeed
+from tranny.provider.rss import RSSFeed
 from tranny.net import download, fetch_url
 from tranny.watch import FileWatchService
+from tranny import web
 
 # Current run state
 running = False
@@ -104,6 +105,10 @@ def init_datastore():
     return datastore
 
 
+def init_webui():
+    web.start()
+
+
 def start():
     """ Start up all the backend services of the application """
     init_config()
@@ -111,6 +116,7 @@ def start():
     init_datastore()
     init_watcher()
     init_client()
+    init_webui()
     reload_conf()
 
 
@@ -132,7 +138,7 @@ def reload_conf():
     feeds = [RSSFeed(config, feed_section) for feed_section in config.find_sections("rss_")]
     service_list = [section for section in config.find_sections("service_") if config.getboolean(section, "enabled")]
     for service_name in service_list:
-        from tranny.service.broadcastthenet import BroadcastTheNet
+        from tranny.provider.broadcastthenet import BroadcastTheNet
 
         service = BroadcastTheNet(config, service_name)
         services.append(service)
@@ -181,6 +187,7 @@ def update_rss(feeds):
 def run_forever():
     """ Run the server under a basic event loop """
     global feeds, config, watcher
+
     running = True
     try:
         while running:
@@ -191,6 +198,7 @@ def run_forever():
         pass
     finally:
         log.info("Exiting")
+        web.stop()
         datastore.sync()
         watcher.stop()
 
