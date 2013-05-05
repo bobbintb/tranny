@@ -44,7 +44,7 @@ class TransmissionClient(ClientProvider):
     def add(self, data, download_dir=None):
         try:
             encoded_data = b64encode(data)
-            res = self.client.add_torrent(encoded_data, download_dir=download_dir)
+            res = self.client.add(encoded_data, download_dir=download_dir)
         except TransmissionError, err:
             try:
                 msg = err._message
@@ -83,4 +83,4 @@ class TransmissionClient(ClientProvider):
         :return:
         :rtype:
         """
-        return self.client.remove_torrent(torrent_id)
+        return self.client.remove(torrent_id)

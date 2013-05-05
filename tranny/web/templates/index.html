@@ -3,15 +3,35 @@
 {% block content %}
     <div class="row">
         <div class="large-6 columns">
-            <h3><small>Most recent matched downloads</small></h3>
+            <h3>
+                <small>Torrent Provider Source Download Totals</small>
+            </h3>
+            <div id="leader_board" style="height: 400px"></div>
+        </div>
+        <div class="large-6 columns">
+            <h3><small>Matched Section Totals</small></h3>
+            <div id="section_totals" style="height: 400px"></div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            <h3>
+                <small>Most recent matched downloads</small>
+            </h3>
             {% for rls in newest %}
-                <div>
-                    {{ rls.release_key }}
+                <div class="release_item">
+                    <span>{{ rls.timestamp }}</span>{{ rls.release_name }}
                 </div>
             {% endfor %}
         </div>
-        <div class="large-6 columns">
-            <h3><small>Provider Rankings</small></h3>
-        </div>
     </div>
+{% endblock %}
+{% block footer %}
+    <script type="text/javascript"
+            src="{{ url_for("webui.static", filename="js/vendor/flot/jquery.flot.js") }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for("webui.static", filename="js/vendor/flot/jquery.flot.resize.js") }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for("webui.static", filename="js/vendor/flot/jquery.flot.pie.js") }}"></script>
 {% endblock %}

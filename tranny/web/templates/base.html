@@ -40,8 +40,11 @@
 {#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.section.js") }}"></script>#}
 {#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.tooltips.js") }}"></script>#}
 <script src="{{ url_for("webui.static", filename="js/foundation/foundation.topbar.js") }}"></script>
+    <script src="{{ url_for("webui.static", filename="js/tranny.js") }}"></script>
 <script>
     jQuery(document).foundation();
 </script>
+
+{% block footer %}{% endblock %}
 </body>
 </html>

@@ -45,3 +45,18 @@
 
 body {
 }
+
+// Label styling for pie charts
+.pie_label {
+    font-size: 70%;
+    text-align: center;
+    padding: 2px;
+    color: white;
+    font-weight: 700;
+}
+
+.release_item {
+    span {
+        @extend  .label;
+    }
+}
