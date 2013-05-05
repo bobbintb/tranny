@@ -1,7 +1,7 @@
 from unittest import main
 from tests import TrannyTestCase, get_fixture
 from tranny import init_datastore, init_config
-from tranny.rss import RSSFeed
+from tranny.provider.rss import RSSFeed
 
 
 class RSSFeedTest(TrannyTestCase):

@@ -2,7 +2,7 @@ from logging import getLogger
 from sqlite3 import connect
 from os.path import join, dirname, abspath
 from tranny import config
-from tranny.db import Datastore
+from tranny.datastore import Datastore
 
 
 class SQLiteStore(Datastore):
@@ -11,6 +11,7 @@ class SQLiteStore(Datastore):
     """
 
     def __init__(self, config=None):
+        self._db = None
         self.config = config
         self.log = getLogger("db.sqlite")
         self._connect()
@@ -71,40 +72,43 @@ class SQLiteStore(Datastore):
                 "release_key"  TEXT NOT NULL,
                 "section"  TEXT,
                 "source"  TEXT,
-                "timestamp"  datetime NOT NULL,
+                "timestamp"  datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY ("release_key" ASC)
             );
         """
         with self._db as cur:
             cur.execute(query)
 
-    def add(self, release_key, section=None, source=None):
+    def add(self, release_key, release_name, section=None, source=None):
         query = """
             INSERT INTO
-            history ( release_key, section, source, timestamp )
+            history ( release_key, release_name, section, source, timestamp )
             values  (?, ?, ?, "now")
         """
         with self._db as cur:
-            cur.execute(query, (release_key, section, source))
+            cur.execute(query, (release_key, release_name, section, source))
 
     def size(self):
         query = "SELECT count(*) as total FROM history"
-        with self._db as cur:
-            for row in cur.execute(query):
-                return row['total']
+        cur = self._db.cursor()
+        cur.execute(query)
+        return cur.fetchone()['total']
 
-    def fetch_newest(self, limit=25):
-        assert limit >= 1, "Invalid limit value, must be positive integer"
+    def fetch(self, limit=25):
         query = """
             SELECT
-                release_key, section, source, timestamp
+                release_key, section, release_name, source, timestamp
             FROM
                 history
             ORDER BY
                 timestamp DESC
-            LIMIT 0, ?
         """
+        if limit:
+            query += """ LIMIT 0, ?"""
+            args = (limit,)
+        else:
+            args = ()
         cur = self._db.cursor()
-        cur.execute(query, (limit,))
+        cur.execute(query, args)
         results = cur.fetchall()
         return results

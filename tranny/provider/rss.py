@@ -2,7 +2,7 @@ from logging import getLogger
 from feedparser import parse as parse
 from tranny.provider import TorrentProvider
 from tranny.parser import match_release
-from tranny.db import generate_release_key
+from tranny.datastore import generate_release_key
 from tranny.release import TorrentData
 
 
@@ -32,7 +32,7 @@ class RSSFeed(TorrentProvider):
                 release_key = generate_release_key(release_name)
                 if not release_key:
                     continue
-                if release_key in self.datastore:
+                if release_key in self.db:
                     if self.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered proper's
@@ -52,5 +52,3 @@ class RSSFeed(TorrentProvider):
                     yield TorrentData(str(release_name), torrent_data, section)
             except Exception as err:
                 self.log.error(err)
-
-

@@ -36,8 +36,7 @@ nosetests.xml
 virtenv
 test_data
 *.torrent
-tranny.ini
 *.db
-test_config.ini
+*.ini
 *.pid
 *.sqlite

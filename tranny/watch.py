@@ -4,7 +4,7 @@ from os.path import exists, isdir, dirname, basename, splitext
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from tranny.db import generate_release_key
+from tranny.datastore import generate_release_key
 
 
 class FileWatchService(FileSystemEventHandler):
@@ -20,10 +20,10 @@ class FileWatchService(FileSystemEventHandler):
         """
         self.log = getLogger("watch")
         self.config = config
-        from tranny import client, datastore
+        from tranny import client, db
 
         self.client = client
-        self.datastore = datastore
+        self.db = db
         self._observer = Observer()
         for section in config.find_sections("watch"):
             try:
@@ -66,7 +66,7 @@ class FileWatchService(FileSystemEventHandler):
             release_key = generate_release_key(torrent_name)
             dl_path = self.config.get_download_path(section, torrent_name)
             self.client.add(open(event.src_path).read(), download_dir=dl_path)
-            self.datastore.add(release_key, section=section, source="watch_{0}".format(section))
+            self.db.add(release_key, section=section, source="watch_{0}".format(section))
 
     def stop(self):
         self._observer.stop()

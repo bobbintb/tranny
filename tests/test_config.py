@@ -1,6 +1,7 @@
 from unittest import TestCase, main
 from tranny.configuration import Configuration
 
+
 class ConfigTest(TestCase):
     def test_find_sections(self):
         config = Configuration()

@@ -14,11 +14,15 @@ pattern_info = [
 
 pattern_release = [
     compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I),
-    compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})"),
+    compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})", I),
 ]
 
 pattern_date = [
-    compile(r"(?P<year>(19|20)\d{2})")
+    compile(r"(?P<year>(19|20)\d{2})", I)
+]
+
+pattern_season = [
+    compile(r"[\.\s]s\d{1,2}[\.\s]", I)
 ]
 
 
@@ -85,8 +89,10 @@ def valid_score(config, release_name, section_name="section_movies"):
         score_votes = config.get_default(section_name, "score_votes", 0, int)
     except (NoOptionError, NoSectionError, ValueError):
         score_votes = 0
-    found_score = rating.score(release_name, min_votes=score_votes)
-    return bool(found_score)
+    if release_name:
+        found_score = rating.score(release_name, min_votes=score_votes)
+        return bool(found_score)
+    return False
 
 
 def is_movie(release_name, strict=True):
@@ -146,7 +152,7 @@ def valid_movie(config, release_name, section_name="section_movies"):
 def valid_tv(config, release_name, section_name="section_tv"):
     quality = find_quality(release_name)
     for key_type in [quality, "any"]:
-        key = "shows_{0}".format(key_type)
+        key = "quality_{0}".format(key_type)
         if not config.has_option(section_name, key):
             # Ignore undefined sections
             continue
@@ -168,7 +174,7 @@ def find_config_section(config, release_name, prefix="section_"):
     :return:
     :rtype: str, bool
     """
-    if is_ignored(config, release_name):
+    if is_ignored(release_name):
         return False
     sections = config.find_sections(prefix)
     for section in sections:
@@ -181,7 +187,7 @@ def find_config_section(config, release_name, prefix="section_"):
     return False
 
 
-def is_ignored(config, release_name, section_name="ignore"):
+def is_ignored(release_name, section_name="ignore"):
     """ Check if the release should be ignored no matter what other conditions are matched
 
     :param release_name: Release name to match against
@@ -189,7 +195,10 @@ def is_ignored(config, release_name, section_name="ignore"):
     :return: Ignored status
     :rtype: bool
     """
+    from tranny import config
     release_name = release_name.lower()
+    if any((pattern.match(release_name) for pattern in pattern_season)):
+        return True
     for key in config.options(section_name):
         try:
             value = config.get(section_name, key)

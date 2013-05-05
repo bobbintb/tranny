@@ -3,7 +3,7 @@ Basic in-memory volatile data store
 """
 from logging import getLogger
 from time import time
-from tranny.db import Datastore
+from tranny.datastore import Datastore
 
 
 class MemoryStore(Datastore, dict):

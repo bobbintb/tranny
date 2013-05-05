@@ -1,12 +1,13 @@
 from os.path import exists
 from os import remove
 from unittest import TestCase, main
-from tranny import net
+from tranny import net, init_config
 
 
 class NetTest(TestCase):
     def setUp(self):
         self.url_ok = "http://mirror.centos.org/centos/6.3/isos/x86_64/CentOS-6.3-x86_64-bin-DVD1to2.torrent"
+        init_config()
 
     def tearDown(self):
         if exists("test_name.torrent"):

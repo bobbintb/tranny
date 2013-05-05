@@ -1,9 +1,9 @@
 from logging import getLogger, basicConfig
 from time import sleep
-from exceptions import ConfigError
-from client.transmission import TransmissionClient
+from tranny.exceptions import ConfigError
+from tranny.client.transmission import TransmissionClient
 from tranny.configuration import Configuration
-from tranny import db
+from tranny import datastore
 from tranny.provider.rss import RSSFeed
 from tranny.net import download, fetch_url
 from tranny.watch import FileWatchService
@@ -13,7 +13,7 @@ from tranny import web
 running = False
 
 client = None
-datastore = None
+db = None
 config = None
 watcher = None
 wait_time = 1
@@ -32,7 +32,10 @@ class TrannyException(Exception):
 
 
 def get_config():
-    return init_config()
+    global config
+    if not config:
+        return init_config()
+    return config
 
 
 def init_config(config_file=None, reload_config=False):
@@ -88,25 +91,33 @@ def init_watcher():
 
 
 def init_datastore():
-    global datastore
+    global db
 
-    if not datastore:
+    if not db:
         # Setup the configured datastore
         if config.get("db", "type") == "memory":
-            from tranny.db.mem import MemoryStore as Datastore
+            from tranny.datastore.adapters.mem import MemoryStore as Datastore
         elif config.get("db", "type") == "sqlite":
-            from tranny.db.sqlite import SQLiteStore as Datastore
+            from tranny.datastore.adapters.sqlite import SQLiteStore as Datastore
         elif config.get("db", "type") == "mysql":
-            from tranny.db.mysql import MySQLStore as Datastore
+            from tranny.datastore.adapters.mysql import MySQLStore as Datastore
         else:
-            from tranny.db.gherkin import GherkinStore as Datastore
-        datastore = Datastore(config)
-        log.debug("Loaded {0} cached entries".format(datastore.size()))
-    return datastore
+            raise ConfigError("Invalid datastore type: {0}".format(config.get("db", "type")))
+        db = Datastore(config)
+        log.info("Loaded {0} cached entries".format(db.size()))
+    return db
 
 
-def init_webui():
-    web.start()
+def init_webui(section_name="webui"):
+    global config
+    if config.getboolean(section_name, "enabled"):
+        log.debug("WebUI enabled, starting.")
+        hostname = config.get(section_name, "listen_host")
+        port = config.getint(section_name, "listen_port")
+        debug = config.getboolean(section_name, "enabled")
+        web.start(listen_host=hostname, listen_port=port, debug=debug)
+    else:
+        log.debug("WebUI disabled, not starting.")
 
 
 def start():
@@ -160,7 +171,7 @@ def update_services(services):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = db.generate_release_key(torrent.release_name)
-                    datastore.add(release_key, section=torrent.section, source=service.name)
+                    db.add(release_key, torrent.release_name, section=torrent.section, source=service.name)
         except Exception as err:
             log.exception("Error updating service")
 
@@ -178,8 +189,8 @@ def update_rss(feeds):
                 res = client.add(torrent.torrent_data, download_dir=dl_path)
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
-                    release_key = db.generate_release_key(torrent.release_name)
-                    datastore.add(release_key, section=torrent.section, source=feed.name)
+                    release_key = datastore.generate_release_key(torrent.release_name)
+                    db.add(release_key, torrent.release_name, section=torrent.section, source=feed.name)
         except Exception as err:
             log.exception("Error updating feed")
 
@@ -199,7 +210,7 @@ def run_forever():
     finally:
         log.info("Exiting")
         web.stop()
-        datastore.sync()
+        db.sync()
         watcher.stop()
 
 

@@ -21,9 +21,8 @@ class TorrentProvider(object):
         self.log = getLogger(self.name)
         self.config = config
         self.interval = self.config.get_default(config_section, "interval", 60, int)
-        from tranny import datastore
-
-        self.datastore = datastore
+        from tranny import db
+        self.db = db
 
     @property
     def name(self):

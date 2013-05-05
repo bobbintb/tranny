@@ -1,5 +1,5 @@
 from unittest import TestCase, main
-from tranny import db
+from tranny import datastore
 
 
 class DBTest(TestCase):
@@ -11,7 +11,7 @@ class DBTest(TestCase):
             ["first.snow", u'First Snow 2006 BRRip XvidHD 720p-NPW'],
         ]
         for expected, release_name in args:
-            self.assertEqual(expected, db.generate_release_key(release_name))
+            self.assertEqual(expected, datastore.generate_release_key(release_name))
 
 
 if __name__ == '__main__':

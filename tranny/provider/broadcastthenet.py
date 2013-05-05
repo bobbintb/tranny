@@ -5,7 +5,7 @@ from jsonrpclib.jsonrpc import ProtocolError
 from tranny.parser import match_release
 from tranny.provider import TorrentProvider
 from tranny.release import TorrentData
-from tranny.db import generate_release_key
+from tranny.datastore import generate_release_key
 
 _errors = {
     -32002: "Call limit exceeded"
@@ -105,7 +105,7 @@ class BroadcastTheNet(TorrentProvider):
                 section = match_release(self.config, release_name)
                 if not section:
                     continue
-                if release_key in self.datastore:
+                if release_key in self.db:
                     if self.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered proper's

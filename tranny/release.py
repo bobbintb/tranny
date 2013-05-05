@@ -10,4 +10,3 @@ class Release(object):
         self.creation_time = time()
         self.start_time = None
         self.finish_time = None
-

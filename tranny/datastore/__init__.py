@@ -2,7 +2,7 @@ from tranny.util import contains
 
 
 class Datastore(object):
-    def add(self, release_key, section=None, source=None):
+    def add(self, release_key, release_name, section=None, source=None):
         raise NotImplementedError("add() not implemented")
 
     def size(self):
@@ -11,7 +11,7 @@ class Datastore(object):
     def sync(self):
         return True
 
-    def fetch_newest(self, limit=25):
+    def fetch(self, limit=25):
         raise NotImplementedError("fetch_newest() not implemented")
 
 

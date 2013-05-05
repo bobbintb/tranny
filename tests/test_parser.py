@@ -33,10 +33,10 @@ class ReleaseTest(TrannyTestCase):
 
     def test_match_release(self):
         test_data = [
-            ["movies", "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC"],
-            ["tv", self.release_a],
+            [False, "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC"],
+            ["section_tv", self.release_a],
             [False, self.release_b],
-            ["tv", self.release_c],
+            ["section_tv", self.release_c],
             [False, self.release_d],
 
         ]
@@ -48,8 +48,7 @@ class ReleaseTest(TrannyTestCase):
             [False, self.release_a],
             [2010, self.release_d]
         ]
-        for expected, release_name in test_data:
-            self.assertEqual(expected, parser.find_year(release_name), release_name)
+        self.run_data_set(test_data, parser.find_year)
 
     def test_is_movie(self):
         test_data = [
@@ -62,6 +61,12 @@ class ReleaseTest(TrannyTestCase):
         for expected, release_name in test_data:
             self.assertEqual(expected, parser.is_movie(release_name), release_name)
 
+    def test_is_ignored(self):
+        test_data = [
+            [True, 'Homeland.S02.HDTV.x264-EVOLVE'],
+            [False, 'Homeland.S02E11.HDTV.x264-EVOLVE']
+        ]
+        self.run_data_set(test_data, parser.is_ignored)
 
 if __name__ == '__main__':
     main()

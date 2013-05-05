@@ -5,7 +5,7 @@ from tranny import init_config
 init_config(get_fixture("test_config.ini"))
 
 # Make sure to import rating after config has been setup
-from tranny import rating
+from tranny.service import rating
 
 
 class TestRating(unittest.TestCase):

@@ -7,18 +7,20 @@ from parser import parse_release
 from tranny.exceptions import ConfigError
 
 try:
+    # noinspection PyUnresolvedReferences
     from configparser import RawConfigParser, NoOptionError, NoSectionError, Error
 except ImportError:
     from ConfigParser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
 if version_info >= (3, 2):
     def mkdirp(path):
+        # noinspection PyArgumentList
         return makedirs(path, exist_ok=True)
 else:
     def mkdirp(path):
         try:
             makedirs(path)
-        except OSError as err: # Python >2.5
+        except OSError as err:  # Python >2.5
             if err.errno == EEXIST and isdir(path):
                 pass
             else:
@@ -99,6 +101,7 @@ class Configuration(ConfigParser):
             self.read(file_path)
         except OSError:
             raise ConfigError("No suitable configuration found")
+        self.config_path = file_path
 
     def find_sections(self, prefix):
         sections = [section for section in self.sections() if section.startswith(prefix)]
@@ -142,7 +145,7 @@ class Configuration(ConfigParser):
             name_list = [normalize(name) for name in self.get(section, key_name).split(",")]
         else:
             name_list = [self.build_regex_fetch_list(s, key_name) for s in self.find_sections("section_")]
-        return name_list
+        return [name for name in name_list if name]
 
     @staticmethod
     def get_unique_section_name(section_name, sep="_"):
@@ -186,5 +189,21 @@ class Configuration(ConfigParser):
         finally:
             return proxies
 
+    def get_filters(self, section, quality):
+        try:
+            titles = self.get(section, "quality_{}".format(quality)).split(",")
+            return self._normalize_filter_names(titles)
+        except (NoSectionError, NoOptionError):
+            return []
 
+    def set_filters(self, section, quality, titles):
+        titles = sorted(self._normalize_filter_names(titles))
+        self.set(section, "quality_{}".format(quality), ", ".join(titles))
+        with open(self.config_path, "w") as config_file:
+            self.write(config_file)
 
+    def _normalize_filter_names(self, titles):
+        return map(self.normalize_title, titles)
+
+    def normalize_title(self, title):
+        return " ".join([part.capitalize() for part in title.replace(".", " ").split()])

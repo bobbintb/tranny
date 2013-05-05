@@ -7,8 +7,6 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-from tranny import db
-
 # Config section names
 _tmdb_section = "themoviedb"
 _imdb_section = "imdb"
@@ -45,10 +43,11 @@ def score(title, min_votes=0, precision=1):
     :return: Average score across all enabled backend services
     :rtype: float
     """
+    from tranny import config
     score = []
-    if imdb and _imdb_enabled:
+    if imdb and _imdb_enabled and config.getboolean("imdb", "enabled"):
         score.append(_imdb_score(title, min_votes=min_votes))
-    if tmdb and _tmdb_enabled:
+    if tmdb and _tmdb_enabled and config.getboolean("themoviedb", "enabled"):
         score.append(_tmdb_score(title, min_votes=min_votes))
     if not score:
         return 0

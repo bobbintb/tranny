@@ -13,18 +13,18 @@
         <!-- Left Nav Section -->
         <ul class="left">
             <li class="divider"></li>
-            <li class="active"><a href="{{ url_for("webui.index") }}">Overview</a></li>
+            <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("webui.index") }}">Stats</a></li>
             <li class="divider"></li>
-            <li><a href="{{ url_for("webui.filters") }}">Filters</a></li>
+            <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("webui.filters") }}">Filters</a></li>
             <li class="divider"></li>
-            <li><a href="{{ url_for("webui.services") }}">Services</a></li>
+            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("webui.services") }}">Services</a></li>
             <li class="divider"></li>
         </ul>
 
         <!-- Right Nav Section -->
         <ul class="right">
             <li class="divider hide-for-small"></li>
-            <li class=""><a href="{{ url_for("webui.settings") }}">Settings</a></li>
+            <li {% if section == "settings" %}class="active"{% endif %}><a href="{{ url_for("webui.settings") }}">Settings</a></li>
         </ul>
     </section>
 </nav>

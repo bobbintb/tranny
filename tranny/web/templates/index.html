@@ -6,13 +6,20 @@
             <h3>
                 <small>Torrent Provider Source Download Totals</small>
             </h3>
-            <div id="leader_board" style="height: 400px"></div>
+            <div id="service_totals" style="height: 400px"></div>
         </div>
         <div class="large-6 columns">
             <h3><small>Matched Section Totals</small></h3>
             <div id="section_totals" style="height: 400px"></div>
         </div>
-
+    </div>
+    <div class="row">
+        <div class="large-6 columns">
+            <h3>
+                <small>Top Provider Service Types</small>
+            </h3>
+            <div id="service_type_totals" style="height: 400px"></div>
+        </div>
     </div>
     <div class="row">
         <div class="large-12 columns">
@@ -21,7 +28,7 @@
             </h3>
             {% for rls in newest %}
                 <div class="release_item">
-                    <span>{{ rls.timestamp }}</span>{{ rls.release_name }}
+                    <span>{{ rls.timestamp }}</span> {{ rls.release_name }}
                 </div>
             {% endfor %}
         </div>
