@@ -207,3 +207,12 @@ class Configuration(ConfigParser):
 
     def normalize_title(self, title):
         return " ".join([part.capitalize() for part in title.replace(".", " ").split()])
+
+    def save(self):
+        try:
+            with open(self.config_path, 'w') as config:
+                self.write(config)
+        except:
+            return False
+        return True
+

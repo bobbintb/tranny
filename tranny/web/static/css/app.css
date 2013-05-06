@@ -5577,3 +5577,211 @@ footer {
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
+/* line 69, ../../sass/app.scss */
+.drop-buttons {
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 1;
+  margin: 0 0 1.25em;
+  position: relative;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  padding-top: 0.75em;
+  padding-right: 1.5em;
+  padding-bottom: 0.8125em;
+  padding-left: 1.5em;
+  font-size: 1em;
+  background-color: #2ba6cb;
+  border-color: #2284a1;
+  color: white;
+  position: relative;
+  padding-right: 4.8em;
+}
+/* line 114, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_buttons.scss */
+.drop-buttons:hover, .drop-buttons:focus {
+  background-color: #2284a1;
+}
+/* line 125, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_buttons.scss */
+.drop-buttons:hover, .drop-buttons:focus {
+  color: white;
+}
+/* line 52, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span {
+  display: block;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-left: solid 1px;
+}
+/* line 61, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span:before {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  display: block;
+  border-style: solid;
+  left: 50%;
+}
+/* line 72, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+/* line 78, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span {
+  border-left-color: #1e728c;
+}
+/* line 111, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span {
+  width: 3em;
+}
+/* line 112, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span:before {
+  border-width: 0.5625em;
+  top: 1.125em;
+  margin-left: -0.5625em;
+}
+/* line 135, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_split-buttons.scss */
+.drop-buttons span:before {
+  border-color: white transparent transparent transparent;
+}
+
+/* line 76, ../../sass/app.scss */
+.inline-switch {
+  position: relative;
+  width: 100%;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  border-style: solid;
+  border-width: 1px;
+  margin-bottom: 1.25em;
+  -webkit-animation: webkitSiblingBugfix infinite 1s;
+  height: 32px;
+  background: white;
+  border-color: #cccccc;
+}
+/* line 58, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch label {
+  position: relative;
+  left: 0;
+  z-index: 2;
+  float: left;
+  width: 50%;
+  height: 100%;
+  margin: 0;
+  font-weight: bold;
+  text-align: left;
+  -webkit-transition: all 0.1s ease-out;
+  -moz-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
+}
+/* line 75, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input {
+  position: absolute;
+  z-index: 3;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+/* line 84, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:hover, .inline-switch input:focus {
+  cursor: pointer;
+}
+/* line 90, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch > span {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  z-index: 1;
+  display: block;
+  padding: 0;
+  border-width: 1px;
+  border-style: solid;
+  -webkit-transition: all 0.1s ease-out;
+  -moz-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
+}
+/* line 105, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:not(:checked) + label {
+  opacity: 0;
+}
+/* line 108, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:checked {
+  display: none !important;
+}
+/* line 109, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input {
+  left: 0;
+  display: block !important;
+}
+/* line 113, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:first-of-type + label,
+.inline-switch input:first-of-type + span + label {
+  left: -50%;
+}
+/* line 115, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:first-of-type:checked + label,
+.inline-switch input:first-of-type:checked + span + label {
+  left: 0%;
+}
+/* line 119, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:last-of-type + label,
+.inline-switch input:last-of-type + span + label {
+  right: -50%;
+  left: auto;
+  text-align: right;
+}
+/* line 121, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:last-of-type:checked + label,
+.inline-switch input:last-of-type:checked + span + label {
+  right: 0%;
+  left: auto;
+}
+/* line 124, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch span.custom {
+  display: none !important;
+}
+/* line 137, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch label {
+  padding: 0 0.375em;
+  line-height: 2.3em;
+  font-size: 0.875em;
+}
+/* line 145, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch input:first-of-type:checked ~ span {
+  left: 100%;
+  margin-left: -1.9375em;
+}
+/* line 151, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch > span {
+  width: 2em;
+  height: 2em;
+}
+/* line 165, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch > span {
+  border-color: #b3b3b3;
+  background: white;
+  background: -moz-linear-gradient(top, white 0%, #f2f2f2 100%);
+  background: -webkit-linear-gradient(top, white 0%, #f2f2f2 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #f2f2f2 100%);
+  -webkit-box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.07), 1000px 0 0 1000px #e1f5d1, -2px 0 10px 0 rgba(0, 0, 0, 0.07), -1000px 0 0 1000px whitesmoke;
+  box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.07), 1000px 0 0 980px #e1f5d1, -2px 0 10px 0 rgba(0, 0, 0, 0.07), -1000px 0 0 1000px whitesmoke;
+}
+/* line 185, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch:hover > span, .inline-switch:focus > span {
+  background: white;
+  background: -moz-linear-gradient(top, white 0%, #e6e6e6 100%);
+  background: -webkit-linear-gradient(top, white 0%, #e6e6e6 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #e6e6e6 100%);
+}
+/* line 193, ../../../../../.gem/ruby/2.0.0/gems/zurb-foundation-4.1.2/scss/foundation/components/_switch.scss */
+.inline-switch:active {
+  background: transparent;
+}

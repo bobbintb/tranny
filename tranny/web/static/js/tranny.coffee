@@ -129,17 +129,43 @@ filter_add = (evt) ->
         if handle_response(response).ok()
             console.log "added ok"
             input_element.val ""
+
+
+feed_save = (evt) ->
+    evt.preventDefault()
+    feed_name = jQuery(@).data "feed"
+    data =
+        feed: feed_name
+        url: jQuery("##{feed_name}_url").val()
+        interval: jQuery("##{feed_name}_interval").val()
+        enabled: !jQuery("##{feed_name}_enabled").is(':checked')
+    jQuery.post "/webui/rss/save", data, handle_response
+
+
+feed_delete = (evt) ->
+    evt.preventDefault()
+    if not confirm "Are you sure you want to delete this RSS feed? This is a non reversable action."
+        return false
+    feed_name = jQuery(@).data "feed"
+    jQuery.post "/webui/rss/delete", {feed: feed_name}, (response) ->
+        if handle_response(response).ok()
+            jQuery("#feed_#{feed_name}").fadeOut 500
+
+
 jQuery ->
     if window.location.pathname == "/webui/"
         render_service_totals()
         render_section_totals()
         render_service_type_totals()
     else if window.location.pathname.indexOf("filters") != -1
-        console.log "filters!"
         jQuery(".filter_remove").on "click", filter_remove
         jQuery(".filter_add").on "click", filter_add
     else if window.location.pathname.indexOf("services") != -1
         console.log "services!"
     else if window.location.pathname.indexOf("settings") != -1
         console.log "settings"
+    else if window.location.pathname.indexOf("rss") != -1
+        jQuery(".feed_save").on "click", feed_save
+        jQuery(".feed_delete").on "click", feed_delete
+
     jQuery(document).foundation()

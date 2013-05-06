@@ -81,6 +81,7 @@ def init_config(config_file=None, reload_config=False):
     if not config or reload_config:
         config = Configuration()
         config.initialize(config_file)
+
         log.info("Initialized configuration")
     return config
 
@@ -209,7 +210,7 @@ def update_services(services):
                 res = client.add(torrent.torrent_data, download_dir=dl_path)
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
-                    release_key = db.generate_release_key(torrent.release_name)
+                    release_key = datastore.generate_release_key(torrent.release_name)
                     db.add(release_key, torrent.release_name, section=torrent.section, source=service.name)
         except Exception as err:
             log.exception("Error updating service")

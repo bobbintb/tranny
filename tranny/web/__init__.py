@@ -1,6 +1,7 @@
 from multiprocessing import Process
 from logging import getLogger
-from flask import Flask, url_for, redirect
+from ConfigParser import NoSectionError, NoOptionError
+from flask import Flask, url_for, redirect, session, render_template
 
 
 log = getLogger("tranny.web")
@@ -11,16 +12,40 @@ app = Flask("tranny")
 app.debug_log_format = "%(asctime)s - %(message)s"
 
 
+def render(template_name, **kwargs):
+    try:
+        kwargs['messages'] = session['messages']
+        del session['messages']
+    except KeyError:
+        pass
+    return render_template(template_name, **kwargs)
+
+
 @app.route("/")
 def index():
     return redirect(url_for("webui.index"))
+
+
+def add_user_message(message, class_name=""):
+    try:
+        session['messages'].append()
+    except KeyError:
+        session['messages'] = [[message, class_name]]
 
 
 def start(listen_host="localhost", listen_port=8080, debug=True):
     global app_thread
     if not app_thread:
         from webui import webui
-
+        from tranny import config
+        try:
+            secret_key = config.get("general", "secret_key")
+            if not secret_key:
+                raise NoOptionError("general", "secret_key")
+        except (NoSectionError, NoOptionError):
+            raise Exception("Failed to find secret_key, please set it before enabling the webui")
+        else:
+            app.secret_key = secret_key
         app.register_blueprint(webui)
         args = {
             'debug': debug,

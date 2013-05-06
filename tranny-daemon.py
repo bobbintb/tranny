@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from logging import getLogger
 import time
-from os import getpid, unlink, listdir
+from os import getpid, unlink
 from os.path import exists, join, dirname
 import signal
 import psutil

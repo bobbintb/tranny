@@ -12,22 +12,37 @@
     <section class="top-bar-section">
         <!-- Left Nav Section -->
         <ul class="left">
+
             <li class="divider"></li>
             <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("webui.index") }}">Dashboard</a></li>
+
             <li class="divider"></li>
             <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("webui.filters") }}">Filters</a></li>
+
             <li class="divider"></li>
-            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("webui.services") }}">API Providers</a></li>
+            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("webui.services") }}">API</a></li>
+
             <li class="divider"></li>
-            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("webui.rss") }}">RSS Providers</a></li>
+            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("webui.rss") }}">RSS</a></li>
+
             <li class="divider"></li>
+            <li class="has-form">
+                <form>
+                    <div class="row collapse">
+                        <div class="small-12 columns">
+                            <a href="#" class="success button">Upload Torrent</a>
+                        </div>
+                    </div>
+                </form>
+            </li>
+
         </ul>
 
         <!-- Right Nav Section -->
         <ul class="right">
-            <li class="divider hide-for-small"></li>
+            <li class="divider"></li>
             <li {% if section == "syslog" %}class="active"{% endif %}><a href="{{ url_for("webui.syslog") }}">SysLog</a></li>
-            <li class="divider hide-for-small"></li>
+            <li class="divider"></li>
             <li {% if section == "settings" %}class="active"{% endif %}><a href="{{ url_for("webui.settings") }}">Settings</a></li>
         </ul>
     </section>

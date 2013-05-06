@@ -65,3 +65,14 @@ footer {
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+.drop-buttons {
+  @include button;
+  @include split-button;
+}
+$transition-speed: $switch-paddle-transition-speed;
+$transition-ease: $switch-paddle-transition-ease;
+
+.inline-switch {
+  @include switch($transition-speed, $transition-ease, 32px);
+}
