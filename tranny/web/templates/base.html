@@ -16,39 +16,31 @@
 </head>
 <body>
 
-    {% include "top_bar.html" %}
+{% include "top_bar.html" %}
 
-    <div class="row">
-        <div class="large-12 columns">
-            <div class="row">
-                <div class="large-12 columns" id="user_messages">
+<div class="row">
+    <div class="large-12 columns">
+        <div class="row">
+            <div class="large-12 columns" id="user_messages">
 
-                </div>
             </div>
-            {% block content %}{% endblock %}
         </div>
+        {% block content %}{% endblock %}
     </div>
+</div>
 
+<footer class="row">
+    <div class="large-12 columns text-center">
+        <a href="https://github.com/leighmacdonald/tranny">Tranny</a>
+    </div>
+</footer>
 
 <script src="{{ url_for("webui.static", filename="js/vendor/jquery.js") }}"></script>
 <script src="{{ url_for("webui.static", filename="js/foundation/foundation.js") }}"></script>
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.alerts.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.clearing.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.cookie.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.dropdown.js") }}"></script>#}
 <script src="{{ url_for("webui.static", filename="js/foundation/foundation.forms.js") }}"></script>
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.joyride.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.magellan.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.orbit.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.placeholder.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.reveal.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.section.js") }}"></script>#}
-{#<script src="{{ url_for("webui.static", filename="js/foundation/foundation.tooltips.js") }}"></script>#}
 <script src="{{ url_for("webui.static", filename="js/foundation/foundation.topbar.js") }}"></script>
-    <script src="{{ url_for("webui.static", filename="js/tranny.js") }}"></script>
-<script>
-    jQuery(document).foundation();
-</script>
+<script src="{{ url_for("webui.static", filename="js/tranny.js") }}"></script>
+
 
 {% block footer %}{% endblock %}
 </body>

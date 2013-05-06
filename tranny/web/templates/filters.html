@@ -6,21 +6,21 @@
             {% set section = section_info.section %}
             <div class="large-6 columns">
 
-                <h3><small>{{ section_info.section|upper }}</small></h3>
+                <h1><small>{{ section_info.section|upper }}</small></h1>
 
-                <h5><small>HD Show Filter</small></h5>
+                <h3><small>HD Show Filters</small></h3>
                 {% set filters = section_info.quality_hd %}
                 {% set quality = "hd" %}
                 {% include "render_filters.html" %}
 
 
-                <h5><small>SD Show Filter</small></h5>
+                <h3><small>SD Show Filters</small></h3>
                 {% set filters = section_info.quality_sd %}
                 {% set quality = "sd" %}
                 {% include "render_filters.html" %}
 
 
-                <h5><small>Any Show Filter</small></h5>
+                <h3><small>Any Show Filters</small></h3>
                 {% set filters = section_info.quality_any %}
                 {% set quality = "any" %}
                 {% include "render_filters.html" %}
@@ -28,6 +28,4 @@
             </div>
         {% endfor %}
     </div>
-
-
 {% endblock %}

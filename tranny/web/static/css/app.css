@@ -5571,3 +5571,9 @@ table tfoot tr td {
   color: white;
   font-weight: 700;
 }
+
+/* line 64, ../../sass/app.scss */
+footer {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}

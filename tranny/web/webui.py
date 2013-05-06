@@ -2,7 +2,7 @@ import httplib
 from json import dumps
 from flask import Blueprint, render_template, abort, request
 from jinja2 import TemplateNotFound
-from tranny import db, config
+from tranny import db, config, log_history
 from tranny.datastore import stats
 from tranny.configuration import NoOptionError, NoSectionError
 
@@ -11,10 +11,7 @@ webui = Blueprint('webui', __name__, template_folder="templates", static_folder=
 
 @webui.route("/", methods=['GET'])
 def index():
-    try:
-        return render_template("index.html", newest=db.fetch(limit=25), section="stats")
-    except TemplateNotFound:
-        abort(httplib.NOT_FOUND)
+    return render_template("index.html", newest=db.fetch(limit=25), section="stats")
 
 
 @webui.route("/stats/service_totals", methods=['GET'])
@@ -97,23 +94,24 @@ def filters():
                 pass
         section_info['section'] = section
         section_data.append(section_info)
-    try:
-        return render_template("filters.html", section_data=section_data, section="filters")
-    except TemplateNotFound:
-        abort(httplib.NOT_FOUND)
+    return render_template("filters.html", section_data=section_data, section="filters")
 
 
 @webui.route("/services")
 def services():
-    try:
-        return render_template("services.html", section="services")
-    except TemplateNotFound:
-        abort(httplib.NOT_FOUND)
+    return render_template("services.html", section="services")
+
+
+@webui.route("/rss")
+def rss():
+    return render_template("rss.html", section="rss")
+
+
+@webui.route("/syslog")
+def syslog():
+    return render_template("syslog.html", section="syslog", logs=log_history.get(100))
 
 
 @webui.route("/settings")
 def settings():
-    try:
-        return render_template("settings.html", section="settings")
-    except TemplateNotFound:
-        abort(httplib.NOT_FOUND)
+    return render_template("settings.html", section="settings")

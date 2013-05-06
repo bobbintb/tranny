@@ -1,5 +1,6 @@
-from logging import getLogger, basicConfig
+from logging import getLogger, basicConfig, StreamHandler
 from time import sleep
+from collections import deque
 from tranny.exceptions import ConfigError
 from tranny.client.transmission import TransmissionClient
 from tranny.configuration import Configuration
@@ -31,6 +32,42 @@ class TrannyException(Exception):
     pass
 
 
+class MemoryRingLogHandler(StreamHandler, deque):
+    """
+    Circular log buffer which pops the old log data off to make room for new
+    """
+    limit = 1000
+
+    def append(self, item):
+        deque.append(self, item)
+        if len(self) == self.limit:
+            self.append = self.full_append
+
+    def full_append(self, item):
+        deque.append(self, item)
+        # full, pop the oldest item, left most item
+        self.popleft()
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+        else:
+            self.append(msg)
+
+    def get(self, limit=None):
+        records = list(self)
+        records.reverse()
+        if limit:
+            return records[0:limit]
+        return records
+
+log_history = MemoryRingLogHandler()
+
+
 def get_config():
     global config
     if not config:
@@ -56,6 +93,8 @@ def init_logging():
             format=config.get_default('log', 'format', "%(asctime)s - %(message)s", str),
             datefmt=config.get_default('log', 'datefmt', "%Y-%m-%d %H:%M:%S", str)
         )
+        from logging import root
+        root.addHandler(log_history)
 
 
 def init_client():

@@ -142,3 +142,4 @@ jQuery ->
         console.log "services!"
     else if window.location.pathname.indexOf("settings") != -1
         console.log "settings"
+    jQuery(document).foundation()

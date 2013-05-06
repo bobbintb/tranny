@@ -190,16 +190,17 @@
     if (window.location.pathname === "/webui/") {
       render_service_totals();
       render_section_totals();
-      return render_service_type_totals();
+      render_service_type_totals();
     } else if (window.location.pathname.indexOf("filters") !== -1) {
       console.log("filters!");
       jQuery(".filter_remove").on("click", filter_remove);
-      return jQuery(".filter_add").on("click", filter_add);
+      jQuery(".filter_add").on("click", filter_add);
     } else if (window.location.pathname.indexOf("services") !== -1) {
-      return console.log("services!");
+      console.log("services!");
     } else if (window.location.pathname.indexOf("settings") !== -1) {
-      return console.log("settings");
+      console.log("settings");
     }
+    return jQuery(document).foundation();
   });
 
 }).call(this);
