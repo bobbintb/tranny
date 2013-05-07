@@ -76,3 +76,19 @@ $transition-ease: $switch-paddle-transition-ease;
 .inline-switch {
   @include switch($transition-speed, $transition-ease, 32px);
 }
+
+.progress-bar {
+    @include progress-container;
+    & > span {
+        @include progress-meter($success-color);
+    }
+}
+
+.disk-header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.alert-bg {
+    background-color: $alert-color !important;
+}

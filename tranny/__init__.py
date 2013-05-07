@@ -1,5 +1,5 @@
 from logging import getLogger, basicConfig, StreamHandler
-from time import sleep
+from time import sleep, time
 from collections import deque
 from tranny.exceptions import ConfigError
 from tranny.client.transmission import TransmissionClient

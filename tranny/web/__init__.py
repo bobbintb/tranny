@@ -2,14 +2,16 @@ from multiprocessing import Process
 from logging import getLogger
 from ConfigParser import NoSectionError, NoOptionError
 from flask import Flask, url_for, redirect, session, render_template
-
+from tranny.info import file_size
 
 log = getLogger("tranny.web")
 
 app_thread = None
-app = Flask("tranny")
 
+# Setup flask environment
+app = Flask("tranny")
 app.debug_log_format = "%(asctime)s - %(message)s"
+app.jinja_env.filters['file_size'] = file_size
 
 
 def render(template_name, **kwargs):

@@ -25,7 +25,7 @@ class SQLiteStore(Datastore):
         :rtype:
         """
         file_name = config.get_default("sqlite", "db", "history.sqlite")
-        full_path = abspath(join(dirname(dirname(dirname(__file__))), file_name))
+        full_path = abspath(join(dirname(dirname(dirname(dirname(__file__)))), file_name))
         self._db = connect(full_path)
 
         # Make sure we return dict's for each row, sqlite doesnt have a built in for this
@@ -71,6 +71,7 @@ class SQLiteStore(Datastore):
             CREATE TABLE "history" (
                 "release_key"  TEXT NOT NULL,
                 "section"  TEXT,
+                "release_name" TEXT,
                 "source"  TEXT,
                 "timestamp"  datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY ("release_key" ASC)
@@ -97,7 +98,7 @@ class SQLiteStore(Datastore):
     def fetch(self, limit=25):
         query = """
             SELECT
-                release_key, section, release_name, source, timestamp
+                release_key, release_name, section, source, timestamp
             FROM
                 history
             ORDER BY

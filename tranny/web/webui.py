@@ -1,7 +1,12 @@
+import platform
+import time
+import sys
+from collections import OrderedDict
 from json import dumps
 from logging import getLogger
-from flask import Blueprint, render_template, request, redirect, url_for, session
-from tranny import db, config, log_history
+from flask import Blueprint, render_template, request, redirect, url_for
+
+from tranny import db, config, log_history, info
 from tranny.datastore import stats
 from tranny.configuration import NoOptionError, NoSectionError
 from tranny.web import add_user_message, render
@@ -100,25 +105,23 @@ def filters():
 
 @webui.route("/services")
 def services():
-    return render_template("services.html", section="services")
+    btn_info = config.get_section_values("service_broadcastthenet")
+    return render_template("services.html", section="services", btn=btn_info)
 
 
 @webui.route("/rss", methods=['GET'])
 def rss():
     feed_data = {}
-    option_set = [
-        ["interval", 300, int],
-        ["url", "", str]
-    ]
     for section in config.find_sections("rss_"):
-        settings = {}
-        for key, default, type_func in option_set:
-            settings[key] = config.get_default(section, key, default, type_func)
-        try:
-            enabled = config.getboolean(section, "enabled")
-        except NoOptionError:
-            enabled = False
-        settings['enabled'] = "0" if enabled else "1"
+        settings = config.get_section_values(section)
+        # for key, default, type_func in option_set:
+        #     settings[key] = config.get_default(section, key, default, type_func)
+        if not "enabled" in settings:
+            try:
+                enabled = config.getboolean(section, "enabled")
+            except NoOptionError:
+                enabled = False
+            settings['enabled'] = "0" if enabled else "1"
         tpl_key = section.split("_")[1]
         feed_data[tpl_key] = settings
     return render("rss.html", section="rss", feeds=feed_data)
@@ -208,6 +211,31 @@ def rss_save():
 @webui.route("/syslog")
 def syslog():
     return render("syslog.html", section="syslog", logs=log_history.get(100))
+
+
+@webui.route("/system")
+def system():
+    about_info = OrderedDict()
+    about_info['Hostname'] = platform.node()
+    about_info['Platform'] = "{0} ({1})".format(platform.platform(), platform.architecture()[0])
+    about_info['Python'] = "{0} {1}".format(platform.python_implementation(), platform.python_version())
+    about_info['Uptime-Sys'] = time.strftime("%H:%M:%S", time.gmtime(info.uptime_sys()))
+    about_info['Uptime-App'] = time.strftime("%H:%M:%S", time.gmtime(info.uptime_app()))
+    try:
+        # TODO Win/OSX support
+        if hasattr(sys, "real_prefix"):
+            about_info['Distribution'] = "VirtualEnv"
+        else:
+            distro = platform.linux_distribution()
+            if distro[0]:
+                about_info['Distribution'] = "{0} {1} {2}".format(distro[0], distro[1], distro[2])
+    except IndexError:
+        pass
+
+    disk_info = OrderedDict()
+    disk_info.update(info.disk_free())
+
+    return render("system.html", section="tranny", info=about_info, disk_info=disk_info)
 
 
 @webui.route("/settings")

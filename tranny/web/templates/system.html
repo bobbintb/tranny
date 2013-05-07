@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-6 columns">
+        <h2><small>System Information</small></h2>
+            {% for key in info %}
+                <div class="row collapse">
+                <div class="small-4 columns">
+                    <span class="prefix">{{ key }}</span>
+                </div>
+                <div class="small-8 columns">
+                <input type="text" name="info_{{ key }}" id="info_{{ key }}" value="{{ info[key] }}" readonly>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        <div class="large-6 columns">
+            <h2><small>Storage Information</small></h2>
+            {% for key in disk_info %}
+                <div class="row collapse">
+                    <div class="small-4 columns disk-header">
+                        <span class="prefix">{{ key|capitalize }}</span>
+                    </div>
+                    <div class="small-8 columns disk-header">
+                    <input class="disk-header" type="text" name="disk_{{ key }}" id="disk_{{ key }}"
+                           value="{{ disk_info[key].used|file_size }} / {{ disk_info[key].total|file_size }} ({{ disk_info[key].free|file_size }} free)" readonly>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <span class="meter {% if disk_info[key].percent >= 90 %}alert-bg{% endif %}" style="width: {{ disk_info[key].percent }}%"></span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

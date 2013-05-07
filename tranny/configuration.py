@@ -216,3 +216,25 @@ class Configuration(ConfigParser):
             return False
         return True
 
+    def get_section_values(self, section):
+        values = {}
+        for key in self.options(section):
+            try:
+                if key == "enabled":
+                    values[key] = self.getboolean(section, key)
+                elif self.is_int(self.get(section, key)):
+                    values[key] = self.getint(section, key)
+                else:
+                    values[key] = self.get(section, key)
+            except (NoOptionError, NoSectionError):
+                pass
+        return values
+
+    def is_int(self, value):
+        try:
+            int(value)
+        except ValueError:
+            return False
+        else:
+            return True
+
