@@ -1,7 +1,7 @@
 <div class="sticky">
 <nav class="top-bar">
     <ul class="title-area">
-        <li class="name"><h1><a href="#">Tranny </a></h1></li>
+        <li class="name"><h1><a href="#"><i class="icon-gauge"></i> Tranny </a></h1></li>
         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
 
@@ -10,23 +10,27 @@
         <ul class="left">
 
             <li class="divider"></li>
-            <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("webui.index") }}">Dashboard</a></li>
+            <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("webui.index") }}">
+                <i class="icon-chart-pie"></i> Dashboard</a></li>
 
             <li class="divider"></li>
-            <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("webui.filters") }}">Filters</a></li>
+            <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("webui.filters") }}">
+                <i class="icon-filter"></i> Filters</a></li>
 
             <li class="divider"></li>
-            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("webui.services") }}">API</a></li>
+            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("webui.services") }}">
+                <i class="icon-cog-alt"></i> API</a></li>
 
             <li class="divider"></li>
-            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("webui.rss") }}">RSS</a></li>
+            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("webui.rss") }}">
+                <i class="icon-rss"></i> RSS</a></li>
 
             <li class="divider"></li>
             <li class="has-form">
                 <form>
                     <div class="row collapse">
                         <div class="small-12 columns">
-                            <a href="#" class="success button upload_button">Upload</a>
+                            <a href="#" class="success button upload_button"><i class="icon-up-open"></i> Upload</a>
                         </div>
                     </div>
                 </form>
@@ -37,9 +41,11 @@
         <!-- Right Nav Section -->
         <ul class="right">
             <li class="divider"></li>
-            <li {% if section == "syslog" %}class="active"{% endif %}><a href="{{ url_for("webui.syslog") }}">SysLog</a></li>
+            <li {% if section == "syslog" %}class="active"{% endif %}><a href="{{ url_for("webui.syslog") }}">
+                <i class="icon-list-alt"></i> SysLog</a></li>
             <li class="divider"></li>
-            <li {% if section == "settings" %}class="active"{% endif %}><a href="{{ url_for("webui.settings") }}">Settings</a></li>
+            <li {% if section == "settings" %}class="active"{% endif %}><a href="{{ url_for("webui.settings") }}">
+                <i class="icon-wrench"></i> Settings</a></li>
         </ul>
     </section>
 </nav>

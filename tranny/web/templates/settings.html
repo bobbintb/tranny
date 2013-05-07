@@ -9,50 +9,46 @@
                 <div class="row">
                     <div class="large-12 columns">
                         <h3>
-                            <small>{{ k }}</small>
+                            <small>{{ k.replace("_", " ") }}</small>
                         </h3>
                         {% for key, value in settings[k].iteritems() %}
+                            <div class="row collapse">
                             {% if key in select_values %}
-                                <div class="row collapse">
-                                    <div class="small-3 columns">
-                                        <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ k }}</label></span>
-                                    </div>
-                                    <div class="small-9 columns">
-                                        <select id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}">
-                                            {% for item in db_types %}
-                                            <option {% if item.lower() == settings[k][key] %}selected="selected"{% endif %}>{{ item }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                                <div class="small-3 columns">
+                                    <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ k }}</label></span>
+                                </div>
+                                <div class="small-9 columns">
+                                    <select id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}">
+                                        {% for item in db_types %}
+                                        <option {% if item.lower() == settings[k][key] %}selected="selected"{% endif %}>{{ item }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             {% elif key in bool_values %}
-                                <div class="row collapse">
-                                    <div class="small-3 columns">
-                                        <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
-                                    </div>
-                                    <div class="small-9 columns">
-                                        <div class="inline-switch">
+                                <div class="small-3 columns">
+                                    <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
+                                </div>
+                                <div class="small-9 columns">
+                                    <div class="inline-switch">
 
-                                            <input id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}" type="radio"
-                                                   {% if not value %}checked{% endif %}>
-                                            <label for="{{ k }}__{{ key }}">Disabled</label>
-                                            <input id="{{ k.lower() }}__{{ key }}1" name="{{ k.lower() }}__{{ key }}" type="radio"
-                                                   {% if value %}checked{% endif %}>
-                                            <label for="{{ k.lower() }}__{{ key }}1">Enabled</label>
-                                            <span></span>
-                                        </div>
+                                        <input id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}" type="radio"
+                                               {% if not value %}checked{% endif %}>
+                                        <label for="{{ k }}__{{ key }}">Disabled</label>
+                                        <input id="{{ k.lower() }}__{{ key }}1" name="{{ k.lower() }}__{{ key }}" type="radio"
+                                               {% if value %}checked{% endif %}>
+                                        <label for="{{ k.lower() }}__{{ key }}1">Enabled</label>
+                                        <span></span>
                                     </div>
                                 </div>
                             {% else %}
-                            <div class="row collapse">
                                 <div class="small-3 columns">
                                     <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
                                 </div>
                                 <div class="small-9 columns">
                                     <input type="text" name="{{ k.lower() }}__{{ key }}" id="{{ k.lower() }}__{{ key }}" value="{{ value }}">
                                 </div>
-                            </div>
                             {% endif %}
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
