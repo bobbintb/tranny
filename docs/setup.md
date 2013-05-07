@@ -9,7 +9,7 @@ One of the following torrent clients configured for remote API access:
 - [Transmission](http://www.transmissionbt.com/) (jsonrpc)
 - [uTorrent 3.x](http://www.utorrent.com/) (webui)
 
-- [Python 2.6/2.7](http://www.python.org/download/) - If you do not use the directory watch feature, it will
+- [Python 2.7](http://www.python.org/download/) - If you do not use the directory watch feature, it will
 probably run on python3 as well. The libraries below are all required. The pip installer will
  take care of installing them if you are using a virtualenv though.
     - [watchdog](https://pypi.python.org/pypi/watchdog)
