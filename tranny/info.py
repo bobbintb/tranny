@@ -42,7 +42,7 @@ def valid_path(path):
     :return: Valid path state
     :rtype: bool
     """
-    bad_prefix = ['/sys', '/dev', '/proc', '/run']
+    bad_prefix = ['/sys', '/dev', '/proc', '/run', '/tmp']
     if hasattr(path, "mountpoint"):
         path = path.mountpoint
     return not any(path.startswith(prefix) for prefix in bad_prefix)

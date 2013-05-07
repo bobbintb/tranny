@@ -1,5 +1,72 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p>Settings block</p>
+    <form class="custom" action="{{ url_for(".settings_save") }}" id="settings_form" method="post">
+    <ul class="small-block-grid-1 large-block-grid-2">
+        {% for k, v in settings.iteritems() %}
+
+            <li>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3>
+                            <small>{{ k }}</small>
+                        </h3>
+                        {% for key, value in settings[k].iteritems() %}
+                            {% if key in select_values %}
+                                <div class="row collapse">
+                                    <div class="small-3 columns">
+                                        <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ k }}</label></span>
+                                    </div>
+                                    <div class="small-9 columns">
+                                        <select id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}">
+                                            {% for item in db_types %}
+                                            <option {% if item.lower() == settings[k][key] %}selected="selected"{% endif %}>{{ item }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            {% elif key in bool_values %}
+                                <div class="row collapse">
+                                    <div class="small-3 columns">
+                                        <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
+                                    </div>
+                                    <div class="small-9 columns">
+                                        <div class="inline-switch">
+
+                                            <input id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}" type="radio"
+                                                   {% if not value %}checked{% endif %}>
+                                            <label for="{{ k }}__{{ key }}">Disabled</label>
+                                            <input id="{{ k.lower() }}__{{ key }}1" name="{{ k.lower() }}__{{ key }}" type="radio"
+                                                   {% if value %}checked{% endif %}>
+                                            <label for="{{ k.lower() }}__{{ key }}1">Enabled</label>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                            <div class="row collapse">
+                                <div class="small-3 columns">
+                                    <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
+                                </div>
+                                <div class="small-9 columns">
+                                    <input type="text" name="{{ k.lower() }}__{{ key }}" id="{{ k.lower() }}__{{ key }}" value="{{ value }}">
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <ul class="button-group even-2">
+                <li><input type="submit" class="small button success settings_save" value="Save Settings"></li>
+                <li><input type="reset" class="small button" value="Reset"></li>
+            </ul>
+        </div>
+    </div>
+    </form>
 {% endblock %}

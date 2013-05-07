@@ -138,7 +138,7 @@ feed_save = (evt) ->
         feed: feed_name
         url: jQuery("##{feed_name}_url").val()
         interval: jQuery("##{feed_name}_interval").val()
-        enabled: !jQuery("##{feed_name}_enabled").is(':checked')
+        enabled: not jQuery("##{feed_name}_enabled").is(':checked')
     jQuery.post "/webui/rss/save", data, handle_response
 
 
@@ -151,6 +151,23 @@ feed_delete = (evt) ->
         if handle_response(response).ok()
             jQuery("#feed_#{feed_name}").fadeOut 500
 
+btn_save = (evt) ->
+    evt.preventDefault()
+    data =
+        btn_api_token: jQuery("#btn_api_token").val()
+        btn_interval: jQuery("#btn_interval").val()
+        btn_enabled: not jQuery("#btn_enabled").is(":checked")
+        btn_url: jQuery("#btn_url").val()
+    jQuery.post "/webui/services/btn/save", data, handle_response
+
+
+settings_save = (evt) ->
+    evt.preventDefault()
+    settings = {}
+    for option in jQuery("#settings_form").serializeArray()
+        settings[option['name']] = option['value']
+    jQuery.post "/webui/settings/save", settings, handle_response
+
 
 jQuery ->
     if window.location.pathname == "/webui/"
@@ -161,9 +178,9 @@ jQuery ->
         jQuery(".filter_remove").on "click", filter_remove
         jQuery(".filter_add").on "click", filter_add
     else if window.location.pathname.indexOf("services") != -1
-        console.log "services!"
+        jQuery(".btn_save").on "click", btn_save
     else if window.location.pathname.indexOf("settings") != -1
-        console.log "settings"
+        jQuery(".settings_save").on "click", settings_save
     else if window.location.pathname.indexOf("rss") != -1
         jQuery(".feed_save").on "click", feed_save
         jQuery(".feed_delete").on "click", feed_delete

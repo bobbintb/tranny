@@ -1,10 +1,11 @@
 import platform
 import time
 import sys
+import httplib
 from collections import OrderedDict
 from json import dumps
 from logging import getLogger
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, abort
 
 from tranny import db, config, log_history, info
 from tranny.datastore import stats
@@ -109,6 +110,34 @@ def services():
     return render_template("services.html", section="services", btn=btn_info)
 
 
+@webui.route("/services/btn/save", methods=['POST'])
+def services_btn_save():
+    try:
+        token = request.values['btn_api_token']
+        url = request.values['btn_url']
+        interval = int(request.values['btn_interval'])
+        enabled = request.values['btn_enabled']
+    except (KeyError, TypeError):
+        log.warning("Malformed request received")
+        abort(httplib.BAD_REQUEST)
+    else:
+        section = "service_broadcastthenet"
+        status = 1
+        msg = "There was an error saving your BTN config"
+        try:
+            config.set(section, "api_token", token)
+            config.set(section, "enabled", enabled)
+            config.set(section, "url", url)
+            config.set(section, "interval", interval)
+            if config.save():
+                status = 0
+                msg = "Saved BTN configuration successfully"
+        except (Exception):
+            pass
+        finally:
+            return dumps({'msg': msg, 'status': status})
+
+
 @webui.route("/rss", methods=['GET'])
 def rss():
     feed_data = {}
@@ -201,11 +230,7 @@ def rss_save():
             status = 0
         except KeyError:
             msg = "Failed to save config. Malformed request: {0}".format(feed)
-    response = {
-        'msg': msg,
-        'status': status
-    }
-    return dumps(response)
+    return dumps({'msg': msg, 'status': status})
 
 
 @webui.route("/syslog")
@@ -232,12 +257,55 @@ def system():
     except IndexError:
         pass
 
-    disk_info = OrderedDict()
-    disk_info.update(info.disk_free())
+    # Get disk info and sort it by path
+    disk_info = info.disk_free()
+    sorted_disk_info = OrderedDict()
+    for key in sorted(disk_info.keys()):
+        sorted_disk_info[key] = disk_info[key]
 
-    return render("system.html", section="tranny", info=about_info, disk_info=disk_info)
+    return render("system.html", section="tranny", info=about_info, disk_info=sorted_disk_info)
 
 
 @webui.route("/settings")
 def settings():
-    return render("settings.html", section="settings")
+    keys = ['General', 'WebUI', 'uTorrent', 'Transmission', 'IMDB', 'TheMovieDB', 'Ignore',
+            'DB', 'Sqlite', 'MySQL', 'Log', 'Section_TV', 'Section_Movies', 'Proxy']
+    settings_set = {k: config.get_section_values(k.lower()) for k in keys}
+    bool_values = ['enabled', 'sort_seasons', 'group_name', 'fetch_proper']
+    db_types = ["sqlite", "mysql", "memory"]
+    select_values = ['type']
+    ignore_keys = ['quality_sd', 'quality_hd', 'quality_any']
+    for k, v in settings_set.items():
+        for key in [i for i in v.keys() if i in ignore_keys]:
+            del settings_set[k][key]
+    return render(
+        "settings.html",
+        section="settings",
+        settings=settings_set,
+        bool_values=bool_values,
+        select_values=select_values,
+        db_types=db_types
+    )
+
+
+@webui.route("/settings/save", methods=['POST'])
+def settings_save():
+    for name, value in request.values.items():
+        section, key = name.split("__")
+        if value == "on":
+            value = "true"
+        elif value == "off":
+            value = "false"
+        config.set(section, key, value)
+    if config.save():
+        status = 0
+        msg = "Saved settings successfully"
+    else:
+        status = 1
+        msg = "Error saving settings"
+    return dumps({'msg': msg, 'status': status})
+
+
+@webui.errorhandler(404)
+def four_oh_four():
+    return ":("

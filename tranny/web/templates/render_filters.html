@@ -6,12 +6,19 @@
         <a href="#" class="button prefix filter_add" data-section="{{ section }}" data-quality={{ quality }}>Add</a>
     </div>
 </div>
-<ul>
-{% for filter in filters %}
-    <li>{{ filter|title }} <a href="#" class="filter_remove"
-                              data-title="{{ filter|title }}"
-                              data-quality="{{ quality }}"
-                              data-section="{{ section }}"
-            ><small>Remove</small></a></li>
-{% endfor %}
-</ul>
+<div class="row">
+    <div class="large-12 columns">
+        <ul>
+            {% for filter in filters %}
+                <li>{{ filter|title }} <a href="#" class="filter_remove"
+                                          data-title="{{ filter|title }}"
+                                          data-quality="{{ quality }}"
+                                          data-section="{{ section }}"
+                        >
+                    <small>Remove</small>
+                </a></li>
+            {% endfor %}
+        </ul>
+
+    </div>
+</div>

@@ -40,11 +40,11 @@
 
                 <div class="small-10 columns">
                     <div class="inline-switch">
-                        <input id="{{ feed }}_enabled" name="switch-z" type="radio" {% if feeds[feed]['enabled'] == "1" %}checked{% endif %}>
+                        <input id="{{ feed }}_enabled" name="switch-z" type="radio" {% if not feeds[feed].enabled %}checked{% endif %}>
                         <label for="{{ feed }}_enabled" onclick="">Disabled</label>
 
-                        <input id="{{ feed }}_disabled" name="switch-z" type="radio" {% if feeds[feed]['enabled']  == "0"  %}checked{% endif %}>
-                        <label for="{{ feed }}_disabled" onclick="">Enabled</label>
+                        <input id="{{ feed }}_enabled1" name="switch-z" type="radio" {% if feeds[feed].enabled %}checked{% endif %}>
+                        <label for="{{ feed }}_enabled1" onclick="">Enabled</label>
 
                         <span></span>
                     </div>
@@ -115,8 +115,8 @@
                     <div class="inline-switch">
                         <input id="new_enabled" name="new_enabled" type="radio" >
                         <label for="new_enabled" onclick="">Disabled</label>
-                        <input id="new_disabled" name="new_enabled" type="radio" checked>
-                        <label for="new_disabled" onclick="">Enabled</label>
+                        <input id="new_enabled1" name="new_enabled" type="radio" checked>
+                        <label for="new_enabled1" onclick="">Enabled</label>
                         <span></span>
                     </div>
                 </div>

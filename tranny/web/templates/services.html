@@ -4,7 +4,7 @@
     <div class="row">
         <div class="large-6 columns">
             <h2><small>BroadcastTheNet</small></h2>
-            <form>
+            <form action="/services/btn/save" method="post">
                 <div class="row collapse">
                     <div class="small-2 columns">
                         <span class="prefix">API Token</span>
@@ -27,6 +27,30 @@
                     </div>
                     <div class="small-10 columns">
                         <input type="number" name="btn_interval" id="btn_interval" value="{{ btn.interval }}" min=30>
+                    </div>
+                </div>
+                <div class="row collapse">
+
+                    <div class="small-2 columns">
+                        <span class="prefix">Active</span>
+                    </div>
+                    <div class="small-10 columns">
+                        <div class="inline-switch">
+
+                            <input id="btn_enabled" name="btn_enabled" type="radio" {% if not btn.enabled %}checked{% endif %}>
+                            <label for="btn_enabled">Disabled</label>
+                            <input id="btn_enabled1" name="btn_enabled" type="radio" {% if btn.enabled %}checked{% endif %}>
+                            <label for="btn_enabled1">Enabled</label>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <ul class="button-group even-2">
+                            <li><input type="submit" class="small button success btn_save" value="Save"></li>
+                            <li><input type="reset" class="small button" value="Reset"></li>
+                        </ul>
                     </div>
                 </div>
             </form>

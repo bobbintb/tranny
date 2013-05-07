@@ -43,7 +43,9 @@
 // @import "foundation/components/tooltips";
 // @import "foundation/components/dropdown";
 
-body {
+html {
+    overflow: -moz-scrollbars-vertical;
+    overflow:scroll;
 }
 
 // Label styling for pie charts

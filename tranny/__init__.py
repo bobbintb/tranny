@@ -88,7 +88,7 @@ def init_config(config_file=None, reload_config=False):
 
 def init_logging():
     """ Setup the logger service """
-    if config.getboolean("log", "enable"):
+    if config.getboolean("log", "enabled"):
         basicConfig(
             level=config.get_default('log', 'level', 10, int),
             format=config.get_default('log', 'format', "%(asctime)s - %(message)s", str),
