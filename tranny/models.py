@@ -23,6 +23,18 @@ class User(CreatedOnMixin, Base):
     def __repr__(self):
         return "<User('{0}','{1}')>".format(self.user_name, self.password)
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return not self.user_id
+
+    def get_id(self):
+        return unicode(self.user_id)
+
 
 class Section(CreatedOnMixin, Base):
     __tablename__ = "section"

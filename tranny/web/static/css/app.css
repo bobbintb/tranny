@@ -5817,3 +5817,9 @@ footer {
 .alert-bg {
   background-color: #c60f13 !important;
 }
+
+/* line 99, ../../sass/app.scss */
+ul.dropdown a {
+  height: 45px !important;
+  line-height: 25px;
+}

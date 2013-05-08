@@ -3,18 +3,37 @@ from logging import getLogger, INFO
 from json import dumps
 from ConfigParser import NoSectionError, NoOptionError
 from flask import Flask, url_for, redirect, session, render_template, g
+from flask.ext.login import LoginManager, confirm_login
 from tranny.info import file_size
+from tranny import datastore
 
 log = getLogger("tranny.web")
 
 app_thread = None
 
-
-# Setup flask environment
+# Setup Flask environment
 app = Flask("tranny")
 app.debug_log_format = "%(asctime)s - %(message)s"
 app.logger.setLevel(INFO)
 app.jinja_env.filters['file_size'] = file_size
+
+# Setup Flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "webui.login"
+login_manager.session_protection = "strong"
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return datastore.fetch_user(user_id=user_id)
+
+
+@login_manager.needs_refresh_handler
+def refresh():
+    # do stuff
+    confirm_login()
+    return True
 
 
 def render(template_name, **kwargs):
@@ -84,4 +103,3 @@ def stop():
         log.info("Waiting for web handler thread to terminate")
         app_thread.terminate()
         app_thread.join()
-

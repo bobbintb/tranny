@@ -94,3 +94,10 @@ $transition-ease: $switch-paddle-transition-ease;
 .alert-bg {
     background-color: $alert-color !important;
 }
+
+ul.dropdown {
+    a {
+        height: 45px !important;
+        line-height: 25px;
+    }
+}

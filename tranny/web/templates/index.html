@@ -34,7 +34,7 @@
             </h3>
             {% for rls in newest %}
                 <div class="release_item">
-                    <span>{{ rls.timestamp }}</span> {{ rls.release_name }}
+                    <span>{{ rls.created_on }}</span> {{ rls.release_name }}
                 </div>
             {% endfor %}
         </div>

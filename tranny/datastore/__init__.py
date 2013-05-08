@@ -39,7 +39,7 @@ def get_section(section_name=None, section_id=None):
         section = tranny.session.query(Section).filter_by(section_id=section_id).first()
     else:
         return tranny.session.query(Section).all()
-    if not section:
+    if not section and section_name:
         section = Section(section_name)
         tranny.session.add(section)
         tranny.session.commit()
@@ -67,4 +67,25 @@ def fetch_download(release_key=None, entity_id=None, limit=None):
         data_set = tranny.session.query(DownloadEntity).filter_by(entity_id=entity_id).first()
     else:
         data_set = tranny.session.query(DownloadEntity).limit(limit).all()
+    return data_set
+
+
+def fetch_user(user_name=None, user_id=None, limit=None):
+    """
+
+    :param user_name:
+    :type user_name:
+    :param user_id:
+    :type user_id:
+    :param limit:
+    :type limit:
+    :return:
+    :rtype: User, User[]
+    """
+    if user_name:
+        data_set = tranny.session.query(User).filter_by(user_name=user_name).first()
+    elif user_id:
+        data_set = tranny.session.query(User).filter_by(user_id=user_id).first()
+    else:
+        data_set = tranny.session.query(User).limit(limit).all()
     return data_set

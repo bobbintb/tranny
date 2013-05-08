@@ -6,7 +6,7 @@ from collections import OrderedDict
 from json import dumps
 from logging import getLogger
 from flask import Blueprint, render_template, request, redirect, url_for, abort, g
-
+from flask.ext.login import login_user, logout_user, login_required, current_user
 from tranny import config, log_history, info
 from tranny import datastore
 from tranny.datastore import stats
@@ -19,27 +19,32 @@ log = getLogger()
 
 
 @webui.route("/", methods=['GET'])
+@login_required
 def index():
     newest = datastore.fetch_download(limit=25)
     return render("index.html", newest=newest, section="stats")
 
 
 @webui.route("/stats/service_totals", methods=['GET'])
+@login_required
 def service_totals():
     return dumps(stats.service_totals(datastore.fetch_download()))
 
 
 @webui.route("/stats/section_totals", methods=['GET'])
+@login_required
 def section_totals():
     return dumps(stats.section_totals(datastore.fetch_download()))
 
 
 @webui.route("/stats/service_type_totals", methods=['GET'])
+@login_required
 def service_type_totals():
     return dumps(stats.service_type_totals(datastore.fetch_download()))
 
 
 @webui.route("/filters/delete", methods=['POST'])
+@login_required
 def filters_delete():
     title = config.normalize_title(request.values['title'])
     section = "section_{0}".format(request.values['section'])
@@ -61,6 +66,7 @@ def filters_delete():
 
 
 @webui.route("/filters/add", methods=['POST'])
+@login_required
 def filters_add():
     title = config.normalize_title(request.values['title'])
     section = "section_{0}".format(request.values['section'])
@@ -83,6 +89,7 @@ def filters_add():
 
 
 @webui.route("/filters", methods=['GET'])
+@login_required
 def filters():
     section_data = []
     for section in ['tv', 'movies']:
@@ -107,12 +114,14 @@ def filters():
 
 
 @webui.route("/services")
+@login_required
 def services():
     btn_info = config.get_section_values("service_broadcastthenet")
     return render_template("services.html", section="services", btn=btn_info)
 
 
 @webui.route("/services/btn/save", methods=['POST'])
+@login_required
 def services_btn_save():
     try:
         token = request.values['btn_api_token']
@@ -141,6 +150,7 @@ def services_btn_save():
 
 
 @webui.route("/rss", methods=['GET'])
+@login_required
 def rss():
     feed_data = {}
     for section in config.find_sections("rss_"):
@@ -159,6 +169,7 @@ def rss():
 
 
 @webui.route("/rss/delete", methods=['POST'])
+@login_required
 def rss_delete():
     status = 1
     try:
@@ -182,6 +193,7 @@ def rss_delete():
 
 
 @webui.route("/rss/create", methods=['POST'])
+@login_required
 def rss_create():
     status = 1
     try:
@@ -215,6 +227,7 @@ def rss_create():
 
 
 @webui.route("/rss/save", methods=['POST'])
+@login_required
 def rss_save():
     status = 1
     try:
@@ -236,11 +249,13 @@ def rss_save():
 
 
 @webui.route("/syslog")
+@login_required
 def syslog():
     return render("syslog.html", section="syslog", logs=log_history.get(100))
 
 
 @webui.route("/system")
+@login_required
 def system():
     about_info = OrderedDict()
     about_info['Hostname'] = platform.node()
@@ -269,6 +284,7 @@ def system():
 
 
 @webui.route("/settings")
+@login_required
 def settings():
     keys = ['General', 'WebUI', 'uTorrent', 'Transmission', 'IMDB', 'TheMovieDB', 'Ignore',
             'DB', 'Sqlite', 'MySQL', 'Log', 'Section_TV', 'Section_Movies', 'Proxy']
@@ -291,6 +307,7 @@ def settings():
 
 
 @webui.route("/settings/save", methods=['POST'])
+@login_required
 def settings_save():
     for name, value in request.values.items():
         section, key = name.split("__")
@@ -311,6 +328,34 @@ def settings_save():
 @webui.route("/login", methods=['GET'])
 def login():
     return render("login.html")
+
+
+@webui.route("/login/perform", methods=['POST'])
+def login_perform():
+    try:
+        user_name = request.values['user_name']
+        user_password = request.values['user_password']
+    except KeyError:
+        pass
+    else:
+        user = datastore.fetch_user(user_name=user_name)
+        if not user:
+            pass
+        if not user.password == user_password:
+            pass
+
+        try:
+            remember = request.values['remember'].lower() == "on"
+        except KeyError:
+            remember = False
+        login_user(user, remember=remember)
+    return redirect(request.args.get("next") or url_for(".index"))
+
+
+@webui.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for(".index"))
 
 
 @webui.errorhandler(404)

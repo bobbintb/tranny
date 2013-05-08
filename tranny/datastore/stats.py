@@ -20,9 +20,8 @@ def service_totals(records):
 
 
 def section_totals(records):
-
-    r = (datastore.get_section(section_id=r.section_id).section_name.split("_")[1] for r in records)
-    return PieChart(r).graph_data()
+    data_set = (datastore.get_section(section_id=r.section_id).section_name.split("_")[1] for r in records)
+    return PieChart(data_set).graph_data()
 
 
 def service_type_totals(records):

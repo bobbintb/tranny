@@ -226,8 +226,8 @@ def update_services(services):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = datastore.generate_release_key(torrent.release_name)
-                    section = datastore.get_section(session, torrent.section)
-                    source = datastore.get_source(session, service.name)
+                    section = datastore.get_section(torrent.section)
+                    source = datastore.get_source(service.name)
                     download = DownloadEntity(release_key, torrent.release_name, section.section_id, source.source_id)
                     session.add(download)
                     session.commit()
@@ -249,8 +249,8 @@ def update_rss(feeds):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = datastore.generate_release_key(torrent.release_name)
-                    section = datastore.get_section(session, torrent.section)
-                    source = datastore.get_source(session, feed.name)
+                    section = datastore.get_section(torrent.section)
+                    source = datastore.get_source(feed.name)
                     download = DownloadEntity(release_key, torrent.release_name, section.section_id, source.source_id)
                     session.add(download)
                     session.commit()

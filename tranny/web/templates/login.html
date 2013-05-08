@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="small-6 large-centered columns">
+            <form action="{{ url_for(".login_perform") }}" method="post" class="custom">
+                <div class="row collapse">
+                    <div class="small-3 columns">
+                        <span class="prefix"><label for="user_name"><i class="icon-torso"></i>Username</label></span>
+                    </div>
+                    <div class="small-9 columns">
+                        <input type="text" name="user_name" id="user_name" value="" placeholder="root">
+                    </div>
+                </div>
+                <div class="row collapse">
+                    <div class="small-3 columns">
+                        <span class="prefix"><label for="user_password"><i class="icon-lock-1"></i>Password</label></span>
+                    </div>
+                    <div class="small-9 columns">
+                        <input type="password" name="user_password" id="user_password" value="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-6 columns">
+                        <label for="remember" class="inline">
+                            <input type="checkbox" id="remember" name="remember" CHECKED style="display: none;">
+                            <span class="custom checkbox checked"></span> Remember Me</label>
+                    </div>
+                    <div class="large-6 columns text-right">
+                        <button class="small button success feed_save" data-feed="{{ feed }}">
+                            <i class="icon-lock"></i> Login
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

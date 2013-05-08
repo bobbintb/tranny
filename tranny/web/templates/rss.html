@@ -50,12 +50,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <ul class="button-group even-3">
+                            <li><a href="#" class="small button success feed_save" data-feed="{{ feed }}"><i
+                                    class="icon-ok"></i> Save</a></li>
+                            <li>
+                                <button class="small button"><i class="icon-arrows-cw"></i> Reset</button>
+                            </li>
+                            <li><a href="#" class="small button alert feed_delete" data-feed="{{ feed }}"><i
+                                    class="icon-cancel"></i> Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
 
-                <ul class="button-group even-3">
-                    <li><a href="#" class="small button success feed_save" data-feed="{{ feed }}"><i class="icon-ok"></i> Save</a></li>
-                    <li><button class="small button"><i class="icon-arrows-cw"></i> Reset</button></li>
-                    <li><a href="#" class="small button alert feed_delete" data-feed="{{ feed }}"><i class="icon-cancel"></i> Delete</a></li>
-                </ul>
             </form>
             </li>
         {% endfor %}
