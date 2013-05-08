@@ -1,5 +1,6 @@
 from logging import getLogger
 from time import time
+from models import DownloadEntity
 from tranny.net import fetch_url
 
 
@@ -21,8 +22,8 @@ class TorrentProvider(object):
         self.log = getLogger(self.name)
         self.config = config
         self.interval = self.config.get_default(config_section, "interval", 60, int)
-        from tranny import db
-        self.db = db
+        from tranny import session
+        self.session = session
 
     @property
     def name(self):
@@ -54,3 +55,11 @@ class TorrentProvider(object):
 
     def fetch_releases(self):
         raise NotImplementedError("Must override this method")
+
+    def exists(self, release_key):
+        try:
+            e = self.session.query(DownloadEntity).filter_by(release_key=release_key).all()
+        except Exception as err:
+            self.log.exception(err)
+            return False
+        return e

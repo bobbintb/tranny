@@ -20,10 +20,9 @@ class FileWatchService(FileSystemEventHandler):
         """
         self.log = getLogger("watch")
         self.config = config
-        from tranny import client, db
-
+        from tranny import client, session
+        self.session = session
         self.client = client
-        self.db = db
         self._observer = Observer()
         for section in config.find_sections("watch"):
             try:
@@ -66,7 +65,7 @@ class FileWatchService(FileSystemEventHandler):
             release_key = generate_release_key(torrent_name)
             dl_path = self.config.get_download_path(section, torrent_name)
             self.client.add(open(event.src_path).read(), download_dir=dl_path)
-            self.db.add(release_key, section=section, source="watch_{0}".format(section))
+            self.session.add(release_key, section=section, source="watch_{0}".format(section))
 
     def stop(self):
         self._observer.stop()

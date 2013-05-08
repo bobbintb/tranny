@@ -5,35 +5,38 @@ import httplib
 from collections import OrderedDict
 from json import dumps
 from logging import getLogger
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, render_template, request, redirect, url_for, abort, g
 
-from tranny import db, config, log_history, info
+from tranny import config, log_history, info
+from tranny import datastore
 from tranny.datastore import stats
 from tranny.configuration import NoOptionError, NoSectionError
 from tranny.web import add_user_message, render
 
+# Use a Flask mountpoint at /webui
 webui = Blueprint('webui', __name__, template_folder="templates", static_folder="static", url_prefix="/webui")
-log = getLogger("web")
+log = getLogger()
 
 
 @webui.route("/", methods=['GET'])
 def index():
-    return render("index.html", newest=db.fetch(limit=25), section="stats")
+    newest = datastore.fetch_download(limit=25)
+    return render("index.html", newest=newest, section="stats")
 
 
 @webui.route("/stats/service_totals", methods=['GET'])
 def service_totals():
-    return dumps(stats.service_totals(db.fetch(limit=False)))
+    return dumps(stats.service_totals(datastore.fetch_download()))
 
 
 @webui.route("/stats/section_totals", methods=['GET'])
 def section_totals():
-    return dumps(stats.section_totals(db.fetch(limit=False)))
+    return dumps(stats.section_totals(datastore.fetch_download()))
 
 
 @webui.route("/stats/service_type_totals", methods=['GET'])
 def service_type_totals():
-    return dumps(stats.service_type_totals(db.fetch(limit=False)))
+    return dumps(stats.service_type_totals(datastore.fetch_download()))
 
 
 @webui.route("/filters/delete", methods=['POST'])
@@ -54,8 +57,7 @@ def filters_delete():
             'msg': "Failed to delete filter: {0}".format(title),
             'status': 1
         }
-    resp = dumps(response)
-    return resp
+    return dumps(response)
 
 
 @webui.route("/filters/add", methods=['POST'])
@@ -304,6 +306,11 @@ def settings_save():
         status = 1
         msg = "Error saving settings"
     return dumps({'msg': msg, 'status': status})
+
+
+@webui.route("/login", methods=['GET'])
+def login():
+    return render("login.html")
 
 
 @webui.errorhandler(404)

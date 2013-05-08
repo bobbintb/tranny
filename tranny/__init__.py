@@ -1,6 +1,9 @@
 from logging import getLogger, basicConfig, StreamHandler
 from time import sleep, time
 from collections import deque
+from os.path import dirname, join, abspath
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from tranny.exceptions import ConfigError
 from tranny.client.transmission import TransmissionClient
 from tranny.configuration import Configuration
@@ -14,7 +17,7 @@ from tranny import web
 running = False
 
 client = None
-db = None
+session = None
 config = None
 watcher = None
 wait_time = 1
@@ -130,22 +133,35 @@ def init_watcher():
     return watcher
 
 
-def init_datastore():
-    global db
+def init_datastore(do_echo=True):
+    global session
 
-    if not db:
+    if not session:
+        db_type = config.get("db", "type")
         # Setup the configured datastore
-        if config.get("db", "type") == "memory":
-            from tranny.datastore.adapters.mem import MemoryStore as Datastore
-        elif config.get("db", "type") == "sqlite":
-            from tranny.datastore.adapters.sqlite import SQLiteStore as Datastore
-        elif config.get("db", "type") == "mysql":
-            from tranny.datastore.adapters.mysql import MySQLStore as Datastore
+        if db_type == "memory":
+            dsn = 'sqlite:///:memory:'
+        elif db_type == "sqlite":
+            file_name = config.get_default(db_type, "db", "history.sqlite")
+            dsn = 'sqlite:///{0}'.format(abspath(join(dirname(dirname(__file__)), file_name)))
+        elif db_type in ["mysql", "postgresql"]:
+            db_name = config.get_default(db_type, "db", "localhost")
+            host = config.get_default(db_type, "host", "localhost")
+            port = config.get_default(db_type, "port", 3306, int)
+            user = config.get_default(db_type, "user", None)
+            password = config.get_default(db_type, "password", None)
+            driver = "+oursql" if db_type else ""
+            dsn = '{0}{6}://{1}:{2}@{3}:{4}/{5}'.format(db_type, user, password, host, port, db_name, driver)
         else:
-            raise ConfigError("Invalid datastore type: {0}".format(config.get("db", "type")))
-        db = Datastore(config)
-        log.info("Loaded {0} cached entries".format(db.size()))
-    return db
+            raise ConfigError("Unsupported database type: {0}".format(db_type))
+        engine = create_engine(dsn, echo=do_echo, convert_unicode=False, encoding='utf-8')
+        from tranny.models import Base
+        Base.metadata.create_all(engine)
+        _Session = sessionmaker(bind=engine)
+        session = _Session()
+        #db = Datastore(config)
+        #log.info("Loaded {0} cached entries".format(db.size()))
+    return session
 
 
 def init_webui(section_name="webui"):
@@ -211,7 +227,11 @@ def update_services(services):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = datastore.generate_release_key(torrent.release_name)
-                    db.add(release_key, torrent.release_name, section=torrent.section, source=service.name)
+                    section = datastore.get_section(session, torrent.section)
+                    source = datastore.get_source(session, service.name)
+                    download = DownloadEntity(release_key, torrent.release_name, section.section_id, source.source_id)
+                    session.add(download)
+                    session.commit()
         except Exception as err:
             log.exception("Error updating service")
 
@@ -230,7 +250,11 @@ def update_rss(feeds):
                 if res:
                     log.info("Added release: {0}".format(torrent.release_name))
                     release_key = datastore.generate_release_key(torrent.release_name)
-                    db.add(release_key, torrent.release_name, section=torrent.section, source=feed.name)
+                    section = datastore.get_section(session, torrent.section)
+                    source = datastore.get_source(session, feed.name)
+                    download = DownloadEntity(release_key, torrent.release_name, section.section_id, source.source_id)
+                    session.add(download)
+                    session.commit()
         except Exception as err:
             log.exception("Error updating feed")
 
@@ -253,9 +277,5 @@ def run_forever():
         db.sync()
         watcher.stop()
 
-
-
-
-
-
+from tranny.models import *
 

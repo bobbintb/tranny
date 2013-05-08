@@ -105,7 +105,7 @@ class BroadcastTheNet(TorrentProvider):
                 section = match_release(self.config, release_name)
                 if not section:
                     continue
-                if release_key in self.db:
+                if self.exists(release_key):
                     if self.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered proper's

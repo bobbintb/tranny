@@ -1,16 +1,19 @@
 from multiprocessing import Process
-from logging import getLogger
+from logging import getLogger, INFO
+from json import dumps
 from ConfigParser import NoSectionError, NoOptionError
-from flask import Flask, url_for, redirect, session, render_template
+from flask import Flask, url_for, redirect, session, render_template, g
 from tranny.info import file_size
 
 log = getLogger("tranny.web")
 
 app_thread = None
 
+
 # Setup flask environment
 app = Flask("tranny")
 app.debug_log_format = "%(asctime)s - %(message)s"
+app.logger.setLevel(INFO)
 app.jinja_env.filters['file_size'] = file_size
 
 
@@ -21,6 +24,19 @@ def render(template_name, **kwargs):
     except KeyError:
         pass
     return render_template(template_name, **kwargs)
+
+
+def response(status=0, msg=None):
+    return dumps({
+        'status': status,
+        'msg': msg
+    })
+
+
+@app.before_request
+def before_request():
+    from tranny import session
+    g.session = session
 
 
 @app.route("/")

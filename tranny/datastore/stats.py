@@ -1,5 +1,6 @@
 from collections import Counter
 from tranny import get_config
+from tranny import datastore
 
 
 class PieChart(Counter):
@@ -11,32 +12,40 @@ def service_totals(records):
     """ Get the download totals for each provider registered in the database
 
     :param records: list of history records
-    :type records: dict
+    :type records: tranny.models.DownloadEntity[]
     :return: Dict with totals for each key corresponding to a providers name
     :rtype: dict[]
     """
-    data = [r['source'] for r in records]
-    return PieChart(data).graph_data()
+    return PieChart(datastore.get_source(source_id=r.source_id).source_name for r in records).graph_data()
 
 
 def section_totals(records):
-    data = [r['section'].split("_")[1] for r in records]
-    return PieChart(data).graph_data()
+
+    r = (datastore.get_section(section_id=r.section_id).section_name.split("_")[1] for r in records)
+    return PieChart(r).graph_data()
 
 
 def service_type_totals(records):
+    """
+
+    :param records:
+    :type records: tranny.models.DownloadEntity[]
+    :return:
+    :rtype:
+    """
     config = get_config()
     rss_feeds = [name.split("_")[1] for name in config.find_sections("rss_")]
     services = [name.split("_")[1] for name in config.find_sections("service_")]
-    counter = Counter()
+    counter = PieChart()
     for record in records:
-        if record['source'] in rss_feeds:
+        # TODO fix with joined value
+        source_name = datastore.get_source(source_id=record.source_id).source_name
+        if source_name in rss_feeds:
             counter['RSS'] += 1
-        elif record['source'] in services:
-            counter["{0} (api)".format(record['source'])] += 1
-        elif record['source'] == "watch":
+        elif source_name in services:
+            counter["{0} (api)".format(source_name)] += 1
+        elif source_name == "watch":
             counter["Watch"] += 1
         else:
             counter['Unknown'] += 1
-    section_data = PieChart(counter).graph_data()
-    return section_data
+    return counter.graph_data()

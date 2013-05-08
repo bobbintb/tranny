@@ -32,7 +32,7 @@ class RSSFeed(TorrentProvider):
                 release_key = generate_release_key(release_name)
                 if not release_key:
                     continue
-                if release_key in self.db:
+                if self.exists(release_key):
                     if self.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered proper's
