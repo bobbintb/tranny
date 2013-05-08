@@ -2,7 +2,7 @@ from logging import getLogger, basicConfig, StreamHandler
 from time import sleep, time
 from collections import deque
 from os.path import dirname, join, abspath
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from tranny.exceptions import ConfigError
 from tranny.client.transmission import TransmissionClient
@@ -150,8 +150,7 @@ def init_datastore(do_echo=True):
             port = config.get_default(db_type, "port", 3306, int)
             user = config.get_default(db_type, "user", None)
             password = config.get_default(db_type, "password", None)
-            driver = "+oursql" if db_type else ""
-            dsn = '{0}{6}://{1}:{2}@{3}:{4}/{5}'.format(db_type, user, password, host, port, db_name, driver)
+            dsn = '{0}://{1}:{2}@{3}:{4}/{5}'.format(db_type, user, password, host, port, db_name)
         else:
             raise ConfigError("Unsupported database type: {0}".format(db_type))
         engine = create_engine(dsn, echo=do_echo, convert_unicode=False, encoding='utf-8')
@@ -159,8 +158,8 @@ def init_datastore(do_echo=True):
         Base.metadata.create_all(engine)
         _Session = sessionmaker(bind=engine)
         session = _Session()
-        #db = Datastore(config)
-        #log.info("Loaded {0} cached entries".format(db.size()))
+        cached = session.query(func.count(DownloadEntity.entity_id)).first()[0]
+        log.info("Loaded {0} cached entries".format(cached))
     return session
 
 

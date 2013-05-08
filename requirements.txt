@@ -7,6 +7,5 @@ imdbpy
 psutil
 six
 pathtools
-oursql
 jinja2
 flask
