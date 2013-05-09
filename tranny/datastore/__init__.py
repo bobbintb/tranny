@@ -1,7 +1,12 @@
+from collections import defaultdict
 import tranny
 from tranny.util import contains
 from tranny import parser
 from tranny.models import User, DownloadEntity, Section, Source
+
+cache_section = defaultdict(lambda: False)
+cache_release = defaultdict(lambda: False)
+cache_source = defaultdict(lambda: False)
 
 
 def generate_release_key(release_name):
@@ -48,15 +53,25 @@ def get_section(section_name=None, section_id=None):
 
 def get_source(source_name=None, source_id=None):
     if source_name:
-        source = tranny.session.query(Source).filter_by(source_name=source_name).first()
+        source = cache_source[source_name]
+        if not source:
+            source = tranny.session.query(Source).filter_by(source_name=source_name).first()
+            cache_source[source_name] = source
     elif source_id:
-        source = tranny.session.query(Source).filter_by(source_id=source_id).first()
+        for source in cache_source.itervalues():
+            if source.source_id == source_id:
+                break
+        else:
+            source = tranny.session.query(Source).filter_by(source_id=source_id).first()
+            cache_source[source.source_name] = source
     else:
         return tranny.session.query(Source).all()
-    if not source:
+    if not source and source_name:
         source = Source(source_name)
         tranny.session.add(source)
         tranny.session.commit()
+    elif not source:
+        raise ValueError("Invalid source name")
     return source
 
 
@@ -66,7 +81,7 @@ def fetch_download(release_key=None, entity_id=None, limit=None):
     elif entity_id:
         data_set = tranny.session.query(DownloadEntity).filter_by(entity_id=entity_id).first()
     else:
-        data_set = tranny.session.query(DownloadEntity).limit(limit).all()
+        data_set = tranny.session.query(DownloadEntity).order_by(DownloadEntity.created_on.desc()).limit(limit).all()
     return data_set
 
 
