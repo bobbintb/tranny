@@ -19,17 +19,21 @@
 <body>
 
 {% include "top_bar.html" %}
-
-<div class="row">
-    <div class="large-12 columns">
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
         <div class="row">
             <div class="large-12 columns" id="user_messages">
-                {% for message in messages %}
-                    <div id="msgid_#{msg_cur_id}" class="rounded alert-box [{{ message[1] }} secondary]">
-                        {{ message[0] }} <a href="" class="close">&times;</a></div>
+                {% for category, message in messages %}
+                    <div class="rounded alert-box {{ category }}_bg secondary">
+                        {{ message }} <a href="" class="close">&times;</a></div>
                 {% endfor %}
             </div>
         </div>
+    {% endif %}
+{% endwith %}
+
+<div class="row">
+    <div class="large-12 columns">
         {% block content %}{% endblock %}
     </div>
 </div>

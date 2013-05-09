@@ -3,7 +3,7 @@ from logging import getLogger, INFO
 from json import dumps
 from ConfigParser import NoSectionError, NoOptionError
 from flask import Flask, url_for, redirect, session, render_template, g
-from flask.ext.login import LoginManager, confirm_login
+from flask.ext.login import LoginManager, confirm_login, current_user
 from tranny.info import file_size
 from tranny import datastore
 
@@ -19,9 +19,10 @@ app.jinja_env.filters['file_size'] = file_size
 
 # Setup Flask-login
 login_manager = LoginManager()
-login_manager.init_app(app)
 login_manager.login_view = "webui.login"
 login_manager.session_protection = "strong"
+login_manager.login_message_category = "alert"
+login_manager.init_app(app)
 
 
 @login_manager.user_loader
@@ -34,6 +35,11 @@ def refresh():
     # do stuff
     confirm_login()
     return True
+
+
+@login_manager.unauthorized_handler
+def login_redir():
+    return redirect(url_for(".login"))
 
 
 def render(template_name, **kwargs):
@@ -56,10 +62,11 @@ def response(status=0, msg=None):
 def before_request():
     from tranny import session
     g.session = session
+    g.user = current_user
 
 
 @app.route("/")
-def index():
+def default_index():
     return redirect(url_for("webui.index"))
 
 

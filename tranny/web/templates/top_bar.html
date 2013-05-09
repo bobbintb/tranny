@@ -1,7 +1,7 @@
 <div class="sticky">
 <nav class="top-bar">
     <ul class="title-area" style="background-color: #5da423">
-        <li class="name"><h1><a href="#"><i class="icon-gauge"></i> Tranny </a></h1></li>
+        <li class="name"><h1><a href="{{ url_for(".index") }}"><i class="icon-gauge"></i> Tranny </a></h1></li>
         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
 
@@ -41,16 +41,17 @@
 
         <!-- Right Nav Section -->
         <ul class="right">
-            <li class="divider"></li>
-            <li {% if section == "syslog" %}class="active"{% endif %}>
-                <a href="{{ url_for("webui.syslog") }}"><i class="icon-list-alt"></i> SysLog</a>
-            </li>
+
             <li class="divider"></li>
             <li class="has-dropdown{% if section == "settings" %} active{% endif %}">
                 <a href="{{ url_for("webui.settings") }}"><i class="icon-wrench"></i> Settings</a>
                 <ul class="dropdown">
                     <li class="divider"></li>
                     <li><a href="{{ url_for("webui.system") }}"><i class="icon-chart-area"></i> System Info</a></li>
+                    <li class="divider"></li>
+                    <li {% if section == "syslog" %}class="active"{% endif %}>
+                        <a href="{{ url_for("webui.syslog") }}"><i class="icon-list-alt"></i> SysLog</a>
+                    </li>
                     <li class="divider"></li>
                     <li><a href="{{ url_for("webui.logout") }}"><i class="icon-lock-open"></i> Logout</a></li>
                 </ul>
