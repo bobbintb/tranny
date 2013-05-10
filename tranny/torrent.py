@@ -164,12 +164,27 @@ class Torrent(BDict):
 
     @classmethod
     def from_str(cls, torrent_data):
-        torrent = cls()
+        """ Generate a torrent instance from a bencoded string of torrent data.
+
+        :param cls:
+        :type cls:
+        :param torrent_data:
+        :type torrent_data:
+        :return:
+        :rtype:
+        """
+        torrent = Torrent()
         torrent.update(torrent.decode(torrent_data))
         return torrent
 
     @property
     def info_hash(self):
+        """ Calculate and return the hex representation of the torrents info key
+        value
+
+        :return: Hex encoded hash of the torrent info field
+        :rtype: str
+        """
         return self.calc_hash().hexdigest()
 
     @property
