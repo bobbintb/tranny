@@ -1,19 +1,7 @@
-from logging import getLogger, basicConfig, StreamHandler
-from time import sleep, time
-from collections import deque
-from os.path import dirname, join, abspath
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker
-from tranny.exceptions import ConfigError
-from tranny.client.transmission import TransmissionClient
-from tranny.configuration import Configuration
-from tranny import datastore
-from tranny.provider.rss import RSSFeed
-from tranny.net import download, fetch_url
-from tranny.watch import FileWatchService
-from tranny import web
 
 # Current run state
+from .exceptions import ConfigError
+
 running = False
 
 client = None
@@ -28,77 +16,7 @@ services = []
 # Running RSS Feeds
 feeds = []
 
-log = getLogger("tranny.main")
-
-
-class TrannyException(Exception):
-    pass
-
-
-class MemoryRingLogHandler(StreamHandler, deque):
-    """
-    Circular log buffer which pops the old log data off to make room for new
-    """
-    limit = 1000
-
-    def append(self, item):
-        deque.append(self, item)
-        if len(self) == self.limit:
-            self.append = self.full_append
-
-    def full_append(self, item):
-        deque.append(self, item)
-        # full, pop the oldest item, left most item
-        self.popleft()
-
-    def emit(self, record):
-        try:
-            msg = self.format(record)
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            self.handleError(record)
-        else:
-            self.append(msg)
-
-    def get(self, limit=None):
-        records = list(self)
-        records.reverse()
-        if limit:
-            return records[0:limit]
-        return records
-
-log_history = MemoryRingLogHandler()
-
-
-def get_config():
-    global config
-    if not config:
-        return init_config()
-    return config
-
-
-def init_config(config_file=None, reload_config=False):
-    global config
-
-    if not config or reload_config:
-        config = Configuration()
-        config.initialize(config_file)
-
-        log.info("Initialized configuration")
-    return config
-
-
-def init_logging():
-    """ Setup the logger service """
-    if config.getboolean("log", "enabled"):
-        basicConfig(
-            level=config.get_default('log', 'level', 10, int),
-            format=config.get_default('log', 'format', "%(asctime)s - %(message)s", str),
-            datefmt=config.get_default('log', 'datefmt', "%Y-%m-%d %H:%M:%S", str)
-        )
-        from logging import root
-        root.addHandler(log_history)
+from app import create_app
 
 
 def init_client():
@@ -133,34 +51,7 @@ def init_watcher():
     return watcher
 
 
-def init_datastore(do_echo=True):
-    global session
 
-    if not session:
-        db_type = config.get("db", "type")
-        # Setup the configured datastore
-        if db_type == "memory":
-            dsn = 'sqlite:///:memory:'
-        elif db_type == "sqlite":
-            file_name = config.get_default(db_type, "db", "history.sqlite")
-            dsn = 'sqlite:///{0}'.format(abspath(join(dirname(dirname(__file__)), file_name)))
-        elif db_type in ["mysql", "postgresql"]:
-            db_name = config.get_default(db_type, "db", "localhost")
-            host = config.get_default(db_type, "host", "localhost")
-            port = config.get_default(db_type, "port", 3306, int)
-            user = config.get_default(db_type, "user", None)
-            password = config.get_default(db_type, "password", None)
-            dsn = '{0}://{1}:{2}@{3}:{4}/{5}'.format(db_type, user, password, host, port, db_name)
-        else:
-            raise ConfigError("Unsupported database type: {0}".format(db_type))
-        engine = create_engine(dsn, echo=do_echo, convert_unicode=False, encoding='utf-8')
-        from tranny.models import Base
-        Base.metadata.create_all(engine)
-        _Session = sessionmaker(bind=engine)
-        session = _Session()
-        cached = session.query(func.count(DownloadEntity.entity_id)).first()[0]
-        log.info("Loaded {0} cached entries".format(cached))
-    return session
 
 
 def init_webui(section_name="webui"):
@@ -193,7 +84,7 @@ def reload_conf():
     :rtype:
     """
     global config, feeds, services
-    init_config()
+
     try:
         tmdb_api_key = config.get("themoviedb", "api_key")
         from tranny import tmdb

@@ -1,24 +1,21 @@
 import datetime
-from sqlalchemy import Column, Integer, String,  ForeignKey, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
+from .extensions import db
+from .constants import ROLE_USER
 
 
-class CreatedOnMixin(object):
-    created_on = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_on = Column(DateTime, default=datetime.datetime.utcnow)
-
-
-class User(CreatedOnMixin, Base):
+class User(db.Model):
     __tablename__ = "user"
-    user_id = Column(Integer, primary_key=True)
-    user_name = Column(String(32))
-    password = Column(String(60))
+    user_id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(32), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+    role = db.Column(db.SmallInteger, default=ROLE_USER)
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, user_name, password):
+    def __init__(self, user_name=None, password=None, role=ROLE_USER):
         self.user_name = user_name
         self.password = password
+        self.role = role
 
     def __repr__(self):
         return "<User('{0}','{1}')>".format(self.user_name, self.password)
@@ -36,32 +33,38 @@ class User(CreatedOnMixin, Base):
         return unicode(self.user_id)
 
 
-class Section(CreatedOnMixin, Base):
+class Section(db.Model):
     __tablename__ = "section"
-    section_id = Column(Integer, primary_key=True)
-    section_name = Column(String(64), unique=True)
+    section_id = db.Column(db.Integer, primary_key=True)
+    section_name = db.Column(db.String(64), unique=True)
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, section_name):
         self.section_name = section_name
 
 
-class Source(CreatedOnMixin, Base):
+class Source(db.Model):
     __tablename__ = "source"
-    source_id = Column(Integer, primary_key=True)
-    source_name = Column(String(64), unique=True)
+    source_id = db.Column(db.Integer, primary_key=True)
+    source_name = db.Column(db.String(64), unique=True)
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, source_name):
         self.source_name = source_name
 
 
-class DownloadEntity(CreatedOnMixin, Base):
+class DownloadEntity(db.Model):
     __tablename__ = 'downloads'
 
-    entity_id = Column(Integer, primary_key=True)
-    release_key = Column(String(255), unique=True)
-    section_id = Column(Integer, ForeignKey('section.section_id'))
-    release_name = Column(String(255))
-    source_id = Column(Integer, ForeignKey('source.source_id'))
+    entity_id = db.Column(db.Integer, primary_key=True)
+    release_key = db.Column(db.String(255), unique=True)
+    section_id = db.Column(db.Integer, db.ForeignKey('section.section_id'))
+    release_name = db.Column(db.String(255))
+    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'))
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, release_key, release_name, section_id, source_id):
         self.release_key = release_key

@@ -10,3 +10,8 @@ pathtools
 jinja2
 flask
 flask-login
+flask-script
+flask-sqlalchemy
+flask-mail
+flask-cache
+flask-babel

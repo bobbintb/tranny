@@ -4,13 +4,14 @@ from os.path import exists, isdir, dirname, basename, splitext
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from tranny.datastore import generate_release_key
+from . import config
+from .datastore import generate_release_key
 
 
 class FileWatchService(FileSystemEventHandler):
     _path_sections = dict()
 
-    def __init__(self, config):
+    def __init__(self):
         """
 
         :param config:

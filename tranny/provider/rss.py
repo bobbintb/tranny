@@ -1,9 +1,9 @@
 from logging import getLogger
 from feedparser import parse as parse
-from tranny.provider import TorrentProvider
-from tranny.parser import match_release
-from tranny.datastore import generate_release_key
-from tranny.release import TorrentData
+from ..provider import TorrentProvider
+from ..parser import match_release
+from ..datastore import generate_release_key
+from ..release import TorrentData
 
 
 class RSSFeed(TorrentProvider):

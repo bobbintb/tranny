@@ -1,10 +1,9 @@
 from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
-from logging import getLogger
 from sys import version_info
 from parser import parse_release
-from tranny.exceptions import ConfigError
+from .exceptions import ConfigError
 
 try:
     # noinspection PyUnresolvedReferences
@@ -28,10 +27,6 @@ else:
 
 
 class Configuration(ConfigParser):
-    def __init__(self):
-        ConfigParser.__init__(self)
-        self.log = getLogger('tranny.config')
-
     def rules(self):
         pass
 
@@ -91,7 +86,6 @@ class Configuration(ConfigParser):
         config_path = expanduser(path)
         if not exists(config_path):
             mkdirp(config_path)
-            self.log.info("Create new configuration path: {0}".format(config_path))
 
     def initialize(self, file_path=False):
         self.create_dirs()
@@ -237,4 +231,7 @@ class Configuration(ConfigParser):
             return False
         else:
             return True
+
+    def init_app(self, app):
+        app.config['LOG_FOLDER'] = 'logs'
 

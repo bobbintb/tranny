@@ -1,7 +1,7 @@
 from os.path import join
 from logging import getLogger
 from requests import get, RequestException
-from tranny.exceptions import InvalidResponse
+from .exceptions import InvalidResponse
 
 log = getLogger("tranny.net")
 

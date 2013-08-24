@@ -1,7 +1,7 @@
 from logging import getLogger
 from time import time
-from models import DownloadEntity
-from tranny.net import fetch_url
+from ..models import DownloadEntity
+from ..net import fetch_url
 
 
 class TorrentProvider(object):

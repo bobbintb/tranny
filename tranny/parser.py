@@ -2,8 +2,8 @@ from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
 from datetime import date
 from logging import getLogger
-from tranny.util import contains
-from tranny.service import rating
+from .util import contains
+from .service import rating
 
 log = getLogger(__name__)
 

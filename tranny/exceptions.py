@@ -1,4 +1,8 @@
-class BotchedTranny(Exception):
+class TrannyException(Exception):
+    pass
+
+
+class BotchedTranny(TrannyException):
     """ General application error """
     pass
 

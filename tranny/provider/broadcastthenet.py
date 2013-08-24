@@ -2,10 +2,10 @@ import socket
 from time import time
 from jsonrpclib import Server
 from jsonrpclib.jsonrpc import ProtocolError
-from tranny.parser import match_release
-from tranny.provider import TorrentProvider
-from tranny.release import TorrentData
-from tranny.datastore import generate_release_key
+from ..parser import match_release
+from ..provider import TorrentProvider
+from ..release import TorrentData
+from ..datastore import generate_release_key
 
 _errors = {
     -32002: "Call limit exceeded"

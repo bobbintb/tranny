@@ -1,11 +1,11 @@
-from collections import namedtuple
 import re
-from logging import getLogger
 import httplib
+from collections import namedtuple
+from logging import getLogger
 from requests import Session
 from requests.auth import HTTPBasicAuth
-from tranny import TrannyException
-from tranny.client import ClientProvider
+from ..exceptions import TrannyException
+from ..client import ClientProvider
 
 
 class uTorrentException(TrannyException):

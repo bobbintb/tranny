@@ -4,10 +4,10 @@ require 'zurb-foundation'
 
 # Set this to the root of your project when deployed:
 http_path = "/"
-css_dir = "tranny/web/static/css"
-sass_dir = "tranny/web/sass"
-images_dir = "tranny/web/static/img"
-javascripts_dir = "tranny/web/static/js"
+css_dir = "tranny/static/css"
+sass_dir = "scss"
+images_dir = "tranny/static/img"
+javascripts_dir = "tranny/static/js"
 
 # You can select your preferred output style here (can be overridden via the command line):
 # output_style = :expanded or :nested or :compact or :compressed
