@@ -13,7 +13,7 @@ any duplicates.
 
 ## Implemented Features
 
-- Support for transmission daemon
+- Support for transmission/rtorrent daemon backends
 - Auto sorting of releases into the correct destination folders based on the name of the torrent. For example
 when downloading a TV episode, it will be placed in the configured TV download path automatically.
 - TV sorting/grouping. Different episodes of a TV show can be grouped under 1 common sub directory of the
@@ -28,6 +28,12 @@ matches.
     - Each Feed is able to have custom settings applied such as minimum refresh intervals.
 - Persistent download history
 - Easily extendable service providers to allow for custom providers to be used
+- RDBMS datastore backend
+    - [SQLite](http://www.sqlite.org/)
+    - [postgres](http://www.postgresql.org/)
+    - [MySQL](http://www.mysql.com/)
+    - Other [dialets](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
+    should work, but are untested.
 
 ## Setup
 
@@ -47,8 +53,7 @@ providers and torrent sites which are supported.
 These are the features i am planning to implement. If you have features you would like to see implemented
 please dont hesitate to contact me.
 
-- Alternate torrent client support
-    - [rTorrent](http://libtorrent.rakshasa.no/)
+- Other torrent clients
     - [deluge](http://deluge-torrent.org/)
 - IRC service providers
     - Simple internal IRC client
@@ -56,6 +61,3 @@ please dont hesitate to contact me.
         - [weechat](http://www.weechat.org/)
         - [irssi](http://www.irssi.org/)
         - [mIRC](http://www.mirc.com/)
-- RDBMS datastore backend
-    - [postgres](http://www.postgresql.org/)
-    - [MySQL](http://www.mysql.com/)
