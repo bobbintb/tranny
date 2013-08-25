@@ -1,14 +1,11 @@
-from logging import getLogger
 from base64 import b64encode
-from tranny.client import ClientProvider
-
-log = getLogger("rpc.transmission")
-
+from ..app import config, logger
+from ..client import ClientProvider
 try:
     from transmissionrpc import Client, TransmissionError
     from transmissionrpc.constants import DEFAULT_PORT
 except ImportError, err:
-    log.error("""Please install the transmission python library available at
+    logger.error("""Please install the transmission python library available at
         "http://pythonhosted.org/transmissionrpc/""")
     raise SystemExit(err)
 
@@ -16,8 +13,7 @@ except ImportError, err:
 class TransmissionClient(ClientProvider):
     _config_key = "transmission"
 
-    def __init__(self, config, host=None, port=None, user=None, password=None):
-        self.log = log
+    def __init__(self, host=None, port=None, user=None, password=None):
         if not host:
             host = config.get_default(self._config_key, "host", "localhost")
         self.host = host
@@ -37,9 +33,9 @@ class TransmissionClient(ClientProvider):
             self.client = Client(self.host, port=self.port, user=self.user, password=self.password)
         except TransmissionError as err:
             if err.original.code == 111:
-                self.log.error("Failed to connect to transmission-daemon, is it running?")
+                logger.error("Failed to connect to transmission-daemon, is it running?")
             else:
-                self.log.exception("Error connecting to transmission server")
+                logger.exception("Error connecting to transmission server")
 
     def add(self, data, download_dir=None):
         try:
@@ -51,9 +47,9 @@ class TransmissionClient(ClientProvider):
             except AttributeError:
                 msg = err.message
             if "duplicate torrent" in msg:
-                self.log.warning("Tried to add duplicate torrent file")
+                logger.warning("Tried to add duplicate torrent file")
                 return True
-            self.log.exception(err)
+            logger.exception(err)
             return False
 
         return res

@@ -1,6 +1,6 @@
 from collections import Counter
-from tranny import get_config
-from tranny import datastore
+from .app import config
+from . import datastore
 
 
 class PieChart(Counter):
@@ -32,7 +32,6 @@ def service_type_totals(records):
     :return:
     :rtype:
     """
-    config = get_config()
     rss_feeds = [name.split("_")[1] for name in config.find_sections("rss_")]
     services = [name.split("_")[1] for name in config.find_sections("service_")]
     counter = PieChart()

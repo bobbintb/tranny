@@ -1,8 +1,8 @@
 from ConfigParser import NoOptionError
 from json import dumps
-from flask import Blueprint, request, redirect, url_for, current_app
+from flask import Blueprint, request, redirect, url_for
 from flask.ext.login import login_required
-from .. import config
+from ..app import config, logger
 from ..ui import render_template
 
 rss = Blueprint("rss", __name__, url_prefix="/rss")
@@ -10,7 +10,7 @@ rss = Blueprint("rss", __name__, url_prefix="/rss")
 
 @rss.route("/", methods=['GET'])
 @login_required
-def rss():
+def index():
     feed_data = {}
     for section in config.find_sections("rss_"):
         settings = config.get_section_values(section)
@@ -29,7 +29,7 @@ def rss():
 
 @rss.route("/delete", methods=['POST'])
 @login_required
-def rss_delete():
+def delete():
     status = 1
     try:
         feed = "rss_{0}".format(request.values['feed'])
@@ -53,7 +53,7 @@ def rss_delete():
 
 @rss.route("/create", methods=['POST'])
 @login_required
-def rss_create():
+def create():
     status = 1
     try:
         feed = "rss_{0}".format(request.values['new_short_name'])
@@ -77,15 +77,15 @@ def rss_create():
         except KeyError:
             msg = "Failed to save config. Malformed request: {0}".format(feed)
     if status == 1:
-        current_app.logger.error(msg)
+        logger.error(msg)
     else:
-        current_app.logger.info(msg)
+        logger.info(msg)
     return redirect(url_for(".index"))
 
 
 @rss.route("/rss/save", methods=['POST'])
 @login_required
-def rss_save():
+def save():
     status = 1
     try:
         feed = "rss_{0}".format(request.values['feed'])

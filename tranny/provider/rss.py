@@ -1,5 +1,6 @@
-from logging import getLogger
 from feedparser import parse as parse
+
+from ..app import config, logger
 from ..provider import TorrentProvider
 from ..parser import match_release
 from ..datastore import generate_release_key
@@ -7,13 +8,12 @@ from ..release import TorrentData
 
 
 class RSSFeed(TorrentProvider):
-    def __init__(self, config, config_section):
-        super(RSSFeed, self).__init__(config, config_section)
-        self.url = self.config.get(config_section, "url")
-        self.interval = self.config.get_default(config_section, "interval", 60, int)
-        self.enabled = self.config.getboolean(config_section, "enabled")
-        self.log = getLogger('rss.{0}'.format(self.name))
-        self.log.info("Initialized RSS Feed: {0}".format(self.name))
+    def __init__(self, config_section):
+        super(RSSFeed, self).__init__(config_section)
+        self.url = config.get(config_section, "url")
+        self.interval = config.get_default(config_section, "interval", 60, int)
+        self.enabled = config.getboolean(config_section, "enabled")
+        logger.info("Initialized RSS Feed: {0}".format(self.name))
 
     def fetch_releases(self):
         """
@@ -33,22 +33,22 @@ class RSSFeed(TorrentProvider):
                 if not release_key:
                     continue
                 if self.exists(release_key):
-                    if self.config.get_default("general", "fetch_proper", True, bool):
+                    if config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered proper's
-                            self.log.debug(
+                            logger.debug(
                                 "Skipped previously downloaded release ({0}): {1}".format(
                                     release_key,
                                     release_name
                                 )
                             )
                             continue
-                section = match_release(self.config, release_name)
+                section = match_release(release_name)
                 if section:
                     torrent_data = self._download_url(entry['link'])
                     if not torrent_data:
-                        self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                        logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                         continue
                     yield TorrentData(str(release_name), torrent_data, section)
             except Exception as err:
-                self.log.error(err)
+                logger.error(err)

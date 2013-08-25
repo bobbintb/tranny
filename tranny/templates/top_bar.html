@@ -1,7 +1,7 @@
 <div class="sticky">
 <nav class="top-bar">
     <ul class="title-area" style="background-color: #5da423">
-        <li class="name"><h1><a href="{{ url_for(".index") }}"><i class="icon-gauge"></i> Tranny </a></h1></li>
+        <li class="name"><h1><a href="{{ url_for("home.index") }}"><i class="icon-gauge"></i> Tranny </a></h1></li>
         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
 
@@ -10,19 +10,19 @@
         <ul class="left">
 
             <li class="divider"></li>
-            <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("webui.index") }}">
+            <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("home.index") }}">
                 <i class="icon-chart-pie"></i> Dashboard</a></li>
 
             <li class="divider"></li>
-            <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("webui.filters") }}">
+            <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("filters.index") }}">
                 <i class="icon-filter"></i> Filters</a></li>
 
             <li class="divider"></li>
-            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("webui.services") }}">
+            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("services.index") }}">
                 <i class="icon-cog-alt"></i> API</a></li>
 
             <li class="divider"></li>
-            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("webui.rss") }}">
+            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("rss.index") }}">
                 <i class="icon-rss"></i> RSS</a></li>
 
             <li class="divider"></li>
@@ -36,26 +36,23 @@
                 </form>
             </li>
             <li class="divider"></li>
-
         </ul>
 
         <!-- Right Nav Section -->
         <ul class="right">
-
             <li class="divider"></li>
             <li class="has-dropdown{% if section == "settings" %} active{% endif %}">
-                <a href="{{ url_for("webui.settings") }}"><i class="icon-wrench"></i> Settings</a>
+                <a href="{{ url_for("settings.index") }}"><i class="icon-wrench"></i> Settings</a>
                 <ul class="dropdown">
                     <li class="divider"></li>
-                    <li><a href="{{ url_for("webui.system") }}"><i class="icon-chart-area"></i> System Info</a></li>
+                    <li><a href="{{ url_for("home.system") }}"><i class="icon-chart-area"></i> System Info</a></li>
                     <li class="divider"></li>
                     <li {% if section == "syslog" %}class="active"{% endif %}>
-                        <a href="{{ url_for("webui.syslog") }}"><i class="icon-list-alt"></i> SysLog</a>
+                        <a href="{{ url_for("home.syslog") }}"><i class="icon-list-alt"></i> SysLog</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="{{ url_for("webui.logout") }}"><i class="icon-lock-open"></i> Logout</a></li>
+                    <li><a href="{{ url_for("user.logout") }}"><i class="icon-lock-open"></i> Logout</a></li>
                 </ul>
-
             </li>
         </ul>
     </section>

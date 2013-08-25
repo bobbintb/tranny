@@ -25,7 +25,7 @@
                     </div>
                     <div class="small-8 columns disk-header">
                     <input class="disk-header" type="text" name="disk_{{ key }}" id="disk_{{ key }}"
-                           value="{{ disk_info[key].used|file_size }} / {{ disk_info[key].total|file_size }} ({{ disk_info[key].free|file_size }} free)" readonly>
+                           value="{{ disk_info[key].used|human_size }} / {{ disk_info[key].total|human_size }} ({{ disk_info[key].free|human_size }} free)" readonly>
                     </div>
                 </div>
                 <div class="progress-bar">

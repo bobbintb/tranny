@@ -2,11 +2,11 @@
 
  @font-face {
   font-family: 'tranny';
-  src: url('/webui/static/fonts/tranny.eot?38988222');
-  src: url('/webui/static/fonts/tranny.eot?38988222#iefix') format('embedded-opentype'),
-       url('/webui/static/fonts/tranny.woff?38988222') format('woff'),
-       url('/webui/static/fonts/tranny.ttf?38988222') format('truetype'),
-       url('/webui/static/fonts/tranny.svg?38988222#tranny') format('svg');
+  src: url('/static/fonts/tranny.eot?38988222');
+  src: url('/static/fonts/tranny.eot?38988222#iefix') format('embedded-opentype'),
+       url('/static/fonts/tranny.woff?38988222') format('woff'),
+       url('/static/fonts/tranny.ttf?38988222') format('truetype'),
+       url('/static/fonts/tranny.svg?38988222#tranny') format('svg');
   font-weight: normal;
   font-style: normal;
 }

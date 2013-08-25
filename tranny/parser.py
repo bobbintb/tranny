@@ -1,11 +1,10 @@
 from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
 from datetime import date
-from logging import getLogger
+from .app import config, logger
 from .util import contains
 from .service import rating
 
-log = getLogger(__name__)
 
 pattern_info = [
     compile(r"\b(?P<year>(19|20)\d{2}).(?P<month>\d{1,2}).(?P<day>\d{1,2})", I),
@@ -53,7 +52,7 @@ def valid_year(config, release_name, none_is_cur_year=True, section_name="sectio
     if not release_year and none_is_cur_year:
         release_year = date.today().year
     elif not release_year:
-        log.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
+        logger.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
         return False
     try:
         year_min = config.get_default(section_name, "year_min", 0, int)
@@ -126,7 +125,7 @@ def is_movie(release_name, strict=True):
                 return False
             elif kind in ["movie", "video movie"]:
                 return True
-    log.warning("Skipped release due to inability to determine type: {0}".format(release_name))
+    logger.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
 
 
@@ -164,7 +163,7 @@ def valid_tv(config, release_name, section_name="section_tv"):
     return False
 
 
-def find_config_section(config, release_name, prefix="section_"):
+def find_config_section(release_name, prefix="section_"):
     """ Attempt to find the configuration section the release provided matches with.
 
     :param release_name:
@@ -195,7 +194,6 @@ def is_ignored(release_name, section_name="ignore"):
     :return: Ignored status
     :rtype: bool
     """
-    from tranny import config
     release_name = release_name.lower()
     if any((pattern.match(release_name) for pattern in pattern_season)):
         return True
@@ -206,14 +204,14 @@ def is_ignored(release_name, section_name="ignore"):
             continue
         if key.startswith("string"):
             if value.lower() in release_name:
-                log.debug("Matched string ignore pattern {0} {1}".format(key, release_name))
+                logger.debug("Matched string ignore pattern {0} {1}".format(key, release_name))
                 return True
         elif key.startswith("rx"):
             if match(value, release_name, I):
-                log.debug("Matched regex ignore pattern {0} {1}".format(key, release_name))
+                logger.debug("Matched regex ignore pattern {0} {1}".format(key, release_name))
                 return True
         else:
-            log.warning("Invalid ignore configuration key found: {0}".format(key))
+            logger.warning("Invalid ignore configuration key found: {0}".format(key))
     return False
 
 
@@ -301,7 +299,7 @@ def parse_release(release_name):
     return False
 
 
-def match_release(config, release_name):
+def match_release(release_name):
     """ Match a release to a section. Return the section found.
 
     :param config: App configuration instance
@@ -311,8 +309,8 @@ def match_release(config, release_name):
     :return: Matched release section
     :rtype: str, bool
     """
-    log.debug("Finding Match: {0}".format(release_name))
-    section = find_config_section(config, release_name)
+    logger.debug("Finding Match: {0}".format(release_name))
+    section = find_config_section(release_name)
     if section == "movies":
         pass
     elif section == "tv":

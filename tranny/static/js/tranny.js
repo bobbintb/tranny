@@ -117,7 +117,7 @@
 
 
   render_service_totals = function() {
-    return jQuery.get("/webui/stats/service_totals", function(response) {
+    return jQuery.get("/stats/service_totals", function(response) {
       var leader_dataset;
       leader_dataset = parse_json(response);
       return render_pie_chart(leader_dataset, "#service_totals");
@@ -125,7 +125,7 @@
   };
 
   render_section_totals = function() {
-    return jQuery.get("/webui/stats/section_totals", function(response) {
+    return jQuery.get("/stats/section_totals", function(response) {
       var section_dataset;
       section_dataset = parse_json(response);
       return render_pie_chart(section_dataset, "#section_totals");
@@ -133,7 +133,7 @@
   };
 
   render_service_type_totals = function() {
-    return jQuery.get("/webui/stats/service_type_totals", function(response) {
+    return jQuery.get("/stats/service_type_totals", function(response) {
       var type_dataset;
       type_dataset = parse_json(response);
       return render_pie_chart(type_dataset, "#service_type_totals");
@@ -153,7 +153,7 @@
     } catch (Err) {
       return false;
     }
-    return jQuery.post("/webui/filters/delete", args, function(response) {
+    return jQuery.post("/filters/delete", args, function(response) {
       if (handle_response(response).ok()) {
         return element.parent().fadeOut(500);
       }
@@ -178,7 +178,7 @@
     } catch (Err) {
       return false;
     }
-    return jQuery.post("/webui/filters/add", args, function(response) {
+    return jQuery.post("/filters/add", args, function(response) {
       if (handle_response(response).ok()) {
         console.log("added ok");
         return input_element.val("");
@@ -196,7 +196,7 @@
       interval: jQuery("#" + feed_name + "_interval").val(),
       enabled: !jQuery("#" + feed_name + "_enabled").is(':checked')
     };
-    return jQuery.post("/webui/rss/save", data, handle_response);
+    return jQuery.post("/rss/save", data, handle_response);
   };
 
   feed_delete = function(evt) {
@@ -206,7 +206,7 @@
       return false;
     }
     feed_name = jQuery(this).data("feed");
-    return jQuery.post("/webui/rss/delete", {
+    return jQuery.post("/rss/delete", {
       feed: feed_name
     }, function(response) {
       if (handle_response(response).ok()) {
@@ -224,7 +224,7 @@
       btn_enabled: !jQuery("#btn_enabled").is(":checked"),
       btn_url: jQuery("#btn_url").val()
     };
-    return jQuery.post("/webui/services/btn/save", data, handle_response);
+    return jQuery.post("/services/btn/save", data, handle_response);
   };
 
   settings_save = function(evt) {
@@ -236,11 +236,11 @@
       option = _ref[_i];
       settings[option['name']] = option['value'];
     }
-    return jQuery.post("/webui/settings/save", settings, handle_response);
+    return jQuery.post("/settings/save", settings, handle_response);
   };
 
   jQuery(function() {
-    if (window.location.pathname === "/webui/") {
+    if (window.location.pathname === "/") {
       render_service_totals();
       render_section_totals();
       render_service_type_totals();

@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, request
+from flask import Blueprint, redirect, url_for, request, flash
 from flask.ext.login import logout_user, login_user
 from ..models import User
 from ..ui import render_template
@@ -20,17 +20,15 @@ def login_perform():
         pass
     else:
         user = User.query.filter_by(user_name=user_name).first()
-        if not user:
-            pass
-        if not user.password == user_password:
-            pass
-
+        if not user or not user.password == user_password:
+            flash("Invalid credentials", "alert")
+            return redirect(url_for(".login"))
         try:
             remember = request.values['remember'].lower() == "on"
         except KeyError:
             remember = False
         login_user(user, remember=remember)
-    return redirect(request.args.get("next") or url_for(".index"))
+    return redirect(request.args.get("next") or url_for("home.index"))
 
 
 @usr.route("/logout")

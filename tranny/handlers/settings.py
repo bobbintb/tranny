@@ -1,7 +1,7 @@
 from json import dumps
 from flask import request, Blueprint
 from flask.ext.login import login_required
-from .. import config
+from ..app import config
 from ..ui import render_template
 
 settings = Blueprint("settings", __name__, url_prefix="/settings")
@@ -10,11 +10,21 @@ settings = Blueprint("settings", __name__, url_prefix="/settings")
 @settings.route("/")
 @login_required
 def index():
-    keys = ['General', 'WebUI', 'uTorrent', 'Transmission', 'IMDB', 'TheMovieDB', 'Ignore',
-            'DB', 'Sqlite', 'MySQL', 'Log', 'Section_TV', 'Section_Movies', 'Proxy']
+    keys = [
+        'General',
+        'WebUI',
+        'uTorrent',
+        'Transmission',
+        'IMDB',
+        'TheMovieDB',
+        'Ignore',
+        'Log',
+        'Section_TV',
+        'Section_Movies',
+        'Proxy'
+    ]
     settings_set = {k: config.get_section_values(k.lower()) for k in keys}
     bool_values = ['enabled', 'sort_seasons', 'group_name', 'fetch_proper']
-    db_types = ["sqlite", "mysql", "memory"]
     select_values = ['type']
     ignore_keys = ['quality_sd', 'quality_hd', 'quality_any']
     for k, v in settings_set.items():
@@ -25,12 +35,11 @@ def index():
         section="settings",
         settings=settings_set,
         bool_values=bool_values,
-        select_values=select_values,
-        db_types=db_types
+        select_values=select_values
     )
 
 
-@settings.route("/settings/save", methods=['POST'])
+@settings.route("/save", methods=['POST'])
 @login_required
 def save():
     for name, value in request.values.items():

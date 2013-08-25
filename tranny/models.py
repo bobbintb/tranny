@@ -35,7 +35,8 @@ class User(db.Model):
 
 class Section(db.Model):
     __tablename__ = "section"
-    section_id = db.Column(db.Integer, primary_key=True)
+
+    section_id = db.Column(db.Integer, primary_key=True, nullable=False)
     section_name = db.Column(db.String(64), unique=True)
     created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -46,6 +47,7 @@ class Section(db.Model):
 
 class Source(db.Model):
     __tablename__ = "source"
+
     source_id = db.Column(db.Integer, primary_key=True)
     source_name = db.Column(db.String(64), unique=True)
     created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -60,9 +62,9 @@ class DownloadEntity(db.Model):
 
     entity_id = db.Column(db.Integer, primary_key=True)
     release_key = db.Column(db.String(255), unique=True)
-    section_id = db.Column(db.Integer, db.ForeignKey('section.section_id'))
+    section_id = db.Column(db.Integer, db.ForeignKey(Section.section_id))
     release_name = db.Column(db.String(255))
-    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'))
+    source_id = db.Column(db.Integer, db.ForeignKey(Source.source_id))
     created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

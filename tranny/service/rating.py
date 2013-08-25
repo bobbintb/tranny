@@ -6,6 +6,7 @@ try:
     import configparser  # py3
 except ImportError:
     import ConfigParser as configparser
+from ..app import config
 
 # Config section names
 _tmdb_section = "themoviedb"
@@ -30,6 +31,8 @@ except (ImportError, configparser.Error):
     tmdb, _tmdb_enabled = False, False
 
 
+
+
 def score(title, min_votes=0, precision=1):
     """ Fetch a average score based on the enabled and installed movie/tv info
     database modules.
@@ -43,7 +46,6 @@ def score(title, min_votes=0, precision=1):
     :return: Average score across all enabled backend services
     :rtype: float
     """
-    from tranny import config
     score = []
     if imdb and _imdb_enabled and config.getboolean("imdb", "enabled"):
         score.append(_imdb_score(title, min_votes=min_votes))

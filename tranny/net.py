@@ -1,9 +1,8 @@
 from os.path import join
-from logging import getLogger
 from requests import get, RequestException
-from .exceptions import InvalidResponse
 
-log = getLogger("tranny.net")
+from .exceptions import InvalidResponse
+from .app import config, logger
 
 
 def download(release_name, url, dest_path="./", extension=".torrent"):
@@ -20,7 +19,7 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     :return:
     :rtype:
     """
-    log.debug("Downloading release [{0}]: {1}".format(release_name, url))
+    logger.debug("Downloading release [{0}]: {1}".format(release_name, url))
     file_path = join(dest_path, release_name) + extension
     dl_ok = False
     response = fetch_url(url)
@@ -41,8 +40,7 @@ def fetch_url(url, auth=None, json=True):
     """
     response = None
     try:
-        log.debug("Fetching url: {0}".format(url))
-        from tranny import config
+        logger.debug("Fetching url: {0}".format(url))
 
         proxies = config.get_proxies()
         response = get(url, auth=auth, proxies=proxies)
@@ -50,7 +48,7 @@ def fetch_url(url, auth=None, json=True):
         if not response.content:
             raise InvalidResponse("Empty response body")
     except (RequestException, InvalidResponse) as err:
-        log.exception(err.message)
+        logger.exception(err.message)
     else:
         response = response.content
         if json:

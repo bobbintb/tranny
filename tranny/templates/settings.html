@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form class="custom" action="{{ url_for(".settings_save") }}" id="settings_form" method="post">
+    <form class="custom" action="{{ url_for("settings.save") }}" id="settings_form" method="post">
     <ul class="small-block-grid-1 large-block-grid-2">
         {% for k, v in settings.iteritems() %}
 

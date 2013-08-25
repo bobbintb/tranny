@@ -1,11 +1,12 @@
-from logging import getLogger
 from time import time
+from ..app import config, logger
 from ..models import DownloadEntity
 from ..net import fetch_url
+from ..extensions import db
 
 
 class TorrentProvider(object):
-    def __init__(self, config, config_section):
+    def __init__(self, config_section):
         """ Provides a basic interface to generate new torrents from external services.
 
         :param config:
@@ -19,11 +20,7 @@ class TorrentProvider(object):
         # Timestamp of last successful update
         self.last_update = 0
         self._config_section = config_section
-        self.log = getLogger(self.name)
-        self.config = config
-        self.interval = self.config.get_default(config_section, "interval", 60, int)
-        from tranny import session
-        self.session = session
+        self.interval = config.get_default(config_section, "interval", 60, int)
 
     @property
     def name(self):
@@ -58,8 +55,8 @@ class TorrentProvider(object):
 
     def exists(self, release_key):
         try:
-            e = self.session.query(DownloadEntity).filter_by(release_key=release_key).all()
+            e = db.session.query(DownloadEntity).filter_by(release_key=release_key).all()
         except Exception as err:
-            self.log.exception(err)
+            logger.exception(err)
             return False
         return e

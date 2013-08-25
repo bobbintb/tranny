@@ -2,7 +2,7 @@ from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
 from sys import version_info
-from parser import parse_release
+
 from .exceptions import ConfigError
 
 try:
@@ -149,6 +149,7 @@ class Configuration(ConfigParser):
             return section_name
 
     def get_download_path(self, section, release_name):
+        from .parser import parse_release
         dl_path = self.get(section, "dl_path")
         #if not exists(dl_path):
         #    raise IOError("Invalid download path root: {0}".format(dl_path))
@@ -233,5 +234,16 @@ class Configuration(ConfigParser):
             return True
 
     def init_app(self, app):
-        app.config['LOG_FOLDER'] = 'logs'
+        config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
+        try:
+            self.readfp(open(config_file, 'r'), config_file)
+        except IOError:
+            raise ConfigError("No config file found: {}".format(config_file))
 
+        def int_value(k, v):
+            if k in ['sqlalchemy_pool_size', 'sqlalchemy_pool_timeout', 'sqlalchemy_pool_recycle']:
+                return int(v)
+            return v
+        config_values = {k.upper(): int_value(k, v) for k, v in self.get_section_values("flask").items()}
+        app.config.update(config_values)
+        app.logger.info("Loaded config")

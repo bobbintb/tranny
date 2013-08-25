@@ -73,7 +73,7 @@
 
     <div id="rss_add" class="reveal-modal">
         <h1><small>Create New RSS Feed</small></h1>
-        <form action="/webui/rss/create" method="post">
+        <form action="{{ url_for("rss.create") }}" method="post">
 
             <div class="row collapse">
                 <div class="small-2 columns">

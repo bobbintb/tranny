@@ -2,7 +2,7 @@ from json import dumps
 from ConfigParser import NoOptionError, NoSectionError
 from flask import Blueprint, request
 from flask.ext.login import login_required
-from .. import config
+from ..app import config
 from ..ui import render_template
 
 filters = Blueprint("filters", __name__, url_prefix="/filters")

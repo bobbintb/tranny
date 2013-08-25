@@ -26,11 +26,17 @@ def initdb():
     db.drop_all()
     db.create_all()
 
-    admin = User(
-        name='admin',
-        password=u'123456',
-        role_code=ROLE_ADMIN
-    )
+    user_name = raw_input("Admin user name [admin]: ")
+    if not user_name:
+        user_name = "admin"
+    password = None
+    while not password:
+        pw_1 = raw_input("Password: ")
+        pw_2 = raw_input("Password Verify: ")
+        if pw_1 and pw_1 == pw_2:
+            password = pw_1
+
+    admin = User(user_name=user_name, password=password, role=ROLE_ADMIN)
     db.session.add(admin)
     db.session.commit()
 

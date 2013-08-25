@@ -1,39 +1,72 @@
 import httplib
-from json import dumps
 import os
-from flask import Flask, g, request, redirect, url_for
+from functools import partial
+from json import dumps
+from flask import Flask, g, request, redirect, url_for, current_app
 from flask.ext.babel import Babel
 from flask.ext.login import current_user, confirm_login
-from .models import User
+
+
+def _log(msg, level="info"):
+    try:
+        getattr(current_app.logger, level)(msg)
+    except:
+        print(msg)
+
+
+class _logger(object):
+    info = partial(_log, level='info')
+    warn = partial(_log, level='warn')
+    warning = warn
+    debug = partial(_log, level='debug')
+    error = partial(_log, level='error')
+    exception = partial(_log, level='exception')
+
+logger = _logger()
+
 from .configuration import Configuration
+config = Configuration()
+
+from .models import User
+from .manager import ServiceManager
 from .util import file_size
 from .ui import render_template
 from .extensions import db, mail, cache, login_manager
 
+service_manager = ServiceManager()
 
 __all__ = ['create_app']
-
-config = Configuration()
 
 
 def create_app(app_name="tranny"):
     app = Flask(app_name)
     configure_app(app)
+    configure_extensions(app)
     configure_hook(app)
     configure_blueprints(app)
-    configure_extensions(app)
     configure_logging(app)
     configure_template_filters(app)
     configure_error_handlers(app)
+    configure_services(app)
     return app
+
+
+def configure_services(app):
+    service_manager.init()
+    service_manager.start()
 
 
 def configure_app(app):
     config.init_app(app)
 
+    @app.route("/")
+    def index():
+        return redirect(url_for("home.index"))
+
 
 def configure_extensions(app):
     # flask-sqlalchemy
+    db.app = app
     db.init_app(app)
 
     # flask-mail
@@ -51,7 +84,7 @@ def configure_extensions(app):
         return request.accept_languages.best_match(accept_languages)
 
     # flask-login
-    login_manager.login_view = 'frontend.login'
+    login_manager.login_view = 'user.login'
     login_manager.refresh_view = 'frontend.reauth'
 
     @login_manager.user_loader
@@ -66,7 +99,7 @@ def configure_extensions(app):
 
     @login_manager.unauthorized_handler
     def login_redir():
-        return redirect(url_for(".login"))
+        return redirect(url_for("user.login"))
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -78,9 +111,6 @@ def configure_extensions(app):
 def configure_hook(app):
     @app.before_request
     def before_request():
-        from tranny import session
-
-        g.session = session
         g.user = current_user
 
 
@@ -140,8 +170,8 @@ def configure_logging(app):
 
     mail_handler = SMTPHandler(app.config['MAIL_SERVER'],
                                app.config['MAIL_USERNAME'],
-                               app.config['ADMINS'],
-                               'O_ops... %s failed!' % app.config['PROJECT'],
+                               config.get("general", "email"),
+                               'O_ops... Tranny failed!',
                                (app.config['MAIL_USERNAME'],
                                 app.config['MAIL_PASSWORD']))
     mail_handler.setLevel(logging.ERROR)
@@ -156,15 +186,15 @@ def configure_error_handlers(app):
 
     @app.errorhandler(403)
     def forbidden_page(error):
-        return render_template("errors/forbidden_page.html"), httplib.FORBIDDEN
+        return render_template("errors/forbidden_page.html", error=error), httplib.FORBIDDEN
 
     @app.errorhandler(404)
     def page_not_found(error):
-        return render_template("errors/page_not_found.html"), httplib.NOT_FOUND
+        return render_template("errors/page_not_found.html", error=error), httplib.NOT_FOUND
 
     @app.errorhandler(500)
     def server_error_page(error):
-        return render_template("errors/server_error.html"), httplib.INTERNAL_SERVER_ERROR
+        return render_template("errors/server_error.html", error=error), httplib.INTERNAL_SERVER_ERROR
 
 
 def response(status=0, msg=None):

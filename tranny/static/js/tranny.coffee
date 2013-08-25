@@ -80,17 +80,17 @@ render_pie_chart = (dataset, element_id) ->
     Fetch source totals and render in a pie graph
 ###
 render_service_totals = ->
-    jQuery.get "/webui/stats/service_totals", (response) ->
+    jQuery.get "/stats/service_totals", (response) ->
         leader_dataset = parse_json response
         render_pie_chart leader_dataset, "#service_totals"
 
 render_section_totals = ->
-    jQuery.get "/webui/stats/section_totals", (response) ->
+    jQuery.get "/stats/section_totals", (response) ->
         section_dataset = parse_json response
         render_pie_chart section_dataset, "#section_totals"
 
 render_service_type_totals = ->
-    jQuery.get "/webui/stats/service_type_totals", (response) ->
+    jQuery.get "/stats/service_type_totals", (response) ->
         type_dataset = parse_json response
         render_pie_chart type_dataset, "#service_type_totals"
 
@@ -105,7 +105,7 @@ filter_remove = (evt) ->
             section: element.data "section"
     catch Err
         return false
-    jQuery.post "/webui/filters/delete", args, (response) ->
+    jQuery.post "/filters/delete", args, (response) ->
         if handle_response(response).ok()
             element.parent().fadeOut 500
 
@@ -125,7 +125,7 @@ filter_add = (evt) ->
             section: section
     catch Err
         return false
-    jQuery.post "/webui/filters/add", args, (response) ->
+    jQuery.post "/filters/add", args, (response) ->
         if handle_response(response).ok()
             console.log "added ok"
             input_element.val ""
@@ -139,7 +139,7 @@ feed_save = (evt) ->
         url: jQuery("##{feed_name}_url").val()
         interval: jQuery("##{feed_name}_interval").val()
         enabled: not jQuery("##{feed_name}_enabled").is(':checked')
-    jQuery.post "/webui/rss/save", data, handle_response
+    jQuery.post "/rss/save", data, handle_response
 
 
 feed_delete = (evt) ->
@@ -147,7 +147,7 @@ feed_delete = (evt) ->
     if not confirm "Are you sure you want to delete this RSS feed? This is a non reversable action."
         return false
     feed_name = jQuery(@).data "feed"
-    jQuery.post "/webui/rss/delete", {feed: feed_name}, (response) ->
+    jQuery.post "/rss/delete", {feed: feed_name}, (response) ->
         if handle_response(response).ok()
             jQuery("#feed_#{feed_name}").fadeOut 500
 
@@ -158,7 +158,7 @@ btn_save = (evt) ->
         btn_interval: jQuery("#btn_interval").val()
         btn_enabled: not jQuery("#btn_enabled").is(":checked")
         btn_url: jQuery("#btn_url").val()
-    jQuery.post "/webui/services/btn/save", data, handle_response
+    jQuery.post "/services/btn/save", data, handle_response
 
 
 settings_save = (evt) ->
@@ -166,11 +166,11 @@ settings_save = (evt) ->
     settings = {}
     for option in jQuery("#settings_form").serializeArray()
         settings[option['name']] = option['value']
-    jQuery.post "/webui/settings/save", settings, handle_response
+    jQuery.post "/settings/save", settings, handle_response
 
 
 jQuery ->
-    if window.location.pathname == "/webui/"
+    if window.location.pathname == "/"
         render_service_totals()
         render_section_totals()
         render_service_type_totals()
