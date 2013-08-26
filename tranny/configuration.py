@@ -27,6 +27,15 @@ else:
 
 
 class Configuration(ConfigParser):
+
+    def __init__(self):
+        ConfigParser.__init__(self)
+        config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
+        try:
+            self.readfp(open(config_file, 'r'), config_file)
+        except IOError:
+            raise ConfigError("No config file found: {}".format(config_file))
+
     def rules(self):
         pass
 
@@ -234,12 +243,6 @@ class Configuration(ConfigParser):
             return True
 
     def init_app(self, app):
-        config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
-        try:
-            self.readfp(open(config_file, 'r'), config_file)
-        except IOError:
-            raise ConfigError("No config file found: {}".format(config_file))
-
         def int_value(k, v):
             if k in ['sqlalchemy_pool_size', 'sqlalchemy_pool_timeout', 'sqlalchemy_pool_recycle']:
                 return int(v)

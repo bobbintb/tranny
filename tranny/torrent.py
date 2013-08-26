@@ -12,6 +12,7 @@
 
 # Minor modifications made by Andrew Resch to replace the BTFailure errors with Exceptions
 from hashlib import sha1
+from .util import file_size
 
 
 def decode_int(x, f):
@@ -193,3 +194,17 @@ class Torrent(BDict):
 
     def calc_hash(self):
         return sha1(self.encode(self[b'info']))
+
+    def size(self, human=False):
+        """ Calculate and return the size of the torrent
+
+        :param human: Return a human readable size string
+        :type human: str
+        :return: Torrent Size
+        :rtype: str,int
+        """
+        try:
+            total = sum([f['length'] for f in self['info']['files']])
+        except KeyError:
+            total = self['info']['length']
+        return file_size(total) if human else total

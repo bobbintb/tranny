@@ -13,7 +13,6 @@ path.append(dirname(dirname(__file__)))
 from tranny.exceptions import ConfigError
 from tranny.client import init_client
 from tranny.torrent import Torrent
-from tranny.util import file_size
 
 client = init_client()
 
@@ -29,11 +28,14 @@ try:
             print(err)
     if len(torrent_data) != len(argv[1:]):
         raise ConfigError("! Failed to locate all files, bailing")
-except ConfigError as err:
+except (ConfigError, Exception) as err:
     print(err)
 else:
     for raw_torrent in torrent_data:
         torrent_struct = Torrent.from_str(raw_torrent)
-        print("-> {} @ {}".format(torrent_struct['info']['name'], file_size(torrent_struct.size())))
-        client.add(raw_torrent)
+        print("-> {} @ {}".format(torrent_struct['info']['name'], torrent_struct.size(human=True)))
+        if client.add(raw_torrent):
+            print("--> Upload successful")
+        else:
+            print("--> Upload failed")
 

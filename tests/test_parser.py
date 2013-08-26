@@ -1,8 +1,11 @@
 from unittest import main
+from tranny.app import config
+from tranny import parser
+import sys
+print(sys.path)
 from tests import TrannyTestCase, get_fixture
-from tranny import parser, init_config
 
-config = init_config(get_fixture("test_config.ini"))
+config.read(get_fixture("test_config.ini"))
 
 
 class ReleaseTest(TrannyTestCase):
@@ -41,7 +44,7 @@ class ReleaseTest(TrannyTestCase):
 
         ]
         for expected, release_name in test_data:
-            self.assertEqual(expected, parser.match_release(config, release_name))
+            self.assertEqual(expected, parser.match_release(release_name), release_name)
 
     def test_find_date(self):
         test_data = [

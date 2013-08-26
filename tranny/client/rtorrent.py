@@ -10,7 +10,12 @@ class RTorrentClient(ClientProvider):
     _config_key = "rtorrent"
 
     def __init__(self):
-        self._server = SCGIServerProxy(config.get(self._config_key, 'url'))
+        self._server = SCGIServerProxy(config.get(self._config_key, 'uri'))
+
+    def client_version(self):
+        client = self._server.system.client_version()
+        lib = self._server.system.library_version()
+        return "rTorrent {}/{}".format(client, lib)
 
     def add(self, data, download_dir=None):
         payload = xmlrpclib.Binary(data)

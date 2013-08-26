@@ -28,6 +28,9 @@ class TransmissionClient(ClientProvider):
         self.password = password
         self.connect()
 
+    def client_version(self):
+        return "Transmission XX"
+
     def connect(self):
         try:
             self.client = Client(self.host, port=self.port, user=self.user, password=self.password)

@@ -62,6 +62,7 @@ class UTorrentClient(ClientProvider):
         self.password = password
         self._session = Session()
         self.config = config
+        self._token = None
         version = self.get_version()
         self.log.info("Connected to uTorrent build {0}".format(version))
 

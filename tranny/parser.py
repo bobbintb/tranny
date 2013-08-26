@@ -34,7 +34,7 @@ def clean_split(string):
     return [p for p in string.replace(".", " ").split(" ") if p]
 
 
-def valid_year(config, release_name, none_is_cur_year=True, section_name="section_movies"):
+def valid_year(release_name, none_is_cur_year=True, section_name="section_movies"):
     """ Check if a release name is too new
 
     :param none_is_cur_year: If no year is found, assume current year
@@ -72,7 +72,7 @@ def valid_year(config, release_name, none_is_cur_year=True, section_name="sectio
     return True
 
 
-def valid_score(config, release_name, section_name="section_movies"):
+def valid_score(release_name, section_name="section_movies"):
     release_name = parse_release(release_name)
     try:
         score_min = config.get_default(section_name, "score_min", 0, int)
@@ -108,13 +108,15 @@ def is_movie(release_name, strict=True):
     if any([n in release_name for n in ["hdtv"]]):
         return False
 
-    title = parse_release(release_name)
+    orig_title = parse_release(release_name)
 
     # Add a year to the name, helps with imdb quite a bit
     year = find_year(release_name)
     if year:
-        title = "{0}.{1}".format(title, year)
-    info = rating.imdb_info(title)
+        title = "{0}.{1}".format(orig_title, year)
+        info = rating.imdb_info(title.replace(".", " "))
+    else:
+        info = rating.imdb_info(orig_title.replace(".", " "))
     if info:
         try:
             kind = info['kind']
@@ -125,11 +127,15 @@ def is_movie(release_name, strict=True):
                 return False
             elif kind in ["movie", "video movie"]:
                 return True
+    else:
+        info = rating.tmdb_info(orig_title.replace(".", " "))
+        if info:
+            return True
     logger.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
 
 
-def valid_movie(config, release_name, section_name="section_movies"):
+def valid_movie(release_name, section_name="section_movies"):
     """
 
     :param config:
@@ -141,14 +147,14 @@ def valid_movie(config, release_name, section_name="section_movies"):
     """
     if not is_movie(release_name):
         return False
-    if not valid_year(config, release_name, section_name=section_name):
+    if not valid_year(release_name, section_name=section_name):
         return False
-    if not valid_score(config, release_name, section_name=section_name):
+    if not valid_score(release_name, section_name=section_name):
         return False
     return True
 
 
-def valid_tv(config, release_name, section_name="section_tv"):
+def valid_tv(release_name, section_name="section_tv"):
     quality = find_quality(release_name)
     for key_type in [quality, "any"]:
         key = "quality_{0}".format(key_type)
@@ -178,10 +184,10 @@ def find_config_section(release_name, prefix="section_"):
     sections = config.find_sections(prefix)
     for section in sections:
         if section.lower() == "section_movies":
-            if valid_movie(config, release_name):
+            if valid_movie(release_name):
                 return section
         elif section.lower() == "section_tv":
-            if valid_tv(config, release_name):
+            if valid_tv(release_name):
                 return section
     return False
 

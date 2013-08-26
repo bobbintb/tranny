@@ -66,7 +66,7 @@ def configure_app(app):
 
 def configure_extensions(app):
     # flask-sqlalchemy
-    db.app = app
+    db.app = app  # hack to allow access outside of context
     db.init_app(app)
 
     # flask-mail

@@ -24,7 +24,7 @@ except (ImportError, configparser.Error):
 
 # Try and load themoviedb
 try:
-    from tranny import tmdb
+    from ..service import tmdb
 
     _tmdb_enabled = True
 except (ImportError, configparser.Error):

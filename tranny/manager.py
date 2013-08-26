@@ -1,12 +1,14 @@
 from threading import Thread
+from time import sleep
 from . import datastore
-from .exceptions import ConfigError
 from .provider.rss import RSSFeed
 from .extensions import db
 from .models import DownloadEntity
+from sqlalchemy.exc import DBAPIError
 from .watch import FileWatchService
 from .app import config, logger
 from .service import tmdb
+from .client import init_client
 
 
 class ServiceManager(object):
@@ -36,14 +38,7 @@ class ServiceManager(object):
         self._watch = FileWatchService(self._client)
 
     def init_client(self):
-        enabled_client = config.get_default("general", "client", "transmission").lower()
-        if enabled_client == "transmission":
-            from tranny.client.transmission import TransmissionClient as TorrentClient
-        elif enabled_client == "utorrent":
-            from tranny.client.utorrent import UTorrentClient as TorrentClient
-        else:
-            raise ConfigError("Invalid client type supplied: {0}".format(enabled_client))
-        return TorrentClient()
+        return init_client()
 
     def init_rss(self):
         feeds = [RSSFeed(feed_section) for feed_section in config.find_sections("rss_")]
@@ -63,6 +58,7 @@ class ServiceManager(object):
     def update(self):
         self.update_rss()
         self.update_services()
+        sleep(1)
 
     def update_services(self):
         """ Update the provided services """
@@ -86,11 +82,10 @@ class ServiceManager(object):
     def update_rss(self):
         """ Update the provided RSS feeds """
         for feed in self._feeds:
-            try:
-                for torrent in feed.find_matches():
+            for torrent in feed.find_matches():
+                try:
                     dl_path = config.get_download_path(torrent.section, torrent.release_name)
-                    res = self._client.add(torrent.torrent_data, download_dir=dl_path)
-                    if res:
+                    if self._client.add(torrent.torrent_data, download_dir=dl_path):
                         logger.info("Added release: {0}".format(torrent.release_name))
                         release_key = datastore.generate_release_key(torrent.release_name)
                         section = datastore.get_section(torrent.section)
@@ -99,8 +94,13 @@ class ServiceManager(object):
                                                   source.source_id)
                         db.session.add(download)
                         db.session.commit()
-            except Exception as err:
-                logger.exception(err)
+                    else:
+                        logger.warn("Failed to add release: {}".format(torrent.release_name))
+                except DBAPIError as err:
+                    logger.exception(err)
+                    db.session.rollback()
+                except Exception as err:
+                    logger.exception(err)
 
     def start(self):
         self._updater.start()
