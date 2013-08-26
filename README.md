@@ -32,7 +32,7 @@ matches.
     - [SQLite](http://www.sqlite.org/)
     - [postgres](http://www.postgresql.org/)
     - [MySQL](http://www.mysql.com/)
-    - Other [dialets](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
+    - Other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
     should work, but are untested.
 
 ## Setup
@@ -48,16 +48,23 @@ providers and torrent sites which are supported.
 - generic - Fetch releases over RSS (revtt,scc,tl,etc...)
 - [BTN](https://broadcasthe.net) - Accesses the site over their [JSON-RPC API](http://btnapps.net/docs.php)
 
-## Planned Features
+## Planned / Possible Features
 
 These are the features i am planning to implement. If you have features you would like to see implemented
 please dont hesitate to contact me.
 
-- Other torrent clients
-    - [deluge](http://deluge-torrent.org/)
+- Torrent clients
+    - [x] [rTorrent](https://github.com/rakshasa/rtorrent)
+    - [x] [Transmission](http://www.transmissionbt.com/)
+    - [ ] [deluge](http://deluge-torrent.org/)
+    - [ ] [uTorrent](http://www.utorrent.com/)
+    - [ ] [qBittorent](http://www.qbittorrent.org/)
+
 - IRC service providers
-    - Simple internal IRC client
-    - IRC Client scripts to interface with tranny
-        - [weechat](http://www.weechat.org/)
-        - [irssi](http://www.irssi.org/)
-        - [mIRC](http://www.mirc.com/)
+    - [ ] Internal IRC client
+    - [ ] [weechat](http://www.weechat.org/)
+    - [ ] [irssi](http://www.irssi.org/)
+    - [ ] [mIRC](http://www.mirc.com/)
+
+- API Service Providers
+    - [x] BTN
