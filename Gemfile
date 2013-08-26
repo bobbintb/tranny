@@ -1,3 +1,3 @@
 source "https://rubygems.org"
-gem "zurb-foundation", "4.1.2"
+gem "zurb-foundation", "4.3.1"
 gem "compass"

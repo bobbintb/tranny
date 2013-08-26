@@ -1,10 +1,12 @@
 #!/bin/env python
+# -*- coding: utf-8 -*-
 """
 Basic CLI script to manually upload a torrent to the configured backend client
 
 ./tranny-add torrent1.torrent torrent2.torrent..
 
 """
+from __future__ import unicode_literals
 from os.path import dirname
 from sys import argv, path
 

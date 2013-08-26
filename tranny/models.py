@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import datetime
 from .extensions import db
 from .constants import ROLE_USER

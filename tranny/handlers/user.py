@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from flask import Blueprint, redirect, url_for, request, flash
 from flask.ext.login import logout_user, login_user
 from ..models import User

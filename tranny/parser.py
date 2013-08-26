@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
 from datetime import date
@@ -201,7 +203,7 @@ def is_ignored(release_name, section_name="ignore"):
     :rtype: bool
     """
     release_name = release_name.lower()
-    if any((pattern.match(release_name) for pattern in pattern_season)):
+    if any((pattern.search(release_name) for pattern in pattern_season)):
         return True
     for key in config.options(section_name):
         try:
@@ -250,10 +252,10 @@ def find_quality(release_name):
 
 def find_year(release_name):
     for pattern in pattern_date:
-        match = pattern.search(release_name, I)
-        if not match:
+        p_match = pattern.search(release_name, I)
+        if not p_match:
             continue
-        values = match.groupdict()
+        values = p_match.groupdict()
         try:
             return int(values['year'])
         except KeyError:
@@ -270,10 +272,10 @@ def parse_release_info(release_name):
     :rtype:
     """
     for pattern in pattern_info:
-        match = pattern.search(release_name, I)
-        if not match:
+        p_match = pattern.search(release_name, I)
+        if not p_match:
             continue
-        values = match.groupdict()
+        values = p_match.groupdict()
         info = {}
         if contains(values, ["year", "month", "day"]):
             info = {
@@ -299,9 +301,9 @@ def parse_release(release_name):
     :rtype: str, bool
     """
     for pattern in pattern_release:
-        match = pattern.search(release_name)
-        if match:
-            return normalize(match.groupdict()['name'])
+        p_match = pattern.search(release_name)
+        if p_match:
+            return normalize(p_match.groupdict()['name'])
     return False
 
 

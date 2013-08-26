@@ -1,4 +1,4 @@
-# tranny - A highly configurable torrent client/api wrapper
+# Tranny - A highly configurable torrent downloader and API wrapper
 
 Tranny is a python library and daemon designed to interact with torrent client via their respective
 API's. Currently support is limited to the [transmission](http://www.transmissionbt.com/) client, however
@@ -7,7 +7,7 @@ plans exist to expand this to at least [rtorrent](http://libtorrent.rakshasa.no/
 
 ## Design Goal
 
-This tool will attempt to automate repetative downloading tasks as efficiently as possible. This
+This tool will attempt to automate repetitive downloading tasks as efficiently as possible. This
 means that there will be support for loading clients from many different sources without loading
 any duplicates.
 
@@ -24,7 +24,7 @@ any duplicates.
 
 - [x] [rTorrent](https://github.com/rakshasa/rtorrent)
 - [x] [Transmission](http://www.transmissionbt.com/)
-- [_] [deluge](http://deluge-torrent.org/)
+- [~] [deluge](http://deluge-torrent.org/)
 - [~] [uTorrent](http://www.utorrent.com/)
 - [_] [qBittorent](http://www.qbittorrent.org/)
 
@@ -34,7 +34,7 @@ any duplicates.
 - [x] Auto sorting of releases into the correct destination folders based on the name of the torrent. For example
 when downloading a TV episode, it will be placed in the configured TV download path automatically.
 - [x] TV sorting/grouping. Different episodes of a TV show can be grouped under 1 common sub directory of the
-download path automcatilly. eg. Show.Name.S01E12.720p.HDTV.x264-FiHTV -> /download/path/tv/Show.Name/Show.Name.S01E12.720p.HDTV.x264-FiHTV
+download path automatically. eg. Show.Name.S01E12.720p.HDTV.x264-FiHTV -> /download/path/tv/Show.Name/Show.Name.S01E12.720p.HDTV.x264-FiHTV
 - [x] Only download the first matching torrent from whichever source finds it first, skipping subsequent duplicate
 matches.
 - [x] Support for handling "Proper" releases
@@ -42,8 +42,20 @@ matches.
 - [x] Persistent download history
 - [~] Handle daily broadcast shows properly
 - [_] Custom regex matching
+- [_] Filter to only accept private torrents
+- [~] Skip releases that don't have a minimum [iMDB](http://imdb.com) score
+- [~] Skip releases that don't have a minimum [The Movie DB](http://themoviedb.org) score
+- [_] Skip releases which are older than N pre time.
+- [_] Skip releases which are not available under predb (Usually P2P)
+- [_] Check for disk space available and set a minimum disk space buffer to provide
 
-**Torrent Source Service Providers**
+**Notifications**
+- [_] IRC
+- [_] XMPP/Jabber
+- [_] Email
+- [_] SMS
+
+**Service Providers**
 
 - [x] Watch folders (Unlimited number of watch folders which can individually be configured with their own section)
 - [x] RSS Feeds (Parsing any number of feeds supported. Independent settings such as different intervals per feed.)
@@ -53,6 +65,7 @@ matches.
 - [_] [weechat](http://www.weechat.org/)
 - [_] [irssi](http://www.irssi.org/)
 - [_] [mIRC](http://www.mirc.com/)
+- [_] IRC PreDB scraper support
 
 **OS Support**
 
@@ -60,15 +73,33 @@ matches.
 - [u] Windows (may work with some features not available)
 - [u] OSX (may work with some features not available)
 
-
-- Easily extendable service providers to allow for custom providers to be used
-
 **RDBMS datastore backend**
 
-- [x] [SQLite](http://www.sqlite.org/)
+- [x] [SQLite](http://www.sqlite.org/) Default, built-in to python generally by default.
 - [x] [postgres](http://www.postgresql.org/)
 - [u] Most (all?) other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
 should work, notably [MySQL](http://www.mysql.com/), but are untested.
+
+
+**WebUI**
+
+These features are not a major priority for me yet. But in the future they will probably
+be. Some of the stuff is beyond the initial scope of the app and will only appear once
+ive ironed out other elements. There are decent webui's available elsewhere which complement
+trannys feature set without much overlap.
+
+- [x] Web based configuration of most things (Filters / System settings)
+- [x] Simple graphs for sources / media types
+- [_] Loaded torrent list view with basic info
+- [_] Torrent detail view (peers/trackers/etc)
+- [_] Start/Stop/Pause torrents
+- [_] Set priorities of individual torrents
+- [x] Responsive design for mobile support
+
+**Other**
+
+- [~] Python 3 support. Tranny itself should be python3 compatible, but some libraries are not.
+
 
 ## Setup
 

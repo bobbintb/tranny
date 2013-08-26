@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
 from sys import version_info
 
 from .exceptions import ConfigError
+from .app import logger
 
 try:
     # noinspection PyUnresolvedReferences
@@ -38,6 +41,11 @@ class Configuration(ConfigParser):
 
     def rules(self):
         pass
+
+    def read(self, filenames):
+        loaded = ConfigParser.read(self, filenames)
+        map(logger.debug, loaded)
+        return loaded
 
     def get_default(self, section, option, default=False, cast=None):
         """ Fetch a config value from the database with an optional default value to use

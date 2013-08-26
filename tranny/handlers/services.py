@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from json import dumps
 import httplib
 from flask import Blueprint, abort, request

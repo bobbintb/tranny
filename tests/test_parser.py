@@ -1,11 +1,7 @@
+# -*- coding: utf-8 -*-
 from unittest import main
-from tranny.app import config
 from tranny import parser
-import sys
-print(sys.path)
-from tests import TrannyTestCase, get_fixture
-
-config.read(get_fixture("test_config.ini"))
+from testcase import TrannyTestCase
 
 
 class ReleaseTest(TrannyTestCase):

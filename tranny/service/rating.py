@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 """
 Provides a basic api for looking up media information using any installed and
 configured services.
 """
+from __future__ import unicode_literals
 try:
     import configparser  # py3
 except ImportError:

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from json import dumps
 from flask import request, Blueprint
 from flask.ext.login import login_required

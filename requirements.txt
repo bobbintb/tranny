@@ -3,7 +3,6 @@ feedparser
 requests
 watchdog
 jsonrpclib
-imdbpy
 psutil
 six
 pathtools
@@ -17,3 +16,4 @@ flask-mail
 flask-cache
 flask-babel
 -e git+git://github.com/seatgeek/fuzzywuzzy.git#egg=fuzzywuzzy
+-e git+git://github.com/alberanid/imdbpy.git#egg=imdbpy

@@ -1,12 +1,33 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import re
 import socket
 import urllib
-import xmlrpclib
+try:
+    from xmlrpc import client as xmlrpclib
+except ImportError:
+    import xmlrpclib
 from ..app import config, logger
 from ..client import ClientProvider
 
+__all__ = ['RTorrentClient']
+
 
 class RTorrentClient(ClientProvider):
+    """ rTorrent client support modules. This class will talk to rtorrent over its
+    scgi+xmlrpc API interface. (Why not just xml-rpc?, arg..). This means that
+    you do NOT have to use a SCGI webserver to facilitate the requests. The client
+    speaks SCGI directly. In the future i will probably add a more standard client
+    using a webserver for the added security mechanisms it adds for a remote
+    connection. Right now you can allow access to the ip:port directly but you
+    are **strongly** advised to at least add a firewall rule to only allow
+    your own IP to connect.
+
+    rtorrent must be configured similar to this:
+
+    scgi_port = localhost:5000
+
+    """
     _config_key = "rtorrent"
 
     def __init__(self):
@@ -29,14 +50,11 @@ class SCGITransport(xmlrpclib.Transport):
         header = '\x00'.join(('%s\x00%s' % item for item in headers.iteritems())) + '\x00'
         header = '%d:%s' % (len(header), header)
         request_body = '%s,%s' % (header, request_body)
-
         sock = None
-
         try:
             if host:
                 host, port = urllib.splitport(host)
-                addrinfo = socket.getaddrinfo(host, port, socket.AF_INET,
-                                              socket.SOCK_STREAM)
+                addrinfo = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
                 sock = socket.socket(*addrinfo[0][:3])
                 sock.connect(addrinfo[0][4])
             else:
@@ -62,11 +80,10 @@ class SCGITransport(xmlrpclib.Transport):
             response_body += data
 
         # Remove SCGI headers from the response.
-        response_header, response_body = re.split(r'\n\s*?\n', response_body,
-                                                  maxsplit=1)
+        response_header, response_body = re.split(r'\n\s*?\n', response_body, maxsplit=1)
 
         if self.verbose:
-            print 'body:', repr(response_body)
+            logger.debug('body:', repr(response_body))
 
         p.feed(response_body)
         p.close()
@@ -75,10 +92,9 @@ class SCGITransport(xmlrpclib.Transport):
 
 
 class SCGIServerProxy(xmlrpclib.ServerProxy):
-    def __init__(self, uri, transport=None, encoding=None, verbose=False,
-                 allow_none=False, use_datetime=False):
-        type, uri = urllib.splittype(uri)
-        if type not in ('scgi'):
+    def __init__(self, uri, transport=None, encoding=None, verbose=False, allow_none=False, use_datetime=False):
+        uri_type, uri = urllib.splittype(uri)
+        if not uri_type == 'scgi':
             raise IOError('unsupported XML-RPC protocol')
         self.__host, self.__handler = urllib.splithost(uri)
         if not self.__handler:
@@ -95,29 +111,17 @@ class SCGIServerProxy(xmlrpclib.ServerProxy):
     def __close(self):
         self.__transport.close()
 
-    def __request(self, methodname, params):
+    def __request(self, method_name, params):
         # call a method on the remote server
 
-        request = xmlrpclib.dumps(params, methodname, encoding=self.__encoding,
-                                  allow_none=self.__allow_none)
-
-        response = self.__transport.request(
-            self.__host,
-            self.__handler,
-            request,
-            verbose=self.__verbose
-            )
-
+        request = xmlrpclib.dumps(params, method_name, encoding=self.__encoding, allow_none=self.__allow_none)
+        response = self.__transport.request(self.__host, self.__handler, request, verbose=self.__verbose)
         if len(response) == 1:
             response = response[0]
-
         return response
 
     def __repr__(self):
-        return (
-            "<SCGIServerProxy for %s%s>" %
-            (self.__host, self.__handler)
-            )
+        return "<SCGIServerProxy for {}{}>".format(self.__host, self.__handler)
 
     __str__ = __repr__
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import socket
 from time import time
 from jsonrpclib import Server

@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Main application entry point. Defines several global vars which are used throughout the
+application.
+"""
+from __future__ import unicode_literals
 import httplib
 import os
 from functools import partial
@@ -15,6 +21,10 @@ def _log(msg, level="info"):
 
 
 class _logger(object):
+    """
+    Basic logger proxy which will print out to console if the flask app context is
+    not available
+    """
     info = partial(_log, level='info')
     warn = partial(_log, level='warn')
     warning = warn
@@ -24,6 +34,7 @@ class _logger(object):
 
 logger = _logger()
 
+# Setup global configuration
 from .configuration import Configuration
 config = Configuration()
 
@@ -39,6 +50,13 @@ __all__ = ['create_app']
 
 
 def create_app(app_name="tranny"):
+    """ Configure a flask application instance ready to launch
+
+    :param app_name: Name of the application
+    :type app_name: unicode
+    :return: Configured flask instance
+    :rtype: Flask
+    """
     app = Flask(app_name)
     configure_app(app)
     configure_extensions(app)
@@ -52,11 +70,22 @@ def create_app(app_name="tranny"):
 
 
 def configure_services(app):
+    """ Setup and start the background downloader services thread
+
+    :param app: Application instance
+    :type app: Flask
+    """
     service_manager.init()
     service_manager.start()
 
 
 def configure_app(app):
+    """ Load the flask application configuration file from disk and configure the flask
+    relevant section.
+
+    :param app: Application instance
+    :type app: Flask
+    """
     config.init_app(app)
 
     @app.route("/")
@@ -65,6 +94,11 @@ def configure_app(app):
 
 
 def configure_extensions(app):
+    """ Load and configure 3rd party flask extensions
+
+    :param app: Application instance
+    :type app: Flask
+    """
     # flask-sqlalchemy
     db.app = app  # hack to allow access outside of context
     db.init_app(app)
@@ -109,12 +143,22 @@ def configure_extensions(app):
 
 
 def configure_hook(app):
+    """ Setup always available pre request context values
+
+    :param app: Application instance
+    :type app: Flask
+    """
     @app.before_request
     def before_request():
         g.user = current_user
 
 
 def configure_blueprints(app):
+    """ Import and initialize all flask blueprint route handlers
+
+    :param app: Application instance
+    :type app: Flask
+    """
     from .handlers.filters import filters
     from .handlers.home import home
     from .handlers.rss import rss
@@ -126,7 +170,11 @@ def configure_blueprints(app):
 
 
 def configure_template_filters(app):
+    """ Configure extra global jinja2 filters
 
+    :param app: Application instance
+    :type app: Flask
+    """
     @app.template_filter()
     def pretty_date(value):
         return pretty_date(value)

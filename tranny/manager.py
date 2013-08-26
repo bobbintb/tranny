@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from threading import Thread
 from time import sleep
 from . import datastore
@@ -63,8 +65,8 @@ class ServiceManager(object):
     def update_services(self):
         """ Update the provided services """
         for service in self._services:
-            try:
-                for torrent in service.find_matches():
+            for torrent in service.find_matches():
+                try:
                     dl_path = config.get_download_path(torrent.section, torrent.release_name)
                     res = self._client.add(torrent.torrent_data, download_dir=dl_path)
                     if res:
@@ -76,8 +78,8 @@ class ServiceManager(object):
                                                   source.source_id)
                         db.session.add(download)
                         db.commit()
-            except Exception as err:
-                logger.exception(err)
+                except Exception as err:
+                    logger.exception(err)
 
     def update_rss(self):
         """ Update the provided RSS feeds """

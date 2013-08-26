@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from flask.ext.script import Manager
 
 from tranny import create_app
@@ -6,6 +7,11 @@ from tranny.extensions import db
 from tranny.models import User
 from tranny.constants import ROLE_ADMIN
 
+try:
+    import __builtin__
+    input = getattr(__builtin__, 'raw_input')
+except (ImportError, AttributeError):
+    pass
 
 app = create_app()
 
@@ -26,13 +32,13 @@ def initdb():
     db.drop_all()
     db.create_all()
 
-    user_name = raw_input("Admin user name [admin]: ")
+    user_name = input("Admin user name [admin]: ")
     if not user_name:
         user_name = "admin"
     password = None
     while not password:
-        pw_1 = raw_input("Password: ")
-        pw_2 = raw_input("Password Verify: ")
+        pw_1 = input("Password: ")
+        pw_2 = input("Password Verify: ")
         if pw_1 and pw_1 == pw_2:
             password = pw_1
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from feedparser import parse as parse
 
 from ..app import config, logger

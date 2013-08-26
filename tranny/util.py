@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from time import time
 from os import getpid
 from psutil import Process, disk_partitions, disk_usage

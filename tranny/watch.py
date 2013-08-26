@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from ConfigParser import NoOptionError, NoSectionError
 from os.path import exists, isdir, dirname, basename, splitext
 from watchdog.events import FileSystemEventHandler
