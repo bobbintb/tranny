@@ -11,60 +11,65 @@ This tool will attempt to automate repetative downloading tasks as efficiently a
 means that there will be support for loading clients from many different sources without loading
 any duplicates.
 
-## Implemented Features
+## Features Status
 
-- Support for transmission/rtorrent daemon backends
-- Auto sorting of releases into the correct destination folders based on the name of the torrent. For example
+    Key | Meaning
+    ----+---------------------------
+     x  | Feature Completed
+     ~  | Feature In-Progress
+     u  | Untested but may work
+     _  | Planned
+
+**Torrent clients**
+
+- [x] [rTorrent](https://github.com/rakshasa/rtorrent)
+- [x] [Transmission](http://www.transmissionbt.com/)
+- [_] [deluge](http://deluge-torrent.org/)
+- [~] [uTorrent](http://www.utorrent.com/)
+- [_] [qBittorent](http://www.qbittorrent.org/)
+
+
+**Auto Sorting & Downloading**
+
+- [x] Auto sorting of releases into the correct destination folders based on the name of the torrent. For example
 when downloading a TV episode, it will be placed in the configured TV download path automatically.
-- TV sorting/grouping. Different episodes of a TV show can be grouped under 1 common sub directory of the
+- [x] TV sorting/grouping. Different episodes of a TV show can be grouped under 1 common sub directory of the
 download path automcatilly. eg. Show.Name.S01E12.720p.HDTV.x264-FiHTV -> /download/path/tv/Show.Name/Show.Name.S01E12.720p.HDTV.x264-FiHTV
-- Only download the first matching torrent from whichever source finds it first, skipping subsequent duplicate
+- [x] Only download the first matching torrent from whichever source finds it first, skipping subsequent duplicate
 matches.
-- Support for handling "Proper" releases
-- Global ignore patterns
-- Tested only on linux currently, however it should work equally well on osx/bsd/win. Please let me know.
-- Unlimited number of watch folders which can individually be configured with their own section
-- Downloading over any number of RSS feeds
-    - Each Feed is able to have custom settings applied such as minimum refresh intervals.
-- Persistent download history
+- [x] Support for handling "Proper" releases
+- [x] Global ignore patterns
+- [x] Persistent download history
+- [~] Handle daily broadcast shows properly
+- [_] Custom regex matching
+
+**Torrent Source Service Providers**
+
+- [x] Watch folders (Unlimited number of watch folders which can individually be configured with their own section)
+- [x] RSS Feeds (Parsing any number of feeds supported. Independent settings such as different intervals per feed.)
+- [_] RSS Feed HTTP Auth
+- [x] BTN API ([JSON-RPC API](http://btnapps.net/docs.php))
+- [_] Internal IRC client
+- [_] [weechat](http://www.weechat.org/)
+- [_] [irssi](http://www.irssi.org/)
+- [_] [mIRC](http://www.mirc.com/)
+
+**OS Support**
+
+- [x] Linux (Tested only on linux currently)
+- [u] Windows (may work with some features not available)
+- [u] OSX (may work with some features not available)
+
+
 - Easily extendable service providers to allow for custom providers to be used
-- RDBMS datastore backend
-    - [SQLite](http://www.sqlite.org/)
-    - [postgres](http://www.postgresql.org/)
-    - [MySQL](http://www.mysql.com/)
-    - Other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
-    should work, but are untested.
+
+**RDBMS datastore backend**
+
+- [x] [SQLite](http://www.sqlite.org/)
+- [x] [postgres](http://www.postgresql.org/)
+- [u] Most (all?) other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
+should work, notably [MySQL](http://www.mysql.com/), but are untested.
 
 ## Setup
 
 For more in depth ways to start the service please see the [setup docs](docs/setup.md).
-
-## Services Available
-
-Each site has its own method of provided updated release information. Tranny aims to
-support as many as possible. Outlined below is the current state of backend service
-providers and torrent sites which are supported.
-
-- generic - Fetch releases over RSS (revtt,scc,tl,etc...)
-- [BTN](https://broadcasthe.net) - Accesses the site over their [JSON-RPC API](http://btnapps.net/docs.php)
-
-## Planned / Possible Features
-
-These are the features i am planning to implement. If you have features you would like to see implemented
-please dont hesitate to contact me.
-
-- Torrent clients
-    - [x] [rTorrent](https://github.com/rakshasa/rtorrent)
-    - [x] [Transmission](http://www.transmissionbt.com/)
-    - [ ] [deluge](http://deluge-torrent.org/)
-    - [ ] [uTorrent](http://www.utorrent.com/)
-    - [ ] [qBittorent](http://www.qbittorrent.org/)
-
-- IRC service providers
-    - [ ] Internal IRC client
-    - [ ] [weechat](http://www.weechat.org/)
-    - [ ] [irssi](http://www.irssi.org/)
-    - [ ] [mIRC](http://www.mirc.com/)
-
-- API Service Providers
-    - [x] BTN
