@@ -7,9 +7,16 @@ from watchdog.observers import Observer
 
 from .app import config, logger
 from .datastore import generate_release_key
+from .release import TorrentData
 
 
 class FileWatchService(FileSystemEventHandler):
+    """
+    Provides a TorrentProvider service for handling any number of watch folders.
+    This is run independently of the service manager event loop as it uses
+    watchdog's thread to watch for events. When valid events are found they are
+    routed back through the same ServiceManager.add method however.
+    """
     _path_sections = dict()
 
     name = "dir_watch"
@@ -63,11 +70,9 @@ class FileWatchService(FileSystemEventHandler):
                 logger.error("Unknown watch path detected: {0}".format(dir_path))
                 return False
             else:
-                release_key = generate_release_key(torrent_name)
                 dl_path = config.get_download_path("section_{}".format(section), torrent_name)
-                self._service_manager.add(open(event.src_path).read(), self, dl_path=dl_path)
-                #de = DownloadEntity(release_key=release_key, release_name=)
-                #db.session.add(release_key, section=section, source="watch_{0}".format(section))
+                torrent_data = TorrentData(torrent_name, open(event.src_path).read(), section)
+                self._service_manager.add(torrent_data, self, dl_path=dl_path)
 
     def stop(self):
         self._observer.stop()
