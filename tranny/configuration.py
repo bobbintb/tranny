@@ -14,6 +14,7 @@ try:
 except ImportError:
     from ConfigParser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
+# Import a mkdir -p equivalent
 if version_info >= (3, 2):
     def mkdirp(path):
         # noinspection PyArgumentList
@@ -30,6 +31,11 @@ else:
 
 
 class Configuration(ConfigParser):
+    """
+    Extend the built in ConfigParser module to provide some helper functions specific
+    to tranny's configuration
+    """
+    _config_path = None
 
     def __init__(self):
         ConfigParser.__init__(self)
@@ -42,8 +48,16 @@ class Configuration(ConfigParser):
     def rules(self):
         pass
 
-    def read(self, filenames):
-        loaded = ConfigParser.read(self, filenames)
+    def read(self, file_names):
+        """Read and parse a filename or a list of filenames.
+
+        This function only add debug logging output, otherwise its the same as
+        ConfigParser.read.
+
+        :return: Return list of successfully read files.
+        :rtype: []unicode
+        """
+        loaded = ConfigParser.read(self, file_names)
         map(logger.debug, loaded)
         return loaded
 
@@ -52,11 +66,11 @@ class Configuration(ConfigParser):
         if the config does not exist.
 
         :param section:
-        :type section: str
+        :type section: unicode
         :param option:
-        :type option: str
+        :type option: unicode
         :param default:
-        :type default: str, int
+        :type default: unicode, int
         :param cast:
         :type cast: callable
         :return:
@@ -70,13 +84,14 @@ class Configuration(ConfigParser):
             return cast(value)
         return value
 
-    def find_config(self, config_name="tranny.ini"):
+    @staticmethod
+    def find_config(config_name="tranny.ini"):
         """ Attempt to find a configuration file to load. This function first attempts
          the users home directory standard location (~/.config/tranny). If that fails it
          moves on to configuration files in the source tree root directory.
 
-        :param config_name:
-        :type config_name:
+        :param config_name: Path of the config file
+        :type config_name: unicode
         :return:
         :rtype:
         """
