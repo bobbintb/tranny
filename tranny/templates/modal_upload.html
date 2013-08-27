@@ -1,0 +1,17 @@
+<div id="upload-modal" class="reveal-modal">
+    <form action="/upload">
+        <fieldset>
+            <legend>Torrent Upload Form</legend>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>{{upload_form.torrent_file.label }}</label>
+                    {{upload_form.torrent_file()|safe }}
+                </div>
+            </div>
+
+            <button class="button medium success">Do it!</button>
+        </fieldset>
+    </form>
+    <a class="close-reveal-modal">&#215;</a>
+</div>

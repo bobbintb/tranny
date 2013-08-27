@@ -42,3 +42,5 @@ test_data
 *.sqlite
 *.profile
 rpctest.py
+*.log
+.sass-cache

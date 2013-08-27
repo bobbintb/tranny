@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from flask import session, render_template as flask_render_template
+from .forms import UploadForm
 
 
 def render_template(template_name, **kwargs):
@@ -9,4 +10,5 @@ def render_template(template_name, **kwargs):
         del session['messages']
     except KeyError:
         pass
+    kwargs['upload_form'] = UploadForm()
     return flask_render_template(template_name, **kwargs)
