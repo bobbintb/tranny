@@ -240,7 +240,7 @@
   };
 
   jQuery(function() {
-    if (window.location.pathname === "/") {
+    if (window.location.pathname.indexOf("home") !== -1) {
       render_service_totals();
       render_section_totals();
       render_service_type_totals();
