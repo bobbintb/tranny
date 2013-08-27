@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from ConfigParser import NoOptionError, NoSectionError
-from os.path import exists, isdir, dirname, basename, splitext
+from os.path import exists, isdir, dirname, basename, splitext, expanduser
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from .app import config, logger
 from .datastore import generate_release_key
-from .extensions import db
 
 
 class FileWatchService(FileSystemEventHandler):
     _path_sections = dict()
 
-    def __init__(self, client):
+    name = "dir_watch"
+
+    def __init__(self, service_manager):
         """
 
-        :param config:
-        :type config: tranny.config
+        :param service_manager:
+        :type service_manager: tranny.manager.ServiceManager
         :return:
         :rtype:
         """
-        self._client = client
+        self._service_manager = service_manager
         self._observer = Observer()
         for section in config.find_sections("watch"):
             try:
@@ -35,7 +36,7 @@ class FileWatchService(FileSystemEventHandler):
                 ))
                 continue
 
-            dl_path = config.get("section_{0}".format(section_name), "dl_path")
+            dl_path = expanduser(config.get("section_{0}".format(section_name), "dl_path"))
             if not dl_path or not exists(dl_path) or not isdir(dl_path):
                 logger.warning("Invalid watch directory {0}".format(dl_path))
                 continue
@@ -61,10 +62,12 @@ class FileWatchService(FileSystemEventHandler):
             except KeyError:
                 logger.error("Unknown watch path detected: {0}".format(dir_path))
                 return False
-            release_key = generate_release_key(torrent_name)
-            dl_path = config.get_download_path(section, torrent_name)
-            self._client.add(open(event.src_path).read(), download_dir=dl_path)
-            db.session.add(release_key, section=section, source="watch_{0}".format(section))
+            else:
+                release_key = generate_release_key(torrent_name)
+                dl_path = config.get_download_path("section_{}".format(section), torrent_name)
+                self._service_manager.add(open(event.src_path).read(), self, dl_path=dl_path)
+                #de = DownloadEntity(release_key=release_key, release_name=)
+                #db.session.add(release_key, section=section, source="watch_{0}".format(section))
 
     def stop(self):
         self._observer.stop()
