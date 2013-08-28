@@ -110,12 +110,12 @@ def configure_extensions(app):
     cache.init_app(app)
 
     # flask-babel
-    babel = Babel(app)
-
-    @babel.localeselector
-    def get_locale():
-        accept_languages = app.config.get('ACCEPT_LANGUAGES')
-        return request.accept_languages.best_match(accept_languages)
+    #babel = Babel(app)
+    #
+    #@babel.localeselector
+    #def get_locale():
+    #    accept_languages = app.config.get('ACCEPT_LANGUAGES')
+    #    return request.accept_languages.best_match(accept_languages)
 
     # flask-login
     login_manager.login_view = 'user.login'
@@ -166,7 +166,8 @@ def configure_blueprints(app):
     from .handlers.settings import settings
     from .handlers.stats import stats
     from .handlers.user import usr
-    map(app.register_blueprint, [filters, home, rss, services, settings, stats, usr])
+    from .handlers.upload import upload
+    map(app.register_blueprint, [filters, home, rss, services, settings, stats, usr, upload])
 
 
 def configure_template_filters(app):

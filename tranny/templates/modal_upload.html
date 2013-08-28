@@ -1,16 +1,22 @@
 <div id="upload-modal" class="reveal-modal">
-    <form action="/upload">
+    <form action="{{ url_for("upload.index") }}" method="POST" enctype="multipart/form-data" class="custom">
         <fieldset>
             <legend>Torrent Upload Form</legend>
 
             <div class="row">
                 <div class="large-12 columns">
-                    <label>{{upload_form.torrent_file.label }}</label>
-                    {{upload_form.torrent_file()|safe }}
+{#                    {{ upload_form.next_url()|safe }}#}
+                    <label>{{ upload_form.torrent_file.label }}</label>
+                    {{ upload_form.torrent_file() }}
+                    {{ upload_form.hidden_tag()  }}
                 </div>
             </div>
-
-            <button class="button medium success">Do it!</button>
+            <br>
+            <div class="row">
+                <div class="large-12 columns">
+                    <button class="button medium success">Do it!</button>
+                </div>
+            </div>
         </fieldset>
     </form>
     <a class="close-reveal-modal">&#215;</a>

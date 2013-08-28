@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from urlparse import urlparse, urljoin
 from time import time
 from os import getpid
 from psutil import Process, disk_partitions, disk_usage
+from flask import request, url_for, redirect
 
 
 def uptime_sys():
@@ -44,5 +46,28 @@ def valid_path(path):
     if hasattr(path, "mountpoint"):
         path = path.mountpoint
     return not any(path.startswith(prefix) for prefix in bad_prefix)
+
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
+
+
+def get_redirect_target():
+    for target in request.values.get('next'), request.referrer:
+        if not target:
+            continue
+        if is_safe_url(target):
+            return target
+
+
+def redirect_back(endpoint, **values):
+    target = request.form['next']
+    if not target or not is_safe_url(target):
+        target = url_for(endpoint, **values)
+    return redirect(target)
+
 
 contains = lambda seq, values: all([k in values for k in seq])
