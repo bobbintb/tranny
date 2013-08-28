@@ -14,7 +14,7 @@ __all__ = ['RTorrentClient']
 
 
 class RTorrentClient(ClientProvider):
-    """ rTorrent client support modules. This class will talk to rtorrent over its
+    """ rTorrent client support module. This class will talk to rtorrent over its
     scgi+xmlrpc API interface. (Why not just xml-rpc?, arg..). This means that
     you do NOT have to use a SCGI webserver to facilitate the requests. The client
     speaks SCGI directly. In the future i will probably add a more standard client
@@ -40,6 +40,8 @@ class RTorrentClient(ClientProvider):
 
     def add(self, data, download_dir=None):
         payload = xmlrpclib.Binary(data)
+        # Make sure the xml-rpc size limit doesnt overflow
+        self._server.set_xmlrpc_size_limit(len(payload.data) * 2)
         return self._server.load_raw_start(payload) == 0
 
 
