@@ -41,7 +41,9 @@ class Configuration(ConfigParser):
         ConfigParser.__init__(self)
         config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
         try:
-            self.readfp(open(config_file, 'r'), config_file)
+            loaded = self.read([config_file])
+            if not len(loaded) == 1:
+                raise ConfigError("Failed to load configuration")
         except IOError:
             raise ConfigError("No config file found: {}".format(config_file))
 

@@ -11,6 +11,7 @@ from json import dumps
 from flask import Flask, g, request, redirect, url_for, current_app
 from flask.ext.babel import Babel
 from flask.ext.login import current_user, confirm_login
+from flask.ext.uploads import configure_uploads, UploadSet, patch_request_class
 
 
 def _log(msg, level="info"):
@@ -37,6 +38,8 @@ logger = _logger()
 # Setup global configuration
 from .configuration import Configuration
 config = Configuration()
+
+torrent_file_set = UploadSet('torrent', extensions=['torrent'])
 
 from .models import User
 from .manager import ServiceManager
@@ -109,13 +112,17 @@ def configure_extensions(app):
     # flask-cache
     cache.init_app(app)
 
+    # flask-uploads
+    configure_uploads(app, [torrent_file_set])
+    patch_request_class(app)
+
     # flask-babel
-    #babel = Babel(app)
-    #
-    #@babel.localeselector
-    #def get_locale():
-    #    accept_languages = app.config.get('ACCEPT_LANGUAGES')
-    #    return request.accept_languages.best_match(accept_languages)
+    babel = Babel(app)
+
+    @babel.localeselector
+    def get_locale():
+        accept_languages = app.config.get('ACCEPT_LANGUAGES')
+        return request.accept_languages.best_match(accept_languages)
 
     # flask-login
     login_manager.login_view = 'user.login'

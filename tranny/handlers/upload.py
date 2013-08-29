@@ -14,24 +14,24 @@ class HTTPUpload(object):
 
 
 @upload.route("/", methods=['POST'])
-def index():
-    form = UploadForm()
+def handler():
+    form = UploadForm.make()
     if form.validate_on_submit():
         file_data = request.files['torrent_file'].stream.read()
         try:
             torrent_struct = Torrent.from_str(file_data)
 
-            tor_data = TorrentData(torrent_struct.name, file_data, 'misc')
+            tor_data = TorrentData(torrent_struct.name, file_data, form.section.data)
             if service_manager.add(tor_data, HTTPUpload()):
                 flash("Torrent {} uploaded successfully".format(torrent_struct.name), "success")
             else:
                 flash("Failed to upload torrent", "alert")
         except TrannyException as err:
             flash(err.message, "alert")
-    elif form.torrent_file.errors:
-        for error in form.errors:
+    elif form.errors:
+        for field, error in form.errors.items():
             try:
-                flash(unicode(error), "alert")
+                flash("[{}] {}".format(field, ' && '.join(error)), "alert")
             except:
                 pass
     try:

@@ -1,20 +1,38 @@
 <div id="upload-modal" class="reveal-modal">
-    <form action="{{ url_for("upload.index") }}" method="POST" enctype="multipart/form-data" class="custom">
+    <form action="{{ url_for("upload.handler") }}" method="POST" enctype="multipart/form-data" class="custom">
         <fieldset>
             <legend>Torrent Upload Form</legend>
 
             <div class="row">
                 <div class="large-12 columns">
-{#                    {{ upload_form.next_url()|safe }}#}
+                    {#                    {{ upload_form.next_url()|safe }}#}
                     <label>{{ upload_form.torrent_file.label }}</label>
                     {{ upload_form.torrent_file() }}
-                    {{ upload_form.hidden_tag()  }}
+                    {{ upload_form.hidden_tag() }}
                 </div>
             </div>
             <br>
             <div class="row">
+                <div class="large-6 columns">
+                    <div class="row collapse">
+                        <div class="large-4 columns">
+                            <span class="prefix"><label for="section">Section</label></span>
+                        </div>
+                        <div class="large-8 columns">
+                            <select id="section">
+                                {% for section in upload_form.section.choices %}
+                                    <option value="{{ section }}">{{ section }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
                 <div class="large-12 columns">
-                    <button class="button medium success">Do it!</button>
+                    <input type="submit" class="button small" value="Do it!">
                 </div>
             </div>
         </fieldset>
