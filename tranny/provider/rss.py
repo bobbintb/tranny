@@ -27,6 +27,8 @@ class RSSFeed(TorrentProvider):
         :return: a 3 element tuple containing (release_name, torrent_raw_data, section_name)
         :rtype: tranny.release.TorrentData
         """
+        if not self.enabled:
+            raise StopIteration
         feed = parse(self.url)
         for entry in feed['entries']:
             try:
