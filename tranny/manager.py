@@ -2,11 +2,11 @@
 from __future__ import unicode_literals
 from threading import Thread
 from time import sleep
+from sqlalchemy.exc import DBAPIError
 from . import datastore
 from .provider.rss import RSSFeed
 from .extensions import db
 from .models import DownloadEntity
-from sqlalchemy.exc import DBAPIError
 from .watch import FileWatchService
 from .app import config, logger
 from .service import tmdb
@@ -39,11 +39,25 @@ class ServiceManager(object):
         self._client = init_client()
         self._watch = FileWatchService(self)
 
-    def init_rss(self):
+    @staticmethod
+    def init_rss():
+        """ Initialize all the RSS feeds. This will load all feed even
+        if they are marked disabled in the configuration file. The enable
+        check is only used later on before trying to process them.
+
+        :return: Instantiated RSS feeds
+        :rtype: []RSSFeed
+        """
         feeds = [RSSFeed(feed_section) for feed_section in config.find_sections("rss_")]
         return feeds
 
-    def init_services(self):
+    @staticmethod
+    def init_services():
+        """ Initialize and return the API based services.
+
+        :return: Configured services API's
+        :rtype: []TorrentProvider
+        """
         services = []
         service_list = [section for section in config.find_sections("service_") if
                         config.getboolean(section, "enabled")]
@@ -55,10 +69,27 @@ class ServiceManager(object):
         return services
 
     def update(self, sleep_time=1):
+        """ This is the primary process loop used to process TorrentProvider
+        classes. It is run independently from the web service inside its own
+        thread
+
+        :type sleep_time: int
+        :param sleep_time: Number of seconds to sleep between executing providers
+        """
         self.update_providers()
         sleep(sleep_time)
 
     def add(self, torrent, service, dl_path=None):
+        """ Handles adding a new torrent to the system. This should be considered the
+        main entry point of doing this to make sure things are consistent, this cannot
+        be guaranteed otherwise
+
+        :param torrent: Torrent data named tuple containing relevant values
+        :type torrent: TorrentData
+        :param service: The TorrentProvider instanced used to get the torrent
+        :type service: TorrentProvider
+        :param dl_path: Optional download path to use for the torrent
+        """
         try:
             if not dl_path:
                 dl_path = config.get_download_path(torrent.section, torrent.release_name)
