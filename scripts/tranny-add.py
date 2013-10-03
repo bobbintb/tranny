@@ -8,7 +8,7 @@ Basic CLI script to manually upload a torrent to the configured backend client
 """
 from __future__ import unicode_literals
 from os.path import dirname
-from sys import argv, path
+from sys import argv, path, exit
 
 path.append(dirname(dirname(__file__)))
 
@@ -32,12 +32,15 @@ try:
         raise ConfigError("! Failed to locate all files, bailing")
 except (ConfigError, Exception) as err:
     print(err)
+    exit(1)
 else:
     for raw_torrent in torrent_data:
         torrent_struct = Torrent.from_str(raw_torrent)
-        print("-> {} @ {}".format(torrent_struct['info']['name'], torrent_struct.size(human=True)))
+        print("-> {} @ {}".format(torrent_struct['info']['name'].decode('utf8'), torrent_struct.size(human=True)))
         if client.add(raw_torrent):
             print("--> Upload successful")
+            exit(0)
         else:
             print("--> Upload failed")
+            exit(1)
 
