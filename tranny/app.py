@@ -3,7 +3,7 @@
 Main application entry point. Defines several global vars which are used throughout the
 application.
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import httplib
 import os
 from functools import partial

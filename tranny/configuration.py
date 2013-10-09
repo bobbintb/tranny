@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
 from sys import version_info
 
-from .exceptions import ConfigError
-from .app import logger
+from tranny.exceptions import ConfigError
+from tranny.app import logger
 
 try:
     # noinspection PyUnresolvedReferences

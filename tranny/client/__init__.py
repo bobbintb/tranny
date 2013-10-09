@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from ..app import config
-from ..exceptions import ConfigError
+from __future__ import unicode_literals, absolute_import
+from tranny.app import config
+from tranny.exceptions import ConfigError
 
 
 class ClientProvider(object):
