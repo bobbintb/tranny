@@ -5,13 +5,14 @@ application.
 """
 from __future__ import unicode_literals, absolute_import
 import httplib
+from os.path import dirname, join
 import os
 from functools import partial
 from json import dumps
-from flask import Flask, g, request, redirect, url_for, current_app
-from flask.ext.babel import Babel
+from flask import Flask, g, request, redirect, url_for, current_app, session
+#from flask.ext.babel import Babel
 from flask.ext.login import current_user, confirm_login
-from flask.ext.uploads import configure_uploads, UploadSet, patch_request_class
+from flask.ext.uploads import configure_uploads, patch_request_class
 
 
 def _log(msg, level="info"):
@@ -36,18 +37,15 @@ class _logger(object):
 logger = _logger()
 
 # Setup global configuration
-from .configuration import Configuration
-config = Configuration()
+from tranny import configuration
+config = configuration.Configuration()
 
-torrent_file_set = UploadSet('torrent', extensions=['torrent'])
+from tranny.models import User
+from tranny.util import file_size
+from tranny import ui, forms
+from tranny.extensions import db, mail, cache, login_manager
 
-from .models import User
-from .manager import ServiceManager
-from .util import file_size
-from .ui import render_template
-from .extensions import db, mail, cache, login_manager
-
-service_manager = ServiceManager()
+service_manager = None
 
 __all__ = ['create_app']
 
@@ -78,6 +76,9 @@ def configure_services(app):
     :param app: Application instance
     :type app: Flask
     """
+    global service_manager
+    from tranny.manager import ServiceManager
+    service_manager = ServiceManager()
     service_manager.init()
     service_manager.start()
 
@@ -94,6 +95,18 @@ def configure_app(app):
     @app.route("/")
     def index():
         return redirect(url_for("home.index"))
+
+    @app.context_processor
+    def inject_global_tpl_vars():
+        kwargs = dict()
+        try:
+            kwargs['messages'] = session['messages']
+            del session['messages']
+        except KeyError:
+            pass
+        # Upload form is included in all pages.
+
+        kwargs['upload_form'] = forms.UploadForm.make()
 
 
 def configure_extensions(app):
@@ -113,16 +126,17 @@ def configure_extensions(app):
     cache.init_app(app)
 
     # flask-uploads
+    from tranny.forms import torrent_file_set
     configure_uploads(app, [torrent_file_set])
     patch_request_class(app)
 
     # flask-babel
-    babel = Babel(app)
+    #babel = Babel(app)
 
-    @babel.localeselector
-    def get_locale():
-        accept_languages = app.config.get('ACCEPT_LANGUAGES')
-        return request.accept_languages.best_match(accept_languages)
+    #@babel.localeselector
+    #def get_locale():
+    #    accept_languages = app.config.get('ACCEPT_LANGUAGES')
+    #R    return request.accept_languages.best_match(accept_languages)
 
     # flask-login
     login_manager.login_view = 'user.login'
@@ -242,15 +256,15 @@ def configure_error_handlers(app):
 
     @app.errorhandler(403)
     def forbidden_page(error):
-        return render_template("errors/forbidden_page.html", error=error), httplib.FORBIDDEN
+        return ui.render_template("errors/forbidden_page.html", error=error), httplib.FORBIDDEN
 
     @app.errorhandler(404)
     def page_not_found(error):
-        return render_template("errors/page_not_found.html", error=error), httplib.NOT_FOUND
+        return ui.render_template("errors/page_not_found.html", error=error), httplib.NOT_FOUND
 
     @app.errorhandler(500)
     def server_error_page(error):
-        return render_template("errors/server_error.html", error=error), httplib.INTERNAL_SERVER_ERROR
+        return ui.render_template("errors/server_error.html", error=error), httplib.INTERNAL_SERVER_ERROR
 
 
 def response(status=0, msg=None):

@@ -1,4 +1,8 @@
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+"""
+Application managements script
+"""
 from __future__ import unicode_literals
 from flask.ext.script import Manager
 

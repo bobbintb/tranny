@@ -3,13 +3,11 @@
 
 """
 from __future__ import unicode_literals, absolute_import, with_statement
-from base64 import b64encode
-from ..app import config, logger
-from ..client import ClientProvider
+from tranny import app, client
 
 
-class DelugeRPCClient(ClientProvider):
-    _config_key = "transmission"
+class DelugeJSONRPCClient(client.ClientProvider):
+    _config_key = "deluge-jsonrpc"
 
     def __init__(self, host=None, port=None, user=None, password=None):
         pass

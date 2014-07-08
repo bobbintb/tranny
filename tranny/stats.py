@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Functions used to retrieve statistics from historical data.
+"""
 from __future__ import unicode_literals
 from collections import Counter
-from .app import config
-from . import datastore
+from tranny import app, datastore
 
 
 class PieChart(Counter):
@@ -34,8 +36,8 @@ def service_type_totals(records):
     :return:
     :rtype:
     """
-    rss_feeds = [name.split("_")[1] for name in config.find_sections("rss_")]
-    services = [name.split("_")[1] for name in config.find_sections("service_")]
+    rss_feeds = [name.split("_")[1] for name in app.config.find_sections("rss_")]
+    services = [name.split("_")[1] for name in app.config.find_sections("service_")]
     counter = PieChart()
     for record in records:
         # TODO fix with joined value

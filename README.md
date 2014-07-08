@@ -13,20 +13,13 @@ any duplicates.
 
 ## Features Status
 
-    Key | Meaning
-    ----+---------------------------
-     x  | Feature Completed
-     ~  | Feature In-Progress
-     u  | Untested but may work
-     _  | Planned
-
 **Torrent clients**
 
 - [x] [rTorrent](https://github.com/rakshasa/rtorrent)
 - [x] [Transmission](http://www.transmissionbt.com/)
-- [~] [deluge](http://deluge-torrent.org/)
-- [~] [uTorrent](http://www.utorrent.com/)
-- [_] [qBittorent](http://www.qbittorrent.org/)
+- [ ] [deluge](http://deluge-torrent.org/)
+- [ ] [uTorrent](http://www.utorrent.com/)
+- [ ] [qBittorent](http://www.qbittorrent.org/)
 
 
 **Auto Sorting & Downloading**
@@ -39,45 +32,45 @@ download path automatically. eg. Show.Name.S01E12.720p.HDTV.x264-FiHTV -> /downl
 matches.
 - [x] Support for handling "Proper" releases
 - [x] Global ignore patterns
-- [x] Persistent download history
-- [~] Handle daily broadcast shows properly
-- [_] Custom regex matching
-- [_] Filter to only accept private torrents
-- [~] Skip releases that don't have a minimum [iMDB](http://imdb.com) score
-- [~] Skip releases that don't have a minimum [The Movie DB](http://themoviedb.org) score
-- [_] Skip releases which are older than N pre time.
-- [_] Skip releases which are not available under predb (Usually P2P)
-- [_] Check for disk space available and set a minimum disk space buffer to provide
+- [ ] Persistent download history
+- [ ] Handle daily broadcast shows properly
+- [ ] Custom regex matching
+- [ ] Filter to only accept private torrents
+- [ ] Skip releases that don't have a minimum [iMDB](http://imdb.com) score
+- [ ] Skip releases that don't have a minimum [The Movie DB](http://themoviedb.org) score
+- [ ] Skip releases which are older than N pre time.
+- [ ] Skip releases which are not available under predb (Usually P2P)
+- [ ] Check for disk space available and set a minimum disk space buffer to provide
 
 **Notifications**
-- [_] IRC
-- [_] XMPP/Jabber
-- [_] Email
-- [_] SMS
+- [ ] IRC
+- [ ] XMPP/Jabber
+- [ ] Email
+- [ ] SMS
 
 **Service Providers**
 
 - [x] Watch folders (Unlimited number of watch folders which can individually be configured with their own section)
 - [x] RSS Feeds (Parsing any number of feeds supported. Independent settings such as different intervals per feed.)
-- [_] RSS Feed HTTP Auth
+- [ ] RSS Feed HTTP Auth
 - [x] BTN API ([JSON-RPC API](http://btnapps.net/docs.php))
-- [_] Internal IRC client
-- [_] [weechat](http://www.weechat.org/)
-- [_] [irssi](http://www.irssi.org/)
-- [_] [mIRC](http://www.mirc.com/)
-- [_] IRC PreDB scraper support
+- [ ] Internal IRC client
+- [ ] [weechat](http://www.weechat.org/)
+- [ ] [irssi](http://www.irssi.org/)
+- [ ] [mIRC](http://www.mirc.com/)
+- [ ] IRC PreDB scraper support
 
 **OS Support**
 
 - [x] Linux (Tested only on linux currently)
-- [u] Windows (may work with some features not available)
-- [u] OSX (may work with some features not available)
+- [ ] Windows (may work with some features not available)
+- [ ] OSX (may work with some features not available)
 
 **RDBMS datastore backend**
 
 - [x] [SQLite](http://www.sqlite.org/) Default, built-in to python generally by default.
 - [x] [postgres](http://www.postgresql.org/)
-- [u] Most (all?) other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
+- [ ] Most (all?) other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
 should work, notably [MySQL](http://www.mysql.com/), but are untested.
 
 
@@ -90,15 +83,15 @@ trannys feature set without much overlap.
 
 - [x] Web based configuration of most things (Filters / System settings)
 - [x] Simple graphs for sources / media types
-- [_] Loaded torrent list view with basic info
-- [_] Torrent detail view (peers/trackers/etc)
-- [_] Start/Stop/Pause torrents
-- [_] Set priorities of individual torrents
+- [ ] Loaded torrent list view with basic info
+- [ ] Torrent detail view (peers/trackers/etc)
+- [ ] Start/Stop/Pause torrents
+- [ ] Set priorities of individual torrents
 - [x] Responsive design for mobile support
 
 **Other**
 
-- [~] Python 3 support. Tranny itself should be python3 compatible, but some libraries are not.
+- [ ] Python 3 support. Tranny itself should be python3 compatible, but some libraries are not.
 
 
 ## Setup

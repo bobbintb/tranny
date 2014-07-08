@@ -54,11 +54,11 @@ def init_client(client_type=None):
     if not client_type:
         client_type = config.get_default("general", "client", "transmission").lower()
     if client_type == "rtorrent":
-        from .rtorrent import RTorrentClient as TorrentClient
+        from tranny.client.rtorrent import RTorrentClient as TorrentClient
     elif client_type == "transmission":
-        from .transmission import TransmissionClient as TorrentClient
+        from tranny.client.transmission import TransmissionClient as TorrentClient
     elif client_type == "utorrent":
-        from .utorrent import UTorrentClient as TorrentClient
+        from tranny.client.utorrent import UTorrentClient as TorrentClient
     else:
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
     return TorrentClient()

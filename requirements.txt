@@ -1,4 +1,3 @@
-transmissionrpc
 feedparser
 requests
 watchdog
@@ -17,5 +16,7 @@ flask-cache
 flask-babel
 flask-uploads
 flask-wtf
--e git+git://github.com/seatgeek/fuzzywuzzy.git#egg=fuzzywuzzy
--e git+git://github.com/alberanid/imdbpy.git#egg=imdbpy
+#-e git+git://github.com/seatgeek/fuzzywuzzy.git#egg=fuzzywuzzy
+#-e git+git://github.com/alberanid/imdbpy.git#egg=imdbpy
+imdbpy
+fuzzywuzzy

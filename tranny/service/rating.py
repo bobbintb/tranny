@@ -33,14 +33,12 @@ except (ImportError, configparser.Error):
     tmdb, _tmdb_enabled = False, False
 
 
-
-
 def score(title, min_votes=0, precision=1):
     """ Fetch a average score based on the enabled and installed movie/tv info
     database modules.
 
     :param title: Media title to lookup
-    :type title: str
+    :type title: unicode
     :param min_votes: Minimum number of votes required to allow the score to be used
     :type min_votes: int
     :param precision: set the score precision returned
@@ -48,14 +46,14 @@ def score(title, min_votes=0, precision=1):
     :return: Average score across all enabled backend services
     :rtype: float
     """
-    score = []
+    scores = []
     if imdb and _imdb_enabled and config.getboolean("imdb", "enabled"):
-        score.append(_imdb_score(title, min_votes=min_votes))
+        scores.append(_imdb_score(title, min_votes=min_votes))
     if tmdb and _tmdb_enabled and config.getboolean("themoviedb", "enabled"):
-        score.append(_tmdb_score(title, min_votes=min_votes))
-    if not score:
+        scores.append(_tmdb_score(title, min_votes=min_votes))
+    if not scores:
         return 0
-    return round(sum(score) / float(len(score)), precision)
+    return round(sum(scores) / float(len(scores)), precision)
 
 
 def imdb_info(title):
@@ -63,7 +61,7 @@ def imdb_info(title):
     the assumption its accurate
 
     :param title: Name of the show/movie to lookup
-    :type title: str
+    :type title: unicode
     :return: Info about the title
     :rtype: dict
     """
@@ -87,7 +85,7 @@ def _imdb_score(title, min_votes=0):
     is greater than 0 and the vote count is less than that number, 0 will be returned
 
     :param title: Name of the show/movie to lookup
-    :type title: str
+    :type title: unicode
     :param min_votes: Minimum required votes to allow the score to be used
     :type min_votes: int
     :return: IMDB score
@@ -106,7 +104,7 @@ def tmdb_info(title):
     the assumption its accurate
 
     :param title: Media name to lookup
-    :type title: str
+    :type title: unicode
     :return: Info about the title
     :rtype: dict
     """
@@ -123,7 +121,7 @@ def _tmdb_score(title, min_votes=0):
     is greater than 0 and the vote count is less than that number, 0 will be returned
 
     :param title: Name of the show/movie to lookup
-    :type title: str
+    :type title: unicode
     :param min_votes: Minimum required votes to allow the score to be used
     :type min_votes: int
     :return: themoviedb score

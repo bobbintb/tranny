@@ -4,19 +4,14 @@ import socket
 from time import time
 from jsonrpclib import Server
 from jsonrpclib.jsonrpc import ProtocolError
-
-from ..app import config, logger
-from ..parser import match_release
-from ..provider import TorrentProvider
-from ..release import TorrentData
-from ..datastore import generate_release_key
+from tranny import app, parser, provider, datastore, release
 
 _errors = {
     -32002: "Call limit exceeded"
 }
 
 
-class BroadcastTheNet(TorrentProvider):
+class BroadcastTheNet(provider.TorrentProvider):
     def __init__(self, config, config_section="service_broadcastthenet"):
         super(BroadcastTheNet, self).__init__(config_section)
         self._api_token = config.get(self._config_section, "api_token")
@@ -42,11 +37,11 @@ class BroadcastTheNet(TorrentProvider):
         except ProtocolError as err:
             self._handle_error(err)
         except socket.timeout:
-            logger.warn("Timeout accessing BTN API")
+            app.logger.warn("Timeout accessing BTN API")
         except socket.error as err:
-            logger.error("There was a socket error trying to call BTN API")
+            app.logger.error("There was a socket error trying to call BTN API")
         except Exception as err:
-            logger.exception("Unknown BTN API call error occurred")
+            app.logger.exception("Unknown BTN API call error occurred")
         else:
             result = response
         finally:
@@ -64,13 +59,13 @@ class BroadcastTheNet(TorrentProvider):
             msg = _errors[err.message[0]]
         except KeyError:
             msg = ""
-        logger.error("JSON-RPC Protocol error calling BTN API: {0}".format(msg))
+        app.logger.error("JSON-RPC Protocol error calling BTN API: {0}".format(msg))
         if err.message[0] == -32002:
             self.last_update = int(time()) + 300
-            logger.info("Pausing for API cool down")
+            app.logger.info("Pausing for API cool down")
 
     def user_info(self):
-        return self.__call__("userInfo")
+        return self.__call__(b"userInfo")
 
     def get_torrents_browse(self, results=100):
         """
@@ -96,23 +91,23 @@ class BroadcastTheNet(TorrentProvider):
         try:
             releases = self.get_torrents_browse(20)['torrents'].values()
         except (TypeError, KeyError) as err:
-            logger.debug("Failed to fetch releases")
+            app.logger.debug("Failed to fetch releases")
         else:
             if scene_only:
                 releases = [rls for rls in releases if rls['Origin'] == "Scene"]
             for entry in releases:
                 release_name = entry['ReleaseName']
-                release_key = generate_release_key(release_name)
+                release_key = datastore.generate_release_key(release_name)
                 if not release_key:
                     continue
-                section = match_release(release_name)
+                section = parser.match_release(release_name)
                 if not section:
                     continue
                 if self.exists(release_key):
-                    if config.get_default("general", "fetch_proper", True, bool):
+                    if app.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
-                            # Skip releases unless they are considered proper's
-                            logger.debug(
+                            # Skip releases unless they are considered propers
+                            app.logger.debug(
                                 "Skipped previously downloaded release ({0}): {1}".format(
                                     release_key,
                                     release_name
@@ -122,6 +117,6 @@ class BroadcastTheNet(TorrentProvider):
                 dl_url = self.get_torrent_url(entry['TorrentID'])
                 torrent_data = self._download_url(dl_url)
                 if not torrent_data:
-                    logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                    app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue
-                yield TorrentData(str(release_name), torrent_data, section)
+                return release.TorrentData(str(release_name), torrent_data, section)

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Functions used to download data over HTTP connections
+"""
 from __future__ import unicode_literals
 from os.path import join
 from requests import get, RequestException
-
-from .exceptions import InvalidResponse
-from .app import config, logger
+from tranny import app, exceptions
 
 
 def download(release_name, url, dest_path="./", extension=".torrent"):
@@ -21,7 +22,7 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     :return:
     :rtype:
     """
-    logger.debug("Downloading release [{0}]: {1}".format(release_name, url))
+    app.logger.info("Downloading release [{0}]: {1}".format(release_name, url))
     file_path = join(dest_path, release_name) + extension
     dl_ok = False
     response = fetch_url(url)
@@ -42,19 +43,16 @@ def fetch_url(url, auth=None, json=True):
     """
     response = None
     try:
-        logger.debug("Fetching url: {0}".format(url))
-
-        proxies = config.get_proxies()
-        response = get(url, auth=auth, proxies=proxies)
+        app.logger.debug("Fetching url: {0}".format(url))
+        response = get(url, auth=auth, proxies=app.config.get_proxies())
         response.raise_for_status()
         if not response.content:
-            raise InvalidResponse("Empty response body")
-    except (RequestException, InvalidResponse) as err:
-        logger.exception(err.message)
+            raise exceptions.InvalidResponse("Empty response body")
+    except (RequestException, exceptions.InvalidResponse) as err:
+        app.logger.exception(err.message)
     else:
         response = response.content
         if json:
             response = response.json()
-
     finally:
         return response

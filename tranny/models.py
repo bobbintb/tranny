@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
-from .extensions import db
-from .constants import ROLE_USER
+from tranny.extensions import db
+from tranny.constants import ROLE_USER
 
 
 class User(db.Model):

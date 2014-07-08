@@ -1,0 +1,3 @@
+[submodule "tranny/geventdeluge"]
+	path = tranny/geventdeluge
+	url = https://github.com/chrippa/gevent-deluge.git

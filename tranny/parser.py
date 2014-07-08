@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
+"""
+File name parser/tokenizer functions
+"""
 from __future__ import unicode_literals
 from ConfigParser import NoSectionError, NoOptionError
 from re import compile, I, match
 from datetime import date
-from .app import config, logger
-from .util import contains
-from .service import rating
+from tranny import app
+from tranny.service import rating
 
 
 pattern_info = [
     compile(r"\b(?P<year>(19|20)\d{2}).(?P<month>\d{1,2}).(?P<day>\d{1,2})", I),
-    compile(r"\bS?(?P<season>\d+)[xe](?P<episode>\d+)\b", I)
+    compile(r"\bS?(?P<season>\d+)[xe](?P<episode>\d+)\b", I),
+    compile(r"\b(?P<year>(19|20)\d{2}).", I)
 ]
 
 pattern_release = [
@@ -28,8 +31,7 @@ pattern_season = [
 
 
 def normalize(name):
-    normalized = '.'.join(clean_split(name))
-    return str(normalized)
+    return str('.'.join(clean_split(name)))
 
 
 def clean_split(string):
@@ -41,12 +43,10 @@ def valid_year(release_name, none_is_cur_year=True, section_name="section_movies
 
     :param none_is_cur_year: If no year is found, assume current year
     :type none_is_cur_year: bool
-    :param config:
-    :type config: tranny.configuration.Configuration
     :param release_name:
-    :type release_name:
+    :type release_name: unicode
     :param section_name:
-    :type section_name:
+    :type section_name: unicode
     :return:
     :rtype:
     """
@@ -54,17 +54,17 @@ def valid_year(release_name, none_is_cur_year=True, section_name="section_movies
     if not release_year and none_is_cur_year:
         release_year = date.today().year
     elif not release_year:
-        logger.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
+        app.logger.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
         return False
     try:
-        year_min = config.get_default(section_name, "year_min", 0, int)
+        year_min = app.config.get_default(section_name, "year_min", 0, int)
     except (NoOptionError, NoSectionError, ValueError):
         year_min = 0
     if year_min and release_year < year_min:
         # Too old
         return False
     try:
-        year_max = config.get_default(section_name, "year_max", 0, int)
+        year_max = app.config.get_default(section_name, "year_max", 0, int)
     except (NoOptionError, NoSectionError, ValueError):
         year_max = 0
 
@@ -75,19 +75,28 @@ def valid_year(release_name, none_is_cur_year=True, section_name="section_movies
 
 
 def valid_score(release_name, section_name="section_movies"):
+    """
+
+    :type release_name: unicode
+    :type section_name: unicode
+    :return:
+    :rtype: bool, None
+    """
     release_name = parse_release(release_name)
+    if not release_name:
+        return None
     try:
-        score_min = config.get_default(section_name, "score_min", 0, int)
+        score_min = app.config.get_default(section_name, "score_min", 0, int)
     except (NoOptionError, NoSectionError, ValueError):
         score_min = 0
     try:
-        score_max = config.get_default(section_name, "score_max", 0, int)
+        score_max = app.config.get_default(section_name, "score_max", 0, int)
     except (NoOptionError, NoSectionError, ValueError):
         score_max = 0
     if not (score_min and score_max and release_name):
         return False
     try:
-        score_votes = config.get_default(section_name, "score_votes", 0, int)
+        score_votes = app.config.get_default(section_name, "score_votes", 0, int)
     except (NoOptionError, NoSectionError, ValueError):
         score_votes = 0
     if release_name:
@@ -133,17 +142,17 @@ def is_movie(release_name, strict=True):
         info = rating.tmdb_info(orig_title.replace(".", " "))
         if info:
             return True
-    logger.warning("Skipped release due to inability to determine type: {0}".format(release_name))
+    app.logger.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
 
 
 def valid_movie(release_name, section_name="section_movies"):
     """
 
-    :param config:
-    :type config: tranny.configuration.Configuration
     :param release_name:
-    :type release_name:
+    :type release_name: unicode
+    :param section_name:
+    :type section_name: unicode
     :return:
     :rtype:
     """
@@ -157,16 +166,25 @@ def valid_movie(release_name, section_name="section_movies"):
 
 
 def valid_tv(release_name, section_name="section_tv"):
+    """
+
+    :param release_name:
+    :type release_name: unicode
+    :param section_name:
+    :type section_name: unicode
+    :return:
+    :rtype:
+    """
     quality = find_quality(release_name)
     for key_type in [quality, "any"]:
         key = "quality_{0}".format(key_type)
-        if not config.has_option(section_name, key):
+        if not app.config.has_option(section_name, key):
             # Ignore undefined sections
             continue
-        patterns = config.build_regex_fetch_list(section_name, key)
+        patterns = app.config.build_regex_fetch_list(section_name, key)
         for pattern in patterns:
             if match(pattern, release_name, I):
-                section_name = config.get_unique_section_name(section_name)
+                section_name = app.config.get_unique_section_name(section_name)
                 return section_name
     return False
 
@@ -175,15 +193,15 @@ def find_config_section(release_name, prefix="section_"):
     """ Attempt to find the configuration section the release provided matches with.
 
     :param release_name:
-    :type release_name: str
+    :type release_name: unicode
     :param prefix:
-    :type prefix: str
+    :type prefix: unicode
     :return:
     :rtype: str, bool
     """
     if is_ignored(release_name):
         return False
-    sections = config.find_sections(prefix)
+    sections = app.config.find_sections(prefix)
     for section in sections:
         if section.lower() == "section_movies":
             if valid_movie(release_name):
@@ -197,29 +215,31 @@ def find_config_section(release_name, prefix="section_"):
 def is_ignored(release_name, section_name="ignore"):
     """ Check if the release should be ignored no matter what other conditions are matched
 
+    :param section_name:
+    :type section_name: unicode
     :param release_name: Release name to match against
-    :type release_name: str
+    :type release_name: unicode
     :return: Ignored status
     :rtype: bool
     """
     release_name = release_name.lower()
     if any((pattern.search(release_name) for pattern in pattern_season)):
         return True
-    for key in config.options(section_name):
+    for key in app.config.options(section_name):
         try:
-            value = config.get(section_name, key)
+            value = app.config.get(section_name, key)
         except (NoSectionError, NoOptionError):
             continue
         if key.startswith("string"):
             if value.lower() in release_name:
-                logger.debug("Matched string ignore pattern {0} {1}".format(key, release_name))
+                app.logger.debug("Matched string ignore pattern {0} {1}".format(key, release_name))
                 return True
         elif key.startswith("rx"):
             if match(value, release_name, I):
-                logger.debug("Matched regex ignore pattern {0} {1}".format(key, release_name))
+                app.logger.debug("Matched regex ignore pattern {0} {1}".format(key, release_name))
                 return True
         else:
-            logger.warning("Invalid ignore configuration key found: {0}".format(key))
+            app.logger.warning("Invalid ignore configuration key found: {0}".format(key))
     return False
 
 
@@ -244,6 +264,12 @@ def _is_sd(release_name):
 
 
 def find_quality(release_name):
+    """
+    :param release_name: Release name to parse
+    :type release_name: unicode
+    :return:
+    :rtype: unicode
+    """
     if _is_hd(release_name):
         return "hd"
     else:
@@ -251,6 +277,13 @@ def find_quality(release_name):
 
 
 def find_year(release_name):
+    """ Parse a year value from a string and return it
+
+    :param release_name: Release name to parse
+    :type release_name: unicode
+    :return: Parsed year
+    :rtype: int, bool
+    """
     for pattern in pattern_date:
         p_match = pattern.search(release_name, I)
         if not p_match:
@@ -267,7 +300,7 @@ def parse_release_info(release_name):
     """ Parse release info out of the release name.
 
     :param release_name:
-    :type release_name:
+    :type release_name: unicode
     :return:
     :rtype:
     """
@@ -277,17 +310,22 @@ def parse_release_info(release_name):
             continue
         values = p_match.groupdict()
         info = {}
-        if contains(values, ["year", "month", "day"]):
+        value_set = set(values.keys())
+        if value_set == {"year", "month", "day"}:
+            # Daily broadcast
             info = {
                 'year': values['year'],
                 'month': values['month'].zfill(2),
                 'day': values['day'].zfill(2)
             }
-        elif contains(values, ["season", "episode"]):
+        elif value_set == {"season", "episode"}:
+            # Season broadcast
             info = {
                 'season': int(values['season']),
                 'episode': int(values['episode'])
             }
+        elif value_set == {"year"}:
+            info = {'year': int(values['year'])}
         return info
     return False
 
@@ -298,7 +336,7 @@ def parse_release(release_name):
     :param release_name: A full release string Conan.2013.04.15.Chelsea.Handler.HDTV.x264-2HD
     :type release_name: str, unicode
     :return: Normalized release name found or False on no match
-    :rtype: str, bool
+    :rtype: unicode, bool
     """
     for pattern in pattern_release:
         p_match = pattern.search(release_name)
@@ -310,14 +348,12 @@ def parse_release(release_name):
 def match_release(release_name):
     """ Match a release to a section. Return the section found.
 
-    :param config: App configuration instance
-    :type config: tranny.configuration.Configuration
     :param release_name:
     :type release_name:
     :return: Matched release section
     :rtype: str, bool
     """
-    logger.debug("Finding Match: {0}".format(release_name))
+    app.logger.debug("Finding Match: {0}".format(release_name))
     section = find_config_section(release_name)
     if section == "movies":
         pass

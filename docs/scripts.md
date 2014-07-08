@@ -24,7 +24,7 @@ configured torrent client. The client it uses is determined by the `tranny.ini`
 client value. The script will accept 1 or more paths to torrent files, an example of
 loading 2 files is below.
 
-    ./tranny-add.py The.Torent.Name.2012.S01E01.HDTV.x264-GRP The.Other.Name.2012.x264-GRP
+    ./tranny-add.py The.Torent.Name.2012.S01E01.HDTV.x264-GRP.torrent The.Other.Name.2012.x264-GRP.torrent
     > Connected to rTorrent 0.9.3/0.13.3
     -> The.Torent.Name.2012.S01E01.HDTV.x264-GRP @ 376.2MB
     --> Upload successful

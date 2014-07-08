@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import re
-import httplib
+try:
+    import http.client as httplib
+except ImportError:
+    import httplib
 from collections import namedtuple
 from logging import getLogger
 from requests import Session
 from requests.auth import HTTPBasicAuth
-from ..exceptions import TrannyException
-from ..client import ClientProvider
+from tranny import app, exceptions, client
 
 
-class uTorrentException(TrannyException):
+class uTorrentException(exceptions.TrannyException):
     pass
 
 
@@ -26,20 +28,22 @@ class url_args(dict):
 UTSetting = namedtuple("UTSetting", ["name", "int", "str", "access"])
 
 
-class UTorrentClient(ClientProvider):
+class UTorrentClient(client.ClientProvider):
     """
-    A basic uTorrent WebUI API client
+    A basic uTorrent WebUI API client.
+
+    Warning: this client is the most fragile of the bunch due to a lack of a proper
+    API to use. Its recommended if possible to use one of the other clients instead
+    due to these design issues.
     """
     version = None
     _config_key = "utorrent"
     _url_prefix = "/gui"
     _token = False
 
-    def __init__(self, config, host=None, port=None, user=None, password=None):
+    def __init__(self, host=None, port=None, user=None, password=None):
         """ Setup the connection parameters and verify connection
 
-        :param config: Tranny configuration
-        :type config: tranny.configuration.Configuration
         :param host: uTorrent webui host
         :type host: str
         :param port: webui port
@@ -51,19 +55,19 @@ class UTorrentClient(ClientProvider):
         """
         self.log = getLogger("rpc.utorrent")
         if not host:
-            host = config.get_default(self._config_key, "host", "localhost")
+            host = app.config.get_default(self._config_key, "host", "localhost")
         self.host = host
         if not port:
-            port = config.getint(self._config_key, "port")
+            port = app.config.getint(self._config_key, "port")
         self.port = port
         if not user:
-            user = config.get_default(self._config_key, "user", None)
+            user = app.config.get_default(self._config_key, "user", None)
         self.user = user
         if not password:
-            password = config.get_default(self._config_key, "password", None)
+            password = app.config.get_default(self._config_key, "password", None)
         self.password = password
         self._session = Session()
-        self.config = config
+        self.config = app.config
         self._token = None
         version = self.get_version()
         self.log.info("Connected to uTorrent build {0}".format(version))

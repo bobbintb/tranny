@@ -20,7 +20,7 @@ probably run on python3 as well. The libraries below are all required. The pip i
 
 ## Setup
 
-Its recommeneded to use a virtualenv to install if possible. Ill outline how to install
+Its recommended to use a virtualenv to install if possible. Ill outline how to install
 using it below.
 
 Checkout the sources
@@ -70,7 +70,7 @@ all the services you want to now. For more info check out the following setup do
 - [RSS Setup](config_rss.md)
 - [BTN API](config_service_btn.md)
 
-Using the editor of your choice, configure any options desired in your new configration.
+Using the editor of your choice, configure any options desired in your new configuration.
 
     $ vim tranny.ini
 
