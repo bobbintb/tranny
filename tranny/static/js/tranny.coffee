@@ -169,6 +169,21 @@ settings_save = (evt) ->
     jQuery.post "/settings/save", settings, handle_response
 
 
+speed_up = document.getElementById("speed_up")
+speed_dn = document.getElementById("speed_dn")
+
+speed_update = ->
+    jQuery.getJSON("/stats/speed_overall").done((data) ->
+        speed_up.innterHTML = data[0]
+        speed_dn.innerHTML = data[1]
+        console.log "updating"
+    )
+    delay 1000, speed_update
+
+
+delay = (ms, func) -> setTimeout func, ms
+
+
 jQuery ->
     if window.location.pathname.indexOf("home") != -1
         render_service_totals()
@@ -186,3 +201,5 @@ jQuery ->
         jQuery(".feed_delete").on "click", feed_delete
 
     jQuery(document).foundation()
+
+    delay 1000, speed_update

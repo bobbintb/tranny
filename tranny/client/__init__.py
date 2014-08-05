@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+from collections import namedtuple
 from tranny.app import config
 from tranny.exceptions import ConfigError
+
+client_speed = namedtuple('client_speed', ['up', 'dn'])
 
 
 class ClientProvider(object):
@@ -40,6 +43,14 @@ class ClientProvider(object):
 
     def __str__(self):
         return self.client_version()
+
+    def current_speeds(self):
+        """ Fetch a tuple of the current upload and download speeds in the client
+
+        :return: Upload and download speed in kbps
+        :rtype: tuple
+        """
+        return client_speed(0.0, 0.0)
 
 
 def init_client(client_type=None):

@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 from json import dumps
 from flask import request, Blueprint
 from flask.ext.login import login_required
-from ..app import config
-from ..ui import render_template
+from tranny.app import config
+from tranny import ui
 
 settings = Blueprint("settings", __name__, url_prefix="/settings")
 
@@ -32,7 +32,7 @@ def index():
     for k, v in settings_set.items():
         for key in [i for i in v.keys() if i in ignore_keys]:
             del settings_set[k][key]
-    return render_template(
+    return ui.render_template(
         "settings.html",
         section="settings",
         settings=settings_set,

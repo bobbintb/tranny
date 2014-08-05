@@ -12,6 +12,10 @@ class RSSFeed(provider.TorrentProvider):
     Provides a RSS service to use as a backend retrieval source
     """
     def __init__(self, config_section):
+        """
+        :param config_section: Configuration section name
+        :type config_section: string
+        """
         super(RSSFeed, self).__init__(config_section)
         self.url = app.config.get(config_section, "url")
         self.interval = app.config.get_default(config_section, "interval", 60, int)
@@ -34,34 +38,38 @@ class RSSFeed(provider.TorrentProvider):
         return [self.parse_entry(f) for f in feed['entries']]
 
     def parse_entry(self, entry):
+        """ Parse RSS entry data for qualified torrents to download
+
+        :param entry: RSS Feed entry data
+        :type entry: dict
+        :return: A parsed release object ready to load into backend client or None on fail
+        :rtype: release.TorrentData, None
+        """
         try:
-            try:
-                release_name = entry['title']
-                if not release_name:
-                    raise ValueError
-            except (KeyError, ValueError):
-                app.logger.warning("No title parsed from RSS feed. Malformed?")
-                return False
-            release_key = datastore.generate_release_key(release_name)
-            if not release_key:
-                return None
-            if self.exists(release_key):
-                if app.config.get_default("general", "fetch_proper", True, bool):
-                    if not ".proper." in release_name.lower():
-                        # Skip releases unless they are considered proper's
-                        app.logger.debug(
-                            "Skipped previously downloaded release ({0}): {1}".format(
-                                release_key,
-                                release_name
-                            )
+            release_name = entry['title']
+            if not release_name:
+                raise ValueError
+        except (KeyError, ValueError):
+            app.logger.warning("No title parsed from RSS feed. Malformed?")
+            return None
+        release_key = datastore.generate_release_key(release_name)
+        if not release_key:
+            return None
+        if self.exists(release_key):
+            if app.config.get_default("general", "fetch_proper", True, bool):
+                if not ".proper." in release_name.lower():
+                    # Skip releases unless they are considered proper's
+                    app.logger.debug(
+                        "Skipped previously downloaded release ({0}): {1}".format(
+                            release_key,
+                            release_name
                         )
-                        return False
-            section = parser.match_release(release_name)
-            if section:
-                torrent_data = self._download_url(entry['link'])
-                if not torrent_data:
-                    app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
-                    return False
-                return release.TorrentData(str(release_name), torrent_data, section)
-        except Exception as err:
-            app.logger.exception("Failed to parse RSS entry")
+                    )
+                    return None
+        section = parser.match_release(release_name)
+        if section:
+            torrent_data = self._download_url(entry['link'])
+            if not torrent_data:
+                app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                return None
+            return release.TorrentData(str(release_name), torrent_data, section)

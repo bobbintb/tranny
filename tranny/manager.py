@@ -15,12 +15,12 @@ class ServiceManager(object):
     """
     def __init__(self):
 
-        self._feeds = []
-        self._services = []
-        self._client = None
+        self.feeds = []
+        self.services = []
+        self.client = None
         self._updater = Thread(target=self.update)
         self._updater.daemon = True
-        self._watch = None
+        self.watch = None
 
     def reload(self):
         pass
@@ -32,10 +32,10 @@ class ServiceManager(object):
             pass
         else:
             tmdb.configure(tmdb_api_key)
-        self._feeds = self.init_rss()
-        self._services = self.init_services()
-        self._client = client.init_client()
-        self._watch = watch.FileWatchService(self)
+        self.feeds = self.init_rss()
+        self.services = self.init_services()
+        self.client = client.init_client()
+        self.watch = watch.FileWatchService(self)
 
     @staticmethod
     def init_rss():
@@ -90,7 +90,7 @@ class ServiceManager(object):
         try:
             if not dl_path:
                 dl_path = app.config.get_download_path(torrent.section, torrent.release_name)
-            res = self._client.add(torrent.torrent_data, download_dir=dl_path)
+            res = self.client.add(torrent.torrent_data, download_dir=dl_path)
             if res:
                 app.logger.info("Added release: {0}".format(torrent.release_name))
                 release_key = datastore.generate_release_key(torrent.release_name)
@@ -108,7 +108,7 @@ class ServiceManager(object):
 
     def update_providers(self):
         """ Update the provided services """
-        for service in self._feeds + self._services:
+        for service in self.feeds + self.services:
             for torrent in service.find_matches():
                 self.add(torrent, service)
 

@@ -1,10 +1,7 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, request, flash, url_for, redirect
 
-from ..exceptions import TrannyException
-from ..torrent import Torrent
-from ..release import TorrentData
-from ..forms import UploadForm
-from ..app import service_manager
+from tranny import exceptions, app, torrent, release, forms
 
 upload = Blueprint("upload", __name__, url_prefix='/upload')
 
@@ -15,18 +12,18 @@ class HTTPUpload(object):
 
 @upload.route("/", methods=['POST'])
 def handler():
-    form = UploadForm.make()
+    form = forms.UploadForm.make()
     if form.validate_on_submit():
         file_data = request.files['torrent_file'].stream.read()
         try:
-            torrent_struct = Torrent.from_str(file_data)
+            torrent_struct = torrent.Torrent.from_str(file_data)
 
-            tor_data = TorrentData(torrent_struct.name, file_data, form.section.data)
-            if service_manager.add(tor_data, HTTPUpload()):
+            tor_data = release.TorrentData(torrent_struct.name, file_data, form.section.data)
+            if app.service_manager.add(tor_data, HTTPUpload()):
                 flash("Torrent {} uploaded successfully".format(torrent_struct.name), "success")
             else:
                 flash("Failed to upload torrent", "alert")
-        except TrannyException as err:
+        except exceptions.TrannyException as err:
             flash(err.message, "alert")
     elif form.errors:
         for field, error in form.errors.items():

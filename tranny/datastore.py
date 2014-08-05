@@ -61,7 +61,7 @@ def get_source(source_name=None, source_id=None):
             source = models.Source.query.filter_by(source_name=source_name).first()
             cache_source[source_name] = source
     elif source_id:
-        for source in cache_source.itervalues():
+        for source in cache_source.values():
             if source.source_id == source_id:
                 break
         else:

@@ -39,13 +39,14 @@ class Configuration(ConfigParser):
 
     def __init__(self):
         ConfigParser.__init__(self)
-        config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
+
+        self.config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
         try:
-            loaded = self.read([config_file])
+            loaded = self.read([self.config_file])
             if not len(loaded) == 1:
                 raise ConfigError("Failed to load configuration")
         except IOError:
-            raise ConfigError("No config file found: {}".format(config_file))
+            raise ConfigError("No config file found: {}".format(self.config_file))
 
     def rules(self):
         pass
@@ -60,7 +61,7 @@ class Configuration(ConfigParser):
         :rtype: []unicode
         """
         loaded = ConfigParser.read(self, file_names)
-        map(logger.debug, loaded)
+        #map(logger.debug, loaded)
         return loaded
 
     def get_default(self, section, option, default=False, cast=None):
@@ -129,7 +130,6 @@ class Configuration(ConfigParser):
             self.read(file_path)
         except OSError:
             raise ConfigError("No suitable configuration found")
-        self.config_path = file_path
 
     def find_sections(self, prefix):
         sections = [section for section in self.sections() if section.startswith(prefix)]
@@ -226,26 +226,54 @@ class Configuration(ConfigParser):
             return []
 
     def set_filters(self, section, quality, titles):
+        """ Update the config file with new filters for a section/quality filter
+
+        :param section: Config section
+        :type section: string
+        :param quality: Quality keyword (sd/hd)
+        :type quality: string
+        :param titles: A list of titles used for the filter ['Show A', 'Show B']
+        :type titles: string[]
+        :return: Save status
+        :rtype: bool
+        """
         titles = sorted(self._normalize_filter_names(titles))
         self.set(section, "quality_{}".format(quality), ", ".join(titles))
-        with open(self.config_path, "w") as config_file:
-            self.write(config_file)
+        return self.save()
 
     def _normalize_filter_names(self, titles):
         return map(self.normalize_title, titles)
 
-    def normalize_title(self, title):
+    @staticmethod
+    def normalize_title(title):
+        """ Normalize a title string into a format more suitable for comparisons
+
+        :param title: Title to normalize
+        :type title: string
+        :return: Normalized title
+        :rtype: string
+        """
         return " ".join([part.capitalize() for part in title.replace(".", " ").split()])
 
     def save(self):
         try:
-            with open(self.config_path, 'w') as config:
+            with open(self.config_file, 'w') as config:
                 self.write(config)
-        except:
+        except IOError:
+            logger.exception("Failed to write config file")
             return False
-        return True
+        else:
+            return True
 
     def get_section_values(self, section):
+        """ Get all values stored in the config file related to a section. Hopefully
+        returning correctly python typed versions of the values based on the keywords.
+
+        :param section: Config section name
+        :type section: string
+        :return: dict of section key/value pairs
+        :rtype: dict
+        """
         values = {}
         for key in self.options(section):
             try:
@@ -260,6 +288,13 @@ class Configuration(ConfigParser):
         return values
 
     def is_int(self, value):
+        """ Make a guess if the config value is a integer.
+
+        :param value: Value to check
+        :type value: string
+        :return: True on int value
+        :rtype: bool
+        """
         try:
             int(value)
         except ValueError:
@@ -268,10 +303,17 @@ class Configuration(ConfigParser):
             return True
 
     def init_app(self, app):
-        def int_value(k, v):
+        """ Load the config values defined for flask into the flask application instance
+
+        :param app: Flask application instance to initialize
+        :type app: Flask
+        """
+        def conv_value(k, v):
             if k in ['sqlalchemy_pool_size', 'sqlalchemy_pool_timeout', 'sqlalchemy_pool_recycle']:
                 return int(v)
+            if k in ['sqlalchemy_echo']:
+                return v.lower() != 'false'
             return v
-        config_values = {k.upper(): int_value(k, v) for k, v in self.get_section_values("flask").items()}
+        config_values = {k.upper(): conv_value(k, v) for k, v in self.get_section_values("flask").items()}
         app.config.update(config_values)
         app.logger.info("Loaded config")

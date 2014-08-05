@@ -3,7 +3,7 @@
 
 """
 from __future__ import unicode_literals, absolute_import, with_statement
-from tranny import app, client
+from tranny import client
 
 
 class DelugeJSONRPCClient(client.ClientProvider):

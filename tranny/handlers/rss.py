@@ -4,8 +4,8 @@ from ConfigParser import NoOptionError
 from json import dumps
 from flask import Blueprint, request, redirect, url_for
 from flask.ext.login import login_required
-from ..app import config, logger
-from ..ui import render_template
+from tranny.app import config, logger
+from tranny import ui
 
 rss = Blueprint("rss", __name__, url_prefix="/rss")
 
@@ -26,7 +26,7 @@ def index():
             settings['enabled'] = "0" if enabled else "1"
         tpl_key = section.split("_")[1]
         feed_data[tpl_key] = settings
-    return render_template("rss.html", section="rss", feeds=feed_data)
+    return ui.render_template("rss.html", section="rss", feeds=feed_data)
 
 
 @rss.route("/delete", methods=['POST'])

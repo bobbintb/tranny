@@ -1,0 +1,8 @@
+twisted
+cryptography
+pyopenssl
+service_identity
+chardet
+mako
+pyxdg
+slimit

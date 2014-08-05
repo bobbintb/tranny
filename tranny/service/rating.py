@@ -8,7 +8,7 @@ try:
     import configparser  # py3
 except ImportError:
     import ConfigParser as configparser
-from ..app import config
+from tranny import app
 
 # Config section names
 _tmdb_section = "themoviedb"
@@ -47,9 +47,9 @@ def score(title, min_votes=0, precision=1):
     :rtype: float
     """
     scores = []
-    if imdb and _imdb_enabled and config.getboolean("imdb", "enabled"):
+    if imdb and _imdb_enabled and app.config.getboolean("imdb", "enabled"):
         scores.append(_imdb_score(title, min_votes=min_votes))
-    if tmdb and _tmdb_enabled and config.getboolean("themoviedb", "enabled"):
+    if tmdb and _tmdb_enabled and app.config.getboolean("themoviedb", "enabled"):
         scores.append(_tmdb_score(title, min_votes=min_votes))
     if not scores:
         return 0
@@ -68,7 +68,7 @@ def imdb_info(title):
     try:
         if title in _imdb_cache:
             return _imdb_cache[title]
-    except:
+    except KeyError:
         pass
     i = imdb.IMDb()
     search_result = i.search_movie(title, results=1)

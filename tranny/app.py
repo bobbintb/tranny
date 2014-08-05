@@ -5,12 +5,10 @@ application.
 """
 from __future__ import unicode_literals, absolute_import
 import httplib
-from os.path import dirname, join
 import os
 from functools import partial
 from json import dumps
-from flask import Flask, g, request, redirect, url_for, current_app, session
-#from flask.ext.babel import Babel
+from flask import Flask, g, redirect, url_for, current_app, session
 from flask.ext.login import current_user, confirm_login
 from flask.ext.uploads import configure_uploads, patch_request_class
 
@@ -22,7 +20,7 @@ def _log(msg, level="info"):
         print(msg)
 
 
-class _logger(object):
+class ProxyLogger(object):
     """
     Basic logger proxy which will print out to console if the flask app context is
     not available
@@ -34,18 +32,16 @@ class _logger(object):
     error = partial(_log, level='error')
     exception = partial(_log, level='exception')
 
-logger = _logger()
+logger = ProxyLogger()
 
 # Setup global configuration
 from tranny import configuration
-config = configuration.Configuration()
+config = None
 
 from tranny.models import User
 from tranny.util import file_size
-from tranny import ui, forms
+from tranny import ui
 from tranny.extensions import db, mail, cache, login_manager
-
-service_manager = None
 
 __all__ = ['create_app']
 
@@ -58,6 +54,9 @@ def create_app(app_name="tranny"):
     :return: Configured flask instance
     :rtype: Flask
     """
+    global config
+    config = configuration.Configuration()
+    config.initialize()
     app = Flask(app_name)
     configure_app(app)
     configure_extensions(app)
@@ -78,9 +77,11 @@ def configure_services(app):
     """
     global service_manager
     from tranny.manager import ServiceManager
+
     service_manager = ServiceManager()
     service_manager.init()
     service_manager.start()
+    app.services = service_manager
 
 
 def configure_app(app):
@@ -96,6 +97,8 @@ def configure_app(app):
     def index():
         return redirect(url_for("home.index"))
 
+    from tranny import forms
+
     @app.context_processor
     def inject_global_tpl_vars():
         kwargs = dict()
@@ -104,9 +107,9 @@ def configure_app(app):
             del session['messages']
         except KeyError:
             pass
-        # Upload form is included in all pages.
-
+        # Upload form is included in all pages so its injected globally.
         kwargs['upload_form'] = forms.UploadForm.make()
+        return kwargs
 
 
 def configure_extensions(app):
@@ -180,14 +183,14 @@ def configure_blueprints(app):
     :param app: Application instance
     :type app: Flask
     """
-    from .handlers.filters import filters
-    from .handlers.home import home
-    from .handlers.rss import rss
-    from .handlers.services import services
-    from .handlers.settings import settings
-    from .handlers.stats import stats
-    from .handlers.user import usr
-    from .handlers.upload import upload
+    from tranny.handlers.filters import filters
+    from tranny.handlers.home import home
+    from tranny.handlers.rss import rss
+    from tranny.handlers.services import services
+    from tranny.handlers.settings import settings
+    from tranny.handlers.stats import stats
+    from tranny.handlers.user import usr
+    from tranny.handlers.upload import upload
     map(app.register_blueprint, [filters, home, rss, services, settings, stats, usr, upload])
 
 

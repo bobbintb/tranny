@@ -4,8 +4,8 @@ from json import dumps
 from ConfigParser import NoOptionError, NoSectionError
 from flask import Blueprint, request
 from flask.ext.login import login_required
-from ..app import config
-from ..ui import render_template
+from tranny.app import config
+from tranny import ui
 
 filters = Blueprint("filters", __name__, url_prefix="/filters")
 
@@ -77,4 +77,4 @@ def index():
                 pass
         section_info['section'] = section
         section_data.append(section_info)
-    return render_template("filters.html", section_data=section_data, section="filters")
+    return ui.render_template("filters.html", section_data=section_data, section="filters")

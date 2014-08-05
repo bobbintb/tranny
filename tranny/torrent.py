@@ -13,8 +13,7 @@
 
 # Minor modifications made by Andrew Resch to replace the BTFailure errors with Exceptions
 from hashlib import sha1
-from .util import file_size
-from .exceptions import TrannyException
+from tranny import util, exceptions
 
 
 def decode_int(x, f):
@@ -75,7 +74,7 @@ def bdecode(x):
     try:
         r, l = decode_func[x[0]](x, 0)
     except (IndexError, KeyError, ValueError):
-        raise TrannyException("not a valid bencoded string")
+        raise exceptions.TrannyException("not a valid bencoded string")
     return r
 
 from types import StringType, IntType, LongType, DictType, ListType, TupleType
@@ -209,7 +208,7 @@ class Torrent(BDict):
             total = sum([f['length'] for f in self['info']['files']])
         except KeyError:
             total = self['info']['length']
-        return file_size(total) if human else total
+        return util.file_size(total) if human else total
 
     @property
     def name(self):

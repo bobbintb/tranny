@@ -3,9 +3,9 @@ from os.path import join, dirname
 from flask.ext.wtf import Form
 from wtforms import HiddenField, SelectField, validators
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from flask import current_app
-from flask.ext import uploads
 
+from flask.ext import uploads
+from tranny import app
 
 torrent_file_set = uploads.UploadSet(
     'torrent',
@@ -23,5 +23,5 @@ class UploadForm(Form):
     def make(cls):
         ul_form = cls()
         ul_form.section.choices = [[s[len("section_"):], s[len("section_"):]]
-                                   for s in current_app.config.find_sections("section_")]
+                                   for s in app.config.find_sections("section_")]
         return ul_form

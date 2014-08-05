@@ -7,11 +7,15 @@ from jsonrpclib.jsonrpc import ProtocolError
 from tranny import app, parser, provider, datastore, release
 
 _errors = {
+    -32001: "Invalid API Key",
     -32002: "Call limit exceeded"
 }
 
 
 class BroadcastTheNet(provider.TorrentProvider):
+    """
+    Provides access to content via BTN's API.
+    """
     def __init__(self, config, config_section="service_broadcastthenet"):
         super(BroadcastTheNet, self).__init__(config_section)
         self._api_token = config.get(self._config_section, "api_token")
@@ -56,7 +60,7 @@ class BroadcastTheNet(provider.TorrentProvider):
         :rtype:
         """
         try:
-            msg = _errors[err.message[0]]
+            msg = _errors[int(err.message[0])]
         except KeyError:
             msg = ""
         app.logger.error("JSON-RPC Protocol error calling BTN API: {0}".format(msg))

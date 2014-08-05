@@ -5,9 +5,8 @@ from os.path import exists, isdir, dirname, basename, splitext, expanduser
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from .app import config, logger
-from .datastore import generate_release_key
-from .release import TorrentData
+from tranny.app import config, logger
+from tranny import release
 
 
 class FileWatchService(FileSystemEventHandler):
@@ -25,7 +24,7 @@ class FileWatchService(FileSystemEventHandler):
         """
 
         :param service_manager:
-        :type service_manager: tranny.manager.ServiceManager
+        :type service_manager: tranny.manager.ServiceManager                continue
         :return:
         :rtype:
         """
@@ -45,13 +44,17 @@ class FileWatchService(FileSystemEventHandler):
 
             dl_path = expanduser(config.get("section_{0}".format(section_name), "dl_path"))
             if not dl_path or not exists(dl_path) or not isdir(dl_path):
-                logger.warning("Invalid watch directory {0}".format(dl_path))
-                continue
+                logger.warning(
+                    "Invalid download directory {0}. Disabling watch service for this directory".format(dl_path)
+                )
+                watch_path = None
             if not config.has_section("section_{0}".format(section_name)):
                 logger.warning("Invalid section name specified for watch dir: {0}".format(section_name))
-
-            self._observer.schedule(self, watch_path, recursive=True)
-            self._path_sections[watch_path] = section_name
+            if watch_path:
+                self._observer.schedule(self, watch_path, recursive=True)
+                self._path_sections[watch_path] = section_name
+        if not self._path_sections:
+            logger.warning("No valid watch dirs found, disabling service")
         self._observer.start()
 
     def on_created(self, event):
@@ -71,7 +74,7 @@ class FileWatchService(FileSystemEventHandler):
                 return False
             else:
                 dl_path = config.get_download_path("section_{}".format(section), torrent_name)
-                torrent_data = TorrentData(torrent_name, open(event.src_path).read(), section)
+                torrent_data = release.TorrentData(torrent_name, open(event.src_path).read(), section)
                 self._service_manager.add(torrent_data, self, dl_path=dl_path)
 
     def stop(self):

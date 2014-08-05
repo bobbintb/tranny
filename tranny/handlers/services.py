@@ -4,8 +4,8 @@ from json import dumps
 import httplib
 from flask import Blueprint, abort, request
 from flask.ext.login import login_required
-from ..app import config, logger
-from ..ui import render_template
+from tranny.app import config, logger
+from tranny import ui
 
 services = Blueprint("services", __name__, url_prefix="/services")
 
@@ -14,7 +14,7 @@ services = Blueprint("services", __name__, url_prefix="/services")
 @login_required
 def index():
     btn_info = config.get_section_values("service_broadcastthenet")
-    return render_template("services.html", section="services", btn=btn_info)
+    return ui.render_template("services.html", section="services", btn=btn_info)
 
 
 @services.route("/btn/save", methods=['POST'])

@@ -7,13 +7,13 @@ try:
     from xmlrpc import client as xmlrpclib
 except ImportError:
     import xmlrpclib
-from ..app import config, logger
-from ..client import ClientProvider
+from tranny.app import config, logger
+from tranny import client
 
 __all__ = ['RTorrentClient']
 
 
-class RTorrentClient(ClientProvider):
+class RTorrentClient(client.ClientProvider):
     """ rTorrent client support module. This class will talk to rtorrent over its
     scgi+xmlrpc API interface. (Why not just xml-rpc?, arg..). This means that
     you do NOT have to use a SCGI webserver to facilitate the requests. The client
@@ -43,6 +43,11 @@ class RTorrentClient(ClientProvider):
         # Make sure the xml-rpc size limit doesnt overflow
         self._server.set_xmlrpc_size_limit(len(payload.data) * 2)
         return self._server.load_raw_start(payload) == 0
+
+    def current_speeds(self):
+        dn = self._server.get_down_rate()
+        up = self._server.get_up_rate()
+        return client.client_speed(up/1024, dn/1024)
 
 
 class SCGITransport(xmlrpclib.Transport):
