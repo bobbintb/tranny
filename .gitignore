@@ -45,3 +45,4 @@ rpctest.py
 *.log
 .sass-cache
 vendor/*
+docs/_build/*
