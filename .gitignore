@@ -44,3 +44,4 @@ test_data
 rpctest.py
 *.log
 .sass-cache
+vendor/*
