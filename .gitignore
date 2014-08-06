@@ -46,3 +46,4 @@ rpctest.py
 .sass-cache
 vendor/*
 docs/_build/*
+node_modules
