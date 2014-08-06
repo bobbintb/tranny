@@ -15,8 +15,7 @@ Contents:
     scripts
     deluge
     config_ratings
-    config_service_rss
-    config_service_btn
+    services
     modules
 
 Indices and tables
