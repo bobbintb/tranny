@@ -62,7 +62,7 @@ class ClientTorrentData(dict):
     """
 
     def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size_total, size_completed,
-                 leechers, peers, priority, private, **kwargs):
+                 leechers, peers, priority, private, is_active, **kwargs):
         super(ClientTorrentData, self).__init__(**kwargs)
         self['DT_RowId'] = info_hash
         self['info_hash'] = info_hash
@@ -78,6 +78,7 @@ class ClientTorrentData(dict):
         self['peers'] = peers
         self['priority'] = priority
         self['private'] = private
+        self['is_active'] = is_active
 
 
 def init_client(client_type=None):

@@ -4,7 +4,7 @@ Endpoints for the /torrent sections
 """
 from __future__ import unicode_literals
 from functools import partial
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, request
 from tranny import ui
 
 section_name = 'torrents'
@@ -23,3 +23,17 @@ def index():
 def list():
     data = current_app.services.client.torrent_list()
     return dict(data=data)
+
+
+@torrents.route('/stop', methods=['POST'])
+@renderer(fmt='json')
+def stop():
+    current_app.services.client.torrent_stop(request.json)
+    return dict(status=0)
+
+
+@torrents.route('/start', methods=['POST'])
+@renderer(fmt='json')
+def start():
+    current_app.services.client.torrent_start(request.json)
+    return dict(status=0)

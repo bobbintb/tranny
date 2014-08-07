@@ -3,14 +3,32 @@
 {% block content %}
     <div class="row">
         <div class="large-12 columns">
+
             {% include "torrents_table.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <div class="button-bar">
+                <ul class="button-group">
+                    <li><a href="#" id="action_start" class="small button">Start</a></li>
+                    <li><a href="#" id="action_stop" class="small button">Stop</a></li>
+                </ul>
+                <ul class="button-group">
+                    <li><a href="#" id="action_remove" class="small button">Remove</a></li>
+                    <li><a href="#" id="action_remove_data" class="small button">Remove + Data</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
 {% endblock %}
 
 {% block footer %}
-    <link rel="stylesheet" href="{{ url_for("static", filename="vendor/datatables/media/css/jquery.dataTables.css") }}"/>
+    <link rel="stylesheet"
+          href="{{ url_for("static", filename="vendor/datatables/media/css/jquery.dataTables.css") }}"/>
     <script src="{{ url_for("static", filename="vendor/datatables/media/js/jquery.dataTables.js") }}"></script>
+    <script src="{{ url_for("static", filename="vendor/lodash/dist/lodash.js") }}"></script>
     <script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
 {% endblock %}

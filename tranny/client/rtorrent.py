@@ -73,10 +73,23 @@ class RTorrentClient(client.ClientProvider):
             'd.get_peers_accounted=',
             'd.get_peers_complete=',
             'd.get_priority=',
-            'd.is_private='
+            'd.is_private=',
+            'd.is_active='
         )
         torrent_data = [ClientTorrentData(*t) for t in torrents]
+        for i in range(0, 1000):
+            torrent_data.append(ClientTorrentData(i,i,i,i,i,i,i,i,i,i,i,i,i,i))
         return torrent_data
+
+    def torrent_stop(self, torrents):
+        for torrent in torrents:
+            self._server.d.stop(torrent)
+        return {}
+
+    def torrent_start(self, torrents):
+        for torrent in torrents:
+            self._server.d.start(torrent)
+        return {}
 
 
 class SCGITransport(xmlrpclib.Transport):
