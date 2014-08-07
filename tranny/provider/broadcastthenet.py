@@ -92,8 +92,9 @@ class BroadcastTheNet(provider.TorrentProvider):
         :return: Matched Downloaded torrents
         :rtype: TorrentData[]
         """
+        found = []
         try:
-            releases = self.get_torrents_browse(20)['torrents'].values()
+            releases = self.get_torrents_browse(50)['torrents'].values()
         except (TypeError, KeyError) as err:
             app.logger.debug("Failed to fetch releases")
         else:
@@ -119,8 +120,10 @@ class BroadcastTheNet(provider.TorrentProvider):
                             )
                             continue
                 dl_url = self.get_torrent_url(entry['TorrentID'])
-                torrent_data = self._download_url(dl_url)
+                torrent_data = self._download_url(entry['DownloadURL'])
                 if not torrent_data:
                     app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue
-                return release.TorrentData(str(release_name), torrent_data, section)
+                data = release.TorrentData(str(release_name), torrent_data, section)
+                found.append(data)
+        return found
