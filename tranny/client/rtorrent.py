@@ -49,12 +49,39 @@ class RTorrentClient(client.ClientProvider):
         up = self._server.get_up_rate()
         return client.client_speed(up/1024, dn/1024)
 
+    def _multi(self, *args):
+        """ Trivial wrapper to d.multicall using the 'main' view
+
+        :param args: Arguments to pass in
+        :type args: list
+        """
+        return self._server.d.multicall('main', *args)
+
+    def torrent_list(self):
+        torrents = self._multi(
+            'd.hash=',
+            'd.get_name=',
+            'd.get_ratio=',
+            'd.get_up_rate=',
+            'd.get_down_rate=',
+            'd.get_up_total=',
+            'd.get_down_total=',
+            'd.get_size_bytes=',
+            'd.get_peers_accounted=',
+            'd.get_peers_complete=',
+            'd.get_completed_bytes=',
+            'd.get_size_bytes=',
+            'd.get_priority=',
+            'd.is_private='
+        )
+        return torrents
+
 
 class SCGITransport(xmlrpclib.Transport):
     def single_request(self, host, handler, request_body, verbose=0):
         # Add SCGI headers to the request.
         headers = {'CONTENT_LENGTH': str(len(request_body)), 'SCGI': '1'}
-        header = '\x00'.join(('%s\x00%s' % item for item in headers.iteritems())) + '\x00'
+        header = '\x00'.join(('%s\x00%s' % item for item in headers.items())) + '\x00'
         header = '%d:%s' % (len(header), header)
         request_body = '%s,%s' % (header, request_body)
         sock = None

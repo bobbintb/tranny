@@ -99,7 +99,7 @@ class ServiceManager(object):
                 download = models.DownloadEntity(release_key, torrent.release_name, section.section_id,
                                           source.source_id)
                 db.session.add(download)
-                db.commit()
+                db.session.commit()
         except DBAPIError as err:
             app.logger.exception(err)
             db.session.rollback()

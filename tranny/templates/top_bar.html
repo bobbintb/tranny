@@ -13,6 +13,9 @@
             <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("home.index") }}">
                 <i class="icon-chart-pie"></i> Dashboard</a></li>
 
+            <li {% if section == "torrents" %}class="active"{% endif %}><a href="{{ url_for("torrents.index") }}">
+                <i class="icon-chart-pie"></i> Torrents</a></li>
+
             <li class="divider"></li>
             <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("filters.index") }}">
                 <i class="icon-filter"></i> Filters</a></li>
