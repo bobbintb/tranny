@@ -33,7 +33,7 @@ class RSSFeed(provider.TorrentProvider):
         :rtype: tranny.release.TorrentData
         """
         if not self.enabled:
-            raise StopIteration
+            return []
         feed = feedparser.parse(self.url)
         return [self.parse_entry(f) for f in feed['entries']]
 

@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 import re
 import socket
 import urllib
+from tranny.client import ClientTorrentData
+
 try:
     from xmlrpc import client as xmlrpclib
 except ImportError:
@@ -67,14 +69,14 @@ class RTorrentClient(client.ClientProvider):
             'd.get_up_total=',
             'd.get_down_total=',
             'd.get_size_bytes=',
+            'd.get_completed_bytes=',
             'd.get_peers_accounted=',
             'd.get_peers_complete=',
-            'd.get_completed_bytes=',
-            'd.get_size_bytes=',
             'd.get_priority=',
             'd.is_private='
         )
-        return torrents
+        torrent_data = [ClientTorrentData(*t) for t in torrents]
+        return torrent_data
 
 
 class SCGITransport(xmlrpclib.Transport):

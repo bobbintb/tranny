@@ -52,6 +52,31 @@ class ClientProvider(object):
         """
         return client_speed(0.0, 0.0)
 
+    def torrent_list(self):
+        raise NotImplementedError('torrent_list undefined')
+
+
+class ClientTorrentData(object):
+    """
+    A struct used to hold data regarding torrent info sent from the backend client in use
+    """
+    def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size_total, size_completed,
+                 leechers, peers, priority, private):
+        self.info_hash = info_hash
+        self.name = name
+        self.ratio = ratio
+        self.up_rate = up_rate
+        self.dn_rate = dn_rate
+        self.up_total = up_total
+        self.dn_total = dn_total
+        self.size_total = size_total
+        self.size_completed = size_completed
+        self.leechers = leechers
+        self.peers = peers
+        self.priority = priority
+        self.private = private
+
+
 
 def init_client(client_type=None):
     """ Import & initialize the client set in the configuration file and return the

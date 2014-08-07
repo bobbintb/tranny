@@ -1,5 +1,5 @@
-Tranny Rating Service Configuration
------------------------------------
+Ratings & Media Info
+--------------------
 
 IMDB
 ~~~~
