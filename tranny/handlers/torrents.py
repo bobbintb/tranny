@@ -21,4 +21,5 @@ def index():
 @torrents.route("/list")
 @renderer(fmt='json')
 def list():
-    return dict(torrents=current_app.services.client.torrent_list())
+    data = current_app.services.client.torrent_list()
+    return dict(data=data)

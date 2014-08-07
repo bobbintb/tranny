@@ -3,9 +3,14 @@
 {% block content %}
     <div class="row">
         <div class="large-12 columns">
-            <h1>Torrents</h1>
             {% include "torrents_table.html" %}
         </div>
     </div>
 
+{% endblock %}
+
+{% block footer %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="vendor/datatables/media/css/jquery.dataTables.css") }}"/>
+    <script src="{{ url_for("static", filename="vendor/datatables/media/js/jquery.dataTables.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
 {% endblock %}

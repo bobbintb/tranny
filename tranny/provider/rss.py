@@ -72,4 +72,5 @@ class RSSFeed(provider.TorrentProvider):
             if not torrent_data:
                 app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                 return None
-            return release.TorrentData(str(release_name), torrent_data, section)
+            data = release.TorrentData(str(release_name), torrent_data, section)
+            return data
