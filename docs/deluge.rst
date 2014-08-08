@@ -13,12 +13,12 @@ its probably a better idea to use an actual web server if you are not confident 
 restrictions.
 
 Deluge (JSON-RPC)
--------------------
+-----------------
 
 More info available at `Deluge JSON-RPC <http://dev.deluge-torrent.org/wiki/Development/DelugeRPC>`_
 
 Deluge (Python)
------------------------------
+---------------
 
 Warn: Using this method is unrecommended as its overly complex for little gain over the JSON-RPC version and
 may in fact be removed altogether.

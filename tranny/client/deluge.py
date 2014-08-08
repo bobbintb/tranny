@@ -2,39 +2,6 @@
 """
 Deluge JSON-RPC client interface
 
-Exposed methods:
-
-[
-    'web.get_torrent_info',
-    'web.add_torrents',
-    'web.get_plugins',
-    'web.start_daemon',
-    'web.add_host',
-    'web.deregister_event_listener',
-    'web.register_event_listener',
-    'web.get_magnet_info',
-    'web.get_torrent_status',
-    'auth.delete_session',
-    'web.download_torrent_from_url',
-    'web.get_config',
-    'web.get_hosts',
-    'web.disconnect',
-    'auth.check_session',
-    'web.set_config',
-    'auth.login',
-    'web.get_plugin_resources',
-    'web.upload_plugin',
-    'web.connect',
-    'web.get_events',
-    'auth.change_password',
-    'web.get_host_status',
-    'web.remove_host',
-    'web.connected',
-    'web.get_torrent_files',
-    'web.stop_daemon',
-    'web.update_ui',
-    'web.get_plugin_info'
-]
 """
 from __future__ import unicode_literals, absolute_import, with_statement
 import json
@@ -84,7 +51,8 @@ class DelugeJSONRPCClient(client.ClientProvider):
     def connect(self):
         host_id = json.loads(self._request('web.get_hosts').text)['result'][0][0]
         resp = self._request('web.connect', [host_id])
-        _methods = self._request('system.listMethods')
+        _methods = self._request('system.listMethods').text
+        print(_methods)
         return resp
 
     def authenticate(self):
