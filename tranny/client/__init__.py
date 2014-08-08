@@ -98,6 +98,8 @@ def init_client(client_type=None):
         from tranny.client.transmission import TransmissionClient as TorrentClient
     elif client_type == "utorrent":
         from tranny.client.utorrent import UTorrentClient as TorrentClient
+    elif client_type == "deluge":
+        from tranny.client.deluge import DelugeJSONRPCClient as TorrentClient
     else:
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
     return TorrentClient()
