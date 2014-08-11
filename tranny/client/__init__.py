@@ -12,6 +12,9 @@ class ClientProvider(object):
     Base class to provide a interface for interacting with backend torrent
     clients.
     """
+
+    config_key = 'undefined'
+
     def list(self):
         """ Retrieve a list of torrents loaded in the client. This list includes all
         torrents, meaning started/stopped/paused/leeching.
@@ -102,4 +105,6 @@ def init_client(client_type=None):
         from tranny.client.deluge import DelugeJSONRPCClient as TorrentClient
     else:
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
-    return TorrentClient()
+    config_values = config.get_section_values(TorrentClient.config_key)
+
+    return TorrentClient(**config_values)

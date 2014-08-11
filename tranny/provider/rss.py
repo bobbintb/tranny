@@ -20,7 +20,7 @@ class RSSFeed(provider.TorrentProvider):
         self.url = app.config.get(config_section, "url")
         self.interval = app.config.get_default(config_section, "interval", 60, int)
         self.enabled = app.config.getboolean(config_section, "enabled")
-        app.logger.info("Initialized RSS Feed: {0}".format(self.name))
+        app.logger.debug("Initialized RSS Feed: {0}".format(self.name))
 
     def fetch_releases(self):
         """
