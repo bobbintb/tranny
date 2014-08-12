@@ -15,7 +15,7 @@ from tranny import client
 __all__ = ['RTorrentClient']
 
 
-class RTorrentClient(client.ClientProvider):
+class RTorrentClient(client.TorrentClient):
     """ rTorrent client support module. This class will talk to rtorrent over its
     scgi+xmlrpc API interface. (Why not just xml-rpc?, arg..). This means that
     you do NOT have to use a SCGI webserver to facilitate the requests. The client
@@ -77,8 +77,6 @@ class RTorrentClient(client.ClientProvider):
             'd.is_active='
         )
         torrent_data = [ClientTorrentData(*t) for t in torrents]
-        for i in range(0, 1000):
-            torrent_data.append(ClientTorrentData(i,i,i,i,i,i,i,i,i,i,i,i,i,i))
         return torrent_data
 
     def torrent_stop(self, torrents):

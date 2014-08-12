@@ -28,7 +28,7 @@ class url_args(dict):
 UTSetting = namedtuple("UTSetting", ["name", "int", "str", "access"])
 
 
-class UTorrentClient(client.ClientProvider):
+class UTorrentClient(client.TorrentClient):
     """
     A basic uTorrent WebUI API client.
 

@@ -1,0 +1,27 @@
+@import "settings";
+
+#torrent_controls {
+    margin-top: 20px;
+}
+
+#torrent_table {
+    td {
+        padding: 4px 2px 4px 2px;
+    }
+}
+
+#torrent_detail {
+    .torrent_detail_value, .torrent_detail_label {
+        font-size: 60%;
+    }
+    .torrent_detail_label {
+        font-weight: 700;
+    }
+    .tab-title a {
+        padding: 4px 8px 4px 8px;
+    }
+    .tabs-content {
+        border: 1px solid $tabs-navigation-bg-color;
+        padding: 4px;
+    }
+}

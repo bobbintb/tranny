@@ -176,7 +176,6 @@ speed_update = ->
     jQuery.getJSON("/stats/speed_overall").done((data) ->
         speed_up.innterHTML = data[0]
         speed_dn.innerHTML = data[1]
-        console.log "updating"
     )
     delay 1000, speed_update
 

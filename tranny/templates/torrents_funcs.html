@@ -1,0 +1,6 @@
+{% macro torrent_detail_item(value_id, label, value="") %}
+    <div class="row">
+        <div class="large-6 columns torrent_detail_label">{{ label }}</div>
+        <div id="{{ value_id }}" class="large-6 columns torrent_detail_value">{{ value|e }}</div>
+    </div>
+{% endmacro %}

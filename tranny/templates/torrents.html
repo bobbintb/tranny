@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    <div class="row" id="torrent_controls">
+        <div class="large-12 columns">
+            {% include "torrents_controls.html" %}
+        </div>
+    </div>
+
     <div class="row">
         <div class="large-12 columns">
 
@@ -9,17 +16,8 @@
     </div>
 
     <div class="row">
-        <div class="large-12 columns">
-            <div class="button-bar">
-                <ul class="button-group">
-                    <li><a href="#" id="action_start" class="small button">Start</a></li>
-                    <li><a href="#" id="action_stop" class="small button">Stop</a></li>
-                </ul>
-                <ul class="button-group">
-                    <li><a href="#" id="action_remove" class="small button">Remove</a></li>
-                    <li><a href="#" id="action_remove_data" class="small button">Remove + Data</a></li>
-                </ul>
-            </div>
+        <div class="large-12 columns epoch-theme-dark">
+            {% include "torrents_detail.html" %}
         </div>
     </div>
 
@@ -28,7 +26,12 @@
 {% block footer %}
     <link rel="stylesheet"
           href="{{ url_for("static", filename="vendor/datatables/media/css/jquery.dataTables.css") }}"/>
+    <link rel="stylesheet"
+          href="{{ url_for("static", filename="vendor/epoch/epoch.min.css") }}"/>
     <script src="{{ url_for("static", filename="vendor/datatables/media/js/jquery.dataTables.js") }}"></script>
     <script src="{{ url_for("static", filename="vendor/lodash/dist/lodash.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/vendor/dataTables.foundation.js") }}"></script>
+    <script src="{{ url_for("static", filename="vendor/d3/d3.js") }}"></script>
+    <script src="{{ url_for("static", filename="vendor/epoch/epoch.min.js") }}"></script>
     <script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
 {% endblock %}

@@ -1,0 +1,55 @@
+{% from "torrents_funcs.html" import torrent_detail_item %}
+<div id="torrent_detail">
+
+    <ul class="tabs" data-tab>
+        <li class="tab-title active"><a href="#detail-status">Status</a></li>
+        <li class="tab-title"><a href="#detail-detail">Details</a></li>
+        <li class="tab-title"><a href="#detail-files">Files</a></li>
+        <li class="tab-title"><a href="#detail-peers">Peers</a></li>
+        <li class="tab-title"><a href="#detail-traffic">Traffic</a></li>
+    </ul>
+
+    <div class="tabs-content">
+        <div class="content active" id="detail-status">
+            <div class="row">
+                <div class="large-3 columns">
+                    {{ torrent_detail_item('detail_downloaded', "Downloaded", "1.0 GB") }}
+                    {{ torrent_detail_item('detail_uploaded', "Uploaded", "251.0 GB") }}
+                    {{ torrent_detail_item("detail_ratio", "Ratio", "1.0 GB") }}
+                    {{ torrent_detail_item("detail_next_announce", "Next Announce", "1.0 GB") }}
+                    {{ torrent_detail_item("detail_tracker_status", "Tracker Status", "tracker.com: Announce OK") }}
+                </div>
+                <div class="large-3 columns">
+                    {{ torrent_detail_item('detail_speed_dl', "Download Speed", "25.73 MB/s") }}
+                    {{ torrent_detail_item('detail_speed_ul', "Upload Speed", "452 KB/s") }}
+                    {{ torrent_detail_item("detail_eta", "ETA", "∞") }}
+                    {{ torrent_detail_item("detail_pieces", "Pieces", "405 (1.0 MB)") }}
+                </div>
+                <div class="large-3 columns">
+                    {{ torrent_detail_item('detail_speed_dl', "Download Speed", "25.73 MB/s") }}
+                    {{ torrent_detail_item('detail_speed_ul', "Upload Speed", "452 KB/s") }}
+                    {{ torrent_detail_item("detail_eta", "ETA", "∞") }}
+                    {{ torrent_detail_item("detail_pieces", "Pieces", "405 (1.0 MB)") }}
+                </div>
+                <div class="large-3 columns">
+                    {{ torrent_detail_item('detail_speed_dl', "Download Speed", "25.73 MB/s") }}
+                    {{ torrent_detail_item('detail_speed_ul', "Upload Speed", "452 KB/s") }}
+                    {{ torrent_detail_item("detail_eta", "ETA", "∞") }}
+                    {{ torrent_detail_item("detail_added_on", "Added On", "") }}
+                </div>
+            </div>
+        </div>
+        <div class="content" id="detail-detail">
+            <p>Second panel content goes here...</p>
+        </div>
+        <div class="content" id="detail-files">
+            <p>Third panel content goes here...</p>
+        </div>
+        <div class="content" id="detail-peers">
+            <p>Fourth panel content goes here...</p>
+        </div>
+        <div class="content" id="detail-traffic">
+            <div id="detail-traffic-chart" class="epoch category10" style="width: 800px; height: 200px"></div>
+        </div>
+    </div>
+</div>

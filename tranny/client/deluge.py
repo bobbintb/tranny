@@ -11,7 +11,10 @@ import requests
 from tranny import client, app
 
 
-class DelugeJSONRPCClient(client.ClientProvider):
+class DelugeClient(client.TorrentClient):
+    """
+    API client for deluge
+    """
     config_key = "deluge"
 
     def __init__(self, host='localhost', port=8112, password='deluge'):
@@ -76,12 +79,15 @@ class DelugeJSONRPCClient(client.ClientProvider):
         if resp is None:
             self._is_connected = True
             app.logger.info("Connected to deluge {}/{}".format(*self.client_version()))
+            self._request('register_event_listener', ['PluginDisabledEvent'])
+            self._request('register_event_listener', ['PluginEnabledEvent'])
         else:
             self._last_request = time.time()
         return resp
 
     def authenticate(self):
         resp = self._request('auth.login', [self._password])
+        return resp
 
     def client_version(self):
         daemon_version = self._request('daemon.info')
@@ -91,37 +97,89 @@ class DelugeJSONRPCClient(client.ClientProvider):
     def _get_events(self):
         events = self._request('web.get_events')
 
-    def add(self, data, download_dir=None):
+    def get_capabilities(self):
+        """ Return a list of supported methods of the client. This is used to tell the
+         webui what the client supports instead of having to hardcode things on a per
+         client basis
+
+        :return: List of supported functions
+        :rtype: str[]
+        """
+        return ['torrent_add', 'torrent_list']
+
+    def torrent_add(self, data, download_dir=None):
         pass
 
-    def list(self):
+    def torrent_list(self):
         """ Get a list of currently loaded torrents from the client
 
         :return:
         :rtype:
         """
-        return []
+        resp = self._request(
+            'web.update_ui', [
+                ["queue", "name", "total_size", "state", "progress", "num_seeds",
+                 "total_seeds", "num_peers", "total_peers", "download_payload_rate",
+                 "upload_payload_rate", "eta", "ratio", "distributed_copies",
+                 "is_auto_managed", "time_added", "tracker_host", "save_path", "total_done",
+                 "total_uploaded", "max_download_speed", "max_upload_speed", "seeds_peers_ratio"
+                ], {}]
+        )
+        torrent_data = list()
+        for info_hash, detail in resp.get('torrents', {}).items():
+            torrent_info = client.ClientTorrentData(
+                info_hash,
+                detail['name'],
+                self._fmt_ratio(detail['ratio']),
+                detail['upload_payload_rate'],
+                detail['download_payload_rate'],
+                detail['total_uploaded'],
+                detail['total_done'],
+                detail['total_size'],
+                detail['total_done'],
+                detail['num_peers'],
+                detail['total_peers'],
+                '1',
+                '1',
+                detail['state']
+            )
+            torrent_data.append(torrent_info)
+        return torrent_data
 
     def torrent_status(self, info_hash):
-        resp = self._request('web.get_torrent_status', [info_hash])
+        params = [
+            "total_done", "total_payload_download", "total_uploaded", "total_payload_upload",
+            "next_announce", "tracker_status", "num_pieces", "piece_length", "is_auto_managed",
+            "active_time", "seeding_time", "seed_rank", "queue", "name", "total_size", "state",
+            "progress", "num_seeds", "total_seeds", "num_peers", "total_peers",
+            "download_payload_rate", "upload_payload_rate", "eta", "ratio", "distributed_copies",
+            "is_auto_managed", "time_added", "tracker_host", "save_path", "total_done", "total_uploaded",
+            "max_download_speed", "max_upload_speed", "seeds_peers_ratio"
+        ]
+        resp = self._request('web.get_torrent_status', [info_hash, params])
         return resp
 
-    def pause_torrent(self, info_hash):
+
+    def torrent_pause(self, info_hash):
         resp = self._request('core.pause_torrent', [info_hash])
-        return resp
+        return resp is None
 
-    def start_torrent(self, info_hash):
+    # deluge doesnt have a notion of "stop"
+    torrent_stop = torrent_pause
+
+    def torrent_start(self, info_hash):
         resp = self._request('core.resume_torrent', [info_hash])
         return resp
 
-    def remove_torrent(self, info_hash, remove_data=False):
+    def torrent_remove(self, info_hash, remove_data=False):
         resp = self._request('core.remove_torrent', [info_hash, remove_data])
+        return resp
 
-    def reannounce(self, info_hash):
+    def torrent_reannounce(self, info_hash):
         resp = self._request('core.force_reannounce', [info_hash])
         return resp
 
-    def recheck_torrent(self, info_hash):
+    def torrent_recheck(self, info_hash):
         resp = self._request('core.force_recheck', [info_hash])
         return resp
 
@@ -129,8 +187,12 @@ class DelugeJSONRPCClient(client.ClientProvider):
         resp = self._request('web.get_torrent_files', [info_hash])
         return resp
 
-    def torrent_add(self, torrent):
-        resp = self._request('web.add_torrents', [torrent])
+    def torrent_add(self, info_hash):
+        resp = self._request('web.add_torrents', [info_hash])
+        return resp
+
+    def torrent_peers(self, info_hash):
+        resp = self._request('web.get_torrent_status', [info_hash, ['peers']])
         return resp
 
     def disconnect(self):

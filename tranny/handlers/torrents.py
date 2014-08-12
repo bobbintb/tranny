@@ -18,6 +18,19 @@ def index():
     return dict()
 
 
+@torrents.route("/recheck", methods=['POST'])
+@renderer(fmt='json')
+def recheck():
+    ids = request.json
+    resp = current_app.services.client.torrent_recheck(ids)
+    return resp is None
+
+@torrents.route("/reannounce", methods=['POST'])
+@renderer(fmt='json')
+def reannounce():
+    resp = current_app.services.client.torrent_reannounce()
+    return resp is None
+
 @torrents.route("/list")
 @renderer(fmt='json')
 def list():

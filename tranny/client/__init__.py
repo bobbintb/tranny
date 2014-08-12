@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 from collections import namedtuple
+from tranny import util
 from tranny.app import config
 from tranny.exceptions import ConfigError
 
 client_speed = namedtuple('client_speed', ['up', 'dn'])
 
 
-class ClientProvider(object):
+class TorrentClient(object):
     """
     Base class to provide a interface for interacting with backend torrent
     clients.
@@ -36,6 +37,9 @@ class ClientProvider(object):
         """
         raise NotImplementedError("add is not implemented")
 
+    def _fmt_ratio(self, ratio):
+        return "{:.2f}".format(ratio)
+
     def client_version(self):
         """ Fetch and return the client version if available
 
@@ -58,13 +62,43 @@ class ClientProvider(object):
     def torrent_list(self):
         raise NotImplementedError('torrent_list undefined')
 
+    def torrent_status(self, info_hash):
+        raise NotImplementedError("torrent_status undefined")
+
+    def torrent_pause(self, info_hash):
+        raise NotImplementedError("torrent_pause undefined")
+
+    def torrent_start(self, info_hash):
+        raise NotImplementedError("torrent_start undefined")
+
+    def torrent_remove(self, info_hash):
+        raise NotImplementedError("torrent_remove undefined")
+
+    def torrent_reannounce(self, info_hash):
+        raise NotImplementedError("torrent_reannounce undefined")
+
+    def torrent_recheck(self, info_hash):
+        raise NotImplementedError("torrent_recheck undefined")
+
+    def torrent_files(self, info_hash):
+        raise NotImplementedError("torrent_files undefined")
+
+    def torrent_add(self, torrent):
+        raise NotImplementedError("torrent_add undefined")
+
+    def torrent_priority(self, torrent):
+        raise NotImplementedError("torrent_priority undefined")
+
+    def disconnect(self):
+        raise NotImplementedError("disconnect undefined")
+
 
 class ClientTorrentData(dict):
     """
     A struct used to hold data regarding torrent info sent from the backend client in use
     """
 
-    def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size_total, size_completed,
+    def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size, size_completed,
                  leechers, peers, priority, private, is_active, **kwargs):
         super(ClientTorrentData, self).__init__(**kwargs)
         self['DT_RowId'] = info_hash
@@ -75,7 +109,7 @@ class ClientTorrentData(dict):
         self['dn_rate'] = dn_rate
         self['up_total'] = up_total
         self['dn_total'] = dn_total
-        self['size_total'] = size_total
+        self['size'] = util.file_size(size)
         self['size_completed'] = size_completed
         self['leechers'] = leechers
         self['peers'] = peers
@@ -100,9 +134,10 @@ def init_client(client_type=None):
     elif client_type == "transmission":
         from tranny.client.transmission import TransmissionClient as TorrentClient
     elif client_type == "utorrent":
-        from tranny.client.utorrent import UTorrentClient as TorrentClient
+        #from tranny.client.utorrent import UTorrentClient as TorrentClient
+        raise NotImplementedError("Utorrent support is currently incomplete. Please use another client")
     elif client_type == "deluge":
-        from tranny.client.deluge import DelugeJSONRPCClient as TorrentClient
+        from tranny.client.deluge import DelugeClient as TorrentClient
     else:
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
     config_values = config.get_section_values(TorrentClient.config_key)
