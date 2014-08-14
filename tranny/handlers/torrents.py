@@ -60,8 +60,23 @@ def detail(info_hash):
     resp = current_app.services.client.torrent_status(info_hash)
     return resp
 
+
 @torrents.route('/detail/<info_hash>/speed')
 @renderer(fmt='json')
 def speed(info_hash):
     resp = current_app.services.client.torrent_speed(info_hash)
+    return resp
+
+
+@torrents.route('/detail/<info_hash>/files')
+@renderer(fmt='json')
+def files(info_hash):
+    resp = current_app.services.client.torrent_files(info_hash)
+    return resp
+
+
+@torrents.route('/detail/<info_hash>/peers')
+@renderer(fmt='json')
+def peers(info_hash):
+    resp = current_app.services.client.torrent_peers(info_hash)
     return resp

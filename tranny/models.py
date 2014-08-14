@@ -77,6 +77,6 @@ class DownloadEntity(db.Model):
         self.source_id = source_id
 
 
-class CountryBlock(db.Model):
-    __tablename__ = 'country_block'
+# class CountryBlock(db.Model):
+#     __tablename__ = 'country_block'
 

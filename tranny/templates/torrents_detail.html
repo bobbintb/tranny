@@ -29,12 +29,12 @@
                     {{ torrent_detail_item('detail_seeders', "Seeders", "0") }}
                     {{ torrent_detail_item('detail_peers', "Peers", "0") }}
                     {{ torrent_detail_item("detail_availability", "Availability", "0") }}
-{#                    {{ torrent_detail_item("detail_auto_managed", "Auto Managed", "True") }}#}
+                    {#                    {{ torrent_detail_item("detail_auto_managed", "Auto Managed", "True") }}#}
                 </div>
                 <div class="large-3 columns">
                     {{ torrent_detail_item('detail_active_time', "Active Time", "0m") }}
                     {{ torrent_detail_item('detail_seeding_time', "seeding Time", "0m") }}
-{#                    {{ torrent_detail_item("detail_seed_rank", "Seed Rank", "0") }}#}
+                    {#                    {{ torrent_detail_item("detail_seed_rank", "Seed Rank", "0") }}#}
                     {{ torrent_detail_item("detail_added_on", "Added On", "") }}
                 </div>
             </div>
@@ -59,7 +59,20 @@
             <p>Third panel content goes here...</p>
         </div>
         <div class="content" id="detail-peers">
-            <p>Fourth panel content goes here...</p>
+            <table id="peer_list">
+                <thead>
+                <tr>
+                    <th colspan="2">Address</th>
+                    <th>Client</th>
+                    <th>Progress</th>
+                    <th>Down speed</th>
+                    <th>Up Speed</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
         </div>
         <div class="content" id="detail-traffic">
             <div id="detail-traffic-chart" class="epoch category10" style="width: 960px; height: 200px"></div>

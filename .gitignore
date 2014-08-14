@@ -6,7 +6,6 @@
 # Packages
 *.egg
 *.egg-info
-dist
 build
 eggs
 parts
@@ -44,6 +43,5 @@ test_data
 rpctest.py
 *.log
 .sass-cache
-vendor/*
 docs/_build/*
 node_modules

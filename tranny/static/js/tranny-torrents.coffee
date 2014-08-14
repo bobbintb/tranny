@@ -34,6 +34,8 @@ detail_update_timer = null
 ### Timer to update the selected torrent speed graph ###
 speed_update_timer = null
 
+### Timer to update the selected torrent peer list ###
+peer_update_timer = null
 
 ###
     Called for each new row loaded into the data table
@@ -70,8 +72,11 @@ row_select_cb = (e) ->
             clearTimeout detail_update_timer
         if speed_update_timer != null
             clearTimeout speed_update_timer
+        if peer_update_timer != null
+            clearTimeout peer_update_timer
         detail_update()
         speed_update()
+        peer_update()
         jQuery("#" + row_id).addClass selected_class
 
 action_recheck = ->
@@ -144,17 +149,38 @@ speed_update = ->
             chart_update data['download_payload_rate'], data['upload_payload_rate']
     speed_update_timer = setTimeout speed_update, update_speed
 
+
+_sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 bytes_to_size = (bytes, per_sec=false) ->
     if bytes == 0
         return '0 B'
-    k = 1000;
-    sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    k = 1000
     i = Math.floor(Math.log(bytes) / Math.log(k))
-    human_size = (bytes / Math.pow(k, i)).toPrecision(2) + ' ' + sizes[i]
+    human_size = (bytes / Math.pow(k, i)).toPrecision(2) + ' ' + _sizes[i]
     if per_sec
         human_size = "#{human_size}/s"
     return human_size
 
+render_peers = (peer_list) ->
+    output_html = []
+    for peer in peer_list
+        output_html.push """
+            <tr>
+                <td><img src="/static/img/country/#{peer['country'].toLowerCase()}.png"></td>
+                <td>#{peer['ip']}</td>
+                <td>#{peer['client']}</td>
+                <td><div class="progress"><span class="meter" style="#{peer['progress'] * 100}"></span></div></td>
+                <td>#{peer['down_speed']}</td>
+                <td>#{peer['up_speed']}</td>
+            </tr>
+            """
+    jQuery("#peer_list tbody").html output_html.join("")
+
+peer_update= ->
+    if selected_detail_id
+        jQuery.getJSON "#{endpoint}/detail/#{selected_detail_id}/peers", (data) ->
+            render_peers data['peers']
+    peer_update_timer = setTimeout peer_update, update_speed
 
 detail_update = ->
     if selected_detail_id
