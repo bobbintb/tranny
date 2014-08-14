@@ -18,6 +18,9 @@ Contents:
     services
     modules
 
+
+This product includes GeoLite2 data created by MaxMind, available from `www.maxmind.com<http://www.maxmind.com>`_
+
 Indices and tables
 ==================
 

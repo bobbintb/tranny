@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+    <!-- Torrent control box -->
     <div class="row" id="torrent_controls">
         <div class="large-12 columns">
             {% include "torrents_controls.html" %}
         </div>
     </div>
 
+    <!-- Torrent listings -->
     <div class="row">
         <div class="large-12 columns">
-
             {% include "torrents_table.html" %}
         </div>
     </div>
 
+    <!-- Torrent details -->
     <div class="row">
         <div class="large-12 columns epoch-theme-dark">
             {% include "torrents_detail.html" %}

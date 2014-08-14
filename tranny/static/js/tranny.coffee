@@ -113,7 +113,6 @@ filter_add = (evt) ->
     evt.preventDefault()
     console.log "got add"
     element = jQuery @
-
     try
         quality = element.data "quality"
         section = element.data "section"
@@ -136,9 +135,9 @@ feed_save = (evt) ->
     feed_name = jQuery(@).data "feed"
     data =
         feed: feed_name
-        url: jQuery("##{feed_name}_url").val()
-        interval: jQuery("##{feed_name}_interval").val()
-        enabled: not jQuery("##{feed_name}_enabled").is(':checked')
+        url: jQuery("#" + "#{feed_name}_url").val()
+        interval: jQuery("#" + "#{feed_name}_interval").val()
+        enabled: not jQuery("#" + "#{feed_name}_enabled").is(':checked')
     jQuery.post "/rss/save", data, handle_response
 
 
@@ -173,15 +172,13 @@ speed_up = document.getElementById("speed_up")
 speed_dn = document.getElementById("speed_dn")
 
 speed_update = ->
-    jQuery.getJSON("/stats/speed_overall").done((data) ->
+    jQuery.getJSON("/stats/speed_overall", (data) ->
         speed_up.innterHTML = data[0]
         speed_dn.innerHTML = data[1]
     )
     delay 1000, speed_update
 
-
 delay = (ms, func) -> setTimeout func, ms
-
 
 jQuery ->
     if window.location.pathname.indexOf("home") != -1

@@ -4,9 +4,10 @@
 Application managements script
 """
 from __future__ import unicode_literals
+import signal
+import sys
 from flask.ext.script import Manager
-
-from tranny import create_app
+from tranny import create_app, app
 from tranny.extensions import db
 from tranny.models import User
 from tranny.constants import ROLE_ADMIN
@@ -17,16 +18,27 @@ try:
 except (ImportError, AttributeError):
     pass
 
-app = create_app()
+application = create_app()
 
-manager = Manager(app)
+
+def shutdown_app(signal, frame):
+    print("\b\bClosing tranny..")
+    print(application.services.client.connected)
+    if application.services.client.connected:
+
+        del application.services.client
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, shutdown_app)
+signal.signal(signal.SIGTERM, shutdown_app)
+manager = Manager(application)
 
 
 @manager.command
 def run():
     """Run in local machine."""
-
-    app.run()
+    application.run(use_reloader=False)
 
 
 @manager.command

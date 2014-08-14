@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 from collections import namedtuple
+import logging
 from tranny import util
 from tranny.app import config
 from tranny.exceptions import ConfigError
@@ -15,6 +16,10 @@ class TorrentClient(object):
     """
 
     config_key = 'undefined'
+
+    def __init__(self):
+        self.connected = False
+        self.log = logging.getLogger(__name__)
 
     def list(self):
         """ Retrieve a list of torrents loaded in the client. This list includes all

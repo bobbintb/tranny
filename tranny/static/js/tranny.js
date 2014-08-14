@@ -193,9 +193,9 @@
     feed_name = jQuery(this).data("feed");
     data = {
       feed: feed_name,
-      url: jQuery("#" + feed_name + "_url").val(),
-      interval: jQuery("#" + feed_name + "_interval").val(),
-      enabled: !jQuery("#" + feed_name + "_enabled").is(':checked')
+      url: jQuery("#" + ("" + feed_name + "_url")).val(),
+      interval: jQuery("#" + ("" + feed_name + "_interval")).val(),
+      enabled: !jQuery("#" + ("" + feed_name + "_enabled")).is(':checked')
     };
     return jQuery.post("/rss/save", data, handle_response);
   };
@@ -245,7 +245,7 @@
   speed_dn = document.getElementById("speed_dn");
 
   speed_update = function() {
-    jQuery.getJSON("/stats/speed_overall").done(function(data) {
+    jQuery.getJSON("/stats/speed_overall", function(data) {
       speed_up.innterHTML = data[0];
       return speed_dn.innerHTML = data[1];
     });
@@ -277,3 +277,7 @@
   });
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=tranny.map
+*/

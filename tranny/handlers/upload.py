@@ -19,7 +19,7 @@ def handler():
             torrent_struct = torrent.Torrent.from_str(file_data)
 
             tor_data = release.TorrentData(torrent_struct.name, file_data, form.section.data)
-            if app.service_manager.add(tor_data, HTTPUpload()):
+            if app.services.add(tor_data, HTTPUpload()):
                 flash("Torrent {} uploaded successfully".format(torrent_struct.name), "success")
             else:
                 flash("Failed to upload torrent", "alert")

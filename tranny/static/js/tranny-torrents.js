@@ -3,7 +3,7 @@
 
 
 (function() {
-  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, chart_update, chart_update_speed, detail_traffic_chart, endpoint, row_load_cb, row_select_cb, selected_class, selected_detail_id, selected_rows, ts, _rand;
+  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, queue_size, row_load_cb, row_select_cb, selected_class, selected_detail_id, selected_rows, speed_update, speed_update_timer, ts, update_speed, _rand;
 
   selected_rows = [];
 
@@ -25,7 +25,42 @@
   /* Update interval for the traffic graph in ms*/
 
 
-  chart_update_speed = 1000;
+  update_speed = 1000;
+
+  /* Type of graph to draw. time.area is an alternate*/
+
+
+  graph_type = 'time.line';
+
+  /* Number of frames per second that transitions animations should use.*/
+
+
+  graph_fps = 60;
+
+  /* Number of entries to keep in working memory while the chart is not animating transitions.*/
+
+
+  queue_size = 240;
+
+  /* Number of entries to display in the graph.*/
+
+
+  graph_window_size = 60;
+
+  /* Update interval for the stats/detail tabs*/
+
+
+  detail_update_speed = update_speed * 2;
+
+  /* Timer to update the selected torrent detail page*/
+
+
+  detail_update_timer = null;
+
+  /* Timer to update the selected torrent speed graph*/
+
+
+  speed_update_timer = null;
 
   /*
       Called for each new row loaded into the data table
@@ -66,75 +101,168 @@
         jQuery("#" + existing_row_id).removeClass(selected_class);
       }
       selected_rows = [row_id];
+      selected_detail_id = [row_id];
+      if (detail_update_timer !== null) {
+        clearTimeout(detail_update_timer);
+      }
+      if (speed_update_timer !== null) {
+        clearTimeout(speed_update_timer);
+      }
+      detail_update();
+      speed_update();
       return jQuery("#" + row_id).addClass(selected_class);
     }
   };
 
   action_recheck = function() {
-    return jQuery.ajax("" + endpoint + "/recheck", {
-      data: JSON.stringify(selected_rows),
-      contentType: 'application/json',
-      type: 'POST'
-    });
+    if (selected_rows) {
+      return jQuery.ajax("" + endpoint + "/recheck", {
+        data: JSON.stringify(selected_rows),
+        contentType: 'application/json',
+        type: 'POST'
+      });
+    }
   };
 
   action_reannounce = function() {
-    return jQuery.ajax("" + endpoint + "/reannounce", {
-      data: JSON.stringify(selected_rows),
-      contentType: 'application/json',
-      type: 'POST'
-    });
+    if (selected_rows) {
+      return jQuery.ajax("" + endpoint + "/reannounce", {
+        data: JSON.stringify(selected_rows),
+        contentType: 'application/json',
+        type: 'POST'
+      });
+    }
   };
 
   action_remove = function() {
-    return jQuery.ajax("" + endpoint + "/remove", {
-      data: JSON.stringify(selected_rows),
-      contentType: 'application/json',
-      type: 'POST'
-    });
+    if (selected_rows) {
+      return jQuery.ajax("" + endpoint + "/remove", {
+        data: JSON.stringify(selected_rows),
+        contentType: 'application/json',
+        type: 'POST'
+      });
+    }
   };
 
   action_remove_data = function() {
-    return jQuery.ajax("" + endpoint + "/remove/data", {
-      data: JSON.stringify(selected_rows),
-      contentType: 'application/json',
-      type: 'POST'
-    });
+    if (selected_rows) {
+      return jQuery.ajax("" + endpoint + "/remove/data", {
+        data: JSON.stringify(selected_rows),
+        contentType: 'application/json',
+        type: 'POST'
+      });
+    }
   };
 
   action_stop = function() {
-    return jQuery.ajax("" + endpoint + "/stop", {
-      data: JSON.stringify(selected_rows),
-      contentType: 'application/json',
-      type: 'POST'
-    });
+    if (selected_rows) {
+      return jQuery.ajax("" + endpoint + "/stop", {
+        data: JSON.stringify(selected_rows),
+        contentType: 'application/json',
+        type: 'POST'
+      });
+    }
   };
 
   action_start = function() {
-    return jQuery.ajax("" + endpoint + "/start", {
-      data: JSON.stringify(selected_rows),
-      contentType: 'application/json',
-      type: 'POST'
-    });
+    if (selected_rows) {
+      return jQuery.ajax("" + endpoint + "/start", {
+        data: JSON.stringify(selected_rows),
+        contentType: 'application/json',
+        type: 'POST'
+      });
+    }
   };
 
   _rand = function() {
     return Math.floor((Math.random() * 1000) + 1);
   };
 
-  chart_update = function() {
+  /* Update the chart values with the latest speed values*/
+
+
+  chart_update = function(upload, download) {
     var update_data;
     update_data = [
       {
         time: ts(),
-        y: _rand()
+        y: upload
       }, {
         time: ts(),
-        y: _rand()
+        y: download
       }
     ];
-    detail_traffic_chart.push(update_data);
-    return setTimeout(chart_update, chart_update_speed);
+    return detail_traffic_chart.push(update_data);
+  };
+
+  fmt_timestamp = function(ts) {
+    return moment.unix(ts).format('D/M/YYYY hh:mm:s');
+  };
+
+  fmt_duration = function(seconds) {
+    return moment.duration(seconds, 'seconds').humanize();
+  };
+
+  speed_update = function() {
+    if (selected_detail_id) {
+      jQuery.getJSON("" + endpoint + "/detail/" + selected_detail_id + "/speed", function(data) {
+        return chart_update(data['download_payload_rate'], data['upload_payload_rate']);
+      });
+    }
+    return speed_update_timer = setTimeout(speed_update, update_speed);
+  };
+
+  bytes_to_size = function(bytes, per_sec) {
+    var human_size, i, k, sizes;
+    if (per_sec == null) {
+      per_sec = false;
+    }
+    if (bytes === 0) {
+      return '0 B';
+    }
+    k = 1000;
+    sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    i = Math.floor(Math.log(bytes) / Math.log(k));
+    human_size = (bytes / Math.pow(k, i)).toPrecision(2) + ' ' + sizes[i];
+    if (per_sec) {
+      human_size = "" + human_size + "/s";
+    }
+    return human_size;
+  };
+
+  detail_update = function() {
+    if (selected_detail_id) {
+      jQuery.getJSON("" + endpoint + "/detail/" + selected_detail_id, function(data) {
+        var eta, peers, pieces, seeds;
+        eta = data['eta'] === 0 ? '∞' : fmt_duration(data['eta']);
+        seeds = "" + data['num_seeds'] + " (" + data['total_seeds'] + ")";
+        peers = "" + data['num_peers'] + " (" + data['total_peers'] + ")";
+        pieces = "" + data['num_pieces'] + " (" + data['piece_length'] + ")";
+        detail_elements.detail_downloaded.text(bytes_to_size(data['total_done']));
+        detail_elements.detail_uploaded.text(bytes_to_size(data['total_uploaded']));
+        detail_elements.detail_tracker_status.text(data['tracker_status']);
+        detail_elements.detail_ratio.text(data['ratio'].toFixed(2));
+        detail_elements.detail_next_announce.text(data['next_announce']);
+        detail_elements.detail_speed_dl.text(bytes_to_size(data['download_payload_rate'], true));
+        detail_elements.detail_speed_ul.text(bytes_to_size(data['upload_payload_rate'], true));
+        detail_elements.detail_eta.text(eta);
+        detail_elements.detail_pieces.text(pieces);
+        detail_elements.detail_seeders.text(seeds);
+        detail_elements.detail_peers.text(peers);
+        detail_elements.detail_availability.text(data['distributed_copies']);
+        detail_elements.detail_active_time.text(fmt_duration(data['active_time']));
+        detail_elements.detail_seeding_time.text(fmt_duration(data['seeding_time']));
+        detail_elements.detail_added_on.text(fmt_timestamp(data['time_added']));
+        detail_elements.detail_name.text(data['name']);
+        detail_elements.detail_hash.text(selected_detail_id);
+        detail_elements.detail_path.text(data['save_path']);
+        detail_elements.detail_total_size.text(data['total_size']);
+        detail_elements.detail_num_files.text(data['detail_num_files']);
+        detail_elements.detail_status.text(data['detail_status']);
+        return detail_elements.detail_tracker.text(data['tracker_host']);
+      });
+    }
+    return detail_update_timer = setTimeout(detail_update, detail_update_speed);
   };
 
   /* Return the current unix timestamp in seconds*/
@@ -145,6 +273,35 @@
   };
 
   detail_traffic_chart = null;
+
+  /* Cache all the detail element nodes*/
+
+
+  detail_elements = {
+    detail_downloaded: jQuery("#detail_downloaded"),
+    detail_uploaded: jQuery("#detail_uploaded"),
+    detail_ratio: jQuery("#detail_ratio"),
+    detail_next_announce: jQuery("#detail_next_announce"),
+    detail_tracker_status: jQuery("#detail_tracker_status"),
+    detail_speed_dl: jQuery("#detail_speed_dl"),
+    detail_speed_ul: jQuery("#detail_speed_ul"),
+    detail_eta: jQuery("#detail_eta"),
+    detail_pieces: jQuery("#detail_pieces"),
+    detail_seeders: jQuery("#detail_seeders"),
+    detail_peers: jQuery("#detail_peers"),
+    detail_availability: jQuery("#detail_availability"),
+    detail_active_time: jQuery("#detail_active_time"),
+    detail_seeding_time: jQuery("#detail_seeding_time"),
+    detail_added_on: jQuery("#detail_added_on"),
+    detail_name: jQuery("#detail_name"),
+    detail_hash: jQuery("#detail_hash"),
+    detail_path: jQuery("#detail_path"),
+    detail_total_size: jQuery("#detail_total_size"),
+    detail_num_files: jQuery("#detail_num_files"),
+    detail_comment: jQuery("#detail_comment"),
+    detail_status: jQuery("#detail_status"),
+    detail_tracker: jQuery("#detail_tracker")
+  };
 
   jQuery(function() {
     jQuery('#torrent_table').dataTable({
@@ -184,8 +341,8 @@
     jQuery('#action_reannounce').on('click', action_reannounce);
     /* Initialize epoch chart on the traffic tab*/
 
-    detail_traffic_chart = jQuery('#detail-traffic-chart').epoch({
-      type: 'time.line',
+    return detail_traffic_chart = jQuery('#detail-traffic-chart').epoch({
+      type: graph_type,
       data: [
         {
           label: "upload",
@@ -195,9 +352,15 @@
           values: []
         }
       ],
-      axes: ['left', 'right']
+      axes: ['left', 'right'],
+      fps: graph_fps,
+      windowSize: graph_window_size,
+      queueSize: queue_size
     });
-    return setTimeout(chart_update, chart_update_speed);
   });
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=tranny-torrents.map
+*/
