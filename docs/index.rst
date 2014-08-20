@@ -13,7 +13,7 @@ Contents:
 
     setup
     scripts
-    deluge
+    clients
     config_ratings
     services
     modules

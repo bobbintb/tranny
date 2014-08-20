@@ -8,7 +8,7 @@ selected_class = 'selected'
 selected_detail_id = false
 
 ### Application endpoint prefix ###
-endpoint = '/torrents'
+endpoint = "http://#{document.domain}:#{location.port}/ws"
 
 ### Update interval for the traffic graph in ms ###
 update_speed = 1000
@@ -36,6 +36,9 @@ speed_update_timer = null
 
 ### Timer to update the selected torrent peer list ###
 peer_update_timer = null
+
+### socket.io-client instance ###
+socket = null
 
 ###
     Called for each new row loaded into the data table
@@ -79,13 +82,15 @@ row_select_cb = (e) ->
         peer_update()
         jQuery("#" + row_id).addClass selected_class
 
+###
+Remove a row from the torrent list by its info_hash
+###
+row_remove = (info_hash) -> jQuery("#" + info_hash).remove()
+
 action_recheck = ->
     if selected_rows
-        jQuery.ajax "#{endpoint}/recheck", {
-            data: JSON.stringify(selected_rows),
-            contentType: 'application/json',
-            type: 'POST'
-        }
+        socket.emit 'event_torrent_recheck', {info_hash: selected_rows}
+        return false
 
 action_reannounce = ->
     if selected_rows
@@ -96,19 +101,21 @@ action_reannounce = ->
         }
 
 action_remove = ->
-    if selected_rows
-        jQuery.ajax "#{endpoint}/remove", {
-            data: JSON.stringify(selected_rows),
-            contentType: 'application/json',
-            type: 'POST'
+    for info_hash in selected_rows
+        jQuery.ajax "#{endpoint}/#{info_hash}/files", {
+            type: 'DELETE'
+        }, status_code: {
+            204: -> row_remove info_hash
+            404: -> console.log "info_hash not found: #{info_hash}"
         }
 
 action_remove_data = ->
-    if selected_rows
-        jQuery.ajax "#{endpoint}/remove/data", {
-            data: JSON.stringify(selected_rows),
-            contentType: 'application/json',
-            type: 'POST'
+    for info_hash in selected_rows
+        jQuery.ajax "#{endpoint}/#{info_hash}", {
+            type: 'DELETE'
+        }, status_code: {
+            204: -> row_remove info_hash
+            404: -> console.log "info_hash not found: #{info_hash}"
         }
 
 action_stop = ->
@@ -247,10 +254,17 @@ detail_elements =
     detail_tracker: jQuery("#detail_tracker")
 
 jQuery ->
+
+    socket = io.connect endpoint
+    socket.on 'event_torrent_recheck', (data) -> console.log data
+    socket.on 'event_torrent_peers', (data) -> console.log data
+    socket.on 'event_torrent_speed', (data) -> console.log data
+    socket.on 'event_torrent_detail', (data) -> console.log data
+
     jQuery('#torrent_table').dataTable {
         processing: true,
         serverSize: true,
-        ajax: "#{endpoint}/list",
+        ajax: "/torrents/list",
         paginate: false,
         searching: false,
         scrollY: 300,
@@ -273,6 +287,8 @@ jQuery ->
     jQuery('#action_start').on 'click', action_start
     jQuery('#action_recheck').on 'click', action_recheck
     jQuery('#action_reannounce').on 'click', action_reannounce
+    jQuery('#action_remove').on 'click', action_remove
+    jQuery('#action_remove_data').on 'click', action_remove_data
 
     ### Initialize epoch chart on the traffic tab ###
     detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {

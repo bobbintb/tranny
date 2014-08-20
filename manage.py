@@ -8,7 +8,7 @@ import signal
 import sys
 from flask.ext.script import Manager
 from tranny import create_app, app
-from tranny.extensions import db
+from tranny.extensions import db, socketio
 from tranny.models import User
 from tranny.constants import ROLE_ADMIN
 
@@ -38,7 +38,7 @@ manager = Manager(application)
 @manager.command
 def run():
     """Run in local machine."""
-    application.run(use_reloader=False)
+    socketio.run(application)
 
 
 @manager.command

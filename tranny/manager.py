@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from threading import Thread
-from time import sleep
+import threading
+from gevent import sleep, monkey
+# Use gevent compatible Threads which turn into gevent coroutines
+monkey.patch_all()
+
 from sqlalchemy.exc import DBAPIError
 from tranny import app, datastore, watch, models, client
 from tranny.provider.rss import RSSFeed
@@ -18,8 +21,8 @@ class ServiceManager(object):
         self.feeds = []
         self.services = []
         self.client = None
-        self._updater = Thread(target=self.update)
-        self._updater.daemon = True
+        self._updater = threading.Thread(target=self.update)
+        self._updater.daemon = False
         self.watch = None
 
     def reload(self):
@@ -35,7 +38,7 @@ class ServiceManager(object):
         self.feeds = self.init_rss()
         self.services = self.init_services()
         self.client = client.init_client()
-        self.watch = watch.FileWatchService(self)
+        #self.watch = watch.FileWatchService(self)
 
     @staticmethod
     def init_rss():
@@ -74,6 +77,7 @@ class ServiceManager(object):
         :param sleep_time: Number of seconds to sleep between executing providers
         """
         self.update_providers()
+        # gevent.sleep used to yield the coroutine since the Thread is now a cooroutine
         sleep(sleep_time)
 
     def add(self, torrent, service, dl_path=None):

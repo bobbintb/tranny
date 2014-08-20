@@ -14,6 +14,7 @@ flask-sqlalchemy
 flask-mail
 flask-cache
 flask-babel
+flask-socketio
 flask-uploads
 flask-wtf
 #-e git+git://github.com/seatgeek/fuzzywuzzy.git#egg=fuzzywuzzy

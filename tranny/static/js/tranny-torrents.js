@@ -3,7 +3,7 @@
 
 
 (function() {
-  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, peer_update, peer_update_timer, queue_size, render_peers, row_load_cb, row_select_cb, selected_class, selected_detail_id, selected_rows, speed_update, speed_update_timer, ts, update_speed, _rand, _sizes;
+  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, peer_update, peer_update_timer, queue_size, render_peers, row_load_cb, row_remove, row_select_cb, selected_class, selected_detail_id, selected_rows, socket, speed_update, speed_update_timer, ts, update_speed, _rand, _sizes;
 
   selected_rows = [];
 
@@ -20,7 +20,7 @@
   /* Application endpoint prefix*/
 
 
-  endpoint = '/torrents';
+  endpoint = "http://" + document.domain + ":" + location.port + "/ws";
 
   /* Update interval for the traffic graph in ms*/
 
@@ -66,6 +66,11 @@
 
 
   peer_update_timer = null;
+
+  /* socket.io-client instance*/
+
+
+  socket = null;
 
   /*
       Called for each new row loaded into the data table
@@ -123,13 +128,21 @@
     }
   };
 
+  /*
+  Remove a row from the torrent list by its info_hash
+  */
+
+
+  row_remove = function(info_hash) {
+    return jQuery("#" + info_hash).remove();
+  };
+
   action_recheck = function() {
     if (selected_rows) {
-      return jQuery.ajax("" + endpoint + "/recheck", {
-        data: JSON.stringify(selected_rows),
-        contentType: 'application/json',
-        type: 'POST'
+      socket.emit('event_torrent_recheck', {
+        info_hash: selected_rows
       });
+      return false;
     }
   };
 
@@ -144,23 +157,45 @@
   };
 
   action_remove = function() {
-    if (selected_rows) {
-      return jQuery.ajax("" + endpoint + "/remove", {
-        data: JSON.stringify(selected_rows),
-        contentType: 'application/json',
-        type: 'POST'
-      });
+    var info_hash, _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = selected_rows.length; _i < _len; _i++) {
+      info_hash = selected_rows[_i];
+      _results.push(jQuery.ajax("" + endpoint + "/" + info_hash + "/files", {
+        type: 'DELETE'
+      }, {
+        status_code: {
+          204: function() {
+            return row_remove(info_hash);
+          },
+          404: function() {
+            return console.log("info_hash not found: " + info_hash);
+          }
+        }
+      }));
     }
+    return _results;
   };
 
   action_remove_data = function() {
-    if (selected_rows) {
-      return jQuery.ajax("" + endpoint + "/remove/data", {
-        data: JSON.stringify(selected_rows),
-        contentType: 'application/json',
-        type: 'POST'
-      });
+    var info_hash, _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = selected_rows.length; _i < _len; _i++) {
+      info_hash = selected_rows[_i];
+      _results.push(jQuery.ajax("" + endpoint + "/" + info_hash, {
+        type: 'DELETE'
+      }, {
+        status_code: {
+          204: function() {
+            return row_remove(info_hash);
+          },
+          404: function() {
+            return console.log("info_hash not found: " + info_hash);
+          }
+        }
+      }));
     }
+    return _results;
   };
 
   action_stop = function() {
@@ -333,10 +368,23 @@
   };
 
   jQuery(function() {
+    socket = io.connect(endpoint);
+    socket.on('event_torrent_recheck', function(data) {
+      return console.log(data);
+    });
+    socket.on('event_torrent_peers', function(data) {
+      return console.log(data);
+    });
+    socket.on('event_torrent_speed', function(data) {
+      return console.log(data);
+    });
+    socket.on('event_torrent_detail', function(data) {
+      return console.log(data);
+    });
     jQuery('#torrent_table').dataTable({
       processing: true,
       serverSize: true,
-      ajax: "" + endpoint + "/list",
+      ajax: "/torrents/list",
       paginate: false,
       searching: false,
       scrollY: 300,
@@ -368,6 +416,8 @@
     jQuery('#action_start').on('click', action_start);
     jQuery('#action_recheck').on('click', action_recheck);
     jQuery('#action_reannounce').on('click', action_reannounce);
+    jQuery('#action_remove').on('click', action_remove);
+    jQuery('#action_remove_data').on('click', action_remove_data);
     /* Initialize epoch chart on the traffic tab*/
 
     return detail_traffic_chart = jQuery('#detail-traffic-chart').epoch({

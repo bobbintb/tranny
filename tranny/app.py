@@ -41,7 +41,7 @@ config = None
 from tranny.models import User
 from tranny.util import file_size
 from tranny import ui
-from tranny.extensions import db, mail, cache, login_manager
+from tranny.extensions import db, mail, cache, login_manager, socketio
 
 __all__ = ['create_app']
 
@@ -128,6 +128,9 @@ def configure_extensions(app):
     # flask-cache
     cache.init_app(app)
 
+    # flask-socketio
+    socketio.init_app(app)
+
     # flask-uploads
     from tranny.forms import torrent_file_set
     configure_uploads(app, [torrent_file_set])
@@ -139,7 +142,7 @@ def configure_extensions(app):
     #@babel.localeselector
     #def get_locale():
     #    accept_languages = app.config.get('ACCEPT_LANGUAGES')
-    #R    return request.accept_languages.best_match(accept_languages)
+    #    return request.accept_languages.best_match(accept_languages)
 
     # flask-login
     login_manager.login_view = 'user.login'

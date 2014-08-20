@@ -12,3 +12,6 @@ cache = Cache()
 
 from flask.ext.login import LoginManager
 login_manager = LoginManager()
+
+from flask.ext.socketio import SocketIO
+socketio = SocketIO()

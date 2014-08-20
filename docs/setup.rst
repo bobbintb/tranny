@@ -15,7 +15,7 @@ One of the following torrent clients configured for remote API access
 
 Along with a python distribution and required python libraries
 
-- `Python 2.7 <http://www.python.org/download/>`_ - If you do not use the directory watch feature, it will probably run on python3 as well. The libraries below are all required. The pip installer will take care of installing them if you are using a virtualenv though.
+- `Python 2.7 <http://www.python.org/download/>`_ - Python 3 support will come with python 3 gevent support
 - `watchdog <https://pypi.python.org/pypi/watchdog>`_
 - `transmissionrpc <https://bitbucket.org/blueluna/transmissionrpc/wiki/Home>`_
 - `requests <http://docs.python-requests.org/en/latest/>`_

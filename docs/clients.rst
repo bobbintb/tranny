@@ -3,6 +3,8 @@ Torrent Client Configuration
 
 Examples of how to setup backend torrent clients for use with tranny.
 
+The most feature complete client is deluge so it is the recommended choice for now.
+
 rTorrent
 --------
 
