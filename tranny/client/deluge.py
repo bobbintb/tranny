@@ -7,7 +7,7 @@ from __future__ import unicode_literals, absolute_import, with_statement
 import json
 import time
 import requests
-from tranny import client, app
+from tranny import client, app, util
 from tranny.exceptions import AuthenticationError, ApiError
 
 ERROR_AUTH = 1
@@ -66,7 +66,7 @@ class DelugeClient(client.TorrentClient):
 
     def _request(self, method, args=None, attempt=0):
         # Prevent requests other than ones used to connect while not connected
-        #if not self.connected and not method in self.allowed_pre_connect_methods:
+        # if not self.connected and not method in self.allowed_pre_connect_methods:
         #    return False
         if attempt > self.max_request_retries:
             self.log.error("Maximum number of retries reached: {} ({})".format(
@@ -102,7 +102,7 @@ class DelugeClient(client.TorrentClient):
                 # sequence of events, This could possibly be the wrong location.
                 if not self.is_connected():
                     self.connect()
-                return self._request(method, args=args, attempt=attempt+1)['result']
+                return self._request(method, args=args, attempt=attempt + 1)['result']
         except ApiError as err:
             self.log.error(err)
         except Exception as exc:
@@ -158,6 +158,13 @@ class DelugeClient(client.TorrentClient):
     def torrent_add(self, data, download_dir=None):
         pass
 
+    def current_speeds(self):
+        resp = self._request('web.update_ui', [['upload_rate', 'download_rate'], {}])
+        try:
+            return resp['stats']['upload_rate'], resp['stats']['download_rate']
+        except:
+            return 0.0, 0.0
+
     def torrent_list(self):
         """ Get a list of currently loaded torrents from the client
 
@@ -180,7 +187,7 @@ class DelugeClient(client.TorrentClient):
             torrent_info = client.ClientTorrentData(
                 info_hash,
                 detail['name'],
-                self._fmt_ratio(detail['ratio']),
+                detail['ratio'],
                 detail['upload_payload_rate'],
                 detail['download_payload_rate'],
                 detail['total_uploaded'],
@@ -191,7 +198,8 @@ class DelugeClient(client.TorrentClient):
                 detail['total_peers'],
                 '1',
                 '1',
-                detail['state']
+                detail['state'],
+                detail['progress']
             )
             torrent_data.append(torrent_info)
         return torrent_data
@@ -230,8 +238,7 @@ class DelugeClient(client.TorrentClient):
         return resp
 
     def torrent_reannounce(self, info_hash):
-        resp = self._request('core.force_reannounce', [info_hash])
-        return resp
+        return self._request('core.force_reannounce', [info_hash]) is None
 
     def torrent_recheck(self, info_hash):
         resp = self._request('core.force_recheck', [info_hash])

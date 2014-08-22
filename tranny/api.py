@@ -6,10 +6,14 @@ from __future__ import unicode_literals, absolute_import
 from flask import jsonify, Response
 
 # General status codes
+from flask.ext.socketio import emit
+
 STATUS_OK = 0
 STATUS_FAIL = 1
-STATUS_INCOMPLETE_REQUEST = 2
 
+# Specific error codes
+STATUS_INCOMPLETE_REQUEST = 10
+STATUS_INVALID_INFO_HASH = 11
 
 # WebSocket event constants
 EVENT_TORRENT_RECHECK = 'event_torrent_recheck'
@@ -43,15 +47,11 @@ EVENT_TORRENT_REMOVE = 'event_torrent_remove'
 EVENT_TORRENT_REMOVE_RESPONSE = 'event_torrent_remove_response'
 
 EVENT_SPEED_OVERALL = 'event_speed_overall'
+EVENT_SPEED_OVERALL_RESPONSE = 'event_speed_overall_response'
 
 # Generic response
 EVENT_RESPONSE = 'event_response'
 
 
-def response(response=None, status=200, json=True):
-    if json:
-        resp = jsonify(response)
-        resp.status_code = status
-    else:
-        resp = Response(response=response, status=status)
-    return resp
+def response(event, data=None, status=STATUS_OK):
+    return emit(event, dict(status=status, data=data))

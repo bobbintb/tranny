@@ -42,8 +42,7 @@ class TorrentClient(object):
         """
         raise NotImplementedError("add is not implemented")
 
-    def _fmt_ratio(self, ratio):
-        return "{:.2f}".format(ratio)
+
 
     def client_version(self):
         """ Fetch and return the client version if available
@@ -97,6 +96,8 @@ class TorrentClient(object):
     def disconnect(self):
         raise NotImplementedError("disconnect undefined")
 
+client = TorrentClient()
+
 
 class ClientTorrentData(dict):
     """
@@ -104,12 +105,12 @@ class ClientTorrentData(dict):
     """
 
     def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size, size_completed,
-                 leechers, peers, priority, private, is_active, **kwargs):
+                 leechers, peers, priority, private, is_active, progress, **kwargs):
         super(ClientTorrentData, self).__init__(**kwargs)
         self['DT_RowId'] = info_hash
         self['info_hash'] = info_hash
         self['name'] = name
-        self['ratio'] = ratio
+        self['ratio'] = util.fmt_ratio(ratio)
         self['up_rate'] = up_rate
         self['dn_rate'] = dn_rate
         self['up_total'] = up_total
@@ -121,6 +122,7 @@ class ClientTorrentData(dict):
         self['priority'] = priority
         self['private'] = private
         self['is_active'] = is_active
+        self['progress'] = util.fmt_ratio(progress)
 
 
 def init_client(client_type=None):
@@ -148,3 +150,13 @@ def init_client(client_type=None):
     config_values = config.get_section_values(TorrentClient.config_key)
 
     return TorrentClient(**config_values)
+
+
+def get():
+    """ Return a reference to the current torrent client in use
+
+    :return: Current torrent client backend in use
+    :rtype: tranny.client.TorrentClient()
+    """
+    from flask import current_app
+    return current_app.services.client

@@ -6,7 +6,15 @@
 
 #torrent_table {
     td {
-        padding: 4px 2px 4px 2px;
+        padding: 1px 4px 4px 4px;
+        line-height: 16px;
+        // Used for ratio colors
+        span.alert {
+            color: $alert-color;
+        }
+        span.success {
+            color: $success-color;
+        }
     }
 }
 

@@ -27,9 +27,3 @@ def sec_totals():
 def type_totals():
     data_set = stat.service_type_totals(models.DownloadEntity.query.all())
     return dumps(data_set)
-
-
-@stats.route("/speed_overall")
-def speed_overall():
-    speeds = current_app.services.client.current_speeds()
-    return dumps(speeds)

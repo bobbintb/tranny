@@ -31,14 +31,62 @@ detail_update_speed = update_speed * 2
 ### Timer to update the selected torrent detail page ###
 detail_update_timer = null
 
+### Timer for the overall speed indicator ###
+overall_speed_update_timer = null
+
 ### Timer to update the selected torrent speed graph ###
 speed_update_timer = null
 
 ### Timer to update the selected torrent peer list ###
 peer_update_timer = null
 
+
+
 ### socket.io-client instance ###
 socket = null
+
+torrent_table = jQuery('#torrent_table').dataTable {
+        processing: true,
+        serverSize: true,
+        paginate: false,
+        searching: false,
+        autoWidth: true,
+        # Column reordering support
+        sDom: 'Rlfrtip',
+        scrollY: 300,
+        columns: [
+            { data: 'name' },
+            { data: 'size' },
+            { data: 'progress' },
+            { data: 'ratio' },
+            { data: 'up_rate' },
+            { data: 'dn_rate' },
+            { data: 'leechers'},
+            { data: 'peers'},
+            { data: 'priority'},
+            { data: 'is_active'}
+        ],
+        rowCallback: row_load_cb,
+        columnDefs: [
+            {
+                render: (data, type, row) ->
+                    pct = Math.floor(data)
+                    style = if pct >= 100 then "success" else "alert"
+                    """<div class="progress #{style}">
+                        <span style="float: left">#{data}%</span>
+                        <span class="meter" style="width: #{data}"></span>
+                    </div>"""
+                targets: 2
+            },
+            {
+                render: (data, type, row) ->
+                    class_name = if data < 1 then 'alert' else 'success'
+                    """<span class="#{class_name}">#{data}</span>"""
+                targets: 3
+            }
+        ]
+    }
+#new jQuery.fn.dataTable.ColReorder torrent_table
 
 ###
     Called for each new row loaded into the data table
@@ -70,7 +118,7 @@ row_select_cb = (e) ->
         for existing_row_id in selected_rows
             jQuery("#" + existing_row_id).removeClass selected_class
         selected_rows = [row_id]
-        selected_detail_id = [row_id]
+        selected_detail_id = row_id
         if detail_update_timer != null
             clearTimeout detail_update_timer
         if speed_update_timer != null
@@ -94,11 +142,7 @@ action_recheck = ->
 
 action_reannounce = ->
     if selected_rows
-        jQuery.ajax "#{endpoint}/reannounce", {
-            data: JSON.stringify(selected_rows),
-            contentType: 'application/json',
-            type: 'POST'
-        }
+        socket.emit 'event_torrent_announce', {info_hash: selected_rows}
 
 action_remove = ->
     for info_hash in selected_rows
@@ -134,6 +178,14 @@ action_start = ->
             type: 'POST'
         }
 
+
+### WS Event handlers ###
+
+event_torrent_list_response_cb = (message) ->
+    for row in message['data']
+        torrent_table.fnAddData(row)
+
+
 _rand = -> Math.floor((Math.random() * 1000) + 1)
 
 ### Update the chart values with the latest speed values ###
@@ -152,10 +204,23 @@ fmt_duration = (seconds) -> moment.duration(seconds, 'seconds').humanize()
 
 speed_update = ->
     if selected_detail_id
-        jQuery.getJSON "#{endpoint}/detail/#{selected_detail_id}/speed", (data) ->
-            chart_update data['download_payload_rate'], data['upload_payload_rate']
+        socket.emit 'event_torrent_speed', {info_hash: selected_detail_id}
     speed_update_timer = setTimeout speed_update, update_speed
 
+handle_event_torrent_speed_response = (message) ->
+    chart_update message['data']['download_payload_rate'], message['data']['upload_payload_rate']
+
+speed_up = jQuery("#speed_up")
+speed_dn = jQuery("#speed_dn")
+
+overall_speed_update = ->
+    socket.emit 'event_speed_overall', {}
+    overall_speed_update_timer = setTimeout overall_speed_update, update_speed
+
+handle_event_speed_overall_response = (message) ->
+    speeds = message['data']
+    speed_up.text bytes_to_size speeds['up'], true
+    speed_dn.text bytes_to_size speeds['dn'], true
 
 _sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 bytes_to_size = (bytes, per_sec=false) ->
@@ -185,42 +250,47 @@ render_peers = (peer_list) ->
 
 peer_update= ->
     if selected_detail_id
-        jQuery.getJSON "#{endpoint}/detail/#{selected_detail_id}/peers", (data) ->
-            render_peers data['peers']
+        socket.emit 'event_torrent_peers', {info_hash: selected_detail_id}
     peer_update_timer = setTimeout peer_update, update_speed
+
+
+handle_event_torrent_peers_response = (message) ->
+    render_peers message['data']['peers']
 
 detail_update = ->
     if selected_detail_id
-        jQuery.getJSON "#{endpoint}/detail/#{selected_detail_id}", (data) ->
-            eta = if data['eta'] == 0 then '∞' else fmt_duration data['eta']
-            seeds = "#{data['num_seeds']} (#{data['total_seeds']})"
-            peers = "#{data['num_peers']} (#{data['total_peers']})"
-            pieces = "#{data['num_pieces']} (#{data['piece_length']})"
-            detail_elements.detail_downloaded.text bytes_to_size data['total_done']
-            detail_elements.detail_uploaded.text bytes_to_size data['total_uploaded']
-            detail_elements.detail_tracker_status.text data['tracker_status']
-            detail_elements.detail_ratio.text data['ratio'].toFixed(2)
-            detail_elements.detail_next_announce.text data['next_announce']
-            detail_elements.detail_speed_dl.text bytes_to_size data['download_payload_rate'], true
-            detail_elements.detail_speed_ul.text bytes_to_size data['upload_payload_rate'], true
-            detail_elements.detail_eta.text eta
-            detail_elements.detail_pieces.text pieces
-            detail_elements.detail_seeders.text seeds
-            detail_elements.detail_peers.text peers
-            detail_elements.detail_availability.text data['distributed_copies']
-            detail_elements.detail_active_time.text fmt_duration data['active_time']
-            detail_elements.detail_seeding_time.text fmt_duration data['seeding_time']
-            detail_elements.detail_added_on.text fmt_timestamp data['time_added']
-            detail_elements.detail_name.text data['name']
-            detail_elements.detail_hash.text selected_detail_id
-            detail_elements.detail_path.text data['save_path']
-            detail_elements.detail_total_size.text data['total_size']
-            detail_elements.detail_num_files.text data['detail_num_files']
-            #detail_elements.detail_comment.text data['detail_comment']
-            detail_elements.detail_status.text data['detail_status']
-            detail_elements.detail_tracker.text data['tracker_host']
-
+        socket.emit('event_torrent_details', {info_hash: selected_detail_id})
     detail_update_timer = setTimeout detail_update, detail_update_speed
+
+handle_event_torrent_details_response = (message) ->
+    data = message['data']
+    eta = if data['eta'] == 0 then '∞' else fmt_duration data['eta']
+    seeds = "#{data['num_seeds']} (#{data['total_seeds']})"
+    peers = "#{data['num_peers']} (#{data['total_peers']})"
+    pieces = "#{data['num_pieces']} (#{data['piece_length']})"
+    detail_elements.detail_downloaded.text bytes_to_size data['total_done']
+    detail_elements.detail_uploaded.text bytes_to_size data['total_uploaded']
+    detail_elements.detail_tracker_status.text data['tracker_status']
+    detail_elements.detail_ratio.text data['ratio'].toFixed(2)
+    detail_elements.detail_next_announce.text data['next_announce']
+    detail_elements.detail_speed_dl.text bytes_to_size data['download_payload_rate'], true
+    detail_elements.detail_speed_ul.text bytes_to_size data['upload_payload_rate'], true
+    detail_elements.detail_eta.text eta
+    detail_elements.detail_pieces.text pieces
+    detail_elements.detail_seeders.text seeds
+    detail_elements.detail_peers.text peers
+    detail_elements.detail_availability.text data['distributed_copies']
+    detail_elements.detail_active_time.text fmt_duration data['active_time']
+    detail_elements.detail_seeding_time.text fmt_duration data['seeding_time']
+    detail_elements.detail_added_on.text fmt_timestamp data['time_added']
+    detail_elements.detail_name.text data['name']
+    detail_elements.detail_hash.text selected_detail_id
+    detail_elements.detail_path.text data['save_path']
+    detail_elements.detail_total_size.text data['total_size']
+    detail_elements.detail_num_files.text data['detail_num_files']
+    #detail_elements.detail_comment.text data['detail_comment']
+    detail_elements.detail_status.text data['detail_status']
+    detail_elements.detail_tracker.text data['tracker_host']
 
 ### Return the current unix timestamp in seconds ###
 ts = -> Math.round(new Date().getTime() / 1000)|0
@@ -253,49 +323,41 @@ detail_elements =
     detail_status: jQuery("#detail_status")
     detail_tracker: jQuery("#detail_tracker")
 
+### Check for the existence of a string in the URL ###
+in_url = (text) ->
+    window.location.pathname.indexOf(text) != -1
+
 jQuery ->
-
     socket = io.connect endpoint
-    socket.on 'event_torrent_recheck', (data) -> console.log data
-    socket.on 'event_torrent_peers', (data) -> console.log data
-    socket.on 'event_torrent_speed', (data) -> console.log data
-    socket.on 'event_torrent_detail', (data) -> console.log data
+    socket.on 'connect', ->
+        if in_url "/torrents/"
+            socket.emit 'event_torrent_list'
+        overall_speed_update()
 
-    jQuery('#torrent_table').dataTable {
-        processing: true,
-        serverSize: true,
-        ajax: "/torrents/list",
-        paginate: false,
-        searching: false,
-        scrollY: 300,
-        columns: [
-            { data: 'name' },
-            { data: 'size' },
-            { data: 'ratio' },
-            { data: 'up_rate' },
-            { data: 'dn_rate' },
-            { data: 'leechers'},
-            { data: 'peers'},
-            { data: 'priority'},
-            { data: 'is_active'}
-        ],
-        rowCallback: row_load_cb
-    }
+    socket.on 'event_speed_overall_response', handle_event_speed_overall_response
 
-    jQuery('#torrent_table tbody').on 'click', 'tr', row_select_cb
-    jQuery('#action_stop').on 'click', action_stop
-    jQuery('#action_start').on 'click', action_start
-    jQuery('#action_recheck').on 'click', action_recheck
-    jQuery('#action_reannounce').on 'click', action_reannounce
-    jQuery('#action_remove').on 'click', action_remove
-    jQuery('#action_remove_data').on 'click', action_remove_data
+    if in_url "/torrents/"
+        socket.on 'event_torrent_recheck', (data) -> console.log data
+        socket.on 'event_torrent_peers_response', handle_event_torrent_peers_response
+        socket.on 'event_torrent_speed', (data) -> console.log data
+        socket.on 'event_torrent_details_response', handle_event_torrent_details_response
+        socket.on 'event_torrent_files', (data) -> console.log data
+        socket.on 'event_torrent_list_response', event_torrent_list_response_cb
 
-    ### Initialize epoch chart on the traffic tab ###
-    detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
-        type: graph_type,
-        data: [{label: "upload", values: []}, {label: "download", values: []}],
-        axes: ['left', 'right'],
-        fps: graph_fps,
-        windowSize: graph_window_size,
-        queueSize: queue_size
-    }
+        jQuery('#torrent_table tbody').on 'click', 'tr', row_select_cb
+        jQuery('#action_stop').on 'click', action_stop
+        jQuery('#action_start').on 'click', action_start
+        jQuery('#action_recheck').on 'click', action_recheck
+        jQuery('#action_reannounce').on 'click', action_reannounce
+        jQuery('#action_remove').on 'click', action_remove
+        jQuery('#action_remove_data').on 'click', action_remove_data
+
+        ### Initialize epoch chart on the traffic tab ###
+        detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
+            type: graph_type,
+            data: [{label: "upload", values: []}, {label: "download", values: []}],
+            axes: ['left', 'right'],
+            fps: graph_fps,
+            windowSize: graph_window_size,
+            queueSize: queue_size
+        }

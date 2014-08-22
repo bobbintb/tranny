@@ -3,7 +3,7 @@
 
 
 (function() {
-  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, peer_update, peer_update_timer, queue_size, render_peers, row_load_cb, row_remove, row_select_cb, selected_class, selected_detail_id, selected_rows, socket, speed_update, speed_update_timer, ts, update_speed, _rand, _sizes;
+  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, event_torrent_list_response_cb, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_peers_response, handle_event_torrent_speed_response, in_url, overall_speed_update, overall_speed_update_timer, peer_update, peer_update_timer, queue_size, render_peers, row_load_cb, row_remove, row_select_cb, selected_class, selected_detail_id, selected_rows, socket, speed_dn, speed_up, speed_update, speed_update_timer, torrent_table, ts, update_speed, _rand, _sizes;
 
   selected_rows = [];
 
@@ -57,6 +57,11 @@
 
   detail_update_timer = null;
 
+  /* Timer for the overall speed indicator*/
+
+
+  overall_speed_update_timer = null;
+
   /* Timer to update the selected torrent speed graph*/
 
 
@@ -71,6 +76,58 @@
 
 
   socket = null;
+
+  torrent_table = jQuery('#torrent_table').dataTable({
+    processing: true,
+    serverSize: true,
+    paginate: false,
+    searching: false,
+    autoWidth: true,
+    sDom: 'Rlfrtip',
+    scrollY: 300,
+    columns: [
+      {
+        data: 'name'
+      }, {
+        data: 'size'
+      }, {
+        data: 'progress'
+      }, {
+        data: 'ratio'
+      }, {
+        data: 'up_rate'
+      }, {
+        data: 'dn_rate'
+      }, {
+        data: 'leechers'
+      }, {
+        data: 'peers'
+      }, {
+        data: 'priority'
+      }, {
+        data: 'is_active'
+      }
+    ],
+    rowCallback: row_load_cb,
+    columnDefs: [
+      {
+        render: function(data, type, row) {
+          var pct, style;
+          pct = Math.floor(data);
+          style = pct >= 100 ? "success" : "alert";
+          return "<div class=\"progress " + style + "\">\n    <span style=\"float: left\">" + data + "%</span>\n    <span class=\"meter\" style=\"width: " + data + "\"></span>\n</div>";
+        },
+        targets: 2
+      }, {
+        render: function(data, type, row) {
+          var class_name;
+          class_name = data < 1 ? 'alert' : 'success';
+          return "<span class=\"" + class_name + "\">" + data + "</span>";
+        },
+        targets: 3
+      }
+    ]
+  });
 
   /*
       Called for each new row loaded into the data table
@@ -111,7 +168,7 @@
         jQuery("#" + existing_row_id).removeClass(selected_class);
       }
       selected_rows = [row_id];
-      selected_detail_id = [row_id];
+      selected_detail_id = row_id;
       if (detail_update_timer !== null) {
         clearTimeout(detail_update_timer);
       }
@@ -148,10 +205,8 @@
 
   action_reannounce = function() {
     if (selected_rows) {
-      return jQuery.ajax("" + endpoint + "/reannounce", {
-        data: JSON.stringify(selected_rows),
-        contentType: 'application/json',
-        type: 'POST'
+      return socket.emit('event_torrent_announce', {
+        info_hash: selected_rows
       });
     }
   };
@@ -218,6 +273,20 @@
     }
   };
 
+  /* WS Event handlers*/
+
+
+  event_torrent_list_response_cb = function(message) {
+    var row, _i, _len, _ref, _results;
+    _ref = message['data'];
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      row = _ref[_i];
+      _results.push(torrent_table.fnAddData(row));
+    }
+    return _results;
+  };
+
   _rand = function() {
     return Math.floor((Math.random() * 1000) + 1);
   };
@@ -249,11 +318,31 @@
 
   speed_update = function() {
     if (selected_detail_id) {
-      jQuery.getJSON("" + endpoint + "/detail/" + selected_detail_id + "/speed", function(data) {
-        return chart_update(data['download_payload_rate'], data['upload_payload_rate']);
+      socket.emit('event_torrent_speed', {
+        info_hash: selected_detail_id
       });
     }
     return speed_update_timer = setTimeout(speed_update, update_speed);
+  };
+
+  handle_event_torrent_speed_response = function(message) {
+    return chart_update(message['data']['download_payload_rate'], message['data']['upload_payload_rate']);
+  };
+
+  speed_up = jQuery("#speed_up");
+
+  speed_dn = jQuery("#speed_dn");
+
+  overall_speed_update = function() {
+    socket.emit('event_speed_overall', {});
+    return overall_speed_update_timer = setTimeout(overall_speed_update, update_speed);
+  };
+
+  handle_event_speed_overall_response = function(message) {
+    var speeds;
+    speeds = message['data'];
+    speed_up.text(bytes_to_size(speeds['up'], true));
+    return speed_dn.text(bytes_to_size(speeds['dn'], true));
   };
 
   _sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -287,46 +376,55 @@
 
   peer_update = function() {
     if (selected_detail_id) {
-      jQuery.getJSON("" + endpoint + "/detail/" + selected_detail_id + "/peers", function(data) {
-        return render_peers(data['peers']);
+      socket.emit('event_torrent_peers', {
+        info_hash: selected_detail_id
       });
     }
     return peer_update_timer = setTimeout(peer_update, update_speed);
   };
 
+  handle_event_torrent_peers_response = function(message) {
+    return render_peers(message['data']['peers']);
+  };
+
   detail_update = function() {
     if (selected_detail_id) {
-      jQuery.getJSON("" + endpoint + "/detail/" + selected_detail_id, function(data) {
-        var eta, peers, pieces, seeds;
-        eta = data['eta'] === 0 ? '∞' : fmt_duration(data['eta']);
-        seeds = "" + data['num_seeds'] + " (" + data['total_seeds'] + ")";
-        peers = "" + data['num_peers'] + " (" + data['total_peers'] + ")";
-        pieces = "" + data['num_pieces'] + " (" + data['piece_length'] + ")";
-        detail_elements.detail_downloaded.text(bytes_to_size(data['total_done']));
-        detail_elements.detail_uploaded.text(bytes_to_size(data['total_uploaded']));
-        detail_elements.detail_tracker_status.text(data['tracker_status']);
-        detail_elements.detail_ratio.text(data['ratio'].toFixed(2));
-        detail_elements.detail_next_announce.text(data['next_announce']);
-        detail_elements.detail_speed_dl.text(bytes_to_size(data['download_payload_rate'], true));
-        detail_elements.detail_speed_ul.text(bytes_to_size(data['upload_payload_rate'], true));
-        detail_elements.detail_eta.text(eta);
-        detail_elements.detail_pieces.text(pieces);
-        detail_elements.detail_seeders.text(seeds);
-        detail_elements.detail_peers.text(peers);
-        detail_elements.detail_availability.text(data['distributed_copies']);
-        detail_elements.detail_active_time.text(fmt_duration(data['active_time']));
-        detail_elements.detail_seeding_time.text(fmt_duration(data['seeding_time']));
-        detail_elements.detail_added_on.text(fmt_timestamp(data['time_added']));
-        detail_elements.detail_name.text(data['name']);
-        detail_elements.detail_hash.text(selected_detail_id);
-        detail_elements.detail_path.text(data['save_path']);
-        detail_elements.detail_total_size.text(data['total_size']);
-        detail_elements.detail_num_files.text(data['detail_num_files']);
-        detail_elements.detail_status.text(data['detail_status']);
-        return detail_elements.detail_tracker.text(data['tracker_host']);
+      socket.emit('event_torrent_details', {
+        info_hash: selected_detail_id
       });
     }
     return detail_update_timer = setTimeout(detail_update, detail_update_speed);
+  };
+
+  handle_event_torrent_details_response = function(message) {
+    var data, eta, peers, pieces, seeds;
+    data = message['data'];
+    eta = data['eta'] === 0 ? '∞' : fmt_duration(data['eta']);
+    seeds = "" + data['num_seeds'] + " (" + data['total_seeds'] + ")";
+    peers = "" + data['num_peers'] + " (" + data['total_peers'] + ")";
+    pieces = "" + data['num_pieces'] + " (" + data['piece_length'] + ")";
+    detail_elements.detail_downloaded.text(bytes_to_size(data['total_done']));
+    detail_elements.detail_uploaded.text(bytes_to_size(data['total_uploaded']));
+    detail_elements.detail_tracker_status.text(data['tracker_status']);
+    detail_elements.detail_ratio.text(data['ratio'].toFixed(2));
+    detail_elements.detail_next_announce.text(data['next_announce']);
+    detail_elements.detail_speed_dl.text(bytes_to_size(data['download_payload_rate'], true));
+    detail_elements.detail_speed_ul.text(bytes_to_size(data['upload_payload_rate'], true));
+    detail_elements.detail_eta.text(eta);
+    detail_elements.detail_pieces.text(pieces);
+    detail_elements.detail_seeders.text(seeds);
+    detail_elements.detail_peers.text(peers);
+    detail_elements.detail_availability.text(data['distributed_copies']);
+    detail_elements.detail_active_time.text(fmt_duration(data['active_time']));
+    detail_elements.detail_seeding_time.text(fmt_duration(data['seeding_time']));
+    detail_elements.detail_added_on.text(fmt_timestamp(data['time_added']));
+    detail_elements.detail_name.text(data['name']);
+    detail_elements.detail_hash.text(selected_detail_id);
+    detail_elements.detail_path.text(data['save_path']);
+    detail_elements.detail_total_size.text(data['total_size']);
+    detail_elements.detail_num_files.text(data['detail_num_files']);
+    detail_elements.detail_status.text(data['detail_status']);
+    return detail_elements.detail_tracker.text(data['tracker_host']);
   };
 
   /* Return the current unix timestamp in seconds*/
@@ -367,75 +465,61 @@
     detail_tracker: jQuery("#detail_tracker")
   };
 
+  /* Check for the existence of a string in the URL*/
+
+
+  in_url = function(text) {
+    return window.location.pathname.indexOf(text) !== -1;
+  };
+
   jQuery(function() {
     socket = io.connect(endpoint);
-    socket.on('event_torrent_recheck', function(data) {
-      return console.log(data);
+    socket.on('connect', function() {
+      if (in_url("/torrents/")) {
+        socket.emit('event_torrent_list');
+      }
+      return overall_speed_update();
     });
-    socket.on('event_torrent_peers', function(data) {
-      return console.log(data);
-    });
-    socket.on('event_torrent_speed', function(data) {
-      return console.log(data);
-    });
-    socket.on('event_torrent_detail', function(data) {
-      return console.log(data);
-    });
-    jQuery('#torrent_table').dataTable({
-      processing: true,
-      serverSize: true,
-      ajax: "/torrents/list",
-      paginate: false,
-      searching: false,
-      scrollY: 300,
-      columns: [
-        {
-          data: 'name'
-        }, {
-          data: 'size'
-        }, {
-          data: 'ratio'
-        }, {
-          data: 'up_rate'
-        }, {
-          data: 'dn_rate'
-        }, {
-          data: 'leechers'
-        }, {
-          data: 'peers'
-        }, {
-          data: 'priority'
-        }, {
-          data: 'is_active'
-        }
-      ],
-      rowCallback: row_load_cb
-    });
-    jQuery('#torrent_table tbody').on('click', 'tr', row_select_cb);
-    jQuery('#action_stop').on('click', action_stop);
-    jQuery('#action_start').on('click', action_start);
-    jQuery('#action_recheck').on('click', action_recheck);
-    jQuery('#action_reannounce').on('click', action_reannounce);
-    jQuery('#action_remove').on('click', action_remove);
-    jQuery('#action_remove_data').on('click', action_remove_data);
-    /* Initialize epoch chart on the traffic tab*/
+    socket.on('event_speed_overall_response', handle_event_speed_overall_response);
+    if (in_url("/torrents/")) {
+      socket.on('event_torrent_recheck', function(data) {
+        return console.log(data);
+      });
+      socket.on('event_torrent_peers_response', handle_event_torrent_peers_response);
+      socket.on('event_torrent_speed', function(data) {
+        return console.log(data);
+      });
+      socket.on('event_torrent_details_response', handle_event_torrent_details_response);
+      socket.on('event_torrent_files', function(data) {
+        return console.log(data);
+      });
+      socket.on('event_torrent_list_response', event_torrent_list_response_cb);
+      jQuery('#torrent_table tbody').on('click', 'tr', row_select_cb);
+      jQuery('#action_stop').on('click', action_stop);
+      jQuery('#action_start').on('click', action_start);
+      jQuery('#action_recheck').on('click', action_recheck);
+      jQuery('#action_reannounce').on('click', action_reannounce);
+      jQuery('#action_remove').on('click', action_remove);
+      jQuery('#action_remove_data').on('click', action_remove_data);
+      /* Initialize epoch chart on the traffic tab*/
 
-    return detail_traffic_chart = jQuery('#detail-traffic-chart').epoch({
-      type: graph_type,
-      data: [
-        {
-          label: "upload",
-          values: []
-        }, {
-          label: "download",
-          values: []
-        }
-      ],
-      axes: ['left', 'right'],
-      fps: graph_fps,
-      windowSize: graph_window_size,
-      queueSize: queue_size
-    });
+      return detail_traffic_chart = jQuery('#detail-traffic-chart').epoch({
+        type: graph_type,
+        data: [
+          {
+            label: "upload",
+            values: []
+          }, {
+            label: "download",
+            values: []
+          }
+        ],
+        axes: ['left', 'right'],
+        fps: graph_fps,
+        windowSize: graph_window_size,
+        queueSize: queue_size
+      });
+    }
   });
 
 }).call(this);

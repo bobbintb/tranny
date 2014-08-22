@@ -7,6 +7,7 @@ from functools import partial
 from flask import Blueprint, current_app, request
 from flask.ext.socketio import emit, error
 from tranny import ui, api
+from tranny import client
 from tranny.extensions import socketio
 
 section_name = 'torrents'
@@ -24,80 +25,100 @@ def index():
 @socketio.on(api.EVENT_TORRENT_RECHECK, namespace=socketio_namespace)
 def recheck(message):
     info_hash = message.get('info_hash', [])
-    resp = current_app.services.client.torrent_recheck(info_hash)
-    emit(api.Event.RESPONSE, dict(data=resp))
+    resp = client.get().torrent_recheck(info_hash)
+    emit(api.EVENT_RESPONSE, dict(data=resp))
 
 
 @socketio.on(api.EVENT_TORRENT_ANNOUNCE, namespace=socketio_namespace)
-def reannounce(message):
-    info_hash = message.get('data', [])
-    resp = current_app.services.client.torrent_reannounce(info_hash) is None
-    emit(api.Event.RESPONSE, dict(data=resp))
+def announce(message):
+    """ (re)announce the torrent(s) to the tracker
 
-
-@torrents.route("/list")
-@renderer(fmt='json')
-def list():
-    """ To be migrated to socketio..
-
+    :param message:
+    :type message: dict
     :return:
     :rtype:
     """
-    return dict(data=current_app.services.client.torrent_list())
+    info_hash = message.get('data', [])
+    if client.get().torrent_reannounce(info_hash):
+        status = api.STATUS_OK
+    else:
+        status = api.STATUS_FAIL
+    emit(api.EVENT_RESPONSE, dict(status=status))
 
 
-@socketio.on(api.EVENT_TORRENT_STOP)
-def stop():
-    current_app.services.client.torrent_stop(request.json)
-    return dict(status=0)
+@socketio.on(api.EVENT_TORRENT_LIST, namespace=socketio_namespace)
+def list_all():
+    """ Return a list of all torrents currently being tracked """
+    torrent_list = client.get().torrent_list()
+    emit(api.EVENT_TORRENT_LIST_RESPONSE, dict(data=torrent_list))
 
 
-@socketio.on(api.EVENT_TORRENT_START)
+@socketio.on(api.EVENT_TORRENT_STOP, namespace=socketio_namespace)
+def stop(message):
+    info_hash = message.get('info_hash', [])
+    client.get().torrent_stop(info_hash)
+    emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(info_hash=info_hash))
+
+
+@socketio.on(api.EVENT_TORRENT_START, namespace=socketio_namespace)
 def start(message):
-    current_app.services.client.torrent_start(message.get('info_hash', []))
-    return dict(status=0)
+    info_hash = message.get('info_hash', [])
+    client.get().torrent_start(info_hash)
+    emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(info_hash=info_hash))
 
 
-@socketio.on(api.EVENT_TORRENT_DETAILS)
+@socketio.on(api.EVENT_TORRENT_DETAILS, namespace=socketio_namespace)
 def details(message):
     info_hash = message.get('info_hash', None)
+    data = dict()
     if info_hash:
-        resp = current_app.services.client.torrent_status(info_hash)
+        data = client.get().torrent_status(info_hash)
         status = api.STATUS_OK
     else:
         status = api.STATUS_INCOMPLETE_REQUEST
-    emit(api.EVENT_RESPONSE, dict(data=resp, status=status))
+    emit(api.EVENT_TORRENT_DETAILS_RESPONSE, dict(data=data, status=status))
 
 
-@socketio.on(api.EVENT_TORRENT_SPEED)
-@renderer(fmt='json')
-def speed(info_hash):
-    resp = current_app.services.client.torrent_speed(info_hash)
-    return resp
-
-
-@torrents.route('/<string(length=40):info_hash>/files')
-def files(info_hash):
-    resp = current_app.services.client.torrent_files(info_hash)
-    return resp
-
-
-@torrents.route('/<string(length=40):info_hash>/peers')
-@renderer(fmt='json')
-def peers(info_hash):
-    resp = current_app.services.client.torrent_peers(info_hash)
-    return resp
-
-
-@torrents.route('/<string(length=40):info_hash>', methods=['DELETE'])
-@torrents.route('/<string(length=40):info_hash>/<remove_data>', methods=['DELETE'])
-def remove(info_hash, remove_data=False):
-    torrent = current_app.services.client.torrent_status(info_hash)
-    if not torrent:
-        status = api.NOT_FOUND
+@socketio.on(api.EVENT_TORRENT_SPEED, namespace=socketio_namespace)
+def speed(message):
+    info_hash = message.get('info_hash', None)
+    if info_hash:
+        tor_speed = client.get().torrent_speed(info_hash)
+        emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(data=tor_speed, status=api.STATUS_OK))
     else:
-        if current_app.services.client.torrent_remove(info_hash, remove_data=remove_data):
-            status = api.NO_CONTENT
+        emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(status=api.STATUS_FAIL))
+
+
+@socketio.on(api.EVENT_SPEED_OVERALL, namespace=socketio_namespace)
+def speed_overall(message=None):
+    up, dn = client.get().current_speeds()
+    emit(api.EVENT_SPEED_OVERALL_RESPONSE, dict(data=dict(up=up, dn=dn)))
+
+
+@socketio.on(api.EVENT_TORRENT_FILES, namespace=socketio_namespace)
+def files(message):
+    info_hash = message.get('info_hash', None)
+    tor_files = client.get().torrent_files(info_hash)
+    emit(api.EVENT_TORRENT_FILES_RESPONSE, dict(status=api.STATUS_OK, data=tor_files))
+
+
+@socketio.on(api.EVENT_TORRENT_PEERS, namespace=socketio_namespace)
+def peers(message):
+    info_hash = message.get('info_hash', None)
+    data = client.get().torrent_peers(info_hash)
+    emit(api.EVENT_TORRENT_PEERS_RESPONSE, dict(status=api.STATUS_OK, data=data))
+
+
+@socketio.on(api.EVENT_TORRENT_REMOVE, namespace=socketio_namespace)
+def remove(message):
+    info_hash = message.get('info_hash', None)
+    remove_data = message.get('remove_data', False)
+    torrent = client.get().torrent_status(info_hash)
+    if not torrent:
+        status = api.STATUS_INVALID_INFO_HASH
+    else:
+        if client.get().torrent_remove(info_hash, remove_data=remove_data):
+            status = api.STATUS_OK
         else:
-            status = api.INTERNAL_SERVER_ERROR
-    return api.response(status=status, json=False)
+            status = api.STATUS_FAIL
+    emit(api.EVENT_TORRENT_REMOVE_RESPONSE, dict(status=status, info_hash=info_hash))

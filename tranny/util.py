@@ -7,6 +7,10 @@ from psutil import Process, disk_partitions, disk_usage
 from flask import request, url_for, redirect
 
 
+def fmt_ratio(ratio):
+    return "{:.2f}".format(ratio)
+
+
 def uptime_sys():
     with open('/proc/uptime', 'r') as f:
         uptime_data = f.readline()
