@@ -2,6 +2,9 @@
 """
 Deluge JSON-RPC client interface
 
+.. note::
+    This was the first complete implementation of the backend client, thus the other backends have been
+    somewhat molded to fit deluge's definition of data structures
 """
 from __future__ import unicode_literals, absolute_import, with_statement
 import json
@@ -140,7 +143,7 @@ class DelugeClient(client.TorrentClient):
     def client_version(self):
         daemon_version = self._request('daemon.info')
         libtorrent_version = self._request('core.get_libtorrent_version')
-        return daemon_version, libtorrent_version
+        return ", ".join([daemon_version, libtorrent_version])
 
     def _get_events(self):
         events = self._request('web.get_events')

@@ -12,7 +12,7 @@ except ImportError:
     raise SystemExit()
 
 
-class TransmissionClient(client.ClientProvider):
+class TransmissionClient(client.TorrentClient):
     _config_key = "transmission"
 
     def __init__(self, host=None, port=None, user=None, password=None):

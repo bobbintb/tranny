@@ -3,7 +3,7 @@
 
 
 (function() {
-  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, event_torrent_list_response_cb, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_peers_response, handle_event_torrent_speed_response, in_url, overall_speed_update, overall_speed_update_timer, peer_update, peer_update_timer, queue_size, render_peers, row_load_cb, row_remove, row_select_cb, selected_class, selected_detail_id, selected_rows, socket, speed_dn, speed_up, speed_update, speed_update_timer, torrent_table, ts, update_speed, _rand, _sizes;
+  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, bytes_to_size, chart_update, detail_elements, detail_traffic_chart, detail_update, detail_update_speed, detail_update_timer, endpoint, event_alert_cb, event_torrent_list_response_cb, event_torrent_stop_response_cb, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_peers_response, handle_event_torrent_speed_response, in_url, overall_speed_update, overall_speed_update_timer, peer_update, peer_update_timer, queue_size, render_peers, row_load_cb, row_remove, row_select_cb, selected_class, selected_detail_id, selected_rows, show_alert, socket, speed_dn, speed_up, speed_update, speed_update_timer, torrent_table, ts, update_speed, user_messages, _alert_num, _rand, _sizes;
 
   selected_rows = [];
 
@@ -76,6 +76,11 @@
 
 
   socket = null;
+
+  /* Element used to show flash message*/
+
+
+  user_messages = jQuery("#user_messages");
 
   torrent_table = jQuery('#torrent_table').dataTable({
     processing: true,
@@ -255,26 +260,41 @@
 
   action_stop = function() {
     if (selected_rows) {
-      return jQuery.ajax("" + endpoint + "/stop", {
-        data: JSON.stringify(selected_rows),
-        contentType: 'application/json',
-        type: 'POST'
+      return socket.emit('event_torrent_stop', {
+        info_hash: selected_rows
       });
     }
   };
 
   action_start = function() {
     if (selected_rows) {
-      return jQuery.ajax("" + endpoint + "/start", {
-        data: JSON.stringify(selected_rows),
-        contentType: 'application/json',
-        type: 'POST'
+      return socket.emit('event_torrent_start', {
+        info_hash: selected_rows
       });
     }
   };
 
+  _alert_num = 0;
+
+  /*
+      Show an alert popup message to the user. The message will fade after a few seconds have passed
+  */
+
+
+  show_alert = function(msg, msg_type) {
+    if (msg_type == null) {
+      msg_type = 'info';
+    }
+    alert += 1;
+    return "<div id=\"alert_" + _alert_num + "\" class=\"" + msg_type + "\" data-alert class=\"alert-box\" tabindex=\"0\" aria-live=\"assertive\" role=\"dialogalert\">\n" + msg + "\n<button href=\"#\" tabindex=\"0\" class=\"close\" aria-label=\"Close Alert\">&times;</button>\n</div>";
+  };
+
   /* WS Event handlers*/
 
+
+  event_alert_cb = function(message) {
+    return show_alert(message['message']);
+  };
 
   event_torrent_list_response_cb = function(message) {
     var row, _i, _len, _ref, _results;
@@ -285,6 +305,10 @@
       _results.push(torrent_table.fnAddData(row));
     }
     return _results;
+  };
+
+  event_torrent_stop_response_cb = function(message) {
+    return show_alert(message['msg'], message['msg_type']);
   };
 
   _rand = function() {
@@ -475,7 +499,14 @@
   jQuery(function() {
     socket = io.connect(endpoint);
     socket.on('connect', function() {
+      var e;
       if (in_url("/torrents/")) {
+        try {
+          torrent_table.clear().draw();
+        } catch (_error) {
+          e = _error;
+          null;
+        }
         socket.emit('event_torrent_list');
       }
       return overall_speed_update();
@@ -494,6 +525,7 @@
         return console.log(data);
       });
       socket.on('event_torrent_list_response', event_torrent_list_response_cb);
+      socket.on('event_alert', event_alert_cb);
       jQuery('#torrent_table tbody').on('click', 'tr', row_select_cb);
       jQuery('#action_stop').on('click', action_stop);
       jQuery('#action_start').on('click', action_start);

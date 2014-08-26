@@ -1,15 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-
+Contains functionality related to the websocket API used to communicate with the webui
 """
 from __future__ import unicode_literals, absolute_import
-from flask import jsonify, Response
+from functools import partial
+
+from flask.ext.socketio import emit as sio_emit
+from tranny.extensions import socketio
+
+NAMESPACE = '/ws'
+
 
 # General status codes
-from flask.ext.socketio import emit
-
 STATUS_OK = 0
 STATUS_FAIL = 1
+
+MSG_ALERT = 'alert'
+MSG_WARN = 'warn'
+MSG_INFO = 'info'
 
 # Specific error codes
 STATUS_INCOMPLETE_REQUEST = 10
@@ -49,9 +57,30 @@ EVENT_TORRENT_REMOVE_RESPONSE = 'event_torrent_remove_response'
 EVENT_SPEED_OVERALL = 'event_speed_overall'
 EVENT_SPEED_OVERALL_RESPONSE = 'event_speed_overall_response'
 
+# To send a popup alert to the user
+EVENT_ALERT = 'event_alert'
+
 # Generic response
 EVENT_RESPONSE = 'event_response'
 
+# Simple partial that includes the default namespace we are using for websocket connections
+on = partial(socketio.on, namespace=NAMESPACE)
 
-def response(event, data=None, status=STATUS_OK):
-    return emit(event, dict(status=status, data=data))
+
+def emit(event, data=None, status=STATUS_OK, **kwargs):
+    if data is None:
+        data = {}
+    resp = dict(status=status, data=data)
+    resp.update(kwargs)
+    return sio_emit(event, resp)
+
+
+def flash(message, msg_type=MSG_INFO):
+    """ Flash a popup message to the user over the webui
+
+    :param message: Message to broadcast to the user
+    :type message: basestring
+    :param msg_type: Type of message to send (alert/info/error..)
+    :type msg_type: basestring
+    """
+    emit(EVENT_ALERT, dict(msg="Stopped successfully", msg_type=msg_type))

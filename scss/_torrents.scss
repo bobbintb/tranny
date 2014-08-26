@@ -1,7 +1,25 @@
 @import "settings";
 
+@mixin hover_shade($color, $lightness: 20%) {
+    background-color: $color;
+    &:hover {
+        background-color: darken($color, $lightness);
+    }
+}
+
+.start { @include hover_shade($success-color) }
+.pause { @include hover_shade($warning-color) }
+.remove { @include hover_shade($alert-color) }
+
 #torrent_controls {
     margin-top: 20px;
+    #remove_button_dropdown a {
+        margin-bottom: 2px;
+        background-color: inherit;
+        &:hover {
+            background-color: $primary-color;
+        }
+    }
 }
 
 #torrent_table {

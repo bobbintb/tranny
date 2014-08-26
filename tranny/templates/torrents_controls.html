@@ -1,16 +1,30 @@
+{% from "funcs.html" import icon, button %}
+
 <div class="button-bar">
+
     <ul class="button-group">
-        <li><a href="#" id="action_start" class="tiny button">Start</a></li>
-        <li><a href="#" id="action_stop" class="tiny button">Stop</a></li>
-        <li><a href="#" id="action_start_all" class="tiny button">Start All</a></li>
-        <li><a href="#" id="action_stop_all" class="tiny button">Stop All</a></li>
+        <li>{{ button(icon("play")+" Start",id="action_start", class="start") }}</li>
+        <li>{{ button(icon("play")+" Start All", id="action_start_all", class="start") }}</li>
     </ul>
+
     <ul class="button-group">
-        <li><a href="#" id="action_remove" class="tiny button">Remove</a></li>
-        <li><a href="#" id="action_remove_data" class="tiny button">Remove + Data</a></li>
+        <li>{{ button(icon("pause")+" Pause", id="action_stop", class="pause") }}</li>
+        <li>{{ button(icon("pause")+" Pause All", id="action_stop_all", class="pause") }}</li>
     </ul>
+
     <ul class="button-group">
-        <li><a href="#" id="action_recheck" class="tiny button">Recheck</a></li>
-        <li><a href="#" id="action_reannounce" class="tiny button">Reannounce</a></li>
+        <li>
+            {{ button(icon("minus")+" Remove", id="action_start", class="dropdown remove", extra='data-dropdown=remove_button_dropdown') }}
+            <ul id="remove_button_dropdown" data-dropdown-content class="f-dropdown">
+                <li>{{ button("Torrent", id="action_remove", class="remove") }}</li>
+                <li>{{ button("Torrent + Data",id="action_remove_data", class="remove") }}</li>
+            </ul>
+        </li>
     </ul>
+
+    <ul class="button-group">
+        <li>{{ button(icon("arrows-cw")+" Recheck", id="action_recheck") }}</li>
+        <li>{{ button(icon("signal")+" Announce", id="action_reannounce") }}</li>
+    </ul>
+
 </div>

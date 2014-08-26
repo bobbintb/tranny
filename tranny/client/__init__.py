@@ -42,8 +42,6 @@ class TorrentClient(object):
         """
         raise NotImplementedError("add is not implemented")
 
-
-
     def client_version(self):
         """ Fetch and return the client version if available
 

@@ -40,10 +40,11 @@ speed_update_timer = null
 ### Timer to update the selected torrent peer list ###
 peer_update_timer = null
 
-
-
 ### socket.io-client instance ###
 socket = null
+
+### Element used to show flash message ###
+user_messages = jQuery("#user_messages")
 
 torrent_table = jQuery('#torrent_table').dataTable {
         processing: true,
@@ -164,26 +165,41 @@ action_remove_data = ->
 
 action_stop = ->
     if selected_rows
-        jQuery.ajax "#{endpoint}/stop", {
-            data: JSON.stringify(selected_rows),
-            contentType: 'application/json',
-            type: 'POST'
-        }
+        socket.emit 'event_torrent_stop', {info_hash: selected_rows}
+
 
 action_start = ->
     if selected_rows
-        jQuery.ajax "#{endpoint}/start", {
-            data: JSON.stringify(selected_rows),
-            contentType: 'application/json',
-            type: 'POST'
-        }
+        socket.emit 'event_torrent_start', {info_hash: selected_rows}
+
+
+_alert_num = 0
+
+###
+    Show an alert popup message to the user. The message will fade after a few seconds have passed
+###
+show_alert = (msg, msg_type='info') ->
+    alert += 1
+    """<div id="alert_#{_alert_num}" class="#{msg_type}" data-alert class="alert-box" tabindex="0" aria-live="assertive" role="dialogalert">
+  #{msg}
+  <button href="#" tabindex="0" class="close" aria-label="Close Alert">&times;</button>
+</div>"""
 
 
 ### WS Event handlers ###
 
+
+event_alert_cb = (message) ->
+    show_alert message['message']
+
+
 event_torrent_list_response_cb = (message) ->
     for row in message['data']
         torrent_table.fnAddData(row)
+
+
+event_torrent_stop_response_cb = (message) ->
+    show_alert message['msg'], message['msg_type']
 
 
 _rand = -> Math.floor((Math.random() * 1000) + 1)
@@ -331,6 +347,11 @@ jQuery ->
     socket = io.connect endpoint
     socket.on 'connect', ->
         if in_url "/torrents/"
+            # Make sure not to load duplicate data on each connect if the server goes away
+            try
+                torrent_table.clear().draw()
+            catch e
+                null
             socket.emit 'event_torrent_list'
         overall_speed_update()
 
@@ -343,6 +364,7 @@ jQuery ->
         socket.on 'event_torrent_details_response', handle_event_torrent_details_response
         socket.on 'event_torrent_files', (data) -> console.log data
         socket.on 'event_torrent_list_response', event_torrent_list_response_cb
+        socket.on 'event_alert', event_alert_cb
 
         jQuery('#torrent_table tbody').on 'click', 'tr', row_select_cb
         jQuery('#action_stop').on 'click', action_stop

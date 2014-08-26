@@ -1,0 +1,7 @@
+{% macro icon(name) -%}
+    <i class="icon-{{ name }}"></i>
+{%- endmacro %}
+
+{% macro button(text, button_class="tiny button", class="", link="#", id="", extra="") -%}
+    <a href="{{ link }}" class="{{ button_class }} {{ class }}" id="{{ id }}" {{ extra }}>{{ text }}</a>
+{%- endmacro %}
