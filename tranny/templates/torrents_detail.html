@@ -59,23 +59,41 @@
             <p>Third panel content goes here...</p>
         </div>
         <div class="content" id="detail-peers">
-            <table id="peer_list">
-                <thead>
-                <tr>
-                    <th colspan="2">Address</th>
-                    <th>Client</th>
-                    <th>Progress</th>
-                    <th>Down speed</th>
-                    <th>Up Speed</th>
-                </tr>
-                </thead>
-                <tbody>
+            <div class="row">
+                <div class="large-8 columns">
+                    <table id="peer_list" style="width: 100%">
+                        <thead>
+                        <tr>
+                            <th colspan="2">Address</th>
+                            <th>Client</th>
+                            <th>Progress</th>
+                            <th>Down speed</th>
+                            <th>Up Speed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="large-4 columns">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h2 style="text-align: center"><small>Peer Countries</small></h2>
+                            <div id="peer_chart" class="epoch category20" style="width: 300px; height: 300px"></div>
+                        </div>
+                        <div class="large-12 columns">
+                            <h2 style="text-align: center"><small>Peer Clients</small></h2>
+                            <div id="client_chart" class="epoch category20" style="width: 300px; height: 300px"></div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
         </div>
         <div class="content" id="detail-traffic">
-            <div id="detail-traffic-chart" class="epoch category10" style="width: 960px; height: 200px"></div>
+            <div id="detail-traffic-chart" class="epoch category20c" style="width: 960px; height: 200px"></div>
         </div>
     </div>
 </div>

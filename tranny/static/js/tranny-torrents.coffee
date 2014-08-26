@@ -49,6 +49,11 @@ has_connected = false
 ### Element used to show flash message ###
 user_messages = jQuery("#user_messages")
 
+### Overall speed indicator elements ###
+speed_up = jQuery("#speed_up")
+speed_dn = jQuery("#speed_dn")
+
+
 torrent_table = jQuery('#torrent_table').dataTable {
         processing: true,
         serverSize: true,
@@ -70,7 +75,7 @@ torrent_table = jQuery('#torrent_table').dataTable {
             { data: 'priority'},
             { data: 'is_active'}
         ],
-        rowCallback: row_load_cb,
+        rowCallback: row_load_handler,
         columnDefs: [
             {
                 render: (data, type, row) ->
@@ -90,7 +95,28 @@ torrent_table = jQuery('#torrent_table').dataTable {
             }
         ]
     }
-#new jQuery.fn.dataTable.ColReorder torrent_table
+
+### Initialize epoch chart on the traffic tab ###
+detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
+    type: graph_type,
+    data: [{label: "upload", values: []}, {label: "download", values: []}],
+    axes: ['left', 'right'],
+    fps: graph_fps,
+    windowSize: graph_window_size,
+    queueSize: queue_size
+}
+
+### Initialize peer chart on the peers tab ###
+peer_chart = jQuery("#peer_chart").epoch {
+    type: 'pie',
+    inner: 50
+}
+
+client_chart = jQuery("#client_chart").epoch {
+    type: 'pie',
+    inner: 50
+}
+
 
 ###
     Called for each new row loaded into the data table
@@ -99,7 +125,7 @@ torrent_table = jQuery('#torrent_table').dataTable {
     @param {object} The rows data object
     @param {number} Index of the row in the table
 ###
-row_load_cb = (row, data, displayIndex) ->
+row_load_handler = (row, data, displayIndex) ->
     #noinspection JSUnresolvedVariable
     if jQuery.inArray(data.DT_RowId, selected_rows) != -1
         jQuery(row).addClass selected_class
@@ -109,7 +135,7 @@ row_load_cb = (row, data, displayIndex) ->
     If the user holds ctrl while clicking the row will be added to the selected_rows array. Otherwise
     the row will be "activated" and show more detailed information for that row in another panel.
 ###
-row_select_cb = (e) ->
+row_select_handler = (e) ->
     row_id = @id
     if e.ctrlKey
         index = _.indexOf selected_rows, row_id
@@ -129,40 +155,39 @@ row_select_cb = (e) ->
             clearTimeout speed_update_timer
         if peer_update_timer != null
             clearTimeout peer_update_timer
-        detail_update()
-        speed_update()
-        peer_update()
+        action_torrent_details()
+        action_torrent_speed()
+        action_torrent_peers()
         jQuery("#" + row_id).addClass selected_class
 
 ###
 Remove a row from the torrent list by its info_hash
 ###
-row_remove = (info_hash) -> jQuery("#" + info_hash).remove()
+row_remove = (info_hash) ->
+    jQuery("#" + info_hash).remove()
 
 
-### recheck handlers ###
+### Client actions ###
 action_recheck = ->
     if selected_rows
         socket.emit 'event_torrent_recheck', {info_hash: selected_rows}
         return false
 
-handle_event_torrent_recheck_response = (message) ->
-    show_alert "Got recheck response"
 
 action_reannounce = ->
     if selected_rows
         socket.emit 'event_torrent_announce', {info_hash: selected_rows}
 
-handle_event_torrent_reannounce_response = (message) ->
-    show_alert "Got reannounce response"
 
 action_remove = ->
     if selected_rows
         socket.emit 'event_torrent_remove', {info_hash: selected_rows, remove_data: false}
 
+
 action_remove_data = ->
     if selected_rows
         socket.emit 'event_torrent_remove', {info_hash: selected_rows, remove_data: true}
+
 
 action_stop = ->
     if selected_rows
@@ -174,105 +199,73 @@ action_start = ->
         socket.emit 'event_torrent_start', {info_hash: selected_rows}
 
 
+action_torrent_details = ->
+    if selected_detail_id
+        socket.emit 'event_torrent_details', {info_hash: selected_detail_id}
+
+
+action_torrent_speed = ->
+    if selected_detail_id
+        socket.emit 'event_torrent_speed', {info_hash: selected_detail_id}
+    speed_update_timer = setTimeout action_torrent_speed, update_speed
+
+
+action_torrent_peers= ->
+    if selected_detail_id
+        socket.emit 'event_torrent_peers', {info_hash: selected_detail_id}
+    peer_update_timer = setTimeout action_torrent_peers, update_speed
+
+
+###
+    Response handlers for sent websocket events
+###
+
 handle_event_torrent_files_response = (message) ->
     false
 
 
-_alert_num = 0
-
-###
-    Show an alert popup message to the user. The message will fade after a few seconds have passed
-###
-show_alert = (msg, msg_type='info', ttl=10) ->
-    _alert_num += 1
-    user_messages.append("""<div id="alert_#{_alert_num}" data-alert class="alert-box radius #{msg_type}">#{msg}<a href="#" class="close">&times;</a></div>""")
-    if ttl > 0
-        setTimeout (-> jQuery("#alert_#{_alert_num}").remove()), ttl
+handle_event_torrent_reannounce_response = (message) ->
+    show_alert "Got reannounce response"
 
 
-### WS Event handlers ###
+handle_event_torrent_recheck_response = (message) ->
+    show_alert "Got recheck response"
 
 
-event_alert_cb = (message) ->
+handle_event_alert = (message) ->
     show_alert message['msg'], message['msg_type']
 
 
-event_torrent_list_response_cb = (message) ->
+handle_event_torrent_list_response = (message) ->
     for row in message['data']
         torrent_table.fnAddData(row)
 
 
-event_torrent_stop_response_cb = (message) ->
+handle_event_torrent_stop_response = (message) ->
     show_alert message['msg'], message['msg_type']
 
 
-### Update the chart values with the latest speed values ###
-chart_update = (upload, download) ->
-    update_data = [
-        {time: ts(), y: upload},
-        {time: ts(), y: download}
-    ]
-    detail_traffic_chart.push update_data
+handle_event_speed_overall_response = (message) ->
+    speed_up.text bytes_to_size message['data']['up'], true
+    speed_dn.text bytes_to_size message['data']['dn'], true
 
-
-fmt_timestamp = (ts) -> moment.unix(ts).format 'D/M/YYYY hh:mm:s'
-
-fmt_duration = (seconds) -> moment.duration(seconds, 'seconds').humanize()
-
-speed_update = ->
-    if selected_detail_id
-        socket.emit 'event_torrent_speed', {info_hash: selected_detail_id}
-    speed_update_timer = setTimeout speed_update, update_speed
 
 handle_event_torrent_speed_response = (message) ->
     chart_update message['data']['download_payload_rate'], message['data']['upload_payload_rate']
 
-speed_up = jQuery("#speed_up")
-speed_dn = jQuery("#speed_dn")
 
-overall_speed_update = ->
-    socket.emit 'event_speed_overall', {}
-    overall_speed_update_timer = setTimeout overall_speed_update, update_speed
+handle_event_torrent_peers_response = (message) ->
+    sort_client = (peer) -> return (peer['client'].split " ")[0..-2].toString()
+    peer_chart_data = []
+    client_chart_data = []
+    for country, count of _.countBy message['data']['peers'], 'country'
+        peer_chart_data.push {label: country, value: count}
+    for client, count of _.countBy message['data']['peers'], sort_client
+        client_chart_data.push {label: client, value: count}
+    peer_chart.update peer_chart_data
+    client_chart.update client_chart_data
+    render_peers message['data']['peers']
 
-handle_event_speed_overall_response = (message) ->
-    speeds = message['data']
-    speed_up.text bytes_to_size speeds['up'], true
-    speed_dn.text bytes_to_size speeds['dn'], true
-
-_sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-bytes_to_size = (bytes, per_sec=false) ->
-    if bytes <= 0
-        return '0 B'
-    k = 1000
-    i = Math.floor(Math.log(bytes) / Math.log(k))
-    human_size = (bytes / Math.pow(k, i)).toPrecision(2) + ' ' + _sizes[i]
-    if per_sec
-        human_size = "#{human_size}/s"
-    return human_size
-
-render_peers = (peer_list) ->
-    output_html = []
-    for peer in peer_list
-        output_html.push """
-            <tr>
-                <td><img src="/static/img/country/#{peer['country'].toLowerCase()}.png"></td>
-                <td>#{peer['ip']}</td>
-                <td>#{peer['client']}</td>
-                <td><div class="progress"><span class="meter" style="#{peer['progress'] * 100}"></span></div></td>
-                <td>#{peer['down_speed']}</td>
-                <td>#{peer['up_speed']}</td>
-            </tr>
-            """
-    jQuery("#peer_list tbody").html output_html.join("")
-
-peer_update= ->
-    if selected_detail_id
-        socket.emit 'event_torrent_peers', {info_hash: selected_detail_id}
-    peer_update_timer = setTimeout peer_update, update_speed
-
-
-
-    detail_update_timer = setTimeout detail_update, detail_update_speed
 
 handle_event_torrent_details_response = (message) ->
     data = message['data']
@@ -304,10 +297,76 @@ handle_event_torrent_details_response = (message) ->
     detail_elements.detail_status.text data['detail_status']
     detail_elements.detail_tracker.text data['tracker_host']
 
+
+###
+    Show an alert popup message to the user. The message will fade after a few seconds have passed
+
+    @param {string} Message to display
+    @param {string} Type of message (css class used)
+    @param {number} Time in seconds to show the message
+###
+show_alert = (msg, msg_type='info', ttl=5) ->
+    _alert_num += 1
+    user_messages.append("""<div id="alert_#{_alert_num}" data-alert class="alert-box radius #{msg_type}">#{msg}<a href="#" class="close">&times;</a></div>""")
+    if ttl > 0
+        setTimeout (-> jQuery("#alert_#{_alert_num}").fadeOut(-> @remove())), ttl * 1000
+_alert_num = 0
+
+
+### Update the chart values with the latest speed values ###
+chart_update = (upload, download) ->
+    update_data = [
+        {time: ts(), y: upload},
+        {time: ts(), y: download}
+    ]
+    detail_traffic_chart.push update_data
+
+
+fmt_timestamp = (ts) ->
+    moment.unix(ts).format 'D/M/YYYY hh:mm:s'
+
+
+fmt_duration = (seconds) ->
+    moment.duration(seconds, 'seconds').humanize()
+
+
+overall_speed_update = ->
+    socket.emit 'event_speed_overall', {}
+    overall_speed_update_timer = setTimeout overall_speed_update, update_speed
+
+
+_sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+bytes_to_size = (bytes, per_sec=false) ->
+    if bytes <= 1000
+        return if per_sec then "#{bytes} B/s" else "#{bytes} B"
+    k = 1000
+    i = Math.floor(Math.log(bytes) / Math.log(k))
+    human_size = (bytes / Math.pow(k, i)).toPrecision(2) + ' ' + _sizes[i]
+    if per_sec
+        human_size = "#{human_size}/s"
+    return human_size
+
+
+render_peers = (peer_list) ->
+    output_html = []
+    for peer in peer_list
+        output_html.push """
+            <tr>
+                <td><img src="/static/img/country/#{peer['country'].toLowerCase()}.png"></td>
+                <td>#{peer['ip']}</td>
+                <td>#{peer['client']}</td>
+                <td><div class="progress"><span class="meter" style="#{peer['progress'] * 100}"></span></div></td>
+                <td>#{bytes_to_size peer['down_speed'], true}</td>
+                <td>#{bytes_to_size peer['up_speed'], true}</td>
+            </tr>
+            """
+    jQuery("#peer_list tbody").html output_html.join("")
+
+
 ### Return the current unix timestamp in seconds ###
 ts = -> Math.round(new Date().getTime() / 1000)|0
 
-detail_traffic_chart = null
+#detail_traffic_chart = null
 
 ### Cache all the detail element nodes ###
 detail_elements =
@@ -363,27 +422,20 @@ jQuery ->
     if in_url "/torrents/"
         socket.on 'event_torrent_recheck', handle_event_torrent_recheck_response
         socket.on 'event_torrent_peers_response', handle_event_torrent_peers_response
-        socket.on 'event_torrent_speed', (data) -> console.log data
+        socket.on 'event_torrent_speed_response', handle_event_torrent_speed_response
         socket.on 'event_torrent_details_response', handle_event_torrent_details_response
         socket.on 'event_torrent_files', handle_event_torrent_files_response
-        socket.on 'event_torrent_list_response', event_torrent_list_response_cb
-        socket.on 'event_alert', event_alert_cb
+        socket.on 'event_torrent_list_response', handle_event_torrent_list_response
+        socket.on 'event_alert', handle_event_alert
         socket.on 'event_torrent_reannounce_response', handle_event_torrent_reannounce_response
+        socket.on 'event_torrent_stop_response', handle_event_torrent_stop_response
 
-        jQuery('#torrent_table tbody').on 'click', 'tr', row_select_cb
+        jQuery('#torrent_table tbody').on 'click', 'tr', row_select_handler
         jQuery('#action_stop').on 'click', action_stop
         jQuery('#action_start').on 'click', action_start
         jQuery('#action_recheck').on 'click', action_recheck
         jQuery('#action_reannounce').on 'click', action_reannounce
         jQuery('#action_remove').on 'click', action_remove
         jQuery('#action_remove_data').on 'click', action_remove_data
-
-        ### Initialize epoch chart on the traffic tab ###
-        detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
-            type: graph_type,
-            data: [{label: "upload", values: []}, {label: "download", values: []}],
-            axes: ['left', 'right'],
-            fps: graph_fps,
-            windowSize: graph_window_size,
-            queueSize: queue_size
-        }
+        jQuery('#resize_columns').on 'click', ->
+            torrent_table.fnAdjustColumnSizing true

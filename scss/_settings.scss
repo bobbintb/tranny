@@ -1128,10 +1128,10 @@ $sub-nav-active-cursor: default;
 // $table-head-padding: rem-calc(8 10 10);
 
 // These control the row padding and font styles
-$table-row-padding: rem-calc(3 4);
-// $table-row-font-size: rem-calc(14);
+$table-row-padding: rem-calc(2 2);
+$table-row-font-size: rem-calc(12);
 // $table-row-font-color: #222;
-$table-line-height: rem-calc(14);
+$table-line-height: 12px;
 
 // These are for controlling the display and margin of tables
 // $table-display: table-cell;

@@ -5,7 +5,6 @@ Basic endpoints for the /torrent sections and the websocket api
 from __future__ import unicode_literals
 from functools import partial
 from flask import Blueprint
-from flask.ext.socketio import emit
 from tranny import ui, api, client
 
 section_name = 'torrents'
@@ -92,21 +91,21 @@ def handle_speed(message):
 @api.on(api.EVENT_SPEED_OVERALL)
 def handle_speed_overall(message=None):
     up, dn = client.get().current_speeds()
-    emit(api.EVENT_SPEED_OVERALL_RESPONSE, dict(data=dict(up=up, dn=dn)))
+    api.emit(api.EVENT_SPEED_OVERALL_RESPONSE, dict(up=up, dn=dn))
 
 
 @api.on(api.EVENT_TORRENT_FILES)
 def handle_files(message):
     info_hash = message.get('info_hash', None)
     tor_files = client.get().torrent_files(info_hash)
-    emit(api.EVENT_TORRENT_FILES_RESPONSE, dict(status=api.STATUS_OK, data=tor_files))
+    api.emit(api.EVENT_TORRENT_FILES_RESPONSE, tor_files)
 
 
 @api.on(api.EVENT_TORRENT_PEERS)
 def handle_peers(message):
     info_hash = message.get('info_hash', None)
     data = client.get().torrent_peers(info_hash)
-    emit(api.EVENT_TORRENT_PEERS_RESPONSE, dict(status=api.STATUS_OK, data=data))
+    api.emit(api.EVENT_TORRENT_PEERS_RESPONSE, data=data)
 
 
 @api.on(api.EVENT_TORRENT_REMOVE)
@@ -121,4 +120,4 @@ def handle_remove(message):
             status = api.STATUS_OK
         else:
             status = api.STATUS_FAIL
-    emit(api.EVENT_TORRENT_REMOVE_RESPONSE, dict(status=status, info_hash=info_hash))
+    api.emit(api.EVENT_TORRENT_REMOVE_RESPONSE, data=dict(info_hash=info_hash), status=status)

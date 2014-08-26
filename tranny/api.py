@@ -67,6 +67,7 @@ EVENT_ALERT = 'event_alert'
 EVENT_RESPONSE = 'event_response'
 
 # Simple partial that includes the default namespace we are using for websocket connections
+# This should be used in place of flask.ext.socketio.emit
 on = partial(socketio.on, namespace=NAMESPACE)
 
 
@@ -77,18 +78,14 @@ def emit(event, data=None, status=STATUS_OK, **kwargs):
     :type event: basestring
     :param data: Data to send to the client
     :type data: dict
-    :param status: Status
-    :type status:
-    :param kwargs:
-    :type kwargs:
-    :return:
-    :rtype:
+    :param status: Command execution status
+    :type status: int
+    :param kwargs: Extra arguments to add to the response outside the data param
+    :type kwargs: dict
     """
     if data is None:
         data = {}
-    resp = dict(status=status, data=data)
-    resp.update(kwargs)
-    return sio_emit(event, resp)
+    sio_emit(event, dict(status=status, data=data, **kwargs))
 
 
 def flash(message, msg_type=MSG_INFO):
@@ -99,4 +96,4 @@ def flash(message, msg_type=MSG_INFO):
     :param msg_type: Type of message to send (alert/info/error..)
     :type msg_type: basestring
     """
-    emit(EVENT_ALERT, dict(msg="Stopped successfully", msg_type=msg_type))
+    emit(EVENT_ALERT, dict(msg=message, msg_type=msg_type))
