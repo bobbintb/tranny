@@ -43,6 +43,9 @@ peer_update_timer = null
 ### socket.io-client instance ###
 socket = null
 
+### Keep track of if we have connected before or not ###
+has_connected = false
+
 ### Element used to show flash message ###
 user_messages = jQuery("#user_messages")
 
@@ -136,32 +139,30 @@ Remove a row from the torrent list by its info_hash
 ###
 row_remove = (info_hash) -> jQuery("#" + info_hash).remove()
 
+
+### recheck handlers ###
 action_recheck = ->
     if selected_rows
         socket.emit 'event_torrent_recheck', {info_hash: selected_rows}
         return false
 
+handle_event_torrent_recheck_response = (message) ->
+    show_alert "Got recheck response"
+
 action_reannounce = ->
     if selected_rows
         socket.emit 'event_torrent_announce', {info_hash: selected_rows}
 
+handle_event_torrent_reannounce_response = (message) ->
+    show_alert "Got reannounce response"
+
 action_remove = ->
-    for info_hash in selected_rows
-        jQuery.ajax "#{endpoint}/#{info_hash}/files", {
-            type: 'DELETE'
-        }, status_code: {
-            204: -> row_remove info_hash
-            404: -> console.log "info_hash not found: #{info_hash}"
-        }
+    if selected_rows
+        socket.emit 'event_torrent_remove', {info_hash: selected_rows, remove_data: false}
 
 action_remove_data = ->
-    for info_hash in selected_rows
-        jQuery.ajax "#{endpoint}/#{info_hash}", {
-            type: 'DELETE'
-        }, status_code: {
-            204: -> row_remove info_hash
-            404: -> console.log "info_hash not found: #{info_hash}"
-        }
+    if selected_rows
+        socket.emit 'event_torrent_remove', {info_hash: selected_rows, remove_data: true}
 
 action_stop = ->
     if selected_rows
@@ -173,24 +174,27 @@ action_start = ->
         socket.emit 'event_torrent_start', {info_hash: selected_rows}
 
 
+handle_event_torrent_files_response = (message) ->
+    false
+
+
 _alert_num = 0
 
 ###
     Show an alert popup message to the user. The message will fade after a few seconds have passed
 ###
-show_alert = (msg, msg_type='info') ->
-    alert += 1
-    """<div id="alert_#{_alert_num}" class="#{msg_type}" data-alert class="alert-box" tabindex="0" aria-live="assertive" role="dialogalert">
-  #{msg}
-  <button href="#" tabindex="0" class="close" aria-label="Close Alert">&times;</button>
-</div>"""
+show_alert = (msg, msg_type='info', ttl=10) ->
+    _alert_num += 1
+    user_messages.append("""<div id="alert_#{_alert_num}" data-alert class="alert-box radius #{msg_type}">#{msg}<a href="#" class="close">&times;</a></div>""")
+    if ttl > 0
+        setTimeout (-> jQuery("#alert_#{_alert_num}").remove()), ttl
 
 
 ### WS Event handlers ###
 
 
 event_alert_cb = (message) ->
-    show_alert message['message']
+    show_alert message['msg'], message['msg_type']
 
 
 event_torrent_list_response_cb = (message) ->
@@ -202,8 +206,6 @@ event_torrent_stop_response_cb = (message) ->
     show_alert message['msg'], message['msg_type']
 
 
-_rand = -> Math.floor((Math.random() * 1000) + 1)
-
 ### Update the chart values with the latest speed values ###
 chart_update = (upload, download) ->
     update_data = [
@@ -213,8 +215,7 @@ chart_update = (upload, download) ->
     detail_traffic_chart.push update_data
 
 
-fmt_timestamp = (ts) ->
-    moment.unix(ts).format 'D/M/YYYY hh:mm:s'
+fmt_timestamp = (ts) -> moment.unix(ts).format 'D/M/YYYY hh:mm:s'
 
 fmt_duration = (seconds) -> moment.duration(seconds, 'seconds').humanize()
 
@@ -240,7 +241,7 @@ handle_event_speed_overall_response = (message) ->
 
 _sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 bytes_to_size = (bytes, per_sec=false) ->
-    if bytes == 0
+    if bytes <= 0
         return '0 B'
     k = 1000
     i = Math.floor(Math.log(bytes) / Math.log(k))
@@ -270,12 +271,7 @@ peer_update= ->
     peer_update_timer = setTimeout peer_update, update_speed
 
 
-handle_event_torrent_peers_response = (message) ->
-    render_peers message['data']['peers']
 
-detail_update = ->
-    if selected_detail_id
-        socket.emit('event_torrent_details', {info_hash: selected_detail_id})
     detail_update_timer = setTimeout detail_update, detail_update_speed
 
 handle_event_torrent_details_response = (message) ->
@@ -346,25 +342,33 @@ in_url = (text) ->
 jQuery ->
     socket = io.connect endpoint
     socket.on 'connect', ->
+        if has_connected
+            show_alert "Reconnected to backend successfully"
+        else
+            show_alert "Connected to backend successfully"
+
         if in_url "/torrents/"
-            # Make sure not to load duplicate data on each connect if the server goes away
+            # Make sure not to load duplicate data on each connect if the server goes away by just clearing
+            # existing data from the table
             try
-                torrent_table.clear().draw()
+                torrent_table.fnClearTable()
             catch e
                 null
             socket.emit 'event_torrent_list'
         overall_speed_update()
+        has_connected = true
 
     socket.on 'event_speed_overall_response', handle_event_speed_overall_response
 
     if in_url "/torrents/"
-        socket.on 'event_torrent_recheck', (data) -> console.log data
+        socket.on 'event_torrent_recheck', handle_event_torrent_recheck_response
         socket.on 'event_torrent_peers_response', handle_event_torrent_peers_response
         socket.on 'event_torrent_speed', (data) -> console.log data
         socket.on 'event_torrent_details_response', handle_event_torrent_details_response
-        socket.on 'event_torrent_files', (data) -> console.log data
+        socket.on 'event_torrent_files', handle_event_torrent_files_response
         socket.on 'event_torrent_list_response', event_torrent_list_response_cb
         socket.on 'event_alert', event_alert_cb
+        socket.on 'event_torrent_reannounce_response', handle_event_torrent_reannounce_response
 
         jQuery('#torrent_table tbody').on 'click', 'tr', row_select_cb
         jQuery('#action_stop').on 'click', action_stop

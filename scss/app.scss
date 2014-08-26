@@ -100,5 +100,12 @@ ul.dropdown {
     }
 }
 
-
+#user_messages > div {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 34px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 12px;
+}
 @import "torrents";

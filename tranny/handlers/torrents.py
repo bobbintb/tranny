@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Endpoints for the /torrent sections
+Basic endpoints for the /torrent sections and the websocket api
 """
 from __future__ import unicode_literals
 from functools import partial
@@ -76,7 +76,7 @@ def handle_details(message):
         status = api.STATUS_OK
     else:
         status = api.STATUS_INCOMPLETE_REQUEST
-    emit(api.EVENT_TORRENT_DETAILS_RESPONSE, dict(data=data, status=status))
+    api.emit(api.EVENT_TORRENT_DETAILS_RESPONSE, data=data, status=status)
 
 
 @api.on(api.EVENT_TORRENT_SPEED)
@@ -84,9 +84,9 @@ def handle_speed(message):
     info_hash = message.get('info_hash', None)
     if info_hash:
         tor_speed = client.get().torrent_speed(info_hash)
-        emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(data=tor_speed, status=api.STATUS_OK))
+        api.emit(api.EVENT_TORRENT_SPEED_RESPONSE, data=tor_speed)
     else:
-        emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(status=api.STATUS_FAIL))
+        api.emit(api.EVENT_TORRENT_SPEED_RESPONSE, status=api.STATUS_FAIL)
 
 
 @api.on(api.EVENT_SPEED_OVERALL)

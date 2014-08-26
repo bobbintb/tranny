@@ -19,8 +19,11 @@ MSG_ALERT = 'alert'
 MSG_WARN = 'warn'
 MSG_INFO = 'info'
 
-# Specific error codes
+### Specific error codes
+# Request did not contain enough parameters
 STATUS_INCOMPLETE_REQUEST = 10
+
+# Unknown info_hash used in request
 STATUS_INVALID_INFO_HASH = 11
 
 # WebSocket event constants
@@ -68,6 +71,19 @@ on = partial(socketio.on, namespace=NAMESPACE)
 
 
 def emit(event, data=None, status=STATUS_OK, **kwargs):
+    """ Send a event over websocket to the client
+
+    :param event: Event name as defined in tranny.api
+    :type event: basestring
+    :param data: Data to send to the client
+    :type data: dict
+    :param status: Status
+    :type status:
+    :param kwargs:
+    :type kwargs:
+    :return:
+    :rtype:
+    """
     if data is None:
         data = {}
     resp = dict(status=status, data=data)
