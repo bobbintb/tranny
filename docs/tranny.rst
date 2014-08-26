@@ -158,3 +158,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Client API Info
+---------------
+
+.. toctree::
+
+    deluge_api

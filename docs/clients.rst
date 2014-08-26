@@ -22,8 +22,9 @@ More info available at `Deluge JSON-RPC <http://dev.deluge-torrent.org/wiki/Deve
 To allow connections to deluge you must enable the WebUI plugin. Additionally the default settings
 disallow remote connections. Change the "allow_remote" setting in $HOME/.config/deluge/core.conf::
 
-    "allow_remote": true,
+    "allow_remote": true
 
+:ref:`deluge_api`
 
 UTorrent
 --------

@@ -4,18 +4,11 @@ tranny.client package
 Submodules
 ----------
 
-tranny.client.deluge-direct module
-----------------------------------
 
-.. automodule:: tranny.client.deluge-direct
-    :members:
-    :undoc-members:
-    :show-inheritance:
+tranny.client.deluge module
+---------------------------
 
-tranny.client.deluge-jsonrpc module
------------------------------------
-
-.. automodule:: tranny.client.deluge-jsonrpc
+.. automodule:: tranny.client.deluge
     :members:
     :undoc-members:
     :show-inheritance:
