@@ -14,7 +14,8 @@ class TrannyTestCase(unittest.TestCase):
         self.load_config()
 
     def load_config(self, config_name="test_config.ini"):
-        ok = 1 == len(config.read(self.get_fixture(config_name)))
+        conf_file = self.get_fixture(config_name)
+        ok = 1 == len(config.read(conf_file))
         return ok
 
     def get_config(self, ):
@@ -25,4 +26,5 @@ class TrannyTestCase(unittest.TestCase):
             self.assertEqual(expected, fn(data), data)
 
     def get_fixture(self, fixture_file):
-        return join(dirname(__file__), "fixtures", fixture_file)
+        file_path = join(dirname(__file__), "fixtures", fixture_file)
+        return file_path
