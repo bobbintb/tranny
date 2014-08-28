@@ -180,13 +180,13 @@ action_reannounce = ->
 
 
 action_remove = ->
-    if selected_rows
-        socket.emit 'event_torrent_remove', {info_hash: selected_rows, remove_data: false}
+    for info_hash in selected_rows
+        socket.emit 'event_torrent_remove', {info_hash: info_hash, remove_data: false}
 
 
 action_remove_data = ->
-    if selected_rows
-        socket.emit 'event_torrent_remove', {info_hash: selected_rows, remove_data: true}
+    for info_hash in selected_rows
+        socket.emit 'event_torrent_remove', {info_hash: info_hash, remove_data: true}
 
 
 action_stop = ->
@@ -266,6 +266,9 @@ handle_event_torrent_peers_response = (message) ->
     client_chart.update client_chart_data
     render_peers message['data']['peers']
 
+handle_event_torrent_remove_response = (message) ->
+    if message['status'] == 0
+        jQuery("#" + message['data']['info_hash']).remove()
 
 handle_event_torrent_details_response = (message) ->
     data = message['data']
@@ -426,6 +429,7 @@ jQuery ->
         socket.on 'event_torrent_details_response', handle_event_torrent_details_response
         socket.on 'event_torrent_files', handle_event_torrent_files_response
         socket.on 'event_torrent_list_response', handle_event_torrent_list_response
+        socket.on 'event_torrent_remove_response', handle_event_torrent_remove_response
         socket.on 'event_alert', handle_event_alert
         socket.on 'event_torrent_reannounce_response', handle_event_torrent_reannounce_response
         socket.on 'event_torrent_stop_response', handle_event_torrent_stop_response

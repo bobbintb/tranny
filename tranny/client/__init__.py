@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, absolute_import
 from collections import namedtuple
 import logging
-from tranny import util
+from tranny import util, app
 from tranny.app import config
 from tranny.exceptions import ConfigError
 
@@ -94,7 +94,7 @@ class TorrentClient(object):
     def disconnect(self):
         raise NotImplementedError("disconnect undefined")
 
-client = TorrentClient()
+#client = TorrentClient()
 
 
 class ClientTorrentData(dict):
@@ -135,19 +135,19 @@ def init_client(client_type=None):
     if not client_type:
         client_type = config.get_default("general", "client", "transmission").lower()
     if client_type == "rtorrent":
-        from tranny.client.rtorrent import RTorrentClient as TorrentClient
+        from tranny.client.rtorrent import RTorrentClient as Client
     elif client_type == "transmission":
-        from tranny.client.transmission import TransmissionClient as TorrentClient
+        from tranny.client.transmission import TransmissionClient as Client
     elif client_type == "utorrent":
         #from tranny.client.utorrent import UTorrentClient as TorrentClient
         raise NotImplementedError("Utorrent support is currently incomplete. Please use another client")
     elif client_type == "deluge":
-        from tranny.client.deluge import DelugeClient as TorrentClient
+        from tranny.client.deluge import DelugeClient as Client
     else:
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
-    config_values = config.get_section_values(TorrentClient.config_key)
+    config_values = config.get_section_values(Client.config_key)
 
-    return TorrentClient(**config_values)
+    return Client(**config_values)
 
 
 def get():
@@ -156,5 +156,4 @@ def get():
     :return: Current torrent client backend in use
     :rtype: tranny.client.TorrentClient()
     """
-    from flask import current_app
-    return current_app.services.client
+    return app.torrent_client

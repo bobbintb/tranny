@@ -133,6 +133,9 @@ class DelugeClient(client.TorrentClient):
             app.logger.info("Connected to deluge {}/{}".format(*self.client_version()))
             self._request('web.register_event_listener', ['PluginDisabledEvent'])
             self._request('web.register_event_listener', ['PluginEnabledEvent'])
+            self._request('web.register_event_listener', ['TorrentAddedEvent'])
+            self._request('web.register_event_listener', ['TorrentStateChangedEvent'])
+            self._request('web.register_event_listener', ['TorrentResumedEvent'])
         else:
             self._last_request = time.time()
         return resp
@@ -224,7 +227,6 @@ class DelugeClient(client.TorrentClient):
         resp = self._request('web.get_torrent_status', [info_hash, params])
         return resp
 
-
     def torrent_pause(self, info_hash):
         resp = self._request('core.pause_torrent', [info_hash])
         return resp is None
@@ -261,3 +263,7 @@ class DelugeClient(client.TorrentClient):
 
     def disconnect(self):
         return self._request('web.disconnect')
+
+    def get_events(self):
+        resp = self._request('web.get_events')
+        return resp

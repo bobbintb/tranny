@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import signal
 import sys
 from flask.ext.script import Manager
+import gevent
 from tranny import create_app, app
 from tranny.extensions import db, socketio
 from tranny.models import User
@@ -38,6 +39,7 @@ manager = Manager(application)
 @manager.command
 def run():
     """Run in local machine."""
+    gevent.signal(signal.SIGQUIT, gevent.kill)
     socketio.run(application)
 
 

@@ -3,7 +3,7 @@
 
 
 (function() {
-  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, action_torrent_details, action_torrent_peers, action_torrent_speed, bytes_to_size, chart_update, client_chart, detail_elements, detail_traffic_chart, detail_update_speed, detail_update_timer, endpoint, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, handle_event_alert, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_files_response, handle_event_torrent_list_response, handle_event_torrent_peers_response, handle_event_torrent_reannounce_response, handle_event_torrent_recheck_response, handle_event_torrent_speed_response, handle_event_torrent_stop_response, has_connected, in_url, overall_speed_update, overall_speed_update_timer, peer_chart, peer_update_timer, queue_size, render_peers, row_load_handler, row_remove, row_select_handler, selected_class, selected_detail_id, selected_rows, show_alert, socket, speed_dn, speed_up, speed_update_timer, torrent_table, ts, update_speed, user_messages, _alert_num, _sizes;
+  var action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, action_torrent_details, action_torrent_peers, action_torrent_speed, bytes_to_size, chart_update, client_chart, detail_elements, detail_traffic_chart, detail_update_speed, detail_update_timer, endpoint, fmt_duration, fmt_timestamp, graph_fps, graph_type, graph_window_size, handle_event_alert, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_files_response, handle_event_torrent_list_response, handle_event_torrent_peers_response, handle_event_torrent_reannounce_response, handle_event_torrent_recheck_response, handle_event_torrent_remove_response, handle_event_torrent_speed_response, handle_event_torrent_stop_response, has_connected, in_url, overall_speed_update, overall_speed_update_timer, peer_chart, peer_update_timer, queue_size, render_peers, row_load_handler, row_remove, row_select_handler, selected_class, selected_detail_id, selected_rows, show_alert, socket, speed_dn, speed_up, speed_update_timer, torrent_table, ts, update_speed, user_messages, _alert_num, _sizes;
 
   selected_rows = [];
 
@@ -265,21 +265,29 @@
   };
 
   action_remove = function() {
-    if (selected_rows) {
-      return socket.emit('event_torrent_remove', {
-        info_hash: selected_rows,
+    var info_hash, _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = selected_rows.length; _i < _len; _i++) {
+      info_hash = selected_rows[_i];
+      _results.push(socket.emit('event_torrent_remove', {
+        info_hash: info_hash,
         remove_data: false
-      });
+      }));
     }
+    return _results;
   };
 
   action_remove_data = function() {
-    if (selected_rows) {
-      return socket.emit('event_torrent_remove', {
-        info_hash: selected_rows,
+    var info_hash, _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = selected_rows.length; _i < _len; _i++) {
+      info_hash = selected_rows[_i];
+      _results.push(socket.emit('event_torrent_remove', {
+        info_hash: info_hash,
         remove_data: true
-      });
+      }));
     }
+    return _results;
   };
 
   action_stop = function() {
@@ -395,6 +403,12 @@
     peer_chart.update(peer_chart_data);
     client_chart.update(client_chart_data);
     return render_peers(message['data']['peers']);
+  };
+
+  handle_event_torrent_remove_response = function(message) {
+    if (message['status'] === 0) {
+      return jQuery("#" + message['data']['info_hash']).remove();
+    }
   };
 
   handle_event_torrent_details_response = function(message) {
@@ -592,6 +606,7 @@
       socket.on('event_torrent_details_response', handle_event_torrent_details_response);
       socket.on('event_torrent_files', handle_event_torrent_files_response);
       socket.on('event_torrent_list_response', handle_event_torrent_list_response);
+      socket.on('event_torrent_remove_response', handle_event_torrent_remove_response);
       socket.on('event_alert', handle_event_alert);
       socket.on('event_torrent_reannounce_response', handle_event_torrent_reannounce_response);
       socket.on('event_torrent_stop_response', handle_event_torrent_stop_response);

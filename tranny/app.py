@@ -38,6 +38,8 @@ logger = ProxyLogger()
 from tranny import configuration
 config = None
 
+torrent_client = None
+
 from tranny.models import User
 from tranny.util import file_size
 from tranny import ui
@@ -57,6 +59,7 @@ def create_app(app_name="tranny"):
     global config
     config = configuration.Configuration()
     config.initialize()
+
     app = Flask(app_name)
     configure_app(app)
     configure_extensions(app)
@@ -66,7 +69,14 @@ def create_app(app_name="tranny"):
     configure_template_filters(app)
     configure_error_handlers(app)
     configure_services(app)
+    configure_torrent_client(app)
     return app
+
+
+def configure_torrent_client(app):
+    from tranny import client
+    global torrent_client
+    torrent_client = client.init_client()
 
 
 def configure_services(app):

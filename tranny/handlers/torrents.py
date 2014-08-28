@@ -5,11 +5,24 @@ Basic endpoints for the /torrent sections and the websocket api
 from __future__ import unicode_literals
 from functools import partial
 from flask import Blueprint
+import gevent
 from tranny import ui, api, client
+from tranny.app import torrent_client
 
 section_name = 'torrents'
 renderer = partial(ui.render, section=section_name)
 torrents = Blueprint(section_name, __name__, url_prefix="/torrents")
+
+
+def client_event_update():
+    while True:
+        if torrent_client:
+            events = torrent_client.get_events()
+            print(events)
+        gevent.sleep(1)
+
+update_thread = gevent.Greenlet.spawn(client_event_update)
+
 
 
 @torrents.route("/")
@@ -36,10 +49,7 @@ def handle_announce(message):
     :rtype:
     """
     info_hash = message.get('data', [])
-    if client.get().torrent_reannounce(info_hash):
-        status = api.STATUS_OK
-    else:
-        status = api.STATUS_FAIL
+    status = api.STATUS_OK if client.get().torrent_reannounce(info_hash) else api.STATUS_FAIL
     api.emit(api.EVENT_TORRENT_ANNOUNCE_RESPONSE, status=status)
 
 
@@ -121,3 +131,9 @@ def handle_remove(message):
         else:
             status = api.STATUS_FAIL
     api.emit(api.EVENT_TORRENT_REMOVE_RESPONSE, data=dict(info_hash=info_hash), status=status)
+
+
+@api.on(api.EVENT_UPDATE)
+def handle_event_update(message):
+    events = client.get().get_events()
+    api.emit(api.EVENT_UPDATE_RESPONSE)

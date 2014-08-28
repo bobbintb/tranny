@@ -60,6 +60,9 @@ EVENT_TORRENT_REMOVE_RESPONSE = 'event_torrent_remove_response'
 EVENT_SPEED_OVERALL = 'event_speed_overall'
 EVENT_SPEED_OVERALL_RESPONSE = 'event_speed_overall_response'
 
+EVENT_UPDATE = 'event_update'
+EVENT_UPDATE_RESPONSE = "event_update_response"
+
 # To send a popup alert to the user
 EVENT_ALERT = 'event_alert'
 
