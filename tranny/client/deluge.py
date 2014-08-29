@@ -179,12 +179,14 @@ class DelugeClient(client.TorrentClient):
         """
         resp = self._request(
             'web.update_ui', [
-                ["queue", "name", "total_size", "state", "progress", "num_seeds",
-                 "total_seeds", "num_peers", "total_peers", "download_payload_rate",
-                 "upload_payload_rate", "eta", "ratio", "distributed_copies",
-                 "is_auto_managed", "time_added", "tracker_host", "save_path", "total_done",
-                 "total_uploaded", "max_download_speed", "max_upload_speed", "seeds_peers_ratio"
-                ], {}]
+                [
+                    "queue", "name", "total_size", "state", "progress", "num_seeds",
+                    "total_seeds", "num_peers", "total_peers", "download_payload_rate",
+                    "upload_payload_rate", "eta", "ratio", "distributed_copies",
+                    "is_auto_managed", "time_added", "tracker_host", "save_path", "total_done",
+                    "total_uploaded", "max_download_speed", "max_upload_speed", "seeds_peers_ratio"
+                ], {}
+            ]
         )
         torrent_data = list()
         if not resp:
@@ -202,6 +204,8 @@ class DelugeClient(client.TorrentClient):
                 detail['total_done'],
                 detail['num_peers'],
                 detail['total_peers'],
+                detail['num_seeds'],
+                detail['total_seeds'],
                 '1',
                 '1',
                 detail['state'],
@@ -211,8 +215,7 @@ class DelugeClient(client.TorrentClient):
         return torrent_data
 
     def torrent_speed(self, info_hash):
-        resp = self._request('web.get_torrent_status', [info_hash, ["download_payload_rate", "upload_payload_rate"]])
-        return resp
+        return self._request('web.get_torrent_status', [info_hash, ["download_payload_rate", "upload_payload_rate"]])
 
     def torrent_status(self, info_hash):
         params = [

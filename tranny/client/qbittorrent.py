@@ -145,10 +145,33 @@ class QBittorrentClient(client.TorrentClient):
     @staticmethod
     def parse_torrent_info(torrent):
         up_rate = net.parse_net_speed_value(torrent['upspeed'])
-        dn_rate = net.parse_net_speed_value(torrent['upspeed'])
-        info = client.ClientTorrentData(torrent['hash'], torrent['name'], torrent['ration'],
-                                        )
-        return parsed_torrents
+        dn_rate = net.parse_net_speed_value(torrent['dlspeed'])
+        size = net.parse_net_speed_value(torrent['size'])
+        num_leechers, total_leechers = torrent['num_leechs'].split()
+        total_leechers = total_leechers.strip("()")
+        num_peers, total_peers = torrent['num_seeds'].split()
+        total_peers = total_peers.strip("()")
+        completed = size * torrent['progress']
+        info = client.ClientTorrentData(
+            torrent['hash'],
+            torrent['name'],
+            torrent['ration'],
+            up_rate,
+            dn_rate,
+            0,
+            0,
+            size,
+            completed,
+            num_leechers,
+            total_leechers,
+            num_peers,
+            total_peers,
+            torrent['priority'],
+            None,
+            None,
+            torrent['progress']
+        )
+        return info
 
     def torrent_speed(self, info_hash):
         resp = self._request('/torrents')

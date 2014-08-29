@@ -78,6 +78,7 @@ torrent_table = jQuery('#torrent_table').dataTable {
         rowCallback: row_load_handler,
         columnDefs: [
             {
+                # Draw a progress bar for total completed
                 render: (data, type, row) ->
                     pct = Math.floor(data)
                     style = if pct >= 100 then "success" else "alert"
@@ -88,10 +89,21 @@ torrent_table = jQuery('#torrent_table').dataTable {
                 targets: 2
             },
             {
+                # Colourise the ratio based on value
                 render: (data, type, row) ->
                     class_name = if data < 1 then 'alert' else 'success'
                     """<span class="#{class_name}">#{data}</span>"""
                 targets: 3
+            },
+            {
+                # Render leechers + total leechers
+                render: (data, type, row) -> """#{data} (#{row['total_leechers']})"""
+                targets: 6
+            },
+            {
+                # Render peers + total peers
+                render: (data, type, row) -> """#{data} (#{row['total_peers']})"""
+                targets: 7
             }
         ]
     }

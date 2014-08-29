@@ -142,6 +142,16 @@
           return "<span class=\"" + class_name + "\">" + data + "</span>";
         },
         targets: 3
+      }, {
+        render: function(data, type, row) {
+          return "" + data + " (" + row['total_leechers'] + ")";
+        },
+        targets: 6
+      }, {
+        render: function(data, type, row) {
+          return "" + data + " (" + row['total_peers'] + ")";
+        },
+        targets: 7
       }
     ]
   });
