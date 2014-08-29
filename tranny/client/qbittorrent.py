@@ -10,7 +10,7 @@ from __future__ import unicode_literals, absolute_import, with_statement
 import json
 import requests
 from requests import auth
-from tranny import client
+from tranny import client, net
 from tranny.exceptions import AuthenticationError, ApiError
 try:
     from http import client as httplib
@@ -141,6 +141,14 @@ class QBittorrentClient(client.TorrentClient):
         """
         resp = self._request('/torrents')
         return resp
+
+    @staticmethod
+    def parse_torrent_info(torrent):
+        up_rate = net.parse_net_speed_value(torrent['upspeed'])
+        dn_rate = net.parse_net_speed_value(torrent['upspeed'])
+        info = client.ClientTorrentData(torrent['hash'], torrent['name'], torrent['ration'],
+                                        )
+        return parsed_torrents
 
     def torrent_speed(self, info_hash):
         resp = self._request('/torrents')

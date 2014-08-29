@@ -24,9 +24,7 @@ application = create_app()
 
 def shutdown_app(signal, frame):
     print("\b\bClosing tranny..")
-    print(application.services.client.connected)
     if application.services.client.connected:
-
         del application.services.client
     sys.exit(0)
 

@@ -1,16 +1,12 @@
 from unittest import main
-from tests import TrannyTestCase, get_fixture
-from tranny import init_datastore, init_config
+from testcase import TrannyTestCase
 from tranny.provider.rss import RSSFeed
 
 
 class RSSFeedTest(TrannyTestCase):
-    def setUp(self):
-        init_config(get_fixture("test_config.ini"))
-        init_datastore()
 
     def test_get(self):
-        eztv = RSSFeed(self.get_config(), "rss_eztv")
+        eztv = RSSFeed("rss_eztv")
         eztv_releases = list(eztv.fetch_releases())
         self.assertFalse(eztv_releases)
 

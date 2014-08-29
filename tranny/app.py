@@ -36,7 +36,7 @@ logger = ProxyLogger()
 
 # Setup global configuration
 from tranny import configuration
-config = None
+config = configuration.Configuration()
 
 torrent_client = None
 
@@ -57,9 +57,8 @@ def create_app(app_name="tranny"):
     :rtype: Flask
     """
     global config
-    config = configuration.Configuration()
-    config.initialize()
 
+    config.initialize()
     app = Flask(app_name)
     configure_app(app)
     configure_extensions(app)
