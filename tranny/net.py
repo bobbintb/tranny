@@ -7,6 +7,30 @@ from os.path import join
 from requests import get, RequestException
 from tranny import app, exceptions
 
+# Conversion table mostly used for converting API values into common bytes
+speed_multi = {
+    # Binary JEDEC keys
+    'KB': lambda v: v * 1024,
+    'MB': lambda v: v * 1024 * 1024,
+    'GB': lambda v: v * 1024 * 1024 * 1024,
+    'TB': lambda v: v * 1024 * 1024 * 1024 * 1024,
+    'PB': lambda v: v * 1024 * 1024 * 1024 * 1024 * 1024,
+
+    # Binary IEC keys
+    'KiB': lambda v: v * 1024,
+    'MiB': lambda v: v * 1024 * 1024,
+    'GiB': lambda v: v * 1024 * 1024 * 1024,
+    'TiB': lambda v: v * 1024 * 1024 * 1024 * 1024,
+    'PiB': lambda v: v * 1024 * 1024 * 1024 * 1024 * 1024,
+
+    # Decimal metric keys
+    'kb': lambda v: v * 1000,
+    'mb': lambda v: v * 1000 * 1000,
+    'gb': lambda v: v * 1000 * 1000 * 1000,
+    'tb': lambda v: v * 1000 * 1000 * 1000 * 1000,
+    'pb': lambda v: v * 1000 * 1000 * 1000 * 1000 * 1000,
+}
+
 
 def download(release_name, url, dest_path="./", extension=".torrent"):
     """ Download a file to a local file path
@@ -56,3 +80,9 @@ def fetch_url(url, auth=None, json=True):
             response = response.json()
     finally:
         return response
+
+
+def parse_net_speed_value(input_speed):
+    value, suffix = input_speed.replace("/s", "").split()
+    parsed_value = float(speed_multi[suffix](float(value)))
+    return parsed_value
