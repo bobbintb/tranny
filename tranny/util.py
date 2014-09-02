@@ -19,7 +19,7 @@ def uptime_sys():
 
 
 def uptime_app():
-    return time() - Process(getpid()).create_time()
+    return time() - Process(getpid()).create_time
 
 
 def disk_free():

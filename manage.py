@@ -38,7 +38,9 @@ manager = Manager(application)
 def run():
     """Run in local machine."""
     gevent.signal(signal.SIGQUIT, gevent.kill)
-    socketio.run(application)
+    host = app.config.get_default('flask', 'listen_host', 'localhost')
+    port = app.config.get_default('flask', 'listen_port', 5000, int)
+    socketio.run(application, host=host, port=port)
 
 
 @manager.command

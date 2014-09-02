@@ -53,6 +53,16 @@ user_messages = jQuery("#user_messages")
 speed_up = jQuery("#speed_up")
 speed_dn = jQuery("#speed_dn")
 
+### Use mustache style interpolation  {{ }} ###
+_.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+
+template =
+    progress: _.template """<div class="progress {{ style }}">
+                            <span style="float: left">{{ data }}</span>
+                            <span class="meter" style="width: {{ data }}"></span>
+                        </div>"""
+    ratio: _.template """<span class="{{ class_name }}">{{ data }}</span>"""
+    peer_info: _.template "{{ num }} ({{ total }})"
 
 torrent_table = jQuery('#torrent_table').dataTable {
         processing: true,
@@ -82,27 +92,26 @@ torrent_table = jQuery('#torrent_table').dataTable {
                 render: (data, type, row) ->
                     pct = Math.floor(data)
                     style = if pct >= 100 then "success" else "alert"
-                    """<div class="progress #{style}">
-                        <span style="float: left">#{data}%</span>
-                        <span class="meter" style="width: #{data}"></span>
-                    </div>"""
+                    template['progress'] {'style': style, 'data':data}
                 targets: 2
             },
             {
                 # Colourise the ratio based on value
                 render: (data, type, row) ->
                     class_name = if data < 1 then 'alert' else 'success'
-                    """<span class="#{class_name}">#{data}</span>"""
+                    template['ratio'] {'class_name': class_name, 'data': data}
                 targets: 3
             },
             {
                 # Render leechers + total leechers
-                render: (data, type, row) -> """#{data} (#{row['total_leechers']})"""
+                render: (data, type, row) ->
+                    template['peer_info'] {'num': data, 'total': row['total_leechers']}
                 targets: 6
             },
             {
                 # Render peers + total peers
-                render: (data, type, row) -> """#{data} (#{row['total_peers']})"""
+                render: (data, type, row) ->
+                    template['peer_info'] {'num': data, 'total': row['total_peers']}
                 targets: 7
             }
         ]

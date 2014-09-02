@@ -1,18 +1,13 @@
 import unittest
-from tests import TrannyTestCase, get_fixture
+from testcase import TrannyTestCase
 from tranny.provider.broadcastthenet import BroadcastTheNet
-from tranny import init_config
-
-try:
-    btn_api = init_config(get_fixture("test_config.ini")).get("service_broadcastthenet", "api_token")
-except:
-    btn_api = False
 
 
-@unittest.skipUnless(btn_api, "No API Key set for BTN")
+#@unittest.skipUnless(btn_api, "No API Key set for BTN")
 class BTNAPITest(TrannyTestCase):
     def setUp(self):
-        self.api = BroadcastTheNet(init_config(get_fixture("test_config.ini")))
+        self.load_config(self.get_fixture("test_config.ini"))
+        self.api = BroadcastTheNet()
 
     def test_user_info(self):
         response = self.api.user_info()

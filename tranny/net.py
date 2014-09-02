@@ -57,7 +57,7 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     return dl_ok
 
 
-def fetch_url(url, auth=None, json=True):
+def fetch_url(url, auth=None, json=True, timeout=10):
     """ Fetch and return data contained at the url provided
 
     :param url: URL to fetch
@@ -68,7 +68,7 @@ def fetch_url(url, auth=None, json=True):
     response = None
     try:
         app.logger.debug("Fetching url: {0}".format(url))
-        response = get(url, auth=auth, proxies=app.config.get_proxies())
+        response = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
         response.raise_for_status()
         if not response.content:
             raise exceptions.InvalidResponse("Empty response body")

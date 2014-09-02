@@ -1,3 +1,4 @@
+{% from "funcs.html" import icon, button %}
 <div class="sticky">
 <nav class="top-bar" data-topbar>
     <ul class="title-area" style="background-color: #5da423">
@@ -10,32 +11,41 @@
         <ul class="left">
 
             <li class="divider"></li>
-            <li {% if section == "stats" %}class="active"{% endif %}><a href="{{ url_for("home.index") }}">
-                <i class="icon-chart-bar"></i> Dashboard</a></li>
-
-            <li {% if section == "torrents" %}class="active"{% endif %}><a href="{{ url_for("torrents.index") }}">
-                <i class="icon-chart-pie"></i> Torrents</a></li>
+            <li {% if section == "stats" %}class="active"{% endif %}>
+                {{ button(icon("chart-bar")+ " Dashboard", link=url_for("home.index"), button_class="") }}
+            </li>
 
             <li class="divider"></li>
-            <li {% if section == "filters" %}class="active"{% endif %}><a href="{{ url_for("filters.index") }}">
-                <i class="icon-filter"></i> Filters</a></li>
+
+            <li {% if section == "torrents" %}class="active"{% endif %}>
+                {{ button(icon("th-list")+ " Torrents", link=url_for("torrents.index"), button_class="") }}
+            </li>
 
             <li class="divider"></li>
-            <li {% if section == "services" %}class="active"{% endif %}><a href="{{ url_for("services.index") }}">
-                <i class="icon-cog-alt"></i> API</a></li>
+
+            <li {% if section == "filters" %}class="active"{% endif %}>
+                {{ button(icon("filter")+ " Filters", link=url_for("filters.index"), button_class="") }}
+            </li>
 
             <li class="divider"></li>
-            <li {% if section == "rss" %}class="active"{% endif %}><a href="{{ url_for("rss.index") }}">
-                <i class="icon-rss"></i> RSS</a></li>
+
+            <li {% if section == "services" %}class="active"{% endif %}>
+                {{ button(icon("cog-alt")+ " API", link=url_for("services.index"), button_class="") }}
+            </li>
 
             <li class="divider"></li>
+
+            <li {% if section == "rss" %}class="active"{% endif %}>
+                {{ button(icon("rss")+ " RSS", link=url_for("rss.index"), button_class="") }}
+             </li>
+
+            <li class="divider"></li>
+
             <li class="has-form">
                 <form>
                     <div class="row collapse">
                         <div class="small-12 columns">
-                            <a href="#" class="success button" data-reveal-id="upload-modal">
-                                <i class="icon-upload-cloud"></i> Upload
-                            </a>
+                            {{ button(icon("upload-cloud")+ " Upload", button_class="success button", extra='data-reveal-id=upload-modal') }}
                         </div>
                     </div>
                 </form>
