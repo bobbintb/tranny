@@ -20,7 +20,9 @@ class RSSFeed(provider.TorrentProvider):
         self.url = app.config.get(config_section, "url")
         self.interval = app.config.get_default(config_section, "interval", 60, int)
         self.enabled = app.config.getboolean(config_section, "enabled")
-        app.logger.debug("Initialized RSS Feed: {0}".format(self.name))
+        app.logger.debug("Initialized RSS Feed ({} State): {}".format(
+            'Enabled' if self.enabled else 'Disabled', self.name)
+        )
 
     def fetch_releases(self):
         """
@@ -32,10 +34,8 @@ class RSSFeed(provider.TorrentProvider):
         :return: a 3 element tuple containing (release_name, torrent_raw_data, section_name)
         :rtype: tranny.release.TorrentData
         """
-        if not self.enabled:
-            return []
         feed = feedparser.parse(self.url)
-        return [self.parse_entry(f) for f in feed['entries']]
+        return [self.parse_entry(f) for f in feed.get('entries', {})]
 
     def parse_entry(self, entry):
         """ Parse RSS entry data for qualified torrents to download
@@ -46,7 +46,7 @@ class RSSFeed(provider.TorrentProvider):
         :rtype: release.TorrentData, None
         """
         try:
-            release_name = entry['title']
+            release_name = entry.get('title', None)
             if not release_name:
                 raise ValueError
         except (KeyError, ValueError):
@@ -55,19 +55,20 @@ class RSSFeed(provider.TorrentProvider):
         release_key = datastore.generate_release_key(release_name)
         if not release_key:
             return None
-        if self.exists(release_key):
-            if app.config.get_default("general", "fetch_proper", True, bool):
-                if not ".proper." in release_name.lower():
-                    # Skip releases unless they are considered proper's
-                    app.logger.debug(
-                        "Skipped previously downloaded release ({0}): {1}".format(
-                            release_key,
-                            release_name
-                        )
-                    )
-                    return None
+
         section = parser.match_release(release_name)
         if section:
+            if self.exists(release_key):
+                if app.config.get_default("general", "fetch_proper", True, bool):
+                    if not ".proper." in release_name.lower():
+                        # Skip releases unless they are considered proper's
+                        app.logger.debug(
+                            "Skipped previously downloaded release ({0}): {1}".format(
+                                release_key,
+                                release_name
+                            )
+                        )
+                        return None
             torrent_data = self._download_url(entry['link'])
             if not torrent_data:
                 app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))

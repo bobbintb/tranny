@@ -4,8 +4,8 @@ Contains functionality related to the websocket API used to communicate with the
 """
 from __future__ import unicode_literals, absolute_import
 from functools import partial
-
 from flask.ext.socketio import emit as sio_emit
+from tranny.exceptions import ClientNotAvailable
 from tranny.extensions import socketio
 
 NAMESPACE = '/ws'
@@ -14,17 +14,22 @@ NAMESPACE = '/ws'
 # General status codes
 STATUS_OK = 0
 STATUS_FAIL = 1
-
-MSG_ALERT = 'alert'
-MSG_WARN = 'warn'
-MSG_INFO = 'info'
+STATUS_INTERNAL_ERROR = 3
 
 ### Specific error codes
+# Cant connect to torrent client daemon
+STATUS_CLIENT_NOT_AVAILABLE = 5
+
 # Request did not contain enough parameters
 STATUS_INCOMPLETE_REQUEST = 10
 
 # Unknown info_hash used in request
 STATUS_INVALID_INFO_HASH = 11
+
+# Message levels
+MSG_ALERT = 'alert'
+MSG_WARN = 'warn'
+MSG_INFO = 'info'
 
 # WebSocket event constants
 EVENT_TORRENT_RECHECK = 'event_torrent_recheck'
@@ -72,6 +77,22 @@ EVENT_RESPONSE = 'event_response'
 # Simple partial that includes the default namespace we are using for websocket connections
 # This should be used in place of flask.ext.socketio.emit
 on = partial(socketio.on, namespace=NAMESPACE)
+
+
+def error_handler(exc, event_name='internal_error'):
+    exc_type = type(exc)
+    if exc_type == ClientNotAvailable:
+        emit(event_name, {
+            'msg': "Client is not available",
+            'event': event_name,
+            'exc': exc.message,
+        }, status=STATUS_CLIENT_NOT_AVAILABLE)
+    else:
+        emit(event_name, {
+            'msg': "Failed to process request, internal error occurred",
+            'func': event_name,
+            'exc': exc.message,
+        }, status=STATUS_INTERNAL_ERROR)
 
 
 def emit(event, data=None, status=STATUS_OK, **kwargs):

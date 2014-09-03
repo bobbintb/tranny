@@ -53,9 +53,17 @@ user_messages = jQuery("#user_messages")
 speed_up = jQuery("#speed_up")
 speed_dn = jQuery("#speed_dn")
 
+STATUS_OK = 0
+STATUS_FAIL = 1
+STATUS_INTERNAL_ERROR = 3
+STATUS_CLIENT_NOT_AVAILABLE = 5
+STATUS_INCOMPLETE_REQUEST = 10
+STATUS_INVALID_INFO_HASH = 11
+
 ### Use mustache style interpolation  {{ }} ###
 _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
+### Compiled _ templates ###
 template =
     progress: _.template """<div class="progress {{ style }}">
                             <span style="float: left">{{ data }}</span>
@@ -69,7 +77,7 @@ torrent_table = jQuery('#torrent_table').dataTable {
         serverSize: true,
         paginate: false,
         searching: false,
-        autoWidth: true,
+        autoWidth: false,
         # Column reordering support
         sDom: 'Rlfrtip',
         scrollY: 300,
@@ -236,10 +244,18 @@ action_torrent_peers= ->
         socket.emit 'event_torrent_peers', {info_hash: selected_detail_id}
     peer_update_timer = setTimeout action_torrent_peers, update_speed
 
+special_alerts = {}
 
 ###
     Response handlers for sent websocket events
 ###
+error_handler = (func, message) ->
+    if message['status'] == STATUS_CLIENT_NOT_AVAILABLE
+        if not special_alerts[STATUS_CLIENT_NOT_AVAILABLE]
+            special_alerts[STATUS_CLIENT_NOT_AVAILABLE] = show_alert "Torrent client not online", 'error', 0
+    else
+        func message
+
 
 handle_event_torrent_files_response = (message) ->
     false
@@ -321,7 +337,7 @@ handle_event_torrent_details_response = (message) ->
     detail_elements.detail_status.text data['detail_status']
     detail_elements.detail_tracker.text data['tracker_host']
 
-
+_alert_num = 0
 ###
     Show an alert popup message to the user. The message will fade after a few seconds have passed
 
@@ -331,10 +347,13 @@ handle_event_torrent_details_response = (message) ->
 ###
 show_alert = (msg, msg_type='info', ttl=5) ->
     _alert_num += 1
+    console.log ttl, msg, _alert_num
     user_messages.append("""<div id="alert_#{_alert_num}" data-alert class="alert-box radius #{msg_type}">#{msg}<a href="#" class="close">&times;</a></div>""")
     if ttl > 0
-        setTimeout (-> jQuery("#alert_#{_alert_num}").fadeOut(-> @remove())), ttl * 1000
-_alert_num = 0
+        setTimeout((=> jQuery("#alert_#{_alert_num}").fadeOut(-> @remove())), ttl * 1000)
+    return _alert_num
+
+
 
 
 ### Update the chart values with the latest speed values ###
@@ -426,9 +445,10 @@ jQuery ->
     socket = io.connect endpoint
     socket.on 'connect', ->
         if has_connected
-            show_alert "Reconnected to backend successfully"
-        else
-            show_alert "Connected to backend successfully"
+            show_alert "Reconnected to backend successfully", null, 5
+        # For some reason this doesnt work on load...???
+        #else
+        #    show_alert "Connected to backend successfully", null, 5
 
         if in_url "/torrents/"
             # Make sure not to load duplicate data on each connect if the server goes away by just clearing
@@ -441,15 +461,18 @@ jQuery ->
         overall_speed_update()
         has_connected = true
 
-    socket.on 'event_speed_overall_response', handle_event_speed_overall_response
+    socket.on 'event_speed_overall_response', (message) =>
+        error_handler handle_event_speed_overall_response, message
 
     if in_url "/torrents/"
-        socket.on 'event_torrent_recheck', handle_event_torrent_recheck_response
+        socket.on 'event_torrent_recheck', (message) =>
+            error_handler handle_event_torrent_recheck_response, message
         socket.on 'event_torrent_peers_response', handle_event_torrent_peers_response
         socket.on 'event_torrent_speed_response', handle_event_torrent_speed_response
         socket.on 'event_torrent_details_response', handle_event_torrent_details_response
         socket.on 'event_torrent_files', handle_event_torrent_files_response
-        socket.on 'event_torrent_list_response', handle_event_torrent_list_response
+        socket.on 'event_torrent_list_response', (message) =>
+            error_handler handle_event_torrent_list_response, message
         socket.on 'event_torrent_remove_response', handle_event_torrent_remove_response
         socket.on 'event_alert', handle_event_alert
         socket.on 'event_torrent_reannounce_response', handle_event_torrent_reannounce_response

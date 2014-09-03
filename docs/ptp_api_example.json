@@ -1,0 +1,4042 @@
+{
+   "TotalResults":"105232",
+   "Movies":[
+      {
+         "GroupId":"117435",
+         "Title":"Sharps and Flats",
+         "Year":"1928",
+         "Cover":"http:\/\/ptpimg.me\/r6ylp4.png",
+         "Tags":[
+            "comedy",
+            "short",
+            "music"
+         ],
+         "ImdbId":"0019372",
+         "TotalLeechers":0,
+         "TotalSeeders":1,
+         "TotalSnatched":0,
+         "MaxSize":103820288,
+         "LastUploadTime":"2014-09-02 19:49:05",
+         "Torrents":[
+            {
+               "Id":318471,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MP4",
+               "Codec":"x264",
+               "Resolution":"636x480",
+               "Scene":false,
+               "Size":"103819381",
+               "UploadTime":"2014-09-02 19:49:05",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Sharps and Flats",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"4991",
+         "Title":"Out of the Past",
+         "Year":"1947",
+         "Cover":"https:\/\/whatimg.com\/i\/AZFHpJ.jpg",
+         "Tags":[
+            "drama",
+            "thriller",
+            "cult",
+            "film.noir"
+         ],
+         "Directors":[
+            {
+               "Name":"Jacques Tourneur",
+               "Id":"1093"
+            }
+         ],
+         "ImdbId":"0039689",
+         "TotalLeechers":0,
+         "TotalSeeders":135,
+         "TotalSnatched":967,
+         "MaxSize":30515174400,
+         "LastUploadTime":"2014-09-02 19:46:19",
+         "Torrents":[
+            {
+               "Id":17766,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x480",
+               "Scene":false,
+               "Size":"741158106",
+               "UploadTime":"2009-06-26 18:32:24",
+               "Snatched":"251",
+               "Seeders":"12",
+               "Leechers":"0",
+               "ReleaseName":"out of the past",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":119594,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"1564393672",
+               "UploadTime":"2011-12-05 20:57:46",
+               "Snatched":"92",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Out of the Past (1947) Robert Mitchum Eng (multisubs)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":69130,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x480",
+               "Scene":false,
+               "Size":"1328959497",
+               "UploadTime":"2011-03-02 06:05:09",
+               "Snatched":"467",
+               "Seeders":"48",
+               "Leechers":"0",
+               "ReleaseName":"Out.Of.The.Past[1947]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":5996,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"ISO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"4240343040",
+               "UploadTime":"2009-01-15 06:07:32",
+               "Snatched":"40",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"out of the past",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":182484,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"6451892224",
+               "UploadTime":"2012-12-07 04:26:24",
+               "Snatched":"21",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"OUT_OF_THE_PAST_1947_DVD9",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":317112,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"4699094859",
+               "UploadTime":"2014-08-22 23:22:10",
+               "Snatched":"62",
+               "Seeders":"49",
+               "Leechers":"0",
+               "ReleaseName":"Out.of.the.Past.1947.720p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":317621,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"5412993028",
+               "UploadTime":"2014-08-26 15:47:31",
+               "RemasterTitle":"With Commentary",
+               "Snatched":"8",
+               "Seeders":"6",
+               "Leechers":"0",
+               "ReleaseName":"Out of the Past 1947 720p BluRay FLAC2.0 x264-CtrlHD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":317116,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"8528025882",
+               "UploadTime":"2014-08-23 06:38:29",
+               "Snatched":"26",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Out.of.the.Past.1947.1080p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318470,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"30515173729",
+               "UploadTime":"2014-09-02 19:46:19",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Out.of.the.Past.1947.COMPLETE.BLURAY-PCH",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"31587",
+         "Title":"Greater Southbridge",
+         "Year":"2003",
+         "Cover":"http:\/\/ptpimg.me\/33iu91.jpg",
+         "Tags":[
+            "comedy",
+            "documentary"
+         ],
+         "Directors":[
+            {
+               "Name":"Rod Murphy",
+               "Id":"14525"
+            }
+         ],
+         "ImdbId":"0360618",
+         "TotalLeechers":1,
+         "TotalSeeders":1,
+         "TotalSnatched":18,
+         "MaxSize":626534400,
+         "LastUploadTime":"2010-11-28 16:18:05",
+         "Torrents":[
+            {
+               "Id":55824,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"DivX",
+               "Resolution":"352x264",
+               "Scene":false,
+               "Size":"626534400",
+               "UploadTime":"2010-11-28 16:18:05",
+               "Snatched":"18",
+               "Seeders":"1",
+               "Leechers":"1",
+               "ReleaseName":"Greater Southbridge",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"20467",
+         "Title":"The Monster Club",
+         "Year":"1980",
+         "Cover":"http:\/\/ptpimg.me\/pqzs8y.jpg",
+         "Tags":[
+            "comedy",
+            "horror"
+         ],
+         "Directors":[
+            {
+               "Name":"Roy Ward Baker",
+               "Id":"676"
+            }
+         ],
+         "ImdbId":"0081178",
+         "TotalLeechers":0,
+         "TotalSeeders":6,
+         "TotalSnatched":49,
+         "MaxSize":7747642368,
+         "LastUploadTime":"2014-09-02 19:35:50",
+         "Torrents":[
+            {
+               "Id":33759,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x544",
+               "Scene":false,
+               "Size":"1326534656",
+               "UploadTime":"2010-01-27 04:54:17",
+               "Snatched":"1",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Monster Club, The (1980) [CG]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":107887,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"708x344",
+               "Scene":false,
+               "Size":"1208069614",
+               "UploadTime":"2011-10-04 19:09:39",
+               "RemasterTitle":"With Commentary",
+               "Snatched":"20",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Monster Club.1980.DVDrip.x264",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":58732,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"708x384",
+               "Scene":false,
+               "Size":"1735332025",
+               "UploadTime":"2010-12-17 00:24:50",
+               "RemasterTitle":"With Amicus Extras",
+               "RemasterYear":"2006",
+               "Snatched":"8",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"The Monster Club",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":257747,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"4596258816",
+               "UploadTime":"2013-10-08 21:51:36",
+               "Snatched":"20",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Monster Club - 1980",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318469,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"7747641954",
+               "UploadTime":"2014-09-02 19:35:50",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"The.Monster.Club.1981.1080p.BluRay.x264-BARC0DE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"103894",
+         "Title":"Pour une femme AKA For a Woman",
+         "Year":"2013",
+         "Cover":"http:\/\/ptpimg.me\/n5mlip.jpg",
+         "Tags":[
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Diane Kurys",
+               "Id":"7890"
+            }
+         ],
+         "ImdbId":"2176786",
+         "TotalLeechers":2,
+         "TotalSeeders":2,
+         "TotalSnatched":3,
+         "MaxSize":23232842752,
+         "LastUploadTime":"2014-09-02 19:32:18",
+         "Torrents":[
+            {
+               "Id":282327,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x302",
+               "Scene":true,
+               "Size":"564777648",
+               "UploadTime":"2014-02-20 19:58:24",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Pour.Une.Femme.2013.FRENCH.BDRip.x264-TiCKETS",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":269065,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"4695076144",
+               "UploadTime":"2013-12-01 22:14:24",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"for.a.woman.2013.720p.bluray.x264-cinefile",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":267421,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"8217045907",
+               "UploadTime":"2013-11-24 17:48:12",
+               "Snatched":"3",
+               "Seeders":"1",
+               "Leechers":"2",
+               "ReleaseName":"For.A.Woman.2013.1080p.BluRay.x264-CiNEFiLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318468,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD25",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"23232842100",
+               "UploadTime":"2014-09-02 19:32:18",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Poure Une Femme 2013 1080p FRA Blu-ray AVC DTS-HD MA 5.1-SbR",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117434",
+         "Title":"The Gotham Rhythm Boys",
+         "Year":"1929",
+         "Cover":"http:\/\/ptpimg.me\/0sc5xu.png",
+         "Tags":[
+            "short",
+            "music"
+         ],
+         "Directors":[
+            {
+               "Name":"Murray Roth",
+               "Id":"19934"
+            }
+         ],
+         "ImdbId":"1698574",
+         "TotalLeechers":0,
+         "TotalSeeders":3,
+         "TotalSnatched":1,
+         "MaxSize":84890624,
+         "LastUploadTime":"2014-09-02 19:30:31",
+         "Torrents":[
+            {
+               "Id":318467,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MP4",
+               "Codec":"x264",
+               "Resolution":"636x480",
+               "Scene":false,
+               "Size":"84890419",
+               "UploadTime":"2014-09-02 19:30:31",
+               "Snatched":"1",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"The Gotham Rhythm Boys",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"110580",
+         "Title":"Leave The World Behind",
+         "Year":"2014",
+         "Cover":"http:\/\/ptpimg.me\/68th0p.jpg",
+         "Tags":[
+            "documentary",
+            "music"
+         ],
+         "Directors":[
+            {
+               "Name":"Christian Larson",
+               "Id":"14906"
+            }
+         ],
+         "ImdbId":"3288290",
+         "TotalLeechers":0,
+         "TotalSeeders":35,
+         "TotalSnatched":74,
+         "MaxSize":3155934208,
+         "LastUploadTime":"2014-09-02 19:23:44",
+         "Torrents":[
+            {
+               "Id":318466,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x312",
+               "Scene":true,
+               "Size":"1093900956",
+               "UploadTime":"2014-09-02 19:23:44",
+               "Snatched":"2",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"Leave.The.World.Behind.2014.DVDRiP.X264-TASTE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":294309,
+               "Quality":"High Definition",
+               "Source":"WEB",
+               "Container":"MKV",
+               "Codec":"H.264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"3155933369",
+               "UploadTime":"2014-04-17 08:54:22",
+               "Snatched":"73",
+               "Seeders":"32",
+               "Leechers":"0",
+               "ReleaseName":"Swedish.House.Mafia.Leave.The.World.Behind.2014.720p.WEB-DL.H264-PublicHD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117433",
+         "Title":"Picturesque Patzcuaro",
+         "Year":"1942",
+         "Cover":"http:\/\/ptpimg.me\/6yfv34.png",
+         "Tags":[
+            "documentary",
+            "short"
+         ],
+         "Directors":[
+            {
+               "Name":"James A. FitzPatrick",
+               "Id":"67550"
+            }
+         ],
+         "ImdbId":"0346999",
+         "TotalLeechers":0,
+         "TotalSeeders":1,
+         "TotalSnatched":0,
+         "MaxSize":114194432,
+         "LastUploadTime":"2014-09-02 19:18:35",
+         "Torrents":[
+            {
+               "Id":318465,
+               "Quality":"Standard Definition",
+               "Source":"TV",
+               "Container":"MP4",
+               "Codec":"x264",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"114194207",
+               "UploadTime":"2014-09-02 19:18:35",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Picturesque Patzcuaro",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117432",
+         "Title":"Shaquille O&amp;#39;Neal Presents: All Star Comedy Jam - Live from Atlanta",
+         "Year":"2013",
+         "Cover":"http:\/\/ptpimg.me\/b84j19.jpg",
+         "Tags":[
+            "comedy"
+         ],
+         "Directors":[
+            {
+               "Name":"Leslie Small",
+               "Id":"6745"
+            }
+         ],
+         "ImdbId":"3085312",
+         "TotalLeechers":1,
+         "TotalSeeders":2,
+         "TotalSnatched":0,
+         "MaxSize":2531968000,
+         "LastUploadTime":"2014-09-02 19:06:36",
+         "Torrents":[
+            {
+               "Id":318434,
+               "Quality":"High Definition",
+               "Source":"HDTV",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"2531967059",
+               "UploadTime":"2014-09-02 14:25:03",
+               "Snatched":"0",
+               "Seeders":"2",
+               "Leechers":"1",
+               "ReleaseName":"all.star.comedy.jam.live.from.atlanta.720p.hdtv.x264-sys",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117428",
+         "Title":"The Hospital",
+         "Year":"2013",
+         "Cover":"http:\/\/ptpimg.me\/khfc59.jpg",
+         "Tags":[
+            "horror"
+         ],
+         "Directors":[
+            {
+               "Name":"Tommy Golden",
+               "Id":"1083324"
+            },
+            {
+               "Name":"Daniel Emery Taylor",
+               "Id":"335118"
+            }
+         ],
+         "ImdbId":"2390341",
+         "TotalLeechers":1,
+         "TotalSeeders":9,
+         "TotalSnatched":4,
+         "MaxSize":3535790080,
+         "LastUploadTime":"2014-09-02 18:50:12",
+         "Torrents":[
+            {
+               "Id":318449,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x404",
+               "Scene":false,
+               "Size":"674236341",
+               "UploadTime":"2014-09-02 17:11:56",
+               "Snatched":"3",
+               "Seeders":"5",
+               "Leechers":"0",
+               "ReleaseName":"The.Hospital.2013.BDRip.X264-iNFiDEL",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318464,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"3535789134",
+               "UploadTime":"2014-09-02 18:50:12",
+               "Snatched":"3",
+               "Seeders":"7",
+               "Leechers":"0",
+               "ReleaseName":"The.Hospital.2013.720p.BluRay.X264-iNVANDRAREN",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117425",
+         "Title":"The Unauthorized Saved by the Bell Story",
+         "Year":"2014",
+         "Cover":"http:\/\/ptpimg.me\/91v8a9.jpg",
+         "Tags":[
+            "comedy"
+         ],
+         "Directors":[
+            {
+               "Name":"Jason Lapeyre",
+               "Id":"940970"
+            }
+         ],
+         "ImdbId":"3816372",
+         "TotalLeechers":3,
+         "TotalSeeders":38,
+         "TotalSnatched":35,
+         "MaxSize":1833153536,
+         "LastUploadTime":"2014-09-02 18:39:16",
+         "Torrents":[
+            {
+               "Id":318463,
+               "Quality":"Standard Definition",
+               "Source":"HDTV",
+               "Container":"MP4",
+               "Codec":"x264",
+               "Resolution":"720x404",
+               "Scene":true,
+               "Size":"686075526",
+               "UploadTime":"2014-09-02 18:39:16",
+               "Snatched":"3",
+               "Seeders":"7",
+               "Leechers":"3",
+               "ReleaseName":"the.unauthorized.saved.by.the.bell.story.2014.hdtv.x264-2hd",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318443,
+               "Quality":"High Definition",
+               "Source":"HDTV",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"1833152568",
+               "UploadTime":"2014-09-02 15:21:58",
+               "Snatched":"32",
+               "Seeders":"32",
+               "Leechers":"1",
+               "ReleaseName":"The.Unauthorized.Saved.by.the.Bell.Story.2014.720p.HDTV.x264-2HD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"791",
+         "Title":"Dancer in the Dark",
+         "Year":"2000",
+         "Cover":"http:\/\/ptpimg.me\/v2d0h6.jpg",
+         "Tags":[
+            "drama",
+            "crime",
+            "musical",
+            "experimental",
+            "arthouse",
+            "music"
+         ],
+         "Directors":[
+            {
+               "Name":"Lars von Trier",
+               "Id":"506"
+            }
+         ],
+         "ImdbId":"0168629",
+         "TotalLeechers":1,
+         "TotalSeeders":152,
+         "TotalSnatched":1664,
+         "MaxSize":45606338560,
+         "LastUploadTime":"2014-09-02 18:33:09",
+         "Torrents":[
+            {
+               "Id":861,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x304",
+               "Scene":false,
+               "Size":"1467967488",
+               "UploadTime":"2008-10-10 23:07:28",
+               "Snatched":"791",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Dancer in the Dark (2000) Lars von Trier",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":168310,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"718x432",
+               "Scene":false,
+               "Size":"1408547711",
+               "UploadTime":"2012-09-14 02:30:00",
+               "Snatched":"108",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Dancer in the dark - 2000 - Lars von Trier",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":157724,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"712x360",
+               "Scene":false,
+               "Size":"2338983471",
+               "UploadTime":"2012-07-07 14:29:56",
+               "RemasterTitle":"With Commentary",
+               "Snatched":"197",
+               "Seeders":"29",
+               "Leechers":"0",
+               "ReleaseName":"Dancer.in.the.Dark.2000.NTSC.DVD.x264-Tree",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":56171,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"ISO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"8306556928",
+               "UploadTime":"2010-11-30 23:35:27",
+               "Snatched":"169",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"whick-ditd",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":230819,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"12584615936",
+               "UploadTime":"2013-06-27 22:56:34",
+               "Snatched":"9",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Dancer.In.The.Dark.2000.PAL.2DVD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":202323,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"7043453528",
+               "UploadTime":"2013-02-20 17:49:36",
+               "Snatched":"211",
+               "Seeders":"49",
+               "Leechers":"0",
+               "ReleaseName":"Dancer.in.the.Dark.2000.720p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":305700,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"10269583210",
+               "UploadTime":"2014-06-13 14:57:56",
+               "Snatched":"9",
+               "Seeders":"7",
+               "Leechers":"0",
+               "ReleaseName":"Dancer.In.The.Dark.2000.720p.JPN.Blu-ray.DD5.1.x264-NoVA",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":202348,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"11740503940",
+               "UploadTime":"2013-02-20 18:52:14",
+               "Snatched":"171",
+               "Seeders":"33",
+               "Leechers":"0",
+               "ReleaseName":"Dancer.in.the.Dark.2000.1080p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":315295,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"H.264",
+               "Resolution":"1080i",
+               "Scene":false,
+               "Size":"40878076780",
+               "UploadTime":"2014-08-03 05:48:12",
+               "RemasterTitle":"Remux",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Dancer in the Dark 2000 1080i Blu-ray Remux AVC DTS-HD MA 5.1 - KRaLiMaRKo",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318462,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080i",
+               "Scene":false,
+               "Size":"45606337853",
+               "UploadTime":"2014-09-02 18:33:09",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Dancer.In.The.Dark.2006.1080i.JPN.Blu-ray.AVC.DTS.HDMA5.1-insinuendo",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"105448",
+         "Title":"Gintama the Movie",
+         "Year":"2013",
+         "Cover":"http:\/\/ptpimg.me\/34e2r5.jpg",
+         "Tags":[
+            "animation"
+         ],
+         "ImdbId":"2374144",
+         "TotalLeechers":1,
+         "TotalSeeders":21,
+         "TotalSnatched":50,
+         "MaxSize":5673768960,
+         "LastUploadTime":"2014-09-02 18:31:01",
+         "Torrents":[
+            {
+               "Id":274283,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MP4",
+               "Codec":"x264",
+               "Resolution":"848x480",
+               "Scene":false,
+               "Size":"1108567574",
+               "UploadTime":"2013-12-27 10:06:02",
+               "Snatched":"7",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"[UTW]_Gintama_Final_Chapter_The_Movie_-_Eternal_Glory_to_the_Odd_Jobs_[BD][h264-480p_AAC][B43C60E2]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318461,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"3160452199",
+               "UploadTime":"2014-09-02 18:31:01",
+               "RemasterTitle":"10-bit",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"1",
+               "ReleaseName":"[UTW]_Gintama_Final_Chapter_The_Movie_-_Eternal_Glory_to_the_Odd_Jobs_[BD][h264-720p_AAC][73CFA835]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":291962,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"5673768118",
+               "UploadTime":"2014-04-02 23:01:24",
+               "Snatched":"40",
+               "Seeders":"16",
+               "Leechers":"0",
+               "ReleaseName":"Gekijouban.Gintama.Kanketsu-hen.Yorozuya.yo.Eien.Nare.2013.720p.BluRay.DD5.1.x264-TayTO",
+               "Checked":true,
+               "GoldenPopcorn":true
+            },
+            {
+               "Id":275312,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"5506776627",
+               "UploadTime":"2014-01-01 18:56:02",
+               "RemasterTitle":"10-bit",
+               "Snatched":"3",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"[WhyNot-Over-Time] Gintama The Movie - The Final Chapter - Be Forever Odd Jobs [BD 1080p FLAC][AC2D2CF7]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"23850",
+         "Title":"Sex and the City 2",
+         "Year":"2010",
+         "Cover":"http:\/\/ptpimg.me\/w8hb5g.jpg",
+         "Tags":[
+            "comedy",
+            "drama",
+            "romance"
+         ],
+         "Directors":[
+            {
+               "Name":"Michael Patrick King",
+               "Id":"130"
+            }
+         ],
+         "ImdbId":"1261945",
+         "TotalLeechers":0,
+         "TotalSeeders":43,
+         "TotalSnatched":670,
+         "MaxSize":38857480192,
+         "LastUploadTime":"2014-09-02 18:28:57",
+         "Torrents":[
+            {
+               "Id":49306,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"592x336",
+               "Scene":true,
+               "Size":"1500495170",
+               "UploadTime":"2010-10-06 21:27:07",
+               "Snatched":"370",
+               "Seeders":"14",
+               "Leechers":"0",
+               "ReleaseName":"Sex.And.The.City.2.DVDRip.XviD-ARROW",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":198566,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"716x572",
+               "Scene":false,
+               "Size":"2216116177",
+               "UploadTime":"2013-02-10 11:57:23",
+               "Snatched":"54",
+               "Seeders":"6",
+               "Leechers":"0",
+               "ReleaseName":"Sex.And.The.City.2.2010.DVDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":94663,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"ISO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"4681441280",
+               "UploadTime":"2011-07-25 22:03:05",
+               "Snatched":"2",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Sex and the City 2 (2010)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":49890,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"7043475905",
+               "UploadTime":"2010-10-15 01:45:08",
+               "Snatched":"171",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Sex.And.The.City.2.2010.720p.BluRay.x264-SiNNERS",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":177333,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"8536642930",
+               "UploadTime":"2012-11-11 13:07:04",
+               "RemasterTitle":"with Commentary",
+               "Snatched":"24",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Sex.and.The.City.2.2010.720p.BluRay.DTS.x264-EbP",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":49972,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"11726423177",
+               "UploadTime":"2010-10-16 02:24:04",
+               "Snatched":"40",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"refined-sex.and.the.city.2-1080p",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":202623,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"VC-1",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"23775853254",
+               "UploadTime":"2013-02-21 14:45:15",
+               "RemasterTitle":"Remux",
+               "Snatched":"9",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Sex.And.The.City.2.2010.Bluray.DTS-MA.VC-1.Remux-doctorx",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318460,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"38857479498",
+               "UploadTime":"2014-09-02 18:28:57",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Sex and the City 2 1080p BluRay CEE AVC DTS HDMA DVDSEED - Gogeta",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"64322",
+         "Title":"Gong fu guan lan AKA Kung Fu Dunk",
+         "Year":"2008",
+         "Cover":"http:\/\/ptpimg.me\/o77i3w.jpg",
+         "Tags":[
+            "comedy",
+            "sport"
+         ],
+         "Directors":[
+            {
+               "Name":"Yen-Ping Chu",
+               "Id":"2725"
+            }
+         ],
+         "ImdbId":"0848538",
+         "TotalLeechers":1,
+         "TotalSeeders":4,
+         "TotalSnatched":11,
+         "MaxSize":38599161856,
+         "LastUploadTime":"2014-09-02 18:15:00",
+         "Torrents":[
+            {
+               "Id":129408,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"656x272",
+               "Scene":false,
+               "Size":"730523159",
+               "UploadTime":"2012-01-23 01:31:37",
+               "Snatched":"1",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Kung Fu Dunk",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":194864,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x304",
+               "Scene":false,
+               "Size":"1465107909",
+               "UploadTime":"2013-01-27 16:28:30",
+               "RemasterTitle":"Dual Audio",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Kung Fu Dunk 2008 480p XviD AC3 [ Dual-ENG CHN ] ESub",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":189509,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"832x400",
+               "Scene":false,
+               "Size":"1151085270",
+               "UploadTime":"2013-01-05 09:08:29",
+               "Snatched":"9",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Kung.Fu.Dunk (2008)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":310722,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"5378351437",
+               "UploadTime":"2014-07-03 10:08:14",
+               "Snatched":"1",
+               "Seeders":"1",
+               "Leechers":"1",
+               "ReleaseName":"Kung.Fu.Dunk.2008.720p.BluRay.x264.DTS-ZEN",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318459,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"38599160996",
+               "UploadTime":"2014-09-02 18:15:00",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"KUNGFU DUNK",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"45084",
+         "Title":"Transylvania",
+         "Year":"2006",
+         "Cover":"http:\/\/ptpimg.me\/wo9z99.jpg",
+         "Tags":[
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Tony Gatlif",
+               "Id":"2799"
+            }
+         ],
+         "ImdbId":"0463381",
+         "TotalLeechers":0,
+         "TotalSeeders":4,
+         "TotalSnatched":11,
+         "MaxSize":4480673792,
+         "LastUploadTime":"2014-09-02 18:06:42",
+         "Torrents":[
+            {
+               "Id":81926,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"576x240",
+               "Scene":false,
+               "Size":"734368323",
+               "UploadTime":"2011-05-16 05:41:06",
+               "Snatched":"11",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"Transylvania",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318458,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"4480673792",
+               "UploadTime":"2014-09-02 18:06:42",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"TRANSYLVANIA",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117431",
+         "Title":"Glamour",
+         "Year":"2000",
+         "Cover":"http:\/\/ptpimg.me\/358r1u.jpg",
+         "Tags":[
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Frigyes G\u00f6dr\u00f6s",
+               "Id":"103267"
+            }
+         ],
+         "ImdbId":"0193195",
+         "TotalLeechers":0,
+         "TotalSeeders":1,
+         "TotalSnatched":0,
+         "MaxSize":6596304896,
+         "LastUploadTime":"2014-09-02 18:05:21",
+         "Torrents":[
+            {
+               "Id":318457,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"6596304896",
+               "UploadTime":"2014-09-02 18:05:21",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Glamour",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"50916",
+         "Title":"Best Defense",
+         "Year":"1984",
+         "Cover":"http:\/\/ptpimg.me\/um83n0.jpg",
+         "Tags":[
+            "comedy",
+            "war"
+         ],
+         "Directors":[
+            {
+               "Name":"Willard Huyck",
+               "Id":"2323"
+            }
+         ],
+         "ImdbId":"0086955",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":24,
+         "MaxSize":6193491968,
+         "LastUploadTime":"2014-09-02 18:02:09",
+         "Torrents":[
+            {
+               "Id":95742,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x416",
+               "Scene":false,
+               "Size":"732504064",
+               "UploadTime":"2011-08-01 11:22:13",
+               "Snatched":"5",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Best Defense (1984)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":141781,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"704x400",
+               "Scene":false,
+               "Size":"1468237824",
+               "UploadTime":"2012-04-08 18:28:25",
+               "Snatched":"10",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Best Defense (1984)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318456,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"716x480",
+               "Scene":false,
+               "Size":"1703064502",
+               "UploadTime":"2014-09-02 18:02:09",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"1",
+               "ReleaseName":"Best.Defense.1984.DVDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":311815,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"6193491968",
+               "UploadTime":"2014-07-11 07:38:07",
+               "Snatched":"1",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Best defense (1984)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":224304,
+               "Quality":"High Definition",
+               "Source":"HDTV",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"2658377331",
+               "UploadTime":"2013-05-31 08:28:58",
+               "Snatched":"8",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Best.Defense.1984.x264.HDTVRip.1080p",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"16015",
+         "Title":"Fukush&amp;ucirc; suru wa ware ni ari AKA Vengeance is Mine",
+         "Year":"1979",
+         "Cover":"http:\/\/ptpimg.me\/58044a.jpg",
+         "Tags":[
+            "drama",
+            "crime",
+            "asian",
+            "japanese"
+         ],
+         "Directors":[
+            {
+               "Name":"Sh\u00f4hei Imamura",
+               "Id":"3083"
+            }
+         ],
+         "ImdbId":"0079182",
+         "TotalLeechers":0,
+         "TotalSeeders":56,
+         "TotalSnatched":409,
+         "MaxSize":40034786304,
+         "LastUploadTime":"2014-09-02 17:58:48",
+         "Torrents":[
+            {
+               "Id":35049,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"608x368",
+               "Scene":false,
+               "Size":"1887260923",
+               "UploadTime":"2010-02-23 17:21:01",
+               "RemasterTitle":"The Criterion Collection",
+               "RemasterYear":"2008",
+               "Snatched":"52",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"vengeance.is.mine.(shohei.imamura.1979)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":37091,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"796x480",
+               "Scene":false,
+               "Size":"1583055107",
+               "UploadTime":"2010-03-30 11:32:55",
+               "RemasterTitle":"The Criterion Collection",
+               "RemasterYear":"2008",
+               "Snatched":"71",
+               "Seeders":"10",
+               "Leechers":"0",
+               "ReleaseName":"Vengeance.is.Mine.1979.DVDRip-Zunidrap",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":106121,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"672x480",
+               "Scene":false,
+               "Size":"2337842224",
+               "UploadTime":"2011-09-23 13:47:25",
+               "RemasterTitle":"The Criterion Collection (2008)",
+               "Snatched":"97",
+               "Seeders":"10",
+               "Leechers":"0",
+               "ReleaseName":"Vengence.Is.Mine.1979.NTSC.DVD.x264-Tree",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":24944,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"7253688320",
+               "UploadTime":"2009-10-06 18:23:54",
+               "RemasterTitle":"Masters of Cinema",
+               "RemasterYear":"2008",
+               "Snatched":"5",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"VIDEO_TS\/VTS_01_1",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":28128,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"7931123712",
+               "UploadTime":"2009-11-11 15:40:40",
+               "RemasterTitle":"The Criterion Collection",
+               "RemasterYear":"2008",
+               "Snatched":"31",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"VENGEANCE_IS_MINE\/VIDEO_TS\/VTS_01_1",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":72519,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"7040937972",
+               "UploadTime":"2011-03-21 12:15:18",
+               "RemasterTitle":"Masters of Cinema",
+               "RemasterYear":"2010",
+               "Snatched":"69",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Vengeance.Is.Mine.1979.720p.BluRay.x264-CiNEFiLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318455,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"10898898364",
+               "UploadTime":"2014-09-02 17:58:48",
+               "RemasterTitle":"The Criterion Collection \/ With Commentary",
+               "Snatched":"0",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Vengeance.is.Mine.1979.720.BluRay.FLAC.x264-HiFi",
+               "Checked":false,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":266476,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"13016067641",
+               "UploadTime":"2013-11-21 04:05:31",
+               "RemasterTitle":"Masters of Cinema \/ With Commentary",
+               "Snatched":"27",
+               "Seeders":"9",
+               "Leechers":"0",
+               "ReleaseName":"Fukushu.suru.wa.ware.ni.ari.(Vengeance.is.Mine).1979.720p.MOC.BluRay.FLAC.2.0.x264-MKu",
+               "Checked":true,
+               "GoldenPopcorn":true
+            },
+            {
+               "Id":72520,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"11737849550",
+               "UploadTime":"2011-03-21 12:16:12",
+               "RemasterTitle":"Masters of Cinema",
+               "RemasterYear":"2010",
+               "Snatched":"48",
+               "Seeders":"6",
+               "Leechers":"0",
+               "ReleaseName":"Vengeance.Is.Mine.1979.1080p.BluRay.x264-CiNEFiLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":234873,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"40034786300",
+               "UploadTime":"2013-07-12 14:02:53",
+               "Snatched":"8",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Vengeance is Mine (BD-UK)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":288283,
+               "Quality":"Other",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x544",
+               "Scene":false,
+               "Size":"406832821",
+               "UploadTime":"2014-03-19 19:17:10",
+               "RemasterTitle":"Extras",
+               "Snatched":"1",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"vengeance.is.mine",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117430",
+         "Title":"Two Plus Fours",
+         "Year":"1930",
+         "Cover":"http:\/\/ptpimg.me\/6kt358.jpg",
+         "Tags":[
+            "short"
+         ],
+         "ImdbId":"0021496",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":115369984,
+         "LastUploadTime":"2014-09-02 17:54:11",
+         "Torrents":[
+            {
+               "Id":318454,
+               "Quality":"Standard Definition",
+               "Source":"Unknown",
+               "Container":"MP4",
+               "Codec":"H.264",
+               "Resolution":"720x540",
+               "Scene":false,
+               "Size":"115369048",
+               "UploadTime":"2014-09-02 17:54:11",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Two Plus Fours (1930)",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"3597",
+         "Title":"Rain Man",
+         "Year":"1988",
+         "Cover":"http:\/\/ptpimg.me\/112mft.jpg",
+         "Tags":[
+            "comedy",
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Barry Levinson",
+               "Id":"860"
+            }
+         ],
+         "ImdbId":"0095953",
+         "TotalLeechers":6,
+         "TotalSeeders":225,
+         "TotalSnatched":2100,
+         "MaxSize":48850275328,
+         "LastUploadTime":"2014-09-02 17:49:42",
+         "Torrents":[
+            {
+               "Id":40195,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"608x336",
+               "Scene":false,
+               "Size":"738625536",
+               "UploadTime":"2010-06-01 03:19:31",
+               "Snatched":"462",
+               "Seeders":"31",
+               "Leechers":"0",
+               "ReleaseName":"rain.man",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":97012,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"624x336",
+               "Scene":true,
+               "Size":"1460252672",
+               "UploadTime":"2011-08-08 11:30:23",
+               "Snatched":"29",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Rain Man (1988)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318453,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x388",
+               "Scene":true,
+               "Size":"954642333",
+               "UploadTime":"2014-09-02 17:49:42",
+               "RemasterTitle":"Remastered",
+               "RemasterYear":"2014",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"1",
+               "ReleaseName":"rain.man.1988.remastered.internal.bdrip.x264-archivist",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":86113,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"704x384",
+               "Scene":false,
+               "Size":"1814716203",
+               "UploadTime":"2011-06-05 20:39:01",
+               "Snatched":"285",
+               "Seeders":"23",
+               "Leechers":"0",
+               "ReleaseName":"Rain.Man.1988",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":229059,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"576p",
+               "Scene":false,
+               "Size":"2628966405",
+               "UploadTime":"2013-06-20 08:38:55",
+               "Snatched":"33",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Rain.man.1988.576p.BDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":179485,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"8282284032",
+               "UploadTime":"2012-11-21 09:22:33",
+               "RemasterTitle":"Special Edition",
+               "Snatched":"47",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"RAINMAN_SE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318300,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"5868066796",
+               "UploadTime":"2014-09-01 15:58:44",
+               "RemasterTitle":"Remastered",
+               "RemasterYear":"2014",
+               "Snatched":"11",
+               "Seeders":"13",
+               "Leechers":"2",
+               "ReleaseName":"Rain.Man.1988.REMASTERED.720p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":65546,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"7042817475",
+               "UploadTime":"2011-02-05 12:04:57",
+               "Snatched":"609",
+               "Seeders":"63",
+               "Leechers":"0",
+               "ReleaseName":"Rain.Man.1988.720p.BluRay.x264-SiNNERS",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":101979,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"9868832412",
+               "UploadTime":"2011-09-03 15:56:46",
+               "Snatched":"263",
+               "Seeders":"33",
+               "Leechers":"1",
+               "ReleaseName":"Rain.Man.1988.720p.BluRay.DD5.1.x264-EbP",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318302,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"11738201671",
+               "UploadTime":"2014-09-01 16:02:03",
+               "RemasterTitle":"Remastered",
+               "RemasterYear":"2014",
+               "Snatched":"2",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Rain.Man.1988.REMASTERED.1080p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":66183,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"11738474780",
+               "UploadTime":"2011-02-09 23:56:40",
+               "Snatched":"92",
+               "Seeders":"14",
+               "Leechers":"0",
+               "ReleaseName":"Rain.Man.1988.1080p.BluRay.x264-CiNEFiLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":163229,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"19076691198",
+               "UploadTime":"2012-08-10 06:48:05",
+               "Snatched":"170",
+               "Seeders":"22",
+               "Leechers":"1",
+               "ReleaseName":"Rain.Man.1988.BluRay.1080p.x264.DTS.dxva-xander",
+               "Checked":true,
+               "GoldenPopcorn":true
+            },
+            {
+               "Id":165026,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"H.264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"36210260914",
+               "UploadTime":"2012-08-19 11:44:38",
+               "RemasterTitle":"Remux",
+               "Snatched":"53",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Rain.Man.1988.BluRay.1080p.DTS-HD.MA.5.1.AVC.REMUX-FraMeSToR",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":165288,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"48850274384",
+               "UploadTime":"2012-08-21 02:06:12",
+               "Snatched":"44",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"RAIN_MAN_BD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"55004",
+         "Title":"Any Number Can Play",
+         "Year":"1949",
+         "Cover":"http:\/\/ptpimg.me\/5zyr34.jpg",
+         "Tags":[
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Mervyn LeRoy",
+               "Id":"1235"
+            }
+         ],
+         "ImdbId":"0041127",
+         "TotalLeechers":2,
+         "TotalSeeders":2,
+         "TotalSnatched":31,
+         "MaxSize":4511961088,
+         "LastUploadTime":"2011-12-29 20:57:02",
+         "Torrents":[
+            {
+               "Id":104909,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"1405457089",
+               "UploadTime":"2011-09-16 22:50:05",
+               "Snatched":"1",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Any.Number.Can.Play.1949.DVDRip",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":122580,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MP4",
+               "Codec":"H.264",
+               "Resolution":"720x480",
+               "Scene":false,
+               "Size":"803525088",
+               "UploadTime":"2011-12-19 16:06:19",
+               "Snatched":"13",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Any.Number.Can.Play.1949",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":124649,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"4511961088",
+               "UploadTime":"2011-12-29 20:57:02",
+               "Snatched":"17",
+               "Seeders":"1",
+               "Leechers":"2",
+               "ReleaseName":"Any Number Can Play [1949]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"582",
+         "Title":"Ghostbusters II",
+         "Year":"1989",
+         "Cover":"http:\/\/ptpimg.me\/317nhi.jpg",
+         "Tags":[
+            "comedy",
+            "fantasy",
+            "cult",
+            "sci.fi"
+         ],
+         "Directors":[
+            {
+               "Name":"Ivan Reitman",
+               "Id":"308"
+            }
+         ],
+         "ImdbId":"0097428",
+         "TotalLeechers":0,
+         "TotalSeeders":101,
+         "TotalSnatched":743,
+         "MaxSize":8527396864,
+         "LastUploadTime":"2014-09-02 17:41:32",
+         "Torrents":[
+            {
+               "Id":623,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"592x240",
+               "Scene":false,
+               "Size":"735153215",
+               "UploadTime":"2008-10-08 21:29:12",
+               "Snatched":"399",
+               "Seeders":"15",
+               "Leechers":"0",
+               "ReleaseName":"Ghostbusters.II.1989.iNT.DVDRip.XviD-aNBc",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":92097,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x288",
+               "Scene":false,
+               "Size":"1468555264",
+               "UploadTime":"2011-07-10 20:53:21",
+               "Snatched":"27",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Ghostbusters 2",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":23965,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"710x368",
+               "Scene":false,
+               "Size":"1586770000",
+               "UploadTime":"2009-09-22 22:17:57",
+               "Snatched":"175",
+               "Seeders":"24",
+               "Leechers":"0",
+               "ReleaseName":"Ghost Busters II",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":115308,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"710x368",
+               "Scene":false,
+               "Size":"1897207008",
+               "UploadTime":"2011-11-11 06:27:43",
+               "RemasterTitle":"Gift Set",
+               "RemasterYear":"2005",
+               "Snatched":"72",
+               "Seeders":"5",
+               "Leechers":"0",
+               "ReleaseName":"Ghostbusters.2.Gift.Set.1989.DVDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":115315,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"6780137472",
+               "UploadTime":"2011-11-11 07:26:07",
+               "RemasterTitle":"Gift Set",
+               "RemasterYear":"2005",
+               "Snatched":"13",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"GHOSTBUSTERS_2_GIFT_SET",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":50174,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"7434249160",
+               "UploadTime":"2010-10-18 09:04:24",
+               "Snatched":"1",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"GHOSTBUSTERS_2",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318166,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"4692257223",
+               "UploadTime":"2014-08-31 15:01:19",
+               "Snatched":"35",
+               "Seeders":"33",
+               "Leechers":"0",
+               "ReleaseName":"Ghostbusters.II.1989.720p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318208,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"8527396401",
+               "UploadTime":"2014-08-31 19:48:21",
+               "Snatched":"21",
+               "Seeders":"21",
+               "Leechers":"0",
+               "ReleaseName":"Ghostbusters.II.1989.1080p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"115731",
+         "Title":"Blue Note - A Story of Modern Jazz",
+         "Year":"1997",
+         "Cover":"http:\/\/ptpimg.me\/33kv1e.jpg",
+         "Tags":[
+            "documentary",
+            "music",
+            "jazz"
+         ],
+         "Directors":[
+            {
+               "Name":"Julian Benedikt",
+               "Id":"1070383"
+            },
+            {
+               "Name":"Andreas Morell",
+               "Id":"1070384"
+            }
+         ],
+         "ImdbId":"0127466",
+         "TotalLeechers":0,
+         "TotalSeeders":7,
+         "TotalSnatched":11,
+         "MaxSize":6849687552,
+         "LastUploadTime":"2014-09-02 17:35:39",
+         "Torrents":[
+            {
+               "Id":311775,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"696x480",
+               "Scene":false,
+               "Size":"1509032159",
+               "UploadTime":"2014-07-11 05:18:35",
+               "Snatched":"14",
+               "Seeders":"13",
+               "Leechers":"0",
+               "ReleaseName":"Blue.Note.A.Story.of.Modern.Jazz.1997.DVDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318451,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"6849687552",
+               "UploadTime":"2014-09-02 17:35:39",
+               "Snatched":"1",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Blue.Note.A.Story.of.Modern.Jazz.1997",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117429",
+         "Title":"The Inside Passage",
+         "Year":"1941",
+         "Cover":"http:\/\/ptpimg.me\/86dbl6.png",
+         "Tags":[
+            "documentary",
+            "short"
+         ],
+         "Directors":[
+            {
+               "Name":"James A. FitzPatrick",
+               "Id":"67550"
+            }
+         ],
+         "ImdbId":"0311335",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":111738880,
+         "LastUploadTime":"2014-09-02 17:35:10",
+         "Torrents":[
+            {
+               "Id":318450,
+               "Quality":"Standard Definition",
+               "Source":"TV",
+               "Container":"MP4",
+               "Codec":"x264",
+               "Resolution":"640x472",
+               "Scene":false,
+               "Size":"111738373",
+               "UploadTime":"2014-09-02 17:35:10",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"The Inside Passage",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"16221",
+         "Title":"Dracula",
+         "Year":"1979",
+         "Cover":"http:\/\/ptpimg.me\/h4b4h9.jpg",
+         "Tags":[
+            "romance",
+            "horror"
+         ],
+         "Directors":[
+            {
+               "Name":"John Badham",
+               "Id":"560"
+            }
+         ],
+         "ImdbId":"0079073",
+         "TotalLeechers":0,
+         "TotalSeeders":5,
+         "TotalSnatched":74,
+         "MaxSize":8637373440,
+         "LastUploadTime":"2014-09-02 17:03:50",
+         "Torrents":[
+            {
+               "Id":174140,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x304",
+               "Scene":false,
+               "Size":"734027776",
+               "UploadTime":"2012-10-25 04:56:13",
+               "Snatched":"24",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Dracula 1979",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":106311,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"720x304",
+               "Scene":false,
+               "Size":"1304502272",
+               "UploadTime":"2011-09-24 14:15:41",
+               "Snatched":"30",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Dracula (1979) CG",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":145938,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"716x362",
+               "Scene":false,
+               "Size":"1173012391",
+               "UploadTime":"2012-05-04 06:07:32",
+               "Snatched":"2",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Dracula.1979.DVDRip.x264.zPZ[CG]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":113022,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"8478208000",
+               "UploadTime":"2011-10-29 20:27:02",
+               "Snatched":"18",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"DRACULA_1979",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318445,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"4694464477",
+               "UploadTime":"2014-09-02 16:01:46",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Dracula.1979.720p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318448,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"8637372835",
+               "UploadTime":"2014-09-02 17:03:50",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Dracula.1979.1080p.BluRay.X264-AMIABLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"58228",
+         "Title":"Sea of Fear",
+         "Year":"2006",
+         "Cover":"http:\/\/ptpimg.me\/9l6k92.jpg",
+         "Tags":[
+            "horror"
+         ],
+         "Directors":[
+            {
+               "Name":"Andrew Schuth",
+               "Id":"337367"
+            }
+         ],
+         "ImdbId":"0389360",
+         "TotalLeechers":0,
+         "TotalSeeders":1,
+         "TotalSnatched":8,
+         "MaxSize":731625472,
+         "LastUploadTime":"2011-10-27 23:01:28",
+         "Torrents":[
+            {
+               "Id":112647,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x272",
+               "Scene":false,
+               "Size":"731625472",
+               "UploadTime":"2011-10-27 23:01:29",
+               "Snatched":"9",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Sea of Fear (2006)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117427",
+         "Title":"The Spectacle Maker",
+         "Year":"1934",
+         "Cover":"http:\/\/ptpimg.me\/369x46.png",
+         "Tags":[
+            "drama",
+            "fantasy",
+            "short"
+         ],
+         "Directors":[
+            {
+               "Name":"John Farrow",
+               "Id":"8054"
+            }
+         ],
+         "ImdbId":"0179475",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":164499456,
+         "LastUploadTime":"2014-09-02 16:40:59",
+         "Torrents":[
+            {
+               "Id":318447,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"164498776",
+               "UploadTime":"2014-09-02 16:40:59",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"The Spectacle Maker [1934]",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"24845",
+         "Title":"Satan&amp;#39;s School for Girls",
+         "Year":"1973",
+         "Cover":"http:\/\/i128.photobucket.com\/albums\/p182\/trahenots\/Miscellaneous\/1414-1.jpg",
+         "Tags":[
+            "crime",
+            "mystery",
+            "horror"
+         ],
+         "Directors":[
+            {
+               "Name":"David Lowell Rich",
+               "Id":"3183"
+            }
+         ],
+         "ImdbId":"0070633",
+         "TotalLeechers":0,
+         "TotalSeeders":4,
+         "TotalSnatched":47,
+         "MaxSize":3821502464,
+         "LastUploadTime":"2013-10-15 20:22:43",
+         "Torrents":[
+            {
+               "Id":43143,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"544x416",
+               "Scene":false,
+               "Size":"734191616",
+               "UploadTime":"2010-07-14 01:19:48",
+               "Snatched":"13",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"SATANS_SCHOOL_FOR_GIRLS",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":259637,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"710x480",
+               "Scene":false,
+               "Size":"1656757734",
+               "UploadTime":"2013-10-15 20:22:43",
+               "Snatched":"19",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Satan.School.for.Girls.[1973].DVD.AC3.x264-PTP",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":259562,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"ISO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"3821502464",
+               "UploadTime":"2013-10-15 15:04:44",
+               "Snatched":"16",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"SATAN_SCHOOL_FOR_GIRLS",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117044",
+         "Title":"The Longest Week",
+         "Year":"2014",
+         "Cover":"http:\/\/ptpimg.me\/644f21.jpg",
+         "Tags":[
+            "comedy",
+            "drama",
+            "romance"
+         ],
+         "Directors":[
+            {
+               "Name":"Peter Glanz",
+               "Id":"1081088"
+            }
+         ],
+         "ImdbId":"2064968",
+         "TotalLeechers":1,
+         "TotalSeeders":60,
+         "TotalSnatched":77,
+         "MaxSize":3303693312,
+         "LastUploadTime":"2014-09-02 16:02:33",
+         "Torrents":[
+            {
+               "Id":318446,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x404",
+               "Scene":true,
+               "Size":"539902261",
+               "UploadTime":"2014-09-02 16:02:33",
+               "Snatched":"5",
+               "Seeders":"7",
+               "Leechers":"1",
+               "ReleaseName":"The.Longest.Week.2014.DVDRiP.X264-TASTE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":316946,
+               "Quality":"High Definition",
+               "Source":"WEB",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"3303692520",
+               "UploadTime":"2014-08-19 23:30:17",
+               "Snatched":"73",
+               "Seeders":"53",
+               "Leechers":"0",
+               "ReleaseName":"The.Longest.Week.2014.720p.WEB-DL.DD5.1.H264-RARBG",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117426",
+         "Title":"Citizen Koch",
+         "Year":"2013",
+         "Cover":"http:\/\/ptpimg.me\/y0g1t6.jpg",
+         "Tags":[
+            "drama",
+            "documentary"
+         ],
+         "Directors":[
+            {
+               "Name":"Carl Deal",
+               "Id":"6894"
+            },
+            {
+               "Name":"Tia Lessin",
+               "Id":"46442"
+            }
+         ],
+         "ImdbId":"2545338",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":2284705792,
+         "LastUploadTime":"2014-09-02 15:40:37",
+         "Torrents":[
+            {
+               "Id":318444,
+               "Quality":"High Definition",
+               "Source":"WEB",
+               "Container":"MP4",
+               "Codec":"H.264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"2284704880",
+               "UploadTime":"2014-09-02 15:40:37",
+               "Snatched":"9",
+               "Seeders":"11",
+               "Leechers":"1",
+               "ReleaseName":"Citizen.Koch.2014.720p.WEB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"52256",
+         "Title":"Amor idiota AKA Idiot Love",
+         "Year":"2004",
+         "Cover":"http:\/\/ptpimg.me\/4mvlpj.jpg",
+         "Tags":[
+            "comedy"
+         ],
+         "Directors":[
+            {
+               "Name":"Ventura Pons",
+               "Id":"18600"
+            }
+         ],
+         "ImdbId":"0421603",
+         "TotalLeechers":1,
+         "TotalSeeders":2,
+         "TotalSnatched":13,
+         "MaxSize":4561483776,
+         "LastUploadTime":"2014-09-02 15:13:55",
+         "Torrents":[
+            {
+               "Id":98590,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"512x272",
+               "Scene":false,
+               "Size":"734028533",
+               "UploadTime":"2011-08-17 22:09:39",
+               "Snatched":"12",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Amor idiota (2004)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318442,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD5",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"4561483776",
+               "UploadTime":"2014-09-02 15:13:55",
+               "Snatched":"2",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"[2004] Amor Idiota AKA Idiot Love",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117424",
+         "Title":"La danza de la realidad AKA The Dance of Reality",
+         "Year":"2013",
+         "Cover":"http:\/\/ptpimg.me\/2dq6fi.jpg",
+         "Tags":[
+            "drama",
+            "fantasy",
+            "biography"
+         ],
+         "Directors":[
+            {
+               "Name":"Alejandro Jodorowsky",
+               "Id":"334"
+            }
+         ],
+         "ImdbId":"2301592",
+         "TotalLeechers":3,
+         "TotalSeeders":23,
+         "TotalSnatched":19,
+         "MaxSize":4772890624,
+         "LastUploadTime":"2014-09-02 15:10:44",
+         "Torrents":[
+            {
+               "Id":318441,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"4772889832",
+               "UploadTime":"2014-09-02 15:10:44",
+               "Snatched":"24",
+               "Seeders":"29",
+               "Leechers":"3",
+               "ReleaseName":"The.Dance.of.Reality.2013.720p.BluRay.DD5.1.x264",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117423",
+         "Title":"Bombs!",
+         "Year":"1916",
+         "Cover":"http:\/\/ptpimg.me\/37hvj3.jpg",
+         "Tags":[
+            "comedy",
+            "short",
+            "silent"
+         ],
+         "Directors":[
+            {
+               "Name":"Frank Griffin",
+               "Id":"455245"
+            }
+         ],
+         "ImdbId":"0006457",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":310300672,
+         "LastUploadTime":"2014-09-02 15:04:43",
+         "Torrents":[
+            {
+               "Id":318440,
+               "Quality":"Standard Definition",
+               "Source":"Unknown",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"310300424",
+               "UploadTime":"2014-09-02 15:04:43",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Bombs_and_Brides",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"766",
+         "Title":"Paranoid Park",
+         "Year":"2007",
+         "Cover":"http:\/\/ptpimg.me\/77ifz8.jpg",
+         "Tags":[
+            "action",
+            "drama",
+            "thriller",
+            "crime",
+            "mystery",
+            "cult",
+            "indie"
+         ],
+         "Directors":[
+            {
+               "Name":"Gus Van Sant",
+               "Id":"488"
+            }
+         ],
+         "ImdbId":"0842929",
+         "TotalLeechers":1,
+         "TotalSeeders":17,
+         "TotalSnatched":482,
+         "MaxSize":22938337280,
+         "LastUploadTime":"2014-09-02 15:03:25",
+         "Torrents":[
+            {
+               "Id":835,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"592x320",
+               "Scene":false,
+               "Size":"734279680",
+               "UploadTime":"2008-10-10 19:22:26",
+               "Snatched":"283",
+               "Seeders":"8",
+               "Leechers":"1",
+               "ReleaseName":"Paranoid Park",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":125832,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1056x592",
+               "Scene":false,
+               "Size":"1466854750",
+               "UploadTime":"2012-01-04 05:40:41",
+               "Snatched":"50",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Paranoid.Park.2007.BDRip.X264-TLF",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":156329,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"ISO",
+               "Codec":"DVD5",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"4346238976",
+               "UploadTime":"2012-06-29 18:59:45",
+               "Snatched":"6",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"PARANOID_PARK",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":171511,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD5",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"4693051392",
+               "UploadTime":"2012-10-10 21:53:40",
+               "Snatched":"6",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Paranoid Park",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":139572,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"4696368856",
+               "UploadTime":"2012-03-26 02:07:06",
+               "Snatched":"36",
+               "Seeders":"10",
+               "Leechers":"0",
+               "ReleaseName":"Paranoid.Park.2007.720p.BluRay.x264-ESiR",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":156291,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"7041506678",
+               "UploadTime":"2012-06-29 14:50:41",
+               "Snatched":"102",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"Paranoid.Park.2007.Proper.1080p.Bluray.x264-Japhson",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318439,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD25",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"22938336920",
+               "UploadTime":"2014-09-02 15:03:25",
+               "Snatched":"2",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"PARANOIDPARK_TAR_14047",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"39066",
+         "Title":"Rebound: The Legend of Earl &amp;#39;The Goat&amp;#39; Manigault",
+         "Year":"1996",
+         "Cover":"http:\/\/ptpimg.me\/6hc1d2.jpg",
+         "Tags":[
+            "drama",
+            "sport",
+            "biography",
+            "basketball"
+         ],
+         "Directors":[
+            {
+               "Name":"Eriq La Salle",
+               "Id":"17565"
+            }
+         ],
+         "ImdbId":"0117450",
+         "TotalLeechers":0,
+         "TotalSeeders":11,
+         "TotalSnatched":42,
+         "MaxSize":6131863552,
+         "LastUploadTime":"2014-09-02 15:01:42",
+         "Torrents":[
+            {
+               "Id":69342,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"512x384",
+               "Scene":false,
+               "Size":"734406656",
+               "UploadTime":"2011-03-03 19:05:23",
+               "Snatched":"41",
+               "Seeders":"8",
+               "Leechers":"0",
+               "ReleaseName":"Rebound - The Legend Of Earl The Goat Manigault (1996)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318438,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"708x478",
+               "Scene":false,
+               "Size":"1625609258",
+               "UploadTime":"2014-09-02 15:01:42",
+               "Snatched":"1",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Rebound.The.Legend.of.Earl.The.Goat.Manigault.1996.DVDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":177522,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"NTSC",
+               "Scene":false,
+               "Size":"6131863552",
+               "UploadTime":"2012-11-12 11:52:29",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Rebound.The.Legend.of.Earl.The.Goat.Manigault.1996.DVD9.FS.NTSC.DVDR-NoRBiT",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"81871",
+         "Title":"Reality",
+         "Year":"2012",
+         "Cover":"http:\/\/ptpimg.me\/z6y078.jpg",
+         "Tags":[
+            "comedy",
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Matteo Garrone",
+               "Id":"699"
+            }
+         ],
+         "ImdbId":"1846487",
+         "TotalLeechers":0,
+         "TotalSeeders":18,
+         "TotalSnatched":234,
+         "MaxSize":37992222720,
+         "LastUploadTime":"2014-09-02 14:54:11",
+         "Torrents":[
+            {
+               "Id":244243,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x272",
+               "Scene":true,
+               "Size":"730218496",
+               "UploadTime":"2013-08-14 09:47:34",
+               "Snatched":"2",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"reality.limited.2012.dvdrip.xvid-lpd",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":205101,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x272",
+               "Scene":false,
+               "Size":"1581921950",
+               "UploadTime":"2013-02-28 10:41:44",
+               "Snatched":"18",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"REALITY",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":199765,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x436",
+               "Scene":false,
+               "Size":"1818628010",
+               "UploadTime":"2013-02-13 05:10:29",
+               "Snatched":"71",
+               "Seeders":"5",
+               "Leechers":"0",
+               "ReleaseName":"Reality.2012.DVDRip.x264",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":199457,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD5",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"4681207808",
+               "UploadTime":"2013-02-12 11:20:22",
+               "Snatched":"18",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Matteo Garrone - Reality",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":200976,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"5878523325",
+               "UploadTime":"2013-02-16 20:15:51",
+               "Snatched":"94",
+               "Seeders":"8",
+               "Leechers":"0",
+               "ReleaseName":"reality.2012.720p.bluray.dts.x264-publichd",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":207346,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"9137194611",
+               "UploadTime":"2013-03-12 22:19:54",
+               "Snatched":"2",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Reality.2012.720p.BluRay.DD5.1.x264-CRiSC",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":205139,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"8424751477",
+               "UploadTime":"2013-02-28 12:11:52",
+               "Snatched":"30",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"reality.2012.1080p.bluray.dts.x264-publichd",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":315187,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"H.264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"23694377175",
+               "UploadTime":"2014-08-02 13:09:10",
+               "RemasterTitle":"Remux",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Reality.2012.ITA.BluRay.Remux.1080p.AVC.DTS-HD.MA.5.1-HiFi",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318437,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"37992222119",
+               "UploadTime":"2014-09-02 14:54:11",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Reality.2012.1080p.ITA.Blu-ray.AVC.DTS-HD.MA.5.1-CtrlHD",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"86296",
+         "Title":"Tutti i santi giorni AKA Every Blessed Day",
+         "Year":"2012",
+         "Cover":"http:\/\/ptpimg.me\/2jx28c.jpg",
+         "Tags":[
+            "comedy",
+            "drama"
+         ],
+         "Directors":[
+            {
+               "Name":"Paolo Virz\u00ec",
+               "Id":"13758"
+            }
+         ],
+         "ImdbId":"2290789",
+         "TotalLeechers":0,
+         "TotalSeeders":3,
+         "TotalSnatched":6,
+         "MaxSize":23686724608,
+         "LastUploadTime":"2014-09-02 14:45:06",
+         "Torrents":[
+            {
+               "Id":203866,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":false,
+               "Size":"5866723103",
+               "UploadTime":"2013-02-25 02:42:35",
+               "Snatched":"6",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Every.Blessed.Day.2012.720p.BluRay.DTS.x264-PublicHD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":203867,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"8350739069",
+               "UploadTime":"2013-02-25 02:51:04",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Every.Blessed.Day.2012.1080p.BluRay.DTS.x264-PublicHD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318436,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD25",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"23686723932",
+               "UploadTime":"2014-09-02 14:45:06",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Tutti.i.santi.giorni.2012.1080p.ITA.Blu-ray.VC-1.DTS-HD.HR.5.1-CtrlHD",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117422",
+         "Title":"Flip&amp;#39;s Circus",
+         "Year":"1921",
+         "Cover":"http:\/\/ptpimg.me\/7md29j.jpg",
+         "Tags":[
+            "animation",
+            "short",
+            "silent"
+         ],
+         "Directors":[
+            {
+               "Name":"Winsor McCay",
+               "Id":"3524"
+            }
+         ],
+         "ImdbId":"0126913",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":69839872,
+         "LastUploadTime":"2014-09-02 14:28:32",
+         "Torrents":[
+            {
+               "Id":318435,
+               "Quality":"Standard Definition",
+               "Source":"Unknown",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"69839866",
+               "UploadTime":"2014-09-02 14:28:32",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Flip_Circus_1921",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"14412",
+         "Title":"All Star Comedy Jam",
+         "Year":"2009",
+         "Cover":"http:\/\/ptpimg.me\/b0uoq5.jpg",
+         "Tags":[
+            "comedy",
+            "documentary",
+            "stand.up"
+         ],
+         "Directors":[
+            {
+               "Name":"Leslie Small",
+               "Id":"6745"
+            }
+         ],
+         "ImdbId":"1459459",
+         "TotalLeechers":0,
+         "TotalSeeders":7,
+         "TotalSnatched":12,
+         "MaxSize":734498816,
+         "LastUploadTime":"2014-09-02 14:25:03",
+         "Torrents":[
+            {
+               "Id":314251,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"624x352",
+               "Scene":false,
+               "Size":"734498816",
+               "UploadTime":"2014-07-27 12:17:06",
+               "Snatched":"12",
+               "Seeders":"7",
+               "Leechers":"0",
+               "ReleaseName":"all.star.comedy.jam.2009.dvdrip.xvid",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117421",
+         "Title":"The Old Actor",
+         "Year":"1912",
+         "Cover":"http:\/\/ptpimg.me\/5xzs04.png",
+         "Tags":[
+            "drama",
+            "short",
+            "silent"
+         ],
+         "Directors":[
+            {
+               "Name":"D.W. Griffith",
+               "Id":"1985"
+            }
+         ],
+         "ImdbId":"0002400",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":211788800,
+         "LastUploadTime":"2014-09-02 14:18:39",
+         "Torrents":[
+            {
+               "Id":318433,
+               "Quality":"Standard Definition",
+               "Source":"Unknown",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"211788464",
+               "UploadTime":"2014-09-02 14:18:39",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"The_Old_Actor",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117420",
+         "Title":"Their Social Splash",
+         "Year":"1915",
+         "Cover":"http:\/\/ptpimg.me\/f652y1.jpg",
+         "Tags":[
+            "comedy",
+            "short",
+            "silent"
+         ],
+         "Directors":[
+            {
+               "Name":"Arvid E. Gillstrom",
+               "Id":"585869"
+            },
+            {
+               "Name":"F. Richard Jones",
+               "Id":"4124"
+            }
+         ],
+         "ImdbId":"0006150",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":135848960,
+         "LastUploadTime":"2014-09-02 14:01:18",
+         "Torrents":[
+            {
+               "Id":318432,
+               "Quality":"Standard Definition",
+               "Source":"Unknown",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"135848810",
+               "UploadTime":"2014-09-02 14:01:18",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Their_Social_Splash_1915",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117419",
+         "Title":"The Ghosts of the Canyon",
+         "Year":"1920",
+         "Cover":"http:\/\/ptpimg.me\/1q06hs.jpg",
+         "Tags":[
+            "western",
+            "short",
+            "silent"
+         ],
+         "ImdbId":"3610098",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":305770496,
+         "LastUploadTime":"2014-09-02 13:46:04",
+         "Torrents":[
+            {
+               "Id":318431,
+               "Quality":"Standard Definition",
+               "Source":"Unknown",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"305770110",
+               "UploadTime":"2014-09-02 13:46:04",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"The_Ghost_of_The_Canyon",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"114531",
+         "Title":"&amp;Agrave; coup s&amp;ucirc;r",
+         "Year":"2014",
+         "Cover":"http:\/\/ptpimg.me\/fvz92y.jpg",
+         "Tags":[
+            "comedy"
+         ],
+         "Directors":[
+            {
+               "Name":"Delphine de Vigan",
+               "Id":"372404"
+            }
+         ],
+         "ImdbId":"2545186",
+         "TotalLeechers":3,
+         "TotalSeeders":4,
+         "TotalSnatched":8,
+         "MaxSize":4691963904,
+         "LastUploadTime":"2014-09-02 13:41:05",
+         "Torrents":[
+            {
+               "Id":307683,
+               "Quality":"Standard Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720x300",
+               "Scene":true,
+               "Size":"522042177",
+               "UploadTime":"2014-06-19 22:53:07",
+               "Snatched":"8",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"a.coup.sur.2014.french.bdrip.x264-unskilled",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318430,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"4691963398",
+               "UploadTime":"2014-09-02 13:41:05",
+               "Snatched":"4",
+               "Seeders":"4",
+               "Leechers":"0",
+               "ReleaseName":"A.Coup.Sur.2014.FRENCH.720p.BluRay.x264-UKDHD",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"78928",
+         "Title":"Sarah Millican: Thoroughly Modern Millican",
+         "Year":"2012",
+         "Cover":"http:\/\/ptpimg.me\/17i7j4.jpg",
+         "Tags":[
+            "comedy",
+            "stand.up"
+         ],
+         "ImdbId":"3035404",
+         "TotalLeechers":1,
+         "TotalSeeders":10,
+         "TotalSnatched":93,
+         "MaxSize":8060481536,
+         "LastUploadTime":"2014-09-02 13:35:35",
+         "Torrents":[
+            {
+               "Id":177174,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"624x352",
+               "Scene":true,
+               "Size":"733919232",
+               "UploadTime":"2012-11-10 18:46:20",
+               "Snatched":"95",
+               "Seeders":"11",
+               "Leechers":"0",
+               "ReleaseName":"sarah.millican.live.thoroughly.modern.millican.2012.dvdrip.xvid-haggis",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318429,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"8060481536",
+               "UploadTime":"2014-09-02 13:35:35",
+               "Snatched":"2",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Sarah.Millican:Thorughly.Modern.Millican.DVD9",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117418",
+         "Title":"The Wild Engine",
+         "Year":"1915",
+         "Cover":"http:\/\/ptpimg.me\/6p77e6.png",
+         "Tags":[
+            "thriller",
+            "short",
+            "silent"
+         ],
+         "Directors":[
+            {
+               "Name":"J.P. McGowan",
+               "Id":"17082"
+            }
+         ],
+         "ImdbId":"1488156",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":136910848,
+         "LastUploadTime":"2014-09-02 13:34:34",
+         "Torrents":[
+            {
+               "Id":318428,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"136910022",
+               "UploadTime":"2014-09-02 13:34:34",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"The Wild Engine",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"52101",
+         "Title":"Peppermint",
+         "Year":"1999",
+         "Cover":"http:\/\/ptpimg.me\/e9w5d8.jpg",
+         "Tags":[
+            "comedy",
+            "drama",
+            "romance",
+            "family"
+         ],
+         "Directors":[
+            {
+               "Name":"Costas Kapakas",
+               "Id":"497888"
+            }
+         ],
+         "ImdbId":"0232295",
+         "TotalLeechers":1,
+         "TotalSeeders":1,
+         "TotalSnatched":5,
+         "MaxSize":732252160,
+         "LastUploadTime":"2011-08-16 00:41:57",
+         "Torrents":[
+            {
+               "Id":98283,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"DivX",
+               "Resolution":"512x304",
+               "Scene":false,
+               "Size":"732251731",
+               "UploadTime":"2011-08-16 00:41:57",
+               "Snatched":"6",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Peppermint (1999)",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117417",
+         "Title":"Kamikaze",
+         "Year":"2014",
+         "Cover":"http:\/\/ptpimg.me\/92g76s.jpg",
+         "Tags":[
+            "action"
+         ],
+         "Directors":[
+            {
+               "Name":"\u00c1lex Pina",
+               "Id":"624770"
+            }
+         ],
+         "ImdbId":"1928200",
+         "TotalLeechers":0,
+         "TotalSeeders":0,
+         "TotalSnatched":0,
+         "MaxSize":42725331968,
+         "LastUploadTime":"2014-09-02 13:30:10",
+         "Torrents":[
+            {
+               "Id":318427,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"42725331672",
+               "UploadTime":"2014-09-02 13:30:10",
+               "Snatched":"0",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Kamikaze",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"117416",
+         "Title":"Final Judgement",
+         "Year":"1992",
+         "Cover":"http:\/\/ptpimg.me\/4h3ln2.jpg",
+         "Tags":[
+            "drama",
+            "thriller"
+         ],
+         "Directors":[
+            {
+               "Name":"Louis Morneau",
+               "Id":"758"
+            }
+         ],
+         "ImdbId":"0104268",
+         "TotalLeechers":0,
+         "TotalSeeders":1,
+         "TotalSnatched":0,
+         "MaxSize":905004032,
+         "LastUploadTime":"2014-09-02 13:23:01",
+         "Torrents":[
+            {
+               "Id":318426,
+               "Quality":"Standard Definition",
+               "Source":"VHS",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"640x480",
+               "Scene":false,
+               "Size":"905003508",
+               "UploadTime":"2014-09-02 13:23:01",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Final Judgement CG",
+               "Checked":false,
+               "GoldenPopcorn":false
+            }
+         ]
+      },
+      {
+         "GroupId":"38475",
+         "Title":"Boy Meets Girl",
+         "Year":"1984",
+         "Cover":"http:\/\/ptpimg.me\/m63t6u.jpg",
+         "Tags":[
+            "drama",
+            "romance"
+         ],
+         "Directors":[
+            {
+               "Name":"Leos Carax",
+               "Id":"7005"
+            }
+         ],
+         "ImdbId":"0086994",
+         "TotalLeechers":0,
+         "TotalSeeders":15,
+         "TotalSnatched":70,
+         "MaxSize":28422529024,
+         "LastUploadTime":"2014-09-02 13:22:36",
+         "Torrents":[
+            {
+               "Id":68063,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"DivX",
+               "Resolution":"448x272",
+               "Scene":false,
+               "Size":"735644967",
+               "UploadTime":"2011-02-22 22:24:34",
+               "Snatched":"4",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Boy Meets Girl",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":77918,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"AVI",
+               "Codec":"XviD",
+               "Resolution":"672x400",
+               "Scene":false,
+               "Size":"1195267266",
+               "UploadTime":"2011-04-23 17:22:29",
+               "Snatched":"54",
+               "Seeders":"8",
+               "Leechers":"0",
+               "ReleaseName":"Boy Meets Girl",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":311053,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"662x572",
+               "Scene":false,
+               "Size":"1895610121",
+               "UploadTime":"2014-07-05 15:57:59",
+               "Snatched":"3",
+               "Seeders":"2",
+               "Leechers":"0",
+               "ReleaseName":"Boy.Meets.Girl.1984.DVDRip.x264-HANDJOB",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":310973,
+               "Quality":"Standard Definition",
+               "Source":"DVD",
+               "Container":"VOB IFO",
+               "Codec":"DVD9",
+               "Resolution":"PAL",
+               "Scene":false,
+               "Size":"7959269376",
+               "UploadTime":"2014-07-05 03:28:07",
+               "Snatched":"1",
+               "Seeders":"0",
+               "Leechers":"0",
+               "ReleaseName":"Leos Carax - Boy Meets Girl [1984]",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":312001,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"720p",
+               "Scene":true,
+               "Size":"4688824802",
+               "UploadTime":"2014-07-12 15:31:23",
+               "Snatched":"6",
+               "Seeders":"3",
+               "Leechers":"1",
+               "ReleaseName":"Boy.Meets.Girl.1984.720P.BLURAY.x264-SPLiTSViLLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":311007,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"MKV",
+               "Codec":"x264",
+               "Resolution":"1080p",
+               "Scene":true,
+               "Size":"7037906125",
+               "UploadTime":"2014-07-05 09:24:09",
+               "Snatched":"3",
+               "Seeders":"3",
+               "Leechers":"0",
+               "ReleaseName":"Boy.Meets.Girl.1984.1080P.BLURAY.x264-SPLiTSViLLE",
+               "Checked":true,
+               "GoldenPopcorn":false
+            },
+            {
+               "Id":318425,
+               "Quality":"High Definition",
+               "Source":"Blu-ray",
+               "Container":"m2ts",
+               "Codec":"BD50",
+               "Resolution":"1080p",
+               "Scene":false,
+               "Size":"28422528264",
+               "UploadTime":"2014-09-02 13:22:36",
+               "Snatched":"0",
+               "Seeders":"1",
+               "Leechers":"0",
+               "ReleaseName":"Boy Meets Girl 1984 1080p GBR Blu-ray AVC DTS-HD MA 5.1-SbR",
+               "Checked":true,
+               "GoldenPopcorn":false
+            }
+         ]
+      }
+   ],
+   "Page":"Browse",
+   "AuthKey":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "PassKey":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}

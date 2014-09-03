@@ -9,9 +9,10 @@ Deluge JSON-RPC client interface
 from __future__ import unicode_literals, absolute_import, with_statement
 import json
 import time
+import gevent
 import requests
 from tranny import client, app, util
-from tranny.exceptions import AuthenticationError, ApiError
+from tranny.exceptions import AuthenticationError, ApiError, ClientNotAvailable
 
 ERROR_AUTH = 1
 ERROR_UNKNOWN_METHOD = 2
@@ -66,11 +67,30 @@ class DelugeClient(client.TorrentClient):
         self._req_id = 0
         self._valid_password = True
         self._last_request = 0
+        self._host_up = True
+        self._host_check = gevent.Greenlet(self._check_conn)
+        self._host_check.start()
+
+    def _check_conn(self):
+        while True:
+            try:
+                self._request('web.get_hosts')
+            except (requests.ConnectionError, ClientNotAvailable) as err:
+                #app.logger.debug("Failed to connect to {}".format(
+                #    app.config.get_default("general", "client", "torrent client")))
+                self._host_up = False
+                sleep_time = 1
+            else:
+                self._host_up = True
+                sleep_time = 30
+            gevent.sleep(sleep_time)
 
     def _request(self, method, args=None, attempt=0):
         # Prevent requests other than ones used to connect while not connected
         # if not self.connected and not method in self.allowed_pre_connect_methods:
         #    return False
+        if not self._host_up:
+            raise ClientNotAvailable()
         if attempt > self.max_request_retries:
             self.log.error("Maximum number of retries reached: {} ({})".format(
                 method, self.max_request_retries))
@@ -79,12 +99,16 @@ class DelugeClient(client.TorrentClient):
             args = []
         self._req_id += 1
         self.log.debug("{} {}".format(method, args))
-        resp = self._session.post(
-            self._endpoint,
-            data=json.dumps(dict(method=method, params=args, id=self._req_id)),
-            headers=self._headers
-        )
         ret_val = None
+        try:
+            resp = self._session.post(
+                self._endpoint,
+                data=json.dumps(dict(method=method, params=args, id=self._req_id)),
+                headers=self._headers
+            )
+        except requests.ConnectionError:
+            self._host_up = False
+            raise ClientNotAvailable()
         try:
             resp = json.loads(resp.text)
             error = resp.get('error', False)

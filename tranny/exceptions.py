@@ -20,11 +20,16 @@ class ConfigError(BotchedTranny):
 class InvalidResponse(BotchedTranny):
     pass
 
+
 class ApiError(BotchedTranny):
     def __init__(self, error):
         self.message = error['message']
         self.err_code = error['code']
 
+
 class AuthenticationError(ApiError):
     pass
 
+
+class ClientNotAvailable(InvalidResponse):
+    pass

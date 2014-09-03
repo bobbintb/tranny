@@ -5,7 +5,6 @@ from time import time
 from jsonrpclib import Server
 from jsonrpclib.jsonrpc import ProtocolError
 from tranny import app, parser, provider, datastore, release
-from tranny.app import config
 
 _errors = {
     -32001: "Invalid API Key",
@@ -19,9 +18,13 @@ class BroadcastTheNet(provider.TorrentProvider):
     """
     def __init__(self, config_section="service_broadcastthenet"):
         super(BroadcastTheNet, self).__init__(config_section)
-        self._api_token = config.get(self._config_section, "api_token")
-        url = config.get(self._config_section, "url")
+        self.enabled = app.config.getboolean(self._config_section, "enabled")
+        self._api_token = app.config.get(self._config_section, "api_token")
+        url = app.config.get(self._config_section, "url")
         self.api = Server(uri=url)
+        app.logger.debug("Initialized BTN Service ({} State)".format(
+            'Enabled' if self.enabled else 'Disabled')
+        )
 
     def __call__(self, method, args=None):
         """ Make a API call to the JSON-RPC server. This method will inject the API key into the request
@@ -110,7 +113,7 @@ class BroadcastTheNet(provider.TorrentProvider):
                 if not section:
                     continue
                 if self.exists(release_key):
-                    if config.get_default("general", "fetch_proper", True, bool):
+                    if app.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered propers
                             app.logger.debug(

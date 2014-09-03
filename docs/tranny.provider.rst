@@ -12,6 +12,22 @@ tranny.provider.broadcastthenet module
     :undoc-members:
     :show-inheritance:
 
+tranny.provider.hdbits module
+-----------------------------
+
+.. automodule:: tranny.provider.hdbits
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+tranny.provider.ptp module
+--------------------------
+
+.. automodule:: tranny.provider.ptp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 tranny.provider.rss module
 --------------------------
 

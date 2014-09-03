@@ -2,61 +2,113 @@
 
 {% block content %}
     <div class="row">
-        <div class="large-6 columns">
-            <h2><small>BroadcastTheNet</small></h2>
-            <form action="/services/btn/save" method="post">
-                <div class="row collapse">
-                    <div class="small-2 columns">
-                        <span class="prefix"><label for="btn_api_token">API Token</label></span>
-                    </div>
-                    <div class="small-10 columns">
-                        <input type="text" name="btn_api_token" id="btn_api_token" value="{{ btn.api_token }}">
-                    </div>
-                </div>
-                <div class="row collapse">
-                    <div class="small-2 columns">
-                        <span class="prefix"><label for="btn_url">URL</label></span>
-                    </div>
-                    <div class="small-10 columns">
-                        <input type="text" name="btn_url" id="btn_url" value="{{ btn.url }}">
-                    </div>
-                </div>
-                <div class="row collapse">
-                    <div class="small-2 columns">
-                        <span class="prefix"><label for="btn_interval">Interval</label></span>
-                    </div>
-                    <div class="small-10 columns">
-                        <input type="number" name="btn_interval" id="btn_interval" value="{{ btn.interval }}" min=30>
-                    </div>
-                </div>
-                <div class="row collapse">
+        <div class="large-12 columns">
+            <ul class="small-block-grid-1 medium-block-grid-2">
+                {% for service, values in service_info.items() %}
+                    <li>
+                        <h2>
+                            <small>{{ service }}</small>
+                        </h2>
+                        <form action="/services/save/{{ service }}" method="post">
+                            {% for k, v in values.items() %}
+                                <div class="row">
+                                    <div class="large-12 columns">
+                                        {% if k == 'enabled' %}
+                                            <div class="row collapse">
+                                                <div class="small-2 columns">
+                                                    <span class="prefix">{{ k|title }}</span>
+                                                </div>
+                                                <div class="small-10 columns">
+                                                    <div class="switch">
+                                                        <input id="{{ service }}_{{ k }}" type="checkbox"
+                                                               {% if v %}checked{% endif %}>
+                                                        <label for="{{ service }}_{{ k }}"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="row collapse">
+                                                <div class="small-2 columns">
+                                                    <span class="prefix">{{ k|title }}</span>
+                                                </div>
+                                                <div class="small-10 columns">
+                                                    <input type="text" name="{{ service }}_{{ k }}"
+                                                           id="{{ service }}_{{ k }}"
+                                                           value="{{ v }}">
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="row">
+                                <div class="large-12 columns">
+                                    <button class="small button success {{ service }}_save">
+                                        <i class="icon-ok"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                {% endfor %}
 
-                    <div class="small-2 columns">
-                        <span class="prefix"><label for="btn_enabled">Active</label></span>
-                    </div>
-                    <div class="small-10 columns">
-                        <div class="inline-switch">
-
-                            <input id="btn_enabled" name="btn_enabled" type="radio" {% if not btn.enabled %}checked{% endif %}>
-                            <label for="btn_enabled">Disabled</label>
-                            <input id="btn_enabled1" name="btn_enabled" type="radio" {% if btn.enabled %}checked{% endif %}>
-                            <label for="btn_enabled1">Enabled</label>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="large-12 columns">
-                        <ul class="button-group even-2">
-                            <li><button class="small button"><i class="icon-arrows-cw"></i> Reset</button></li>
-                            <li><button class="small button success btn_save"><i class="icon-ok"></i> Save</button></li>
-                        </ul>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="large-6 columns">
-
+            </ul>
+            {#        #}
+            {#            <h2><small>BroadcastTheNet</small></h2>#}
+            {#            <form action="/services/btn/save" method="post">#}
+            {#                <div class="row collapse">#}
+            {#                    <div class="small-2 columns">#}
+            {#                        <span class="prefix"><label for="btn_api_token">API Token</label></span>#}
+            {#                    </div>#}
+            {#                    <div class="small-10 columns">#}
+            {#                        <input type="text" name="btn_api_token" id="btn_api_token" value="{{ btn.api_token }}">#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="row collapse">#}
+            {#                    <div class="small-2 columns">#}
+            {#                        <span class="prefix"><label for="btn_url">URL</label></span>#}
+            {#                    </div>#}
+            {#                    <div class="small-10 columns">#}
+            {#                        <input type="text" name="btn_url" id="btn_url" value="{{ btn.url }}">#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="row collapse">#}
+            {#                    <div class="small-2 columns">#}
+            {#                        <span class="prefix"><label for="btn_interval">Interval</label></span>#}
+            {#                    </div>#}
+            {#                    <div class="small-10 columns">#}
+            {#                        <input type="number" name="btn_interval" id="btn_interval" value="{{ btn.interval }}" min=30>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                            <div class="row collapse">#}
+            {#            #}
+            {#                                <div class="small-2 columns">#}
+            {#                                    <span class="prefix"><label for="btn_enabled">Active</label></span>#}
+            {#                                </div>#}
+            {#                                <div class="small-10 columns">#}
+            {#                                    <div class="inline-switch">#}
+            {#            #}
+            {#                                        <input id="btn_enabled" name="btn_enabled" type="radio" {% if not btn.enabled %}checked{% endif %}>#}
+            {#                                        <label for="btn_enabled">Disabled</label>#}
+            {#                                        <input id="btn_enabled1" name="btn_enabled" type="radio" {% if btn.enabled %}checked{% endif %}>#}
+            {#                                        <label for="btn_enabled1">Enabled</label>#}
+            {#                                        <span></span>#}
+            {#                                    </div>#}
+            {#                                </div>#}
+            {#                            </div>#}
+            {#                <div class="row">#}
+            {#                    <div class="large-12 columns">#}
+            {#                        <ul class="button-group even-2">#}
+            {#                            <li><button class="small button"><i class="icon-arrows-cw"></i> Reset</button></li>#}
+            {#                            <li><button class="small button success btn_save"><i class="icon-ok"></i> Save</button></li>#}
+            {#                        </ul>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </form>#}
+            {#        </div>#}
+            {#        <div class="large-6 columns">#}
+            {##}
+            {#        </div>#}
         </div>
     </div>
 {% endblock %}

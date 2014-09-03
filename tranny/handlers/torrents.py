@@ -8,6 +8,7 @@ from flask import Blueprint
 import gevent
 from tranny import ui, api, client
 from tranny.app import torrent_client
+from tranny.exceptions import ClientNotAvailable
 
 section_name = 'torrents'
 renderer = partial(ui.render, section=section_name)
@@ -22,7 +23,6 @@ def client_event_update():
         gevent.sleep(1)
 
 update_thread = gevent.Greenlet.spawn(client_event_update)
-
 
 
 @torrents.route("/")
@@ -56,36 +56,52 @@ def handle_announce(message):
 @api.on(api.EVENT_TORRENT_LIST)
 def handle_list_all():
     """ Return a list of all torrents currently being tracked """
-    torrent_list = client.get().torrent_list()
-    api.emit(api.EVENT_TORRENT_LIST_RESPONSE, data=torrent_list)
+    try:
+        torrent_list = client.get().torrent_list()
+    except Exception as exc:
+        api.error_handler(exc, api.EVENT_TORRENT_LIST_RESPONSE)
+    else:
+        api.emit(api.EVENT_TORRENT_LIST_RESPONSE, data=torrent_list)
 
 
 @api.on(api.EVENT_TORRENT_STOP)
 def handle_stop(message):
     info_hash = message.get('info_hash', [])
-    client.get().torrent_stop(info_hash)
-    api.emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(info_hash=info_hash))
-    api.flash("Stopped successfully")
+    try:
+        client.get().torrent_stop(info_hash)
+    except ClientNotAvailable as exc:
+        api.error_handler(exc, api.EVENT_TORRENT_SPEED_RESPONSE)
+    else:
+        api.emit(api.EVENT_TORRENT_SPEED_RESPONSE, dict(info_hash=info_hash))
+        api.flash("Stopped successfully")
 
 
 @api.on(api.EVENT_TORRENT_START)
 def handle_start(message):
     info_hash = message.get('info_hash', [])
-    client.get().torrent_start(info_hash)
-    api.emit(api.EVENT_TORRENT_START_RESPONSE, dict(info_hash=info_hash))
-    api.flash("Started successfully")
+    try:
+        client.get().torrent_start(info_hash)
+    except ClientNotAvailable as exc:
+        api.error_handler(exc, api.EVENT_TORRENT_START_RESPONSE)
+    else:
+        api.emit(api.EVENT_TORRENT_START_RESPONSE, dict(info_hash=info_hash))
+        api.flash("Started successfully")
 
 
 @api.on(api.EVENT_TORRENT_DETAILS)
 def handle_details(message):
-    info_hash = message.get('info_hash', None)
-    data = dict()
-    if info_hash:
-        data = client.get().torrent_status(info_hash)
-        status = api.STATUS_OK
+    try:
+        info_hash = message.get('info_hash', None)
+        data = dict()
+        if info_hash:
+            data = client.get().torrent_status(info_hash)
+            status = api.STATUS_OK
+        else:
+            status = api.STATUS_INCOMPLETE_REQUEST
+    except ClientNotAvailable as exc:
+        api.error_handler(exc, api.EVENT_TORRENT_DETAILS_RESPONSE)
     else:
-        status = api.STATUS_INCOMPLETE_REQUEST
-    api.emit(api.EVENT_TORRENT_DETAILS_RESPONSE, data=data, status=status)
+        api.emit(api.EVENT_TORRENT_DETAILS_RESPONSE, data=data, status=status)
 
 
 @api.on(api.EVENT_TORRENT_SPEED)
@@ -100,8 +116,12 @@ def handle_speed(message):
 
 @api.on(api.EVENT_SPEED_OVERALL)
 def handle_speed_overall(message=None):
-    up, dn = client.get().current_speeds()
-    api.emit(api.EVENT_SPEED_OVERALL_RESPONSE, dict(up=up, dn=dn))
+    try:
+        up, dn = client.get().current_speeds()
+    except ClientNotAvailable as exc:
+        api.error_handler(exc, api.EVENT_SPEED_OVERALL_RESPONSE)
+    else:
+        api.emit(api.EVENT_SPEED_OVERALL_RESPONSE, dict(up=up, dn=dn))
 
 
 @api.on(api.EVENT_TORRENT_FILES)
