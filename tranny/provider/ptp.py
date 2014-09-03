@@ -56,7 +56,7 @@ class PTP(provider.TorrentProvider):
             return self._authenticated
 
     def find_matches(self):
-        if not self._authenticated:
+        if not self._authenticated or not self.enabled:
             return []
         try:
             resp = self.session.get(self.endpoint + '/torrents.php?json=noredirect')

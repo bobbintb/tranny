@@ -8,15 +8,15 @@ from flask.ext.socketio import emit as sio_emit
 from tranny.exceptions import ClientNotAvailable
 from tranny.extensions import socketio
 
+# Default websocket namespace for the websocket connection
 NAMESPACE = '/ws'
-
 
 # General status codes
 STATUS_OK = 0
 STATUS_FAIL = 1
 STATUS_INTERNAL_ERROR = 3
 
-### Specific error codes
+### Specific error status codes
 # Cant connect to torrent client daemon
 STATUS_CLIENT_NOT_AVAILABLE = 5
 
@@ -26,12 +26,12 @@ STATUS_INCOMPLETE_REQUEST = 10
 # Unknown info_hash used in request
 STATUS_INVALID_INFO_HASH = 11
 
-# Message levels
+# Message levels, should correspond to css class names
 MSG_ALERT = 'alert'
 MSG_WARN = 'warn'
 MSG_INFO = 'info'
 
-# WebSocket event constants
+# Torrent events
 EVENT_TORRENT_RECHECK = 'event_torrent_recheck'
 EVENT_TORRENT_RECHECK_RESPONSE = 'event_torrent_recheck_response'
 
@@ -80,6 +80,13 @@ on = partial(socketio.on, namespace=NAMESPACE)
 
 
 def error_handler(exc, event_name='internal_error'):
+    """ Generate API error events to send to the client on an error
+
+    :param exc: Exception raised during handling the event
+    :type exc: Exception
+    :param event_name: Name of the event being handled
+    :type event_name: basestring
+    """
     exc_type = type(exc)
     if exc_type == ClientNotAvailable:
         emit(event_name, {
@@ -112,12 +119,14 @@ def emit(event, data=None, status=STATUS_OK, **kwargs):
     sio_emit(event, dict(status=status, data=data, **kwargs))
 
 
-def flash(message, msg_type=MSG_INFO):
+def flash(message, msg_type=MSG_INFO, ttl=5):
     """ Flash a popup message to the user over the webui
 
+    :param ttl: Duration of the popup
+    :type ttl: int
     :param message: Message to broadcast to the user
     :type message: basestring
     :param msg_type: Type of message to send (alert/info/error..)
     :type msg_type: basestring
     """
-    emit(EVENT_ALERT, dict(msg=message, msg_type=msg_type))
+    emit(EVENT_ALERT, dict(msg=message, msg_type=msg_type, ttl=ttl))

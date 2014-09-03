@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import platform
 import gevent
 from sqlalchemy.exc import DBAPIError
 from tranny import app, datastore, watch, models, client
@@ -18,7 +19,13 @@ class ServiceManager(object):
         self.services = []
         self.client = None
         self._updater = gevent.Greenlet(self.update_providers)
+        self._updater.start_later(1)
         self.watch = None
+        self.services = self.init_services()
+        #if platform.system() == 'Linux':
+        #    self.watch = watch.FileWatchService(self)
+        #else:
+        #    app.logger.info("File watch service not supported under: {}".format(platform.system()))
 
     def reload(self):
         pass
@@ -30,9 +37,6 @@ class ServiceManager(object):
             pass
         else:
             tmdb.configure(tmdb_api_key)
-        self.services = {}
-        self.init_services()
-        self.client = client.init_client()
         #self.watch = watch.FileWatchService(self)
 
     @staticmethod
@@ -75,7 +79,7 @@ class ServiceManager(object):
         try:
             if not dl_path:
                 dl_path = app.config.get_download_path(torrent.section, torrent.release_name)
-            res = self.client.add(torrent.torrent_data, download_dir=dl_path)
+            res = client.get().add(torrent, download_dir=dl_path)
             if res:
                 app.logger.info("Added release: {0}".format(torrent.release_name))
                 release_key = datastore.generate_release_key(torrent.release_name)
