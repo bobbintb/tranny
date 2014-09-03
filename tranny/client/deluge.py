@@ -60,7 +60,8 @@ class DelugeClient(client.TorrentClient):
         :type password: string
         """
         super(DelugeClient, self).__init__()
-        self._endpoint = 'http://{}:{}/json'.format(host, port)
+        self._host = 'http://{}:{}'.format(host, port)
+        self._endpoint = '{}/json'.format(self._host)
         self._session = requests.session()
         self._password = password
         self._headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
@@ -138,6 +139,59 @@ class DelugeClient(client.TorrentClient):
             ret_val = resp['result']
         finally:
             return ret_val
+
+    def add(self, data, download_dir=None):
+        """
+        {
+          "method": "web.add_torrents",
+          "params": [
+            [
+              {
+                "path": "/tmp/delugeweb-WI1LET/tmpyjwB1B.torrent",
+                "options": {
+                  "file_priorities": [
+                    1
+                  ],Instant.Star.S02.DVDRip.XviD-HXR
+                  "add_paused": false,
+                  "compact_allocation": false,
+                  "download_location": "/home/leigh",
+                  "move_completed": false,
+                  "move_completed_path": "/home/leigh",
+                  "max_connections": -1,
+                  "max_download_speed": -1,
+                  "max_upload_slots": -1,
+                  "max_upload_speed": -1,
+                  "prioritize_first_last_pieces": false
+                }
+              }
+            ]
+          ],
+          "id": 52
+        }
+        :param data: Torrent data to load in
+        :type data: TorrentData
+        :param download_dir: Path on deluge server to store download
+        :type download_dir: basestring
+        :return: Status of successful load (according to deluge)
+        :rtype: bool
+        """
+        if data.release_name.lower().endswith(".torrent"):
+            file_name = data.release_name
+        else:
+            file_name = "{}.torrent".format(data.release_name)
+        payload = {'file': (file_name, data.torrent_data, 'application/x-bittorrent')}
+        resp_data = self._session.post("{}/upload".format(self._host), files=payload).json()
+        if resp_data.get('success', False):
+            # If we do this too fast deluge will bawk so this delay stops the failure
+            time.sleep(1)
+            upload_args = []
+            for file_path in resp_data.get('files', []):
+                upload_args.append({'path': file_path, 'options': {'download_location': download_dir}})
+            load_resp = self._request('web.add_torrents', [upload_args])
+            return load_resp
+        else:
+            return False
+
 
     def is_connected(self):
         return self._request('web.connected')
