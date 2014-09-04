@@ -22,7 +22,7 @@ class BroadcastTheNet(provider.TorrentProvider):
         self._api_token = app.config.get(self._config_section, "api_token")
         url = app.config.get(self._config_section, "url")
         self.api = Server(uri=url)
-        app.logger.debug("Initialized BTN Service ({} State)".format(
+        app.logger.info("Initialized BTN Provider ({} State)".format(
             'Enabled' if self.enabled else 'Disabled')
         )
 

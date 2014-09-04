@@ -23,8 +23,50 @@
 }
 
 #torrent_table {
+    tbody {
+        height: 100px !important;
+        overflow: auto !important;
+    }
+    .name {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    .peers, .leechers {
+        width: 60px;
+    }
+    .size {
+        width: 50px;
+    }
+    .is_active {
+        width: 60px;
+    }
+    .priority {
+        width: 40px;
+    }
+    td.completed, th.completed {
+        width: 100px;
+    }
+    td.progress {
+        padding: 0;
+    }
+    div.progress {
+        margin-bottom: 0;
+        background-color: inherit;
+        border: 0;
+        .count {
+            float: left;
+            color: $white;
+            margin-top: 2px;
+            margin-left: 2px;
+        }
+    }
+    .up_rate, .dn_rate, .ratio {
+        width: 80px;
+    }
     td {
-        padding: 1px 4px 4px 4px;
+        white-space: nowrap;
+        font-size: 65%;
+        padding: 4px 4px 4px 4px;
         line-height: 16px;
         // Used for ratio colors
         span.alert {
@@ -33,6 +75,12 @@
         span.success {
             color: $success-color;
         }
+    }
+    tr.selected {
+        background-color: lighten($success-color, 50%);
+    }
+    tr {
+        cursor: pointer;
     }
 }
 

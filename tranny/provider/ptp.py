@@ -21,6 +21,9 @@ class PTP(provider.TorrentProvider):
         self.interval = app.config.get_default(self._config_section, 'interval', self.interval, int)
         self._authenticated = False
         self.session = requests.Session()
+        app.logger.info("Initialized PTP Provider ({} State)".format(
+            'Enabled' if self.enabled else 'Disabled')
+        )
         if self.enabled:
             self.login()
 

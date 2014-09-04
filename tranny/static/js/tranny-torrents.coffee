@@ -1,3 +1,5 @@
+root = exports ? this
+
 ### Contains a list of currently selected DT_RowId (info_hash's) ###
 selected_rows = []
 
@@ -60,70 +62,121 @@ STATUS_CLIENT_NOT_AVAILABLE = 5
 STATUS_INCOMPLETE_REQUEST = 10
 STATUS_INVALID_INFO_HASH = 11
 
-### Use mustache style interpolation  {{ }} ###
+### Use mustache/jinja style interpolation  {{ }} ###
 _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
 ### Compiled _ templates ###
 template =
     progress: _.template """<div class="progress {{ style }}">
-                            <span style="float: left">{{ data }}</span>
+                            <span class="count">{{ data }} %</span>
                             <span class="meter" style="width: {{ data }}"></span>
                         </div>"""
     ratio: _.template """<span class="{{ class_name }}">{{ data }}</span>"""
     peer_info: _.template "{{ num }} ({{ total }})"
 
-torrent_table = jQuery('#torrent_table').dataTable {
-        processing: true,
-        serverSize: true,
-        paginate: false,
-        searching: false,
-        autoWidth: false,
-        # Column reordering support
-        sDom: 'Rlfrtip',
-        scrollY: 300,
-        columns: [
-            { data: 'name' },
-            { data: 'size' },
-            { data: 'progress' },
-            { data: 'ratio' },
-            { data: 'up_rate' },
-            { data: 'dn_rate' },
-            { data: 'leechers'},
-            { data: 'peers'},
-            { data: 'priority'},
-            { data: 'is_active'}
-        ],
-        rowCallback: row_load_handler,
-        columnDefs: [
-            {
-                # Draw a progress bar for total completed
-                render: (data, type, row) ->
-                    pct = Math.floor(data)
-                    style = if pct >= 100 then "success" else "alert"
-                    template['progress'] {'style': style, 'data':data}
-                targets: 2
-            },
-            {
-                # Colourise the ratio based on value
-                render: (data, type, row) ->
-                    class_name = if data < 1 then 'alert' else 'success'
-                    template['ratio'] {'class_name': class_name, 'data': data}
-                targets: 3
-            },
-            {
-                # Render leechers + total leechers
-                render: (data, type, row) ->
-                    template['peer_info'] {'num': data, 'total': row['total_leechers']}
-                targets: 6
-            },
-            {
-                # Render peers + total peers
-                render: (data, type, row) ->
-                    template['peer_info'] {'num': data, 'total': row['total_peers']}
-                targets: 7
+
+
+###
+    Class to handle interactions and rendering of the torrent table.
+
+    This does not use jQuery nor does it use string concatenation to generate
+    table rows & cells. This is purposefully done to ensure maximum client
+    side performance for users with large numbers of torrents loaded.
+###
+class TorrentTable
+    ### Allow self reference when @ doesnt refer to this instance ###
+    self = {}
+    torrents = {}
+    constructor: (@dom_id) ->
+        self = @
+        @table = document.getElementById dom_id
+        @table_body = document.querySelector dom_id + "> tbody"
+        @cols = ['name', 'size', 'progress', 'ratio', 'up_rate',
+                 'dn_rate', 'leechers', 'peers', 'priority', 'is_active']
+        @info_hashes = {}
+
+    ###
+    We are using dom elements here over plain strings to keep things performant
+    ###
+    insert_row: (row) ->
+        if row['info_hash'] in @info_hashes
+            # Don't re-add known data
+            return
+        tr = document.createElement "tr"
+        tr.setAttribute 'id', row['info_hash']
+        tr.onclick = @row_select_handler
+        for key in @cols
+            td = document.createElement "td"
+            key_name = if key == 'progress' then 'completed' else key
+            td.setAttribute "class", key_name
+            switch key
+                when "progress"
+                    style = if Math.floor row[key] >= 100 then "success" else "alert"
+                    td.innerHTML = template['progress'] {'style': style, 'data': row[key]}
+                when "ratio"
+                    class_name = if row[key] < 1 then 'alert' else 'success'
+                    td.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key]}
+                when "leechers"
+                    td.appendChild document.createTextNode template['peer_info'] {
+                        'num': row[key], 'total': row['total_leechers']
+                    }
+                when "peers"
+                    td.appendChild document.createTextNode template['peer_info'] {
+                        'num': row[key], 'total': row['total_peers']
+                    }
+                else
+                    td.appendChild document.createTextNode row[key]
+
+            torrents[row['info_hash']] = {
+                row: tr.appendChild td
             }
-        ]
-    }
+        @table_body.appendChild tr
+
+    add_rows: (rows) ->
+        rows = (@insert_row row for row in rows)
+
+    update: (data) ->
+
+
+    remove: (info_hash) ->
+        @table_body.removeChild @table_body.getElementById info_hash
+
+    ###
+        Called when a user selects a row with the cursor. Will update the currently selected rows.
+        If the user holds ctrl while clicking the row will be added to the selected_rows array. Otherwise
+        the row will be "activated" and show more detailed information for that row in another panel.
+    ###
+    row_select_handler: (e) ->
+        row_id = @id
+        if e.ctrlKey
+            index = _.indexOf selected_rows, row_id
+            if index == -1
+                selected_rows.push row_id
+            else
+                selected_rows.splice index, 1
+            attr = @getAttribute "class"
+            if attr != "selected"
+                @setAttribute "class", selected_class
+            else
+                @removeAttribute "class"
+        else
+            for element in self.table_body.querySelectorAll(".selected")
+                element.removeAttribute "class"
+            selected_rows = [row_id]
+            selected_detail_id = row_id
+            if detail_update_timer != null
+                clearTimeout detail_update_timer
+            if speed_update_timer != null
+                clearTimeout speed_update_timer
+            if peer_update_timer != null
+                clearTimeout peer_update_timer
+            action_torrent_details()
+            action_torrent_speed()
+            action_torrent_peers()
+            @setAttribute "class", selected_class
+
+torrent_table = null
+
 
 ### Initialize epoch chart on the traffic tab ###
 detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
@@ -159,35 +212,6 @@ row_load_handler = (row, data, displayIndex) ->
     if jQuery.inArray(data.DT_RowId, selected_rows) != -1
         jQuery(row).addClass selected_class
 
-###
-    Called when a user selects a row with the cursor. Will update the currently selected rows.
-    If the user holds ctrl while clicking the row will be added to the selected_rows array. Otherwise
-    the row will be "activated" and show more detailed information for that row in another panel.
-###
-row_select_handler = (e) ->
-    row_id = @id
-    if e.ctrlKey
-        index = _.indexOf selected_rows, row_id
-        if index == -1
-            selected_rows.push row_id
-        else
-            selected_rows.splice index, 1
-        jQuery(@).toggleClass selected_class
-    else
-        for existing_row_id in selected_rows
-            jQuery("#" + existing_row_id).removeClass selected_class
-        selected_rows = [row_id]
-        selected_detail_id = row_id
-        if detail_update_timer != null
-            clearTimeout detail_update_timer
-        if speed_update_timer != null
-            clearTimeout speed_update_timer
-        if peer_update_timer != null
-            clearTimeout peer_update_timer
-        action_torrent_details()
-        action_torrent_speed()
-        action_torrent_peers()
-        jQuery("#" + row_id).addClass selected_class
 
 ###
 Remove a row from the torrent list by its info_hash
@@ -274,8 +298,9 @@ handle_event_alert = (message) ->
 
 
 handle_event_torrent_list_response = (message) ->
-    for row in message['data']
-        torrent_table.fnAddData(row)
+    torrent_table.add_rows message['data']
+    #for row in message['data']
+    #    torrent_table.fnAddData(row)
 
 
 handle_event_torrent_stop_response = (message) ->
@@ -442,6 +467,9 @@ in_url = (text) ->
     window.location.pathname.indexOf(text) != -1
 
 jQuery ->
+    if in_url "/torrents/"
+        torrent_table = new TorrentTable "#torrent_table"
+        root.t = torrent_table
     socket = io.connect endpoint
     socket.on 'connect', ->
         if has_connected
@@ -478,7 +506,6 @@ jQuery ->
         socket.on 'event_torrent_reannounce_response', handle_event_torrent_reannounce_response
         socket.on 'event_torrent_stop_response', handle_event_torrent_stop_response
 
-        jQuery('#torrent_table tbody').on 'click', 'tr', row_select_handler
         jQuery('#action_stop').on 'click', action_stop
         jQuery('#action_start').on 'click', action_start
         jQuery('#action_recheck').on 'click', action_recheck
