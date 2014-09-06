@@ -466,6 +466,11 @@ detail_elements =
 in_url = (text) ->
     window.location.pathname.indexOf(text) != -1
 
+torrent_wrapper = document.querySelector "#table_wrap"
+window_resize_handler = ->
+    torrent_wrapper.style.height = "#{window.innerHeight - 395}px";
+
+
 jQuery ->
     if in_url "/torrents/"
         torrent_table = new TorrentTable "#torrent_table"
@@ -514,3 +519,5 @@ jQuery ->
         jQuery('#action_remove_data').on 'click', action_remove_data
         jQuery('#resize_columns').on 'click', ->
             torrent_table.fnAdjustColumnSizing true
+        window_resize_handler()
+        jQuery(window).on 'resize', window_resize_handler

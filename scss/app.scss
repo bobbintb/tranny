@@ -108,5 +108,13 @@ ul.dropdown {
     padding-bottom: 10px;
     line-height: 12px;
 }
+
+#speed_indicator {
+    color: $topbar-link-color;
+    font-size: $topbar-link-font-size;
+    padding-top: $topbar-link-padding;
+    display: inline-block;
+}
+
 @import "graph";
 @import "torrents";

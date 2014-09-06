@@ -51,10 +51,16 @@
                 </form>
             </li>
             <li class="divider"></li>
+
         </ul>
 
         <!-- Right Nav Section -->
         <ul class="right">
+            <li>
+                <div class="row collapse has-dropdown" id="speed_indicator">
+                    <div>▲ <div id="speed_up" style="display: inline-block">n/a</div> ▼ <div id="speed_dn" style="display: inline-block">n/a</div></div>
+                </div>
+            </li>
             <li class="has-dropdown{% if section == "settings" %} active{% endif %}">
                 <a href="{{ url_for("settings.index") }}"><i class="icon-wrench"></i> Settings</a>
                 <ul class="dropdown">

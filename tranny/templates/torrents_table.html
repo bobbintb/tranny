@@ -1,4 +1,5 @@
-<table id="torrent_table" class="display" cellspacing="0" width="100%">
+<!-- bs hacks to make scrollable tables.. -->
+<table id="torrent_table_head"  class="display" cellspacing="0">
     <thead>
         <tr>
             <th class="name">Name</th>
@@ -9,9 +10,13 @@
             <th class="dn_rate">DL</th>
             <th class="leechers">Leech</th>
             <th class="peers">Peers</th>
-            <th class="priority">Pri</th>
-            <th class="is_active">Sts</th>
+            <th class="priority">Priority</th>
+            <th class="is_active">Status</th>
         </tr>
     </thead>
-    <tbody></tbody>
 </table>
+<div id="table_wrap">
+    <table id="torrent_table" class="display">
+        <tbody></tbody>
+    </table>
+</div>

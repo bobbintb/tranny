@@ -21,15 +21,22 @@
         }
     }
 }
+#table_wrap {
+    height: 400px;
+    overflow: auto;
+}
 
-#torrent_table {
-    tbody {
-        height: 100px !important;
-        overflow: auto !important;
+#torrent_table_head {
+    margin-bottom: 0;
+    th.completed {
+        width: 100px;
     }
+}
+
+#torrent_table, #torrent_table_head {
     .name {
         overflow-x: hidden;
-        width: 100%;
+        //width: 100%;
     }
     .peers, .leechers {
         width: 60px;
@@ -38,17 +45,28 @@
         width: 50px;
     }
     .is_active {
-        width: 60px;
+        width: 100px;
     }
     .priority {
-        width: 40px;
+        width: 90px;
     }
-    td.completed, th.completed {
+    td.completed {
         width: 100px;
     }
     td.progress {
         padding: 0;
     }
+    .up_rate, .dn_rate, .ratio {
+        width: 80px;
+    }
+}
+#torrent_table {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     div.progress {
         margin-bottom: 0;
         background-color: inherit;
@@ -60,9 +78,7 @@
             margin-left: 2px;
         }
     }
-    .up_rate, .dn_rate, .ratio {
-        width: 80px;
-    }
+
     td {
         white-space: nowrap;
         font-size: 65%;
