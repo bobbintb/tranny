@@ -78,14 +78,14 @@ def get_source(source_name=None, source_id=None):
     return source
 
 
-def fetch_download(release_key=None, entity_id=None, limit=None):
+def fetch_download(release_key=None, download_id=None, limit=None):
     if release_key:
-        data_set = models.DownloadEntity.query.filter_by(release_key=release_key).first()
-    elif entity_id:
-        data_set = models.DownloadEntity.query.filter_by(entity_id=entity_id).first()
+        data_set = models.Download.query.filter_by(release_key=release_key).first()
+    elif download_id:
+        data_set = models.Download.query.filter_by(download_id=download_id).first()
     else:
-        data_set = models.DownloadEntity.query.\
-            order_by(models.DownloadEntity.created_on.desc()).\
+        data_set = models.Download.query.\
+            order_by(models.Download.created_on.desc()).\
             limit(limit).\
             all()
     return data_set

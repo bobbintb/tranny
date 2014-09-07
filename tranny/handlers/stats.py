@@ -11,19 +11,19 @@ stats = Blueprint("stats", __name__, url_prefix="/stats")
 @stats.route("/service_totals")
 @login_required
 def svc_totals():
-    data_set = stat.service_totals(models.DownloadEntity.query.all())
+    data_set = stat.service_totals(models.Download.query.all())
     return dumps(data_set)
 
 
 @stats.route("/section_totals")
 @login_required
 def sec_totals():
-    data_set = stat.section_totals(models.DownloadEntity.query.all())
+    data_set = stat.section_totals(models.Download.query.all())
     return dumps(data_set)
 
 
 @stats.route("/service_type_totals")
 @login_required
 def type_totals():
-    data_set = stat.service_type_totals(models.DownloadEntity.query.all())
+    data_set = stat.service_type_totals(models.Download.query.all())
     return dumps(data_set)

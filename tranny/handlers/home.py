@@ -14,7 +14,7 @@ home = Blueprint("home", __name__, url_prefix="/home")
 @home.route("/")
 @login_required
 def index():
-    newest = models.DownloadEntity.query.limit(25).all()
+    newest = models.Download.query.limit(25).all()
     return ui.render_template("index.html", newest=newest, section="stats")
 
 

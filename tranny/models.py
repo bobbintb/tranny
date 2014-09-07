@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
+from sqlalchemy.orm import relationship, backref
 from tranny.extensions import db
 from tranny.constants import ROLE_USER
 
@@ -59,8 +60,20 @@ class Source(db.Model):
         self.source_name = source_name
 
 
-class DownloadEntity(db.Model):
-    __tablename__ = 'downloads'
+class MediaInfo(db.Model):
+    __tablename__ = 'media_info'
+
+    media_id = db.Column(db.Integer, primary_key=True)
+
+    imdb_id = db.Column(db.Integer, nullable=True)
+    tvdb_id = db.Column(db.Integer, nullable=True)
+    # themoviedb.org ID
+    tmdb_id = db.Column(db.Integer, nullable=True)
+    tvrage_id = db.Column(db.Integer, nullable=True)
+
+
+class Download(db.Model):
+    __tablename__ = 'download'
 
     entity_id = db.Column(db.Integer, primary_key=True)
     release_key = db.Column(db.String(255), unique=True)
@@ -69,14 +82,10 @@ class DownloadEntity(db.Model):
     source_id = db.Column(db.Integer, db.ForeignKey(Source.source_id))
     created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    media_id = db.Column(db.Integer, db.ForeignKey(MediaInfo.media_id))
 
     def __init__(self, release_key, release_name, section_id, source_id):
         self.release_key = release_key
         self.release_name = release_name
         self.section_id = section_id
         self.source_id = source_id
-
-
-# class CountryBlock(db.Model):
-#     __tablename__ = 'country_block'
-

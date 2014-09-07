@@ -16,7 +16,7 @@ def service_totals(records):
     """ Get the download totals for each provider registered in the database
 
     :param records: list of history records
-    :type records: tranny.models.DownloadEntity[]
+    :type records: tranny.models.Download[]
     :return: Dict with totals for each key corresponding to a providers name
     :rtype: dict[]
     """
@@ -32,7 +32,7 @@ def service_type_totals(records):
     """
 
     :param records:
-    :type records: tranny.models.DownloadEntity[]
+    :type records: tranny.models.Download[]
     :return:
     :rtype:
     """
