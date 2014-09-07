@@ -5,7 +5,6 @@ jsonrpclib
 psutil
 six
 pathtools
-psycopg2
 jinja2
 flask
 flask-login
@@ -17,7 +16,5 @@ flask-babel
 flask-socketio
 flask-uploads
 flask-wtf
-#-e git+git://github.com/seatgeek/fuzzywuzzy.git#egg=fuzzywuzzy
-#-e git+git://github.com/alberanid/imdbpy.git#egg=imdbpy
 imdbpy
 fuzzywuzzy

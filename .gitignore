@@ -45,3 +45,5 @@ rpctest.py
 .sass-cache
 docs/_build/*
 node_modules
+
+.idea
