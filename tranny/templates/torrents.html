@@ -25,13 +25,8 @@
 {% endblock %}
 
 {% block footer %}
-    <link rel="stylesheet"
-          href="{{ url_for("static", filename="vendor/datatables/media/css/jquery.dataTables.css") }}"/>
-    <link rel="stylesheet"
-          href="{{ url_for("static", filename="vendor/epoch/epoch.min.css") }}"/>
-    <script src="{{ url_for("static", filename="vendor/datatables/media/js/jquery.dataTables.js") }}"></script>
+    <link rel="stylesheet" href="{{ url_for("static", filename="vendor/epoch/epoch.min.css") }}"/>
     <script src="{{ url_for("static", filename="vendor/lodash/dist/lodash.js") }}"></script>
-    <script src="{{ url_for("static", filename="js/vendor/dataTables.foundation.js") }}"></script>
     <script src="{{ url_for("static", filename="vendor/d3/d3.js") }}"></script>
     <script src="{{ url_for("static", filename="vendor/epoch/epoch.min.js") }}"></script>
     <script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>

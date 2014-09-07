@@ -58,7 +58,6 @@ The notification features are likly to be the lowest priority at the moment and 
 like a version 2 of the application. Their support is absolutely planned however.
 
 - [ ] IRC Bot
-- [ ] XMPP/Jabber
 - [ ] Email
 - [ ] SMS
 - [ ] Growl
@@ -136,9 +135,9 @@ A list of the major library used.
 - [Sphinx](http://sphinx-doc.org/)
 
 **Web**
+
 - [Foundation](http://foundation.zurb.com/)
 - [Epoch](https://github.com/fastly/epoch)
-- [DataTables](http://www.datatables.net/)
 - [lodash](http://lodash.com/)
 - [socketio](http://socket.io/)
 - [fontello](http://fontello.com/)
