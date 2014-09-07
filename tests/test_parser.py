@@ -40,7 +40,7 @@ class ReleaseTest(TrannyTestCase):
 
         ]
         for expected, release_name in test_data:
-            self.assertEqual(expected, parser.match_release(release_name), release_name)
+            self.assertEqual(expected, parser.find_section(release_name), release_name)
 
     def test_find_date(self):
         test_data = [

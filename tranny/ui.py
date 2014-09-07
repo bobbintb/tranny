@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json
 from flask import render_template as flask_render_template, request, jsonify, Response
 from six import wraps
 

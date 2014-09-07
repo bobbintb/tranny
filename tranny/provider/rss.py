@@ -40,7 +40,6 @@ class RSSFeed(provider.TorrentProvider):
             if torrent_data:
                 yield torrent_data
 
-
     def parse_entry(self, entry):
         """ Parse RSS entry data for qualified torrents to download
 

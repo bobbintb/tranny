@@ -189,7 +189,7 @@ def valid_tv(release_name, section_name="section_tv"):
     return False
 
 
-def find_config_section(release_name, prefix="section_"):
+def find_section(release_name, prefix="section_"):
     """ Attempt to find the configuration section the release provided matches with.
 
     :param release_name:
@@ -343,22 +343,3 @@ def parse_release(release_name):
         if p_match:
             return normalize(p_match.groupdict()['name'])
     return False
-
-
-def match_release(release_name):
-    """ Match a release to a section. Return the section found.
-
-    :param release_name:
-    :type release_name:
-    :return: Matched release section
-    :rtype: str, bool
-    """
-    app.logger.debug("Finding Match: {0}".format(release_name))
-    section = find_config_section(release_name)
-    if section == "movies":
-        pass
-    elif section == "tv":
-        pass
-    else:
-        pass
-    return section
