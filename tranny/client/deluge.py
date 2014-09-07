@@ -178,8 +178,8 @@ class DelugeClient(client.TorrentClient):
         if data.release_name.lower().endswith(".torrent"):
             file_name = data.release_name
         else:
-            file_name = "{}.torrent".format(data.release_name)
-        payload = {'file': (file_name, data.torrent_data, 'application/x-bittorrent')}
+            file_name = b"{}.torrent".format(data.release_name)
+        payload = {b'file': (file_name, data.torrent_data, b'application/x-bittorrent')}
         resp_data = self._session.post("{}/upload".format(self._host), files=payload).json()
         if resp_data.get('success', False):
             # If we do this too fast deluge will bawk so this delay stops the failure
