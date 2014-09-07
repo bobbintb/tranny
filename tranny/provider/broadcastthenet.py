@@ -109,7 +109,7 @@ class BroadcastTheNet(provider.TorrentProvider):
                 release_key = datastore.generate_release_key(release_name)
                 if not release_key:
                     continue
-                section = parser.match_release(release_name)
+                section = parser.find_section(release_name)
                 if not section:
                     continue
                 if self.exists(release_key):
@@ -129,5 +129,4 @@ class BroadcastTheNet(provider.TorrentProvider):
                     app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue
                 data = release.TorrentData(str(release_name), torrent_data, section)
-                found.append(data)
-        return found
+                yield data

@@ -44,9 +44,10 @@ class TorrentProvider(object):
         t0 = time()
         delta = t0 - self.last_update
         if not delta > self.interval or not self.enabled:
-            return []
+            raise StopIteration
         self.last_update = t0
-        return self.fetch_releases()
+        for torrent in self.fetch_releases():
+            yield torrent
 
     def _download_url(self, url):
         """ Fetch a torrent from the url provided
@@ -56,7 +57,7 @@ class TorrentProvider(object):
         :return:
         :rtype:
         """
-        torrent_data = net.fetch_url(url)
+        torrent_data = net.fetch_url(url, json=False)
         return torrent_data
 
     def fetch_releases(self):
@@ -64,7 +65,7 @@ class TorrentProvider(object):
 
     def exists(self, release_key):
         try:
-            e = db.session.query(models.DownloadEntity).filter_by(release_key=release_key).all()
+            e = db.session.query(models.Download).filter_by(release_key=release_key).all()
         except Exception as err:
             logger.exception(err)
             return False

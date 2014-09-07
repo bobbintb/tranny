@@ -35,7 +35,11 @@ class RSSFeed(provider.TorrentProvider):
         :rtype: tranny.release.TorrentData
         """
         feed = feedparser.parse(self.url)
-        return [self.parse_entry(f) for f in feed.get('entries', {})]
+        for entry in feedparser.parse(self.url).get('entries', {}):
+            torrent_data = self.parse_entry(entry)
+            if torrent_data:
+                yield torrent_data
+
 
     def parse_entry(self, entry):
         """ Parse RSS entry data for qualified torrents to download
@@ -56,7 +60,7 @@ class RSSFeed(provider.TorrentProvider):
         if not release_key:
             return None
 
-        section = parser.match_release(release_name)
+        section = parser.find_section(release_name)
         if section:
             if self.exists(release_key):
                 if app.config.get_default("general", "fetch_proper", True, bool):
@@ -73,5 +77,5 @@ class RSSFeed(provider.TorrentProvider):
             if not torrent_data:
                 app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                 return None
-            data = release.TorrentData(str(release_name), torrent_data, section)
+            data = release.TorrentData(bytes(release_name), torrent_data, section)
             return data
