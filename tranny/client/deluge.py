@@ -192,7 +192,6 @@ class DelugeClient(client.TorrentClient):
         else:
             return False
 
-
     def is_connected(self):
         return self._request('web.connected')
 

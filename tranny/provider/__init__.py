@@ -65,7 +65,7 @@ class TorrentProvider(object):
 
     def exists(self, release_key):
         try:
-            e = db.session.query(models.Download).filter_by(release_key=release_key).all()
+            e = db.session.query(models.Download).filter_by(release_key=unicode(release_key)).all()
         except Exception as err:
             logger.exception(err)
             return False

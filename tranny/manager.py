@@ -85,7 +85,7 @@ class ServiceManager(object):
                 release_key = datastore.generate_release_key(torrent.release_name)
                 section = datastore.get_section(torrent.section)
                 source = datastore.get_source(service.name)
-                download = models.Download(release_key, torrent.release_name, section.section_id,
+                download = models.Download(unicode(release_key), torrent.release_name, section.section_id,
                                            source.source_id)
                 db.session.add(download)
 

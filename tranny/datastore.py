@@ -1,12 +1,63 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import defaultdict
-from tranny import parser, models
+from tranny import parser, models, constants
 from tranny.extensions import db
 
 cache_section = defaultdict(lambda: False)
 cache_release = defaultdict(lambda: False)
 cache_source = defaultdict(lambda: False)
+
+
+class BaseReleaseKey(object):
+    def __init__(self, release_name, name, release_key=None, media_type=constants.MEDIA_UNKNOWN):
+        self.release_name = release_name
+        self.name = name
+        self.release_key = release_key or name
+        self.media_type = media_type
+
+    def __unicode__(self):
+        return self.release_key
+
+    def __str__(self):
+        return self.release_key
+
+
+class TVReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, season, episode, year=None):
+        super(TVReleaseKey, self).__init__(
+            release_name,
+            name,
+            "{}-{}_{}".format(name, season, episode),
+            media_type=constants.MEDIA_TV
+        )
+        self.season = season
+        self.episode = episode
+        self.year = year
+
+
+class TVDailyReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, day, month, year):
+        super(TVDailyReleaseKey, self).__init__(
+            release_name,
+            name,
+            "{}-{}_{}_{}".format(year, month, day),
+            media_type=constants.MEDIA_TV
+        )
+        self.day = day
+        self.month = month
+        self.year = year
+
+
+class MovieReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, year):
+        super(MovieReleaseKey, self).__init__(
+            release_name,
+            name,
+            "{}-{}".format(name, year),
+            media_type=constants.MEDIA_MOVIE
+        )
+        self.year = year
 
 
 def generate_release_key(release_name):
@@ -22,6 +73,7 @@ def generate_release_key(release_name):
     if not name:
         return False
     name = name.lower()
+    release_info = BaseReleaseKey(release_name, name)
     try:
         info = parser.parse_release_info(release_name)
     except TypeError:
@@ -31,13 +83,13 @@ def generate_release_key(release_name):
         if info:
             key_set = set(info.keys())
             if key_set == {"season", "episode"}:
-                name = "{}-{}_{}".format(name, info['season'], info['episode'])
+                release_info = TVReleaseKey(release_name, name, info['season'], info['episode'])
             elif key_set == {"year", "day", "month"}:
-                name = "{}-{}_{}_{}".format(name, info['year'], info['month'], info['day'])
+                release_info = TVDailyReleaseKey(release_name, name, info['day'], info['month'], info['year'])
             elif key_set == {"year"}:
-                name = "{}-{}".format(name, info['year'])
+                release_info = MovieReleaseKey(release_name, name, info['year'])
     finally:
-        return name
+        return release_info
 
 
 def get_section(section_name=None, section_id=None):
