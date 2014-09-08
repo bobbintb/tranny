@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 import platform
 import gevent
 from sqlalchemy.exc import DBAPIError
-from tranny import app, datastore, watch, models, client
+from tranny import app, datastore, watch, models, client,metadata
+from tranny.exceptions import ClientError
 from tranny.provider.rss import RSSFeed
 from tranny.extensions import db
 from tranny.service import tmdb
@@ -80,23 +81,25 @@ class ServiceManager(object):
             if not dl_path:
                 dl_path = app.config.get_download_path(torrent.section, torrent.release_name)
             res = client.get().add(torrent, download_dir=dl_path)
-            if res:
-                app.logger.info("Added release: {0}".format(torrent.release_name))
-                release_key = datastore.generate_release_key(torrent.release_name)
-                section = datastore.get_section(torrent.section)
-                source = datastore.get_source(service.name)
-                download = models.Download(unicode(release_key), torrent.release_name, section.section_id,
-                                           source.source_id)
-                db.session.add(download)
-
-
-
-                db.session.commit()
+            if not res:
+                raise ClientError
+            app.logger.info("Added release: {0}".format(torrent.release_name))
+            release_key = datastore.generate_release_key(torrent.release_name)
+            section = datastore.get_section(torrent.section)
+            source = datastore.get_source(service.name)
+            download = models.Download(unicode(release_key), torrent.release_name, section.section_id,
+                                       source.source_id)
+            db.session.add(download)
+            db.session.commit()
         except DBAPIError as err:
             app.logger.exception(err)
             db.session.rollback()
+        except ClientError:
+            app.logger.warning("Could not add torrent to client backend")
         except Exception as err:
             app.logger.exception(err)
+        else:
+            metadata.update_media_info(release_key)
 
     def update_providers(self):
         """ This is the primary process loop used to process TorrentProvider

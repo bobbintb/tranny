@@ -34,7 +34,6 @@ class RSSFeed(provider.TorrentProvider):
         :return: a 3 element tuple containing (release_name, torrent_raw_data, section_name)
         :rtype: tranny.release.TorrentData
         """
-        feed = feedparser.parse(self.url)
         for entry in feedparser.parse(self.url).get('entries', {}):
             torrent_data = self.parse_entry(entry)
             if torrent_data:
@@ -60,21 +59,18 @@ class RSSFeed(provider.TorrentProvider):
             return None
 
         section = parser.find_section(release_name)
-        if section:
-            if self.exists(release_key):
-                if app.config.get_default("general", "fetch_proper", True, bool):
-                    if not ".proper." in release_name.lower():
-                        # Skip releases unless they are considered proper's
-                        app.logger.debug(
-                            "Skipped previously downloaded release ({0}): {1}".format(
-                                release_key,
-                                release_name
-                            )
-                        )
-                        return None
-            torrent_data = self._download_url(entry['link'])
-            if not torrent_data:
-                app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
-                return None
-            data = release.TorrentData(bytes(release_name), torrent_data, section)
-            return data
+        if not section:
+            return None
+        if self.exists(release_key):
+            if app.config.get_default("general", "fetch_proper", True, bool):
+                if not ".proper." in release_name.lower():
+                    # Skip releases unless they are considered proper's
+                    app.logger.debug(
+                        "Skipped previously downloaded release ({0}): {1}".format(
+                            release_key, release_name))
+                    return None
+        torrent_data = self._download_url(entry['link'])
+        if not torrent_data:
+            app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
+            return None
+        return release.TorrentData(bytes(release_name), torrent_data, section)

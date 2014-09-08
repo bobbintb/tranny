@@ -9,15 +9,11 @@
 __author__ = "doganaydin"
 __version__ = "1.0b"
 
-try:
-    import simplejson
-except:
-    import json as simplejson
-
 import fuzzywuzzy.fuzz
 import requests
 
 cfg = {}
+
 
 def configure(api_key, language='en'):
     cfg['apikey'] = api_key
@@ -51,11 +47,11 @@ def configure(api_key, language='en'):
 class Core(object):
     def getJSON(self, url, language=None):
         language = language or cfg['language']
-        page = requests.get(url, params={'language': language}).content
+        page = requests.get(url, params={'language': language})
         try:
-            return simplejson.loads(page)
+            return page.json()
         except:
-            return simplejson.loads(page.decode('utf-8'))
+            return {}
 
     def escape(self,text):
         if len(text) > 0:
@@ -263,7 +259,7 @@ class Movie(Core):
             sess_id = cfg["api"]["session.id"]
             data = {"value":float(value)}
             req = requests.post(cfg['urls']['movie.add.rating'] % (self.movie_id,sess_id),data=data)
-            res = simplejson.loads(bytes(req.content).decode())
+            res = req.json()
             if res['status_message'] == "Success":
                 return True
             else:

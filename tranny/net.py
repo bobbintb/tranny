@@ -74,10 +74,12 @@ def fetch_url(url, auth=None, json=True, timeout=10):
             raise exceptions.InvalidResponse("Empty response body")
     except (RequestException, exceptions.InvalidResponse) as err:
         app.logger.exception(err.message)
+        response = {}
     else:
-        response = response.content
         if json:
             response = response.json()
+        else:
+            response = response.content
     finally:
         return response
 

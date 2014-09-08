@@ -21,6 +21,10 @@ class InvalidResponse(BotchedTranny):
     pass
 
 
+class ClientError(TrannyException):
+    pass
+
+
 class ApiError(BotchedTranny):
     def __init__(self, error):
         self.message = error['message']

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from urlparse import urlparse, urljoin
 from time import time
 from os import getpid
+from fuzzywuzzy import fuzz
 from psutil import Process, disk_partitions, disk_usage
 from flask import request, url_for, redirect
 
@@ -72,6 +73,14 @@ def redirect_back(endpoint, **values):
     if not target or not is_safe_url(target):
         target = url_for(endpoint, **values)
     return redirect(target)
+
+
+def find_closest_match(string, iterable, key):
+    if len(iterable) == 1:
+        return iterable[0]
+    def cmp(item):
+        return fuzz.ratio(string.lower(), item.get(key, "").lower())
+    return sorted(iterable, key=cmp, reverse=True)[0]
 
 
 contains = lambda seq, values: all([k in values for k in seq])

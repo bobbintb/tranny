@@ -15,6 +15,9 @@ def update_trakt(release_key):
     :type release_key: tranny.datastore.BaseReleaseKey
     """
     if release_key.media_type == constants.MEDIA_TV:
-        info = trakt.show_episode_summary()
+        info = trakt.show_episode_summary(
+            release_key.name,
+            release_key.season,
+            release_key.episode)
 
 
