@@ -11,24 +11,24 @@ from tranny import app, exceptions
 speed_multi = {
     # Binary JEDEC keys
     'KB': lambda v: v * 1024,
-    'MB': lambda v: v * 1024 * 1024,
-    'GB': lambda v: v * 1024 * 1024 * 1024,
-    'TB': lambda v: v * 1024 * 1024 * 1024 * 1024,
-    'PB': lambda v: v * 1024 * 1024 * 1024 * 1024 * 1024,
+    'MB': lambda v: v * 1024 ** 2,
+    'GB': lambda v: v * 1024 ** 3,
+    'TB': lambda v: v * 1024 ** 4,
+    'PB': lambda v: v * 1024 ** 5,
 
     # Binary IEC keys
     'KiB': lambda v: v * 1024,
-    'MiB': lambda v: v * 1024 * 1024,
-    'GiB': lambda v: v * 1024 * 1024 * 1024,
-    'TiB': lambda v: v * 1024 * 1024 * 1024 * 1024,
-    'PiB': lambda v: v * 1024 * 1024 * 1024 * 1024 * 1024,
+    'MiB': lambda v: v * 1024 ** 2,
+    'GiB': lambda v: v * 1024 ** 3,
+    'TiB': lambda v: v * 1024 ** 4,
+    'PiB': lambda v: v * 1024 ** 5,
 
     # Decimal metric keys
     'kb': lambda v: v * 1000,
-    'mb': lambda v: v * 1000 * 1000,
-    'gb': lambda v: v * 1000 * 1000 * 1000,
-    'tb': lambda v: v * 1000 * 1000 * 1000 * 1000,
-    'pb': lambda v: v * 1000 * 1000 * 1000 * 1000 * 1000,
+    'mb': lambda v: v * 1000 ** 2,
+    'gb': lambda v: v * 1000 ** 3,
+    'tb': lambda v: v * 1000 ** 4,
+    'pb': lambda v: v * 1000 ** 5,
 }
 
 

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from testcase import TrannyTestCase
 from tranny import metadata, datastore
 
+
 class MetaDataTest(TrannyTestCase):
 
     def test_update_trakt_tv(self):

@@ -14,6 +14,35 @@ _slug_cache = {
 
 TRAKT_URL = 'http://api.trakt.tv/'
 
+show_properties_map = [
+    # [Model prop, api prop]
+    ['air_day', 'air_day'],
+    ['air_time', 'air_time'],
+    ['certification', 'certification'],
+    ['imdb_id', 'imdb_id'],
+    ['tvdb_id', 'tvdb_id'],
+    ['tvrage_id', 'tvrage_id'],
+    ['title', 'title'],
+    ['year', 'year'],
+    ['trakt_url', 'url'],
+    ['first_aired', 'first_aired_utc'],
+    ['country', 'country'],
+    ['overview', 'overview'],
+    ['runtime', 'runtime'],
+    ['network', 'network']
+]
+
+episode_property_map = [
+    ['first_aired', 'first_aired'],
+    ['trakt_url', 'url'],
+    ['overview', 'overview'],
+    ['title', 'title'],
+    ['tvdb_id', 'tvdb_id'],
+    ['imdb_id', 'imdb_id'],
+    ['number', 'number'],
+    ['season', 'season']
+]
+
 
 def _find_slug(title, media_type):
     slug = _slug_cache[media_type].get(title, None)

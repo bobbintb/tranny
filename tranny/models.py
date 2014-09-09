@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 import datetime
 import hashlib
-from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table
+from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table, \
+    UnicodeText
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import UnicodeText
 from tranny import constants
 from tranny.app import Base
 from tranny.constants import ROLE_USER
@@ -153,7 +153,6 @@ class Movie(Base):
     rt_id = Column(Integer, unique=True, nullable=True)
 
     genres = relationship('Genre', secondary=genre_movie_assoc_table, backref="movies")
-
 
 
 class Download(Base):

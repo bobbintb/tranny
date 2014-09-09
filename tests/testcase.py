@@ -5,13 +5,14 @@
 from __future__ import unicode_literals, absolute_import, with_statement
 import unittest
 from os.path import join, dirname
-from tranny.app import config
+from tranny.app import config, Session, Base, engine
 
 
 class TrannyTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(TrannyTestCase, self).__init__(methodName=methodName)
         self.load_config()
+        self.init_db()
 
     def load_config(self, config_name="test_config.ini"):
         conf_file = self.get_fixture(config_name)
@@ -28,3 +29,7 @@ class TrannyTestCase(unittest.TestCase):
     def get_fixture(self, fixture_file):
         file_path = join(dirname(__file__), "fixtures", fixture_file)
         return file_path
+
+    def init_db(self):
+        Session.configure(bind=engine)
+        Base.metadata.create_all(bind=engine)

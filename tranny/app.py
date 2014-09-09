@@ -5,7 +5,6 @@ application.
 """
 from __future__ import unicode_literals, absolute_import
 import httplib
-from os.path import expanduser
 import os
 from functools import partial
 from json import dumps
