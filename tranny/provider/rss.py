@@ -24,13 +24,15 @@ class RSSFeed(provider.TorrentProvider):
             'Enabled' if self.enabled else 'Disabled', self.name)
         )
 
-    def fetch_releases(self):
+    def fetch_releases(self, session):
         """
         Parse the feed yielding valid release data to be added to the torrent backend.
 
         This will attempt to fetch proper releases for existing releases if the fetch_proper config value
         is true.
 
+        :param session:
+        :type session: sqlalchemy.orm.session.Session
         :return: a 3 element tuple containing (release_name, torrent_raw_data, section_name)
         :rtype: tranny.release.TorrentData
         """

@@ -58,6 +58,8 @@ movie_property_map = [
     ['rt_id', 'rt_id']
 ]
 
+
+@cache.cache_on_arguments(expiration_time=3600*7)
 def _find_slug(title, media_type):
     slug = _slug_cache[media_type].get(title, None)
     if slug:
@@ -106,14 +108,17 @@ def _post_request(method, data):
     return net.http_request(url, data=data, method='post')
 
 
+@cache.cache_on_arguments(expiration_time=3600)
 def calendar_shows():
     return _get_request('calendar/shows')
 
 
+@cache.cache_on_arguments(expiration_time=3600)
 def calendar_premiers():
     return _get_request('calendar/premieres')
 
 
+@cache.cache_on_arguments()
 def search(search_query, media_type):
     if media_type == constants.MEDIA_TV:
         method = 'search/shows'

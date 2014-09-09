@@ -88,9 +88,11 @@ class BroadcastTheNet(provider.TorrentProvider):
     def get_torrent_url(self, torrent_id):
         return self.__call__("getTorrentsUrl", torrent_id)
 
-    def fetch_releases(self, scene_only=True):
+    def fetch_releases(self, session, scene_only=True):
         """ Generator which yields torrent data to be loaded into backend daemons
 
+        :param session:
+        :type session: sqlalchemy.orm.session.Session
         :param scene_only: Only fetch scene releases
         :type scene_only: bool
         :return: Matched Downloaded torrents
@@ -112,7 +114,7 @@ class BroadcastTheNet(provider.TorrentProvider):
                 section = parser.find_section(release_name)
                 if not section:
                     continue
-                if self.exists(release_key):
+                if self.exists(session, release_key):
                     if app.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered propers

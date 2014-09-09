@@ -149,9 +149,6 @@ def configure_extensions(app):
     # flask-mail
     mail.init_app(app)
 
-    # flask-cache
-    cache.init_app(app)
-
     # flask-socketio
     socketio.init_app(app)
 
@@ -174,7 +171,7 @@ def configure_extensions(app):
 
     @login_manager.user_loader
     def user_loader(user_id):
-        return User.query.filter_by(user_id=user_id).first()
+        return Session().query(User).filter_by(user_id=user_id).first()
 
     @login_manager.needs_refresh_handler
     def refresh():
@@ -188,7 +185,7 @@ def configure_extensions(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(user_id)
+        return Session().query(User).get(user_id)
 
     login_manager.init_app(app)
 

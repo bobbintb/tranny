@@ -2,8 +2,9 @@
 from __future__ import unicode_literals
 import platform
 import gevent
+from gevent import pywsgi
 from sqlalchemy.exc import DBAPIError
-from tranny import app, datastore, watch, models, client,metadata
+from tranny import app, datastore, watch, models, client, metadata
 from tranny.exceptions import ClientError
 from tranny.provider.rss import RSSFeed
 from tranny.service import tmdb
@@ -106,8 +107,8 @@ class ServiceManager(object):
         thread """
         while True:
             for service in self.services:
-                for torrent in service.find_matches():
-                    self.add(torrent, service)
+                for torrent, session in service.find_matches():
+                    self.add(session, torrent, service)
             gevent.sleep(1)
 
     def start(self):

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import defaultdict
-from tranny import parser, models, constants
+from tranny import parser, constants
+from tranny.models import Section, Source, User, Download
 
 
 cache_section = defaultdict(lambda: False)
@@ -100,13 +101,13 @@ def generate_release_key(release_name):
 
 def get_section(session, section_name=None, section_id=None):
     if section_name:
-        section = models.Section.query.filter_by(section_name=section_name).first()
+        section = session.query(Section).filter_by(section_name=section_name).first()
     elif section_id:
-        section = models.Section.query.filter_by(section_id=section_id).first()
+        section = session.query(Section).filter_by(section_id=section_id).first()
     else:
-        return models.Section.query.all()
+        return session.query(Section).all()
     if not section and section_name:
-        section = models.Section(section_name)
+        section = Section(section_name)
         session.session.add(section)
         #session.session.commit()
     return section
@@ -116,19 +117,19 @@ def get_source(session, source_name=None, source_id=None):
     if source_name:
         source = cache_source[source_name]
         if not source:
-            source = models.Source.query.filter_by(source_name=source_name).first()
+            source = session.query(Source).filter_by(source_name=source_name).first()
             cache_source[source_name] = source
     elif source_id:
         for source in cache_source.values():
             if source.source_id == source_id:
                 break
         else:
-            source = models.Source.query.filter_by(source_id=source_id).first()
+            source = session.query(Source).filter_by(source_id=source_id).first()
             cache_source[source.source_name] = source
     else:
-        return models.Source.query.all()
+        return session.query(Source).query.all()
     if not source and source_name:
-        source = models.Source(source_name)
+        source = Source(source_name)
         session.session.add(source)
         #session.session.commit()
     elif not source:
@@ -136,22 +137,25 @@ def get_source(session, source_name=None, source_id=None):
     return source
 
 
-def fetch_download(release_key=None, download_id=None, limit=None):
+def fetch_download(session, release_key=None, download_id=None, limit=None):
     if release_key:
-        data_set = models.Download.query.filter_by(release_key=release_key).first()
+        data_set = session.query(Download).query.filter_by(release_key=release_key).first()
     elif download_id:
-        data_set = models.Download.query.filter_by(download_id=download_id).first()
+        data_set = session.query(Download).filter_by(download_id=download_id).first()
     else:
-        data_set = models.Download.query.\
-            order_by(models.Download.created_on.desc()).\
+        data_set = session.query(Download).\
+            order_by(Download.created_on.desc()).\
             limit(limit).\
             all()
     return data_set
 
 
-def fetch_user(user_name=None, user_id=None, limit=None):
+def fetch_user(session, user_name=None, user_id=None, limit=None):
     """
 
+
+    :param session:
+    :type session: sqlalchemy.orm.session.Session
     :param user_name:
     :type user_name:
     :param user_id:
@@ -162,9 +166,9 @@ def fetch_user(user_name=None, user_id=None, limit=None):
     :rtype: User, User[]
     """
     if user_name:
-        data_set = models.User.query.filter_by(user_name=user_name).first()
+        data_set = session.query(User).filter_by(user_name=user_name).first()
     elif user_id:
-        data_set = models.User.filter_by(user_id=user_id).first()
+        data_set = session.query(User).filter_by(user_id=user_id).first()
     else:
-        data_set = models.User.query.limit(limit).all()
+        data_set = session.query(User).query.limit(limit).all()
     return data_set

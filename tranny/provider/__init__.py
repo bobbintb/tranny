@@ -5,7 +5,7 @@ just overriding the fetch_releases method.
 """
 from __future__ import unicode_literals
 from time import time
-from tranny.app import config, logger
+from tranny.app import config, logger, Session
 from tranny import models, net
 
 
@@ -45,26 +45,21 @@ class TorrentProvider(object):
         if not delta > self.interval or not self.enabled:
             raise StopIteration
         self.last_update = t0
-        for torrent in self.fetch_releases():
-            yield torrent
+        session = Session()
+        for torrent in self.fetch_releases(session):
+            yield torrent, session
 
-    def _download_url(self, url):
-        """ Fetch a torrent from the url provided
-
-        :param url:
-        :type url:
-        :return:
-        :rtype:
+    def fetch_releases(self, session):
         """
-        torrent_data = net.http_request(url, json=False)
-        return torrent_data
 
-    def fetch_releases(self):
+        :param session:
+        :type session: sqlalchemy.orm.session.Session
+        """
         raise NotImplementedError("Must override this method")
 
     def exists(self, session, release_key):
         try:
-            return session.query(models.Download).filter_by(release_key=unicode(release_key)).all()
+            return session.query(models.Download).filter_by(release_key=release_key).all()
         except Exception as err:
             logger.exception(err)
             return False
