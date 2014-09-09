@@ -329,6 +329,7 @@ def parse_release_info(release_name):
         return info
     return False
 
+stop_words = set('hdtv')
 
 def parse_release(release_name):
     """ Fetch just the release name title from the release name provided
@@ -341,5 +342,7 @@ def parse_release(release_name):
     for pattern in pattern_release:
         p_match = pattern.search(release_name)
         if p_match:
+            if p_match.lastgroup == "year":
+                pass
             return normalize(p_match.groupdict()['name'])
     return False

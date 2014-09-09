@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 from time import time
 from tranny.app import config, logger
 from tranny import models, net
-from tranny.extensions import db
 
 
 class TorrentProvider(object):
@@ -57,16 +56,15 @@ class TorrentProvider(object):
         :return:
         :rtype:
         """
-        torrent_data = net.fetch_url(url, json=False)
+        torrent_data = net.http_request(url, json=False)
         return torrent_data
 
     def fetch_releases(self):
         raise NotImplementedError("Must override this method")
 
-    def exists(self, release_key):
+    def exists(self, session, release_key):
         try:
-            e = db.session.query(models.Download).filter_by(release_key=unicode(release_key)).all()
+            return session.query(models.Download).filter_by(release_key=unicode(release_key)).all()
         except Exception as err:
             logger.exception(err)
             return False
-        return e

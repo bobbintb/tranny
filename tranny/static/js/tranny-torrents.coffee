@@ -379,8 +379,6 @@ show_alert = (msg, msg_type='info', ttl=5) ->
     return _alert_num
 
 
-
-
 ### Update the chart values with the latest speed values ###
 chart_update = (upload, download) ->
     update_data = [

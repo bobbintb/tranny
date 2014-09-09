@@ -18,7 +18,7 @@ class TrannyTestCase(unittest.TestCase):
         ok = 1 == len(config.read(conf_file))
         return ok
 
-    def get_config(self, ):
+    def get_config(self):
         return config
 
     def run_data_set(self, test_data, fn):

@@ -5,12 +5,16 @@ application.
 """
 from __future__ import unicode_literals, absolute_import
 import httplib
+from os.path import expanduser
 import os
 from functools import partial
 from json import dumps
-from flask import Flask, g, redirect, url_for, current_app, session
+from flask import Flask, g, redirect, url_for, current_app, session, _app_ctx_stack
 from flask.ext.login import current_user, confirm_login
 from flask.ext.uploads import configure_uploads, patch_request_class
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 
 def _log(msg, level="info"):
@@ -37,15 +41,23 @@ logger = ProxyLogger()
 # Setup global configuration
 from tranny import configuration
 config = configuration.Configuration()
+config.initialize()
+engine = create_engine(config.get_db_uri())
+# Setup sqlalchemy session factory
+Base = declarative_base()
+session_factory = sessionmaker()
+# scopefunc determines our current context, we use flasks context for this to allow usage from the
+# flask views and outside of flask interchangeably
+Session = scoped_session(session_factory, scopefunc=_app_ctx_stack.__ident_func__)
 
 torrent_client = None
 
 from tranny.models import User
 from tranny.util import file_size
 from tranny import ui
-from tranny.extensions import db, mail, cache, login_manager, socketio
+from tranny.extensions import mail, cache, login_manager, socketio
 
-__all__ = ['create_app']
+__all__ = ['create_app', 'config', 'Session']
 
 
 def create_app(app_name="tranny"):
@@ -56,9 +68,10 @@ def create_app(app_name="tranny"):
     :return: Configured flask instance
     :rtype: Flask
     """
-    global config
 
-    config.initialize()
+    Session.configure(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
     app = Flask(app_name)
     configure_app(app)
     configure_extensions(app)
@@ -127,9 +140,6 @@ def configure_extensions(app):
     :param app: Application instance
     :type app: Flask
     """
-    # flask-sqlalchemy
-    db.app = app  # hack to allow access outside of context
-    db.init_app(app)
 
     # flask-mail
     mail.init_app(app)

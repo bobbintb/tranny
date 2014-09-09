@@ -27,6 +27,10 @@ class TraktServiceTest(TrannyTestCase):
         seasons = trakt.show_seasons(self.show)
         self.assertEqual(len(seasons), 10)
 
+    def test_show__episode_seen(self):
+        result = trakt.show_episode_seen(304130, 'Seinfeld', 5, 7, imdb_id='tt0697739')
+        self.assertEqual(result['status'], 'success')
+
     def test_show_episode_summary(self):
         summary = trakt.show_episode_summary(self.show, self.season, self.episode)
         self.assertEqual(summary.get('episode', {}).get('season', 0), self.season)

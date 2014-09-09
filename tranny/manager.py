@@ -6,7 +6,6 @@ from sqlalchemy.exc import DBAPIError
 from tranny import app, datastore, watch, models, client,metadata
 from tranny.exceptions import ClientError
 from tranny.provider.rss import RSSFeed
-from tranny.extensions import db
 from tranny.service import tmdb
 
 
@@ -66,7 +65,7 @@ class ServiceManager(object):
                 services.append(HDBits(service_name))
         return services
 
-    def add(self, torrent, service, dl_path=None):
+    def add(self, session, torrent, service, dl_path=None):
         """ Handles adding a new torrent to the system. This should be considered the
         main entry point of doing this to make sure things are consistent, this cannot
         be guaranteed otherwise
@@ -89,11 +88,11 @@ class ServiceManager(object):
             source = datastore.get_source(service.name)
             download = models.Download(unicode(release_key), torrent.release_name, section.section_id,
                                        source.source_id)
-            db.session.add(download)
-            db.session.commit()
+            session.add(download)
+            session.commit()
         except DBAPIError as err:
             app.logger.exception(err)
-            db.session.rollback()
+            session.rollback()
         except ClientError:
             app.logger.warning("Could not add torrent to client backend")
         except Exception as err:

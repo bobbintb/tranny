@@ -112,7 +112,7 @@ class Configuration(ConfigParser):
         # No configs were found
         return False
 
-    def create_dirs(self, path="~/.tranny"):
+    def create_dirs(self, path="~/.config/tranny"):
         """ Initialize a users config directory by creating the prerequisite directories.
 
         :return:
@@ -197,13 +197,17 @@ class Configuration(ConfigParser):
                 pass
         return full_dl_path
 
-    def get_db_path(self):
+    def get_db_uri(self, section='db', key='uri'):
         """ Get the path to the history db used by the shelve module
 
         :return:
         :rtype:
         """
-        return abspath(join(dirname(dirname(__file__)), "history.db"))
+        default_uri = "sqlite:///{}".format(expanduser("~/.config/tranny/tranny.sqlite"))
+        uri = self.get_default(section, key, default_uri)
+        if not uri:
+            uri = default_uri
+        return uri
 
     def get_proxies(self):
         proxies = {}

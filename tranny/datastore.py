@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from collections import defaultdict
 from tranny import parser, models, constants
-from tranny.extensions import db
+
 
 cache_section = defaultdict(lambda: False)
 cache_release = defaultdict(lambda: False)
@@ -10,6 +10,9 @@ cache_source = defaultdict(lambda: False)
 
 
 class BaseReleaseKey(object):
+    """
+    Basic info for a release used to make a unique identifier for a release name
+    """
     def __init__(self, release_name, name, release_key=None, media_type=constants.MEDIA_UNKNOWN):
         self.release_name = release_name
         self.name = name
@@ -20,7 +23,10 @@ class BaseReleaseKey(object):
         return self.release_key
 
     def __str__(self):
-        return self.release_key
+        return bytes(self.release_key)
+
+    def __eq__(self, other):
+        return other == self.release_key
 
 
 class TVReleaseKey(BaseReleaseKey):
@@ -41,7 +47,7 @@ class TVDailyReleaseKey(BaseReleaseKey):
         super(TVDailyReleaseKey, self).__init__(
             release_name,
             name,
-            "{}-{}_{}_{}".format(year, month, day),
+            release_key="{}-{}_{}_{}".format(name, year, month, day),
             media_type=constants.MEDIA_TV
         )
         self.day = day
@@ -66,7 +72,7 @@ def generate_release_key(release_name):
     :param release_name: Release name to generate a key from
     :type release_name: str, unicode
     :return: Database suitable key name
-    :rtype: str
+    :rtype: BaseReleaseKey
     """
     release_name = parser.normalize(release_name)
     name = parser.parse_release(release_name)
@@ -92,7 +98,7 @@ def generate_release_key(release_name):
         return release_info
 
 
-def get_section(section_name=None, section_id=None):
+def get_section(session, section_name=None, section_id=None):
     if section_name:
         section = models.Section.query.filter_by(section_name=section_name).first()
     elif section_id:
@@ -101,12 +107,12 @@ def get_section(section_name=None, section_id=None):
         return models.Section.query.all()
     if not section and section_name:
         section = models.Section(section_name)
-        db.session.add(section)
-        db.session.commit()
+        session.session.add(section)
+        #session.session.commit()
     return section
 
 
-def get_source(source_name=None, source_id=None):
+def get_source(session, source_name=None, source_id=None):
     if source_name:
         source = cache_source[source_name]
         if not source:
@@ -123,8 +129,8 @@ def get_source(source_name=None, source_id=None):
         return models.Source.query.all()
     if not source and source_name:
         source = models.Source(source_name)
-        db.session.add(source)
-        db.session.commit()
+        session.session.add(source)
+        #session.session.commit()
     elif not source:
         raise ValueError("Invalid source name")
     return source

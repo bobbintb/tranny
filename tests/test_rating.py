@@ -1,14 +1,10 @@
 import unittest
-from tests import get_fixture
-from tranny import init_config
-
-init_config(get_fixture("test_config.ini"))
-
+from testcase import TrannyTestCase
 # Make sure to import rating after config has been setup
 from tranny.service import rating
 
 
-class TestRating(unittest.TestCase):
+class TestRating(TrannyTestCase):
     title_a = "The Mask"
 
     def test_imdb_score(self):

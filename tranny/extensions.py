@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from flask.ext.sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
-
 from flask.ext.mail import Mail
 mail = Mail()
 

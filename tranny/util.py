@@ -20,7 +20,10 @@ def uptime_sys():
 
 
 def uptime_app():
-    return time() - Process(getpid()).create_time
+    try:
+        return time() - Process(getpid()).create_time
+    except TypeError:
+        return time() - Process(getpid()).create_time()
 
 
 def disk_free():

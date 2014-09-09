@@ -9,7 +9,8 @@ import sys
 from flask.ext.script import Manager
 import gevent
 from tranny import create_app, app
-from tranny.extensions import db, socketio
+from tranny.app import Session, Base, engine
+from tranny.extensions import socketio
 from tranny.models import User
 from tranny.constants import ROLE_ADMIN
 
@@ -44,16 +45,23 @@ def run():
 
 
 @manager.command
+def dropdb():
+    for tbl in reversed(Base.metadata.sorted_tables):
+        print("Dropping: {}".format(tbl.name))
+        tbl.drop(engine)
+
+
+@manager.command
 def initdb():
     """Init/reset database."""
-
-    db.drop_all()
-    db.create_all()
-
+    dropdb()
+    Session.configure(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    session = Session()
     user_name = input("Admin user name [admin]: ")
     if not user_name:
         user_name = "admin"
-    password = None
+    password = "admin"
     while not password:
         pw_1 = input("Password: ")
         pw_2 = input("Password Verify: ")
@@ -61,8 +69,8 @@ def initdb():
             password = pw_1
 
     admin = User(user_name=user_name, password=password, role=ROLE_ADMIN)
-    db.session.add(admin)
-    db.session.commit()
+    session.add(admin)
+    session.commit()
 
 
 manager.add_option('-c', '--config', dest="config", required=False, help="config file")

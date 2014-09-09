@@ -7,6 +7,7 @@ from collections import OrderedDict
 from flask import Blueprint
 from flask.ext.login import login_required
 from tranny import ui, util, models
+from tranny.app import Session
 
 home = Blueprint("home", __name__, url_prefix="/home")
 
@@ -14,7 +15,7 @@ home = Blueprint("home", __name__, url_prefix="/home")
 @home.route("/")
 @login_required
 def index():
-    newest = models.Download.query.limit(25).all()
+    newest = Session.query(models.Download).limit(25).all()
     return ui.render_template("index.html", newest=newest, section="stats")
 
 

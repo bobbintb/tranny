@@ -4,7 +4,7 @@ Functions used to download data over HTTP connections
 """
 from __future__ import unicode_literals
 from os.path import join
-from requests import get, RequestException
+from requests import get, RequestException, post
 from tranny import app, exceptions
 
 # Conversion table mostly used for converting API values into common bytes
@@ -49,7 +49,7 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     app.logger.info("Downloading release [{0}]: {1}".format(release_name, url))
     file_path = join(dest_path, release_name) + extension
     dl_ok = False
-    response = fetch_url(url)
+    response = http_request(url)
     if response:
         with open(file_path, 'wb') as torrent_file:
             torrent_file.write(response)
@@ -57,9 +57,14 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     return dl_ok
 
 
-def fetch_url(url, auth=None, json=True, timeout=10):
+def http_request(url, auth=None, json=True, timeout=10, method='get', data=None):
     """ Fetch and return data contained at the url provided
 
+    :param data:
+    :param method:
+    :param timeout:
+    :param json:
+    :param auth:
     :param url: URL to fetch
     :type url: basestring
     :return: HTTP response body
@@ -68,7 +73,10 @@ def fetch_url(url, auth=None, json=True, timeout=10):
     response = None
     try:
         app.logger.debug("Fetching url: {0}".format(url))
-        response = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
+        if method == 'get':
+            response = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
+        elif method == 'post':
+            response = post(url, data=data, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
         response.raise_for_status()
         if not response.content:
             raise exceptions.InvalidResponse("Empty response body")

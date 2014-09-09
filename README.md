@@ -89,8 +89,8 @@ on the service.
 
 - [x] [SQLite](http://www.sqlite.org/) Default, built-in to python generally by default.
 - [x] [postgres](http://www.postgresql.org/)
-- [ ] Most (all?) other [dialects](http://docs.sqlalchemy.org/en/rel_0_8/dialects/) supported by sqlalchemy
-should work, notably [MySQL](http://www.mysql.com/), but are untested.
+- [x] [mysql5+](http://mysql.com)
+- [x] [oracle](http://oracle.com)
 
 
 **WebUI**
