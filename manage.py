@@ -52,22 +52,25 @@ def dropdb():
 
 
 @manager.command
-def initdb():
+def initdb(ask=False):
     """Init/reset database."""
     dropdb()
     Session.configure(bind=engine)
     Base.metadata.create_all(bind=engine)
     session = Session()
-    user_name = input("Admin user name [admin]: ")
-    if not user_name:
+    if ask:
+        user_name = input("Admin user name [admin]: ")
+        if not user_name:
+            user_name = "admin"
+        password = None
+        while not password:
+            pw_1 = input("Password: ")
+            pw_2 = input("Password Verify: ")
+            if pw_1 and pw_1 == pw_2:
+                password = pw_1
+    else:
         user_name = "admin"
-    password = "admin"
-    while not password:
-        pw_1 = input("Password: ")
-        pw_2 = input("Password Verify: ")
-        if pw_1 and pw_1 == pw_2:
-            password = pw_1
-
+        password = "admin"
     admin = User(user_name=user_name, password=password, role=ROLE_ADMIN)
     session.add(admin)
     session.commit()

@@ -41,6 +41,12 @@ logger = ProxyLogger()
 from tranny import configuration
 config = configuration.Configuration()
 config.initialize()
+
+# Init cache
+from tranny import cache
+cache.configure(config)
+
+# Init db
 engine = create_engine(config.get_db_uri())
 # Setup sqlalchemy session factory
 Base = declarative_base()
@@ -54,7 +60,7 @@ torrent_client = None
 from tranny.models import User
 from tranny.util import file_size
 from tranny import ui
-from tranny.extensions import mail, cache, login_manager, socketio
+from tranny.extensions import mail, login_manager, socketio
 
 __all__ = ['create_app', 'config', 'Session']
 

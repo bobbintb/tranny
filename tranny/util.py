@@ -6,7 +6,7 @@ from os import getpid
 from fuzzywuzzy import fuzz
 from psutil import Process, disk_partitions, disk_usage
 from flask import request, url_for, redirect
-
+from tranny import exceptions
 
 def fmt_ratio(ratio):
     return "{:.2f}".format(ratio)
@@ -84,6 +84,11 @@ def find_closest_match(string, iterable, key):
     def cmp(item):
         return fuzz.ratio(string.lower(), item.get(key, "").lower())
     return sorted(iterable, key=cmp, reverse=True)[0]
+
+
+def raise_unless(v, exc=exceptions.TrannyException, msg=None):
+    if not v:
+        raise exc(msg)
 
 
 contains = lambda seq, values: all([k in values for k in seq])

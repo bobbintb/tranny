@@ -37,7 +37,7 @@ class Configuration(ConfigParser):
     """
     _config_path = None
 
-    def __init__(self):
+    def __init__(self, path="~/.config/tranny"):
         ConfigParser.__init__(self)
 
         self.config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
@@ -47,6 +47,8 @@ class Configuration(ConfigParser):
                 raise ConfigError("Failed to load configuration")
         except IOError:
             raise ConfigError("No config file found: {}".format(self.config_file))
+        self.config_path = expanduser(path)
+        self.cache_path = join(self.config_path, 'cache_path')
 
     def rules(self):
         pass
@@ -112,15 +114,17 @@ class Configuration(ConfigParser):
         # No configs were found
         return False
 
-    def create_dirs(self, path="~/.config/tranny"):
+    def create_dirs(self):
         """ Initialize a users config directory by creating the prerequisite directories.
 
         :return:
         :rtype:
         """
-        config_path = expanduser(path)
-        if not exists(config_path):
-            mkdirp(config_path)
+        if not exists(self.config_path):
+            mkdirp(self.config_path)
+        if not exists(self.cache_path):
+            mkdirp(self.cache_path)
+
 
     def initialize(self, file_path=False):
         self.create_dirs()

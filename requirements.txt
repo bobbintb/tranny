@@ -17,3 +17,4 @@ flask-uploads
 flask-wtf
 imdbpy
 fuzzywuzzy
+dogile.cache

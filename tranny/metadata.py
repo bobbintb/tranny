@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+import logging
 from sqlalchemy import or_
 from sqlalchemy.exc import DBAPIError
-from tranny import tasks, constants, models
+from tranny import tasks, constants, exceptions
 from tranny.app import Session
 from tranny.service import trakt
+from tranny.util import raise_unless
+from tranny.models import Show, Episode, Movie, Genre
+
+log = logging.getLogger(__name__)
 
 
 def update_media_info(download):
@@ -18,58 +23,60 @@ def update_trakt(release_key):
     :type release_key: BaseReleaseKey|TVReleaseKey|TVDailyReleaseKey|MovieReleaseKey
     """
     session = Session()
-    if release_key.media_type == constants.MEDIA_TV:
-        info = trakt.show_episode_summary(release_key.name, release_key.season, release_key.episode)
-        _update_trakt_tv(session, release_key, info)
+    media_info = None
+
     try:
+        if release_key.media_type == constants.MEDIA_TV:
+            info = trakt.show_episode_summary(release_key.name, release_key.season, release_key.episode)
+            raise_unless(info, exceptions.ApiError, "Failed to fetch metadata for: {}".format(release_key))
+            media_info = _update_trakt_tv(session, info)
+        elif release_key.media_type == constants.MEDIA_MOVIE:
+            info = trakt.movie_summary(release_key.name)
+            raise_unless(info, exceptions.ApiError, "Failed to fetch metadata for: {}".format(release_key))
+            media_info = _update_trakt_movie(session, info)
+        else:
+            return None
         session.commit()
     except DBAPIError:
         session.rollback()
+    except exceptions.ApiError as e:
+        log.warn(e.message)
+    return media_info
 
 
-def _update_trakt_tv(session, release_key, info):
+def _update_trakt_tv(session, info, update_show=True):
     """
 
     :param session:
     :type session: sqlalchemy.orm.session.Session
-    :param release_key:
-    :type release_key:
     :param info:
     :type info:
     :return:
     :rtype:
     """
-    show_args = []
-    for key in ['tvrage_id', 'tvdb_id', 'imdb_id']:
-        value = info.get('show', {}).get(key, None)
-        if value:
-            show_args.append(getattr(models.Show, key) == value)
-    show = session.query(models.Show).filter(or_(*show_args)).first() if show_args else None
+    show_args = Show.build_model_or_args(Show.external_keys, info.get('show', {}))
+    show = session.query(Show).filter(or_(*show_args)).first()
     if not show:
-        show = models.Show()
-        for model_prop, api_prop in trakt.show_properties_map:
-            api_value = info.get('show', {}).get(api_prop, None)
-            if not api_value:
-                continue
-            setattr(show, model_prop, api_value)
+        show = Show()
         session.add(show)
-    episode_args = []
-    for key in ['tvdb_id', 'imdb_id']:
-        value = info.get('episode').get(key, None)
-        if value:
-            episode_args.append(getattr(models.Episode, key) == value)
-    episode = session.query(models.Episode).filter(or_(*episode_args)).first()
+    if update_show or not show.show_id:
+        show.update_properties(trakt.show_properties_map, info.get('show', {}))
+    episode_args = Episode.build_model_or_args(Episode.external_keys, info.get('episode', {}))
+    episode = session.query(Episode).filter(or_(*episode_args)).first()
     if not episode:
-        episode = models.Episode()
+        episode = Episode()
         session.add(episode)
-    for model_prop, api_prop in trakt.episode_property_map:
-        api_value = info.get('episode', {}).get(api_prop, None)
-        if not api_value:
-            continue
-        setattr(episode, model_prop, api_value)
+    episode.update_properties(trakt.episode_property_map, info.get('episode', {}))
     if not episode in show.episodes:
         show.episodes.append(episode)
     return episode
 
 
+def _update_trakt_movie(session, info):
+    movie_args = Movie.build_model_or_args(Movie.external_keys, info)
+    movie = session.query(Movie).filter(or_(*movie_args)).first()
+    if not movie:
+        movie = Movie()
+        session.add(movie)
+    return movie.update_properties(trakt.movie_property_map, info)
 

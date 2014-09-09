@@ -4,7 +4,7 @@ from functools import partial
 import time
 import re
 import hashlib
-from tranny import net, constants, util
+from tranny import net, constants, util, cache
 from tranny.app import config
 
 _slug_cache = {
@@ -15,7 +15,7 @@ _slug_cache = {
 TRAKT_URL = 'http://api.trakt.tv/'
 
 show_properties_map = [
-    # [Model prop, api prop]
+    # [Model.prop, api.prop]
     ['air_day', 'air_day'],
     ['air_time', 'air_time'],
     ['certification', 'certification'],
@@ -33,6 +33,7 @@ show_properties_map = [
 ]
 
 episode_property_map = [
+    # [Model.prop, api.prop]
     ['first_aired', 'first_aired'],
     ['trakt_url', 'url'],
     ['overview', 'overview'],
@@ -43,6 +44,19 @@ episode_property_map = [
     ['season', 'season']
 ]
 
+movie_property_map = [
+    # [Model.prop, api.prop]
+    ['title', 'title'],
+    ['year', 'year'],
+    ['released', 'released'],
+    ['trakt_url', 'url'],
+    ['trailer', 'trailer'],
+    ['runtime', 'runtime'],
+    ['tag_line', 'tagline'],
+    ['imdb_id', 'imdb_id'],
+    ['tmdb_id', 'tmdb_id'],
+    ['rt_id', 'rt_id']
+]
 
 def _find_slug(title, media_type):
     slug = _slug_cache[media_type].get(title, None)
@@ -113,26 +127,32 @@ search_tv = partial(search, media_type=constants.MEDIA_TV)
 search_movie = partial(search, media_type=constants.MEDIA_MOVIE)
 
 
+@cache.cache_on_arguments()
 def show_episode_summary(show, season, episode):
     return _get_request('show/episode/summary', _find_slug(show, constants.MEDIA_TV), season, episode)
 
 
+@cache.cache_on_arguments()
 def show_related(show):
     return _get_request('show/related', _find_slug(show, constants.MEDIA_TV))
 
 
+@cache.cache_on_arguments()
 def show_season(show, season):
     return _get_request('show/season', _find_slug(show, constants.MEDIA_TV), season)
 
 
+@cache.cache_on_arguments()
 def show_seasons(show):
     return _get_request('show/seasons', _find_slug(show, constants.MEDIA_TV))
 
 
+@cache.cache_on_arguments()
 def show_summary(show):
     return _get_request('show/summary', _find_slug(show, constants.MEDIA_TV))
 
 
+@cache.cache_on_arguments()
 def show_episode_seen(tvdb_id, title, season, episode, year=None, imdb_id=None):
     return _post_request(
         'show/episode/seen', {
@@ -151,17 +171,21 @@ def show_episode_seen(tvdb_id, title, season, episode, year=None, imdb_id=None):
     )
 
 
+@cache.cache_on_arguments()
 def movie_summary(movie):
     return _get_request('movie/summary', _find_slug(movie, constants.MEDIA_MOVIE))
 
 
+@cache.cache_on_arguments()
 def movie_related(movie):
     return _get_request('movie/related', _find_slug(movie, constants.MEDIA_MOVIE))
 
 
+@cache.cache_on_arguments()
 def recommend_movies():
     return _get_request('recommendations/movies')
 
 
+@cache.cache_on_arguments()
 def recommend_shows():
     return _get_request('recommendations/shows')

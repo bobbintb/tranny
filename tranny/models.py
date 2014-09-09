@@ -10,7 +10,28 @@ from tranny.app import Base
 from tranny.constants import ROLE_USER
 
 
-class User(Base):
+class ModelArgs(object):
+    @classmethod
+    def build_model_or_args(cls, keys, data):
+        show_args = []
+        for key in keys:
+            value = data.get(key, None)
+            if value:
+                show_args.append(getattr(cls, key) == value)
+        return show_args
+
+
+class PropUpdate(object):
+    def update_properties(self, property_map, data):
+        for model_prop, api_prop in property_map:
+            api_value = data.get(api_prop, None)
+            if not api_value:
+                continue
+            setattr(self, model_prop, api_value)
+        return self
+
+
+class User(Base, ModelArgs):
     __tablename__ = "user"
     user_id = Column(Integer, primary_key=True)
     user_name = Column(String(32), nullable=False)
@@ -37,10 +58,11 @@ class User(Base):
         return not self.user_id
 
     def get_id(self):
-        return unicode(self.user_id)
+        # TODO How to properly convert int to unicode for py3?
+        return "{}".format(self.user_id)
 
 
-class Section(Base):
+class Section(Base, ModelArgs):
     __tablename__ = "section"
 
     section_id = Column(Integer, primary_key=True, nullable=False)
@@ -52,7 +74,7 @@ class Section(Base):
         self.section_name = section_name
 
 
-class Source(Base):
+class Source(Base, ModelArgs):
     __tablename__ = "source"
 
     source_id = Column(Integer, primary_key=True)
@@ -78,14 +100,14 @@ genre_movie_assoc_table = Table(
 )
 
 
-class Genre(Base):
+class Genre(Base, ModelArgs):
     __tablename__ = 'genre'
 
     genre_id = Column(Integer, primary_key=True)
     genre_name = Column(Unicode(length=16), unique=True, nullable=False)
 
 
-class MediaInfo(Base):
+class MediaInfo(Base, ModelArgs):
     __tablename__ = 'media_info'
 
     media_id = Column(Integer, primary_key=True)
@@ -99,8 +121,10 @@ class MediaInfo(Base):
     tvrage_id = Column(Integer, nullable=True)
 
 
-class Show(Base):
+class Show(Base, ModelArgs, PropUpdate):
     __tablename__ = 'show'
+
+    external_keys = ['imdb_id', 'tvrage_id', 'tvdb_id']
 
     show_id = Column(Integer, primary_key=True)
     title = Column(Unicode(length=255), nullable=False)
@@ -122,8 +146,10 @@ class Show(Base):
     episodes = relationship("Episode")
 
 
-class Episode(Base):
+class Episode(Base, ModelArgs, PropUpdate):
     __tablename__ = 'episode'
+
+    external_keys = ['imdb_id', 'tvdb_id']
 
     episode_id = Column(Integer, primary_key=True)
     show_id = Column(Integer, ForeignKey(Show.show_id))
@@ -137,8 +163,10 @@ class Episode(Base):
     first_aired = Column(Integer)
 
 
-class Movie(Base):
+class Movie(Base, ModelArgs, PropUpdate):
     __tablename__ = 'movie'
+
+    external_keys = ['tvdb_id', 'imdb_id']
 
     movie_id = Column(Integer, primary_key=True)
     title = Column(Unicode(length=255), nullable=False)
@@ -155,7 +183,7 @@ class Movie(Base):
     genres = relationship('Genre', secondary=genre_movie_assoc_table, backref="movies")
 
 
-class Download(Base):
+class Download(Base, ModelArgs):
     __tablename__ = 'download'
 
     entity_id = Column(Integer, primary_key=True)
