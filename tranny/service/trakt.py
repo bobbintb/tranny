@@ -4,6 +4,7 @@ from functools import partial
 import time
 import re
 import hashlib
+from fuzzywuzzy import fuzz
 from tranny import net, constants, util, cache
 from tranny.app import config
 
@@ -65,7 +66,7 @@ def _find_slug(title, media_type):
     if slug:
         return slug
     else:
-        closest = search(title, media_type)
+        closest = search(media_type, title)
         if media_type == constants.MEDIA_MOVIE:
             slug = closest['imdb_id']
         elif media_type == constants.MEDIA_TV:
@@ -88,12 +89,14 @@ def _make_url(method, api_key, json=True):
     return "{}{}{}/{}".format(TRAKT_URL, method, '.json' if json else '', api_key)
 
 
-def _get_request(method, *args):
+def _get_request(method, *args, **kwargs):
+    params = kwargs.get('params', None)
+    args = [i for i in args if i]
     key = config.get_default('trakt', 'api_key', None)
     if not key:
         return {}
     full_url = "".join([_make_url(method, key), '/' if args else "", '/'.join(map(unicode, args))])
-    return net.http_request(full_url)
+    return net.http_request(full_url, params=params, method='get')
 
 
 def _post_request(method, data):
@@ -105,12 +108,13 @@ def _post_request(method, data):
     url = _make_url(method, key, json=False)
     data['username'] = username
     data['password'] = hashlib.sha1(password).hexdigest()
-    return net.http_request(url, data=data, method='post')
+    results = net.http_request(url, data=data, method='post')
+    return results
 
 
 @cache.cache_on_arguments(expiration_time=3600)
-def calendar_shows():
-    return _get_request('calendar/shows')
+def calendar_shows(date, days):
+    return _get_request('calendar/shows', date, days)
 
 
 @cache.cache_on_arguments(expiration_time=3600)
@@ -119,7 +123,7 @@ def calendar_premiers():
 
 
 @cache.cache_on_arguments()
-def search(search_query, media_type):
+def search(media_type, search_query):
     if media_type == constants.MEDIA_TV:
         method = 'search/shows'
     else:
@@ -128,13 +132,33 @@ def search(search_query, media_type):
     return util.find_closest_match(search_query, results, 'title')
 
 
-search_tv = partial(search, media_type=constants.MEDIA_TV)
-search_movie = partial(search, media_type=constants.MEDIA_MOVIE)
+search_tv = partial(search, constants.MEDIA_TV)
+search_movie = partial(search, constants.MEDIA_MOVIE)
+
+
+def search_episode(search_query):
+    results = _get_request('search/episodes', params={'query': search_query})
+    return results
 
 
 @cache.cache_on_arguments()
 def show_episode_summary(show, season, episode):
     return _get_request('show/episode/summary', _find_slug(show, constants.MEDIA_TV), season, episode)
+
+
+@cache.cache_on_arguments()
+def show_episode_summary_daily(show, day, month, year):
+    date_fmt = "{}{:0>2}{:0>2}".format(year, month, day)
+    shows = calendar_shows(date_fmt, 1)
+    if not shows or not shows[0].get('episodes', None):
+        return {}
+    best_match = [0, None]
+    for show_info in shows[0].get('episodes', []):
+        show_data = show_info.get('show', {})
+        ratio = fuzz.partial_ratio(show, show_data.get('title', ""))
+        if ratio > best_match[0]:
+            best_match = [ratio, show_info]
+    return best_match[1]
 
 
 @cache.cache_on_arguments()
@@ -153,27 +177,30 @@ def show_seasons(show):
 
 
 @cache.cache_on_arguments()
-def show_summary(show):
-    return _get_request('show/summary', _find_slug(show, constants.MEDIA_TV))
+def show_summary(show, extended):
+    args = [_find_slug(show, constants.MEDIA_TV)]
+    if extended:
+        args.append("extended")
+    return _get_request('show/summary', *args)
 
 
-@cache.cache_on_arguments()
-def show_episode_seen(tvdb_id, title, season, episode, year=None, imdb_id=None):
-    return _post_request(
-        'show/episode/seen', {
-            'tvdb_id': tvdb_id,
-            'title': title,
-            'year': year,
-            'imdb_id': imdb_id,
-            'episodes': [
-                {
-                    "season": season,
-                    "episode": episode,
-                    "last_played": time.time()
-                }
-            ]
-        }
-    )
+#@cache.cache_on_arguments()
+# def show_episode_seen(tvdb_id, title, season, episode, year=None, imdb_id=None):
+#     return _post_request(
+#         'show/episode/seen', {
+#             'tvdb_id': tvdb_id,
+#             'title': title,
+#             'year': year,
+#             'imdb_id': imdb_id,
+#             'episodes': [
+#                 {
+#                     "season": season,
+#                     "episode": episode,
+#                     "last_played": time.time()
+#                 }
+#             ]
+#         }
+#     )
 
 
 @cache.cache_on_arguments()

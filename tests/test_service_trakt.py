@@ -14,7 +14,7 @@ class TraktServiceTest(TrannyTestCase):
 
     def test_show_summary(self):
         # Uses title with space to test slug detection
-        self.assertEqual(trakt.show_summary("The Simpsons").get('tvrage_id', 0), 6190)
+        self.assertEqual(trakt.show_summary("The Simpsons", False).get('tvrage_id', 0), 6190, False)
 
     def test_show_related(self):
         self.assertTrue(len(trakt.show_related(self.show)) >= 10)
@@ -27,22 +27,29 @@ class TraktServiceTest(TrannyTestCase):
         seasons = trakt.show_seasons(self.show)
         self.assertEqual(len(seasons), 10)
 
-    def test_show__episode_seen(self):
-        result = trakt.show_episode_seen(304130, 'Seinfeld', 5, 7, imdb_id='tt0697739')
-        self.assertEqual(result['status'], 'success')
+    # def test_show_episode_seen(self):
+    #     result = trakt.show_episode_seen(304130, 'Seinfeld', 5, 7, imdb_id='tt0697739')
+    #     self.assertEqual(result['status'], 'success')
 
     def test_show_episode_summary(self):
+        daily_summary = trakt.show_episode_summary_daily("The Daily Show", 9, 9, 2014)
+        self.assertEqual(daily_summary['episode']['number'], 149)
+        self.assertEqual(daily_summary['episode']['season'], 19)
         summary = trakt.show_episode_summary(self.show, self.season, self.episode)
         self.assertEqual(summary.get('episode', {}).get('season', 0), self.season)
         self.assertEqual(summary.get('episode', {}).get('number', 0), self.episode)
 
     def test_calendar_shows(self):
-        shows = trakt.calendar_shows()
+        shows = trakt.calendar_shows(None, None)
         self.assertEqual(len(shows), 7)
 
     def test_calendar_premiers(self):
         premiers = trakt.calendar_premiers()
         self.assertTrue(len(premiers) > 0)
+
+    def test_search_episode(self):
+        results = trakt.search_episode("The Daily Show - 2014-09-09")
+        self.assertTrue(results)
 
     def test_search_tv(self):
         result = trakt.search_tv(self.show)
