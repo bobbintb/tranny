@@ -4,6 +4,7 @@ Base implementation of a torrent provider. New providers should mostly be ok
 just overriding the fetch_releases method.
 """
 from __future__ import unicode_literals
+import logging
 from time import time
 from tranny.app import config, logger, Session
 from tranny import models, net
@@ -16,12 +17,8 @@ class TorrentProvider(object):
     def __init__(self, config_section):
         """ Provides a basic interface to generate new torrents from external services.
 
-        :param config:
-        :type config: tranny.configuration.Configuration
         :param config_section:
         :type config_section:
-        :return:
-        :rtype:
         """
 
         # Timestamp of last successful update
@@ -29,6 +26,11 @@ class TorrentProvider(object):
         self.last_update = 0
         self._config_section = config_section
         self.interval = config.get_default(config_section, "interval", 60, int)
+        self.log = logging.getLogger(config_section)
+        self.log.debug("Initialized {} Provider ({} State): {}".format(
+            self.__class__.__name__,
+            'Enabled' if self.enabled else 'Disabled', self.name)
+        )
 
     @property
     def name(self):

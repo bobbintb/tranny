@@ -105,10 +105,10 @@ def configure_services(app):
     global service_manager
     from tranny.manager import ServiceManager
 
-    service_manager = ServiceManager()
-    service_manager.init()
-    service_manager.start()
-    app.services = service_manager
+    #service_manager = ServiceManager()
+    #service_manager.init()
+    #service_manager.start()
+    #app.services = service_manager
 
 
 def configure_app(app):

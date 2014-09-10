@@ -4,7 +4,7 @@ RSS backend provider functionality
 """
 from __future__ import unicode_literals
 import feedparser
-from tranny import app, provider, parser, datastore, release
+from tranny import app, provider, parser, datastore, release, net
 
 
 class RSSFeed(provider.TorrentProvider):
@@ -20,9 +20,6 @@ class RSSFeed(provider.TorrentProvider):
         self.url = app.config.get(config_section, "url")
         self.interval = app.config.get_default(config_section, "interval", 60, int)
         self.enabled = app.config.getboolean(config_section, "enabled")
-        app.logger.debug("Initialized RSS Provider ({} State): {}".format(
-            'Enabled' if self.enabled else 'Disabled', self.name)
-        )
 
     def fetch_releases(self, session):
         """
@@ -31,48 +28,50 @@ class RSSFeed(provider.TorrentProvider):
         This will attempt to fetch proper releases for existing releases if the fetch_proper config value
         is true.
 
-        :param session:
+        :param session: DB Session
         :type session: sqlalchemy.orm.session.Session
         :return: a 3 element tuple containing (release_name, torrent_raw_data, section_name)
         :rtype: tranny.release.TorrentData
         """
         for entry in feedparser.parse(self.url).get('entries', {}):
-            torrent_data = self.parse_entry(entry)
+            torrent_data = self.parse_entry(session, entry)
             if torrent_data:
                 yield torrent_data
 
-    def parse_entry(self, entry):
+    def parse_entry(self, session, entry):
         """ Parse RSS entry data for qualified torrents to download
 
+        :param session: DB Session
+        :type session: sqlalchemy.orm.session.Session
         :param entry: RSS Feed entry data
         :type entry: dict
         :return: A parsed release object ready to load into backend client or None on fail
         :rtype: release.TorrentData, None
         """
-        try:
-            release_name = entry.get('title', None)
-            if not release_name:
-                raise ValueError
-        except (KeyError, ValueError):
-            app.logger.warning("No title parsed from RSS feed. Malformed?")
+
+        release_name = entry.get('title', "")
+        if not release_name:
+            self.log.warning("No title parsed from RSS feed. Malformed?")
             return None
+
         release_key = datastore.generate_release_key(release_name)
         if not release_key:
+            self.log.warning("No release key parsed from release name: {}".format(release_name))
             return None
 
         section = parser.find_section(release_name)
         if not section:
             return None
-        if self.exists(release_key):
+        if self.exists(session, release_key):
             if app.config.get_default("general", "fetch_proper", True, bool):
                 if not ".proper." in release_name.lower():
                     # Skip releases unless they are considered proper's
-                    app.logger.debug(
+                    self.log.debug(
                         "Skipped previously downloaded release ({0}): {1}".format(
                             release_key, release_name))
                     return None
-        torrent_data = self._download_url(entry['link'])
+        torrent_data = net.http_request(entry['link'], json=False)
         if not torrent_data:
-            app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
+            self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
             return None
         return release.TorrentData(bytes(release_name), torrent_data, section)

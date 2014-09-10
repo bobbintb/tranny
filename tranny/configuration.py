@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+import logging
 from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
 from sys import version_info
 
 from tranny.exceptions import ConfigError
-from tranny.app import logger
+
+log = logging.getLogger(__name__)
 
 try:
     # noinspection PyUnresolvedReferences
@@ -268,9 +270,10 @@ class Configuration(ConfigParser):
             with open(self.config_file, 'w') as config:
                 self.write(config)
         except IOError:
-            logger.exception("Failed to write config file")
+            log.exception("Failed to write config file")
             return False
         else:
+            log.info("Saved config file: {}".format(self.config_file))
             return True
 
     def get_section_values(self, section):
@@ -324,4 +327,4 @@ class Configuration(ConfigParser):
             return v
         config_values = {k.upper(): conv_value(k, v) for k, v in self.get_section_values("flask").items()}
         app.config.update(config_values)
-        app.logger.info("Loaded config")
+        log.info("Loaded flask config successfully")

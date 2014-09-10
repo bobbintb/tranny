@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import defaultdict
+from sqlalchemy import Unicode, type_coerce
 from tranny import parser, constants
 from tranny.models import Section, Source, User, Download
 
@@ -10,7 +11,7 @@ cache_release = defaultdict(lambda: False)
 cache_source = defaultdict(lambda: False)
 
 
-class BaseReleaseKey(object):
+class BaseReleaseKey(Unicode):
     """
     Basic info for a release used to make a unique identifier for a release name
     """
@@ -28,6 +29,9 @@ class BaseReleaseKey(object):
 
     def __eq__(self, other):
         return other == self.release_key
+
+    def bind_expression(self, bindvalue):
+        return type_coerce(bindvalue, Unicode)
 
 
 class TVReleaseKey(BaseReleaseKey):
