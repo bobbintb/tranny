@@ -139,9 +139,13 @@ def is_movie(release_name, strict=True):
             elif kind in ["movie", "video movie"]:
                 return True
     else:
-        info = rating.tmdb_info(orig_title.replace(".", " "))
-        if info:
-            return True
+        try:
+            info = rating.tmdb_info(orig_title.replace(".", " "))
+        except:
+            pass
+        else:
+            if info:
+                return True
     app.logger.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
 

@@ -4,7 +4,7 @@ import socket
 from time import time
 from jsonrpclib import Server
 from jsonrpclib.jsonrpc import ProtocolError
-from tranny import app, parser, provider, datastore, release
+from tranny import app, parser, provider, datastore, release, net
 
 _errors = {
     -32001: "Invalid API Key",
@@ -22,9 +22,6 @@ class BroadcastTheNet(provider.TorrentProvider):
         self._api_token = app.config.get(self._config_section, "api_token")
         url = app.config.get(self._config_section, "url")
         self.api = Server(uri=url)
-        app.logger.info("Initialized BTN Provider ({} State)".format(
-            'Enabled' if self.enabled else 'Disabled')
-        )
 
     def __call__(self, method, args=None):
         """ Make a API call to the JSON-RPC server. This method will inject the API key into the request
@@ -126,7 +123,7 @@ class BroadcastTheNet(provider.TorrentProvider):
                             )
                             continue
                 dl_url = self.get_torrent_url(entry['TorrentID'])
-                torrent_data = self._download_url(entry['DownloadURL'])
+                torrent_data = net.http_request(entry['DownloadURL'], json=False)
                 if not torrent_data:
                     app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue

@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import logging
 from time import time
 from tranny.app import config, logger, Session
-from tranny import models, net
+from tranny.models import Download
 
 
 class TorrentProvider(object):
@@ -61,7 +61,7 @@ class TorrentProvider(object):
 
     def exists(self, session, release_key):
         try:
-            return session.query(models.Download).filter_by(release_key=release_key).all()
+            return session.query(Download).filter_by(release_key="{}".format(release_key)).all()
         except Exception as err:
             logger.exception(err)
             return False

@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from collections import defaultdict
-from sqlalchemy import Unicode, type_coerce
+import logging
+from sqlalchemy.exc import DBAPIError
 from tranny import parser, constants
 from tranny.models import Section, Source, User, Download
 
+log = logging.getLogger(__name__)
 
 cache_section = defaultdict(lambda: False)
 cache_release = defaultdict(lambda: False)
 cache_source = defaultdict(lambda: False)
 
 
-class BaseReleaseKey(Unicode):
+class BaseReleaseKey(object):
     """
     Basic info for a release used to make a unique identifier for a release name
     """
@@ -30,8 +32,8 @@ class BaseReleaseKey(Unicode):
     def __eq__(self, other):
         return other == self.release_key
 
-    def bind_expression(self, bindvalue):
-        return type_coerce(bindvalue, Unicode)
+    def as_unicode(self):
+        return "{}".format(self)
 
 
 class TVReleaseKey(BaseReleaseKey):
@@ -45,6 +47,7 @@ class TVReleaseKey(BaseReleaseKey):
         self.season = season
         self.episode = episode
         self.year = year
+        self.daily = False
 
 
 class TVDailyReleaseKey(BaseReleaseKey):
@@ -58,6 +61,7 @@ class TVDailyReleaseKey(BaseReleaseKey):
         self.day = day
         self.month = month
         self.year = year
+        self.daily = True
 
 
 class MovieReleaseKey(BaseReleaseKey):
@@ -112,7 +116,7 @@ def get_section(session, section_name=None, section_id=None):
         return session.query(Section).all()
     if not section and section_name:
         section = Section(section_name)
-        session.session.add(section)
+        session.add(section)
         #session.session.commit()
     return section
 
@@ -134,7 +138,7 @@ def get_source(session, source_name=None, source_id=None):
         return session.query(Source).query.all()
     if not source and source_name:
         source = Source(source_name)
-        session.session.add(source)
+        session.add(source)
         #session.session.commit()
     elif not source:
         raise ValueError("Invalid source name")
@@ -174,5 +178,34 @@ def fetch_user(session, user_name=None, user_id=None, limit=None):
     elif user_id:
         data_set = session.query(User).filter_by(user_id=user_id).first()
     else:
-        data_set = session.query(User).query.limit(limit).all()
+        data_set = session.query(User).limit(limit).all()
     return data_set
+
+
+def db_drop():
+    from tranny.app import Base, engine
+    for tbl in reversed(Base.metadata.sorted_tables):
+        log.info("Dropping: {}".format(tbl.name))
+        tbl.drop(engine)
+
+
+def db_init(username="admin", password="tranny", wipe=False):
+    from tranny.app import Base, engine, Session
+    Session.configure(bind=engine)
+    try:
+        if wipe:
+            db_drop()
+        Base.metadata.create_all(bind=engine)
+    except DBAPIError:
+        log.exception("Failed to initialize db schema")
+    else:
+        log.info("Initialized db schema successfully")
+        session = Session()
+        try:
+            admin = User(user_name=username, password=password, role=constants.ROLE_ADMIN)
+            session.add(admin)
+            session.commit()
+        except DBAPIError:
+            session.rollback()
+        else:
+            log.info("Created admin user successfully")

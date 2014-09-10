@@ -103,9 +103,9 @@ class ServiceManager(object):
                 raise ClientError
             app.logger.info("Added release: {0}".format(torrent.release_name))
             release_key = datastore.generate_release_key(torrent.release_name)
-            section = datastore.get_section(torrent.section)
-            source = datastore.get_source(service.name)
-            download = Download(release_key, torrent.release_name, section.section_id,
+            section = datastore.get_section(session, torrent.section)
+            source = datastore.get_source(session, service.name)
+            download = Download(release_key.as_unicode(), torrent.release_name, section.section_id,
                                 source.source_id)
             session.add(download)
             session.commit()

@@ -17,9 +17,6 @@ class HDBits(provider.TorrentProvider):
         self.endpoint = app.config.get_default(self._config_section, 'endpoint', 'https://hdbits.org/api')
         self.enabled = app.config.getboolean(self._config_section, 'enabled')
         self.interval = app.config.get_default(self._config_section, 'interval', self.interval, int)
-        app.logger.info("Initialized HDBits Provider ({} State)".format(
-            'Enabled' if self.enabled else 'Disabled')
-        )
 
     def _request(self, method):
         pass

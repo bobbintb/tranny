@@ -57,7 +57,7 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     return dl_ok
 
 
-def http_request(url, auth=None, json=True, timeout=10, method='get', data=None):
+def http_request(url, auth=None, json=True, timeout=30, method='get', data=None, params=None):
     """ Fetch and return data contained at the url provided
 
     :param data:
@@ -74,7 +74,7 @@ def http_request(url, auth=None, json=True, timeout=10, method='get', data=None)
     try:
         app.logger.debug("Fetching url: {0}".format(url))
         if method == 'get':
-            response = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
+            response = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout, params=params)
         elif method == 'post':
             response = post(url, data=data, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
         response.raise_for_status()
