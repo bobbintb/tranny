@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 from functools import partial
-import time
 import re
 import hashlib
 from fuzzywuzzy import fuzz
@@ -182,25 +181,6 @@ def show_summary(show, extended):
     if extended:
         args.append("extended")
     return _get_request('show/summary', *args)
-
-
-#@cache.cache_on_arguments()
-# def show_episode_seen(tvdb_id, title, season, episode, year=None, imdb_id=None):
-#     return _post_request(
-#         'show/episode/seen', {
-#             'tvdb_id': tvdb_id,
-#             'title': title,
-#             'year': year,
-#             'imdb_id': imdb_id,
-#             'episodes': [
-#                 {
-#                     "season": season,
-#                     "episode": episode,
-#                     "last_played": time.time()
-#                 }
-#             ]
-#         }
-#     )
 
 
 @cache.cache_on_arguments()

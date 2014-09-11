@@ -13,6 +13,18 @@ from tranny.constants import ROLE_USER
 class ModelArgs(object):
     @classmethod
     def build_model_or_args(cls, keys, data):
+        """
+        This method will build a list of sqlalchemy or_ parameters for the keys
+        that exist in the dict that is assigned to the properties of the sub-classed
+        model with the same name as the key.
+
+        :param keys:
+        :type keys:
+        :param data:
+        :type data:
+        :return:[]or_
+        :rtype:
+        """
         show_args = []
         for key in keys:
             value = data.get(key, None)
@@ -33,6 +45,7 @@ class PropUpdate(object):
 
 class User(Base, ModelArgs):
     __tablename__ = "user"
+
     user_id = Column(Integer, primary_key=True)
     user_name = Column(String(32), nullable=False)
     password = Column(String(40), nullable=False)
@@ -105,6 +118,10 @@ class Genre(Base, ModelArgs):
 
     genre_id = Column(Integer, primary_key=True)
     genre_name = Column(Unicode(length=16), unique=True, nullable=False)
+
+    def __init__(self, genre_name=None):
+        if genre_name:
+            self.genre_name = genre_name.title()
 
 
 class MediaInfo(Base, ModelArgs):

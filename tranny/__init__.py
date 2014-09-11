@@ -29,29 +29,61 @@ def parse_args():
         from tranny.datastore import db_drop, db_init
         db_init(username=options.username, password=options.password, wipe=options.wipe)
 
+    def cmd_cache_clear(options):
+        from tranny import cache
+        cache.invalidate()
+
     parser = argparse.ArgumentParser(prog="tranny-cli.py", description="Tranny torrent management system")
+
     subparsers = parser.add_subparsers(help="Command help")
 
-    db_init = subparsers.add_parser("db_init")
+    db_init = subparsers.add_parser("db_init", help="Initialize the database schema")
     db_init.add_argument("-u", "--username", help="Admin username", default="admin")
     db_init.add_argument("-p", "--password", help="Admin password", default="tranny")
     db_init.add_argument("-w", "--wipe", help="Wipe any existing database", action="store_true")
     db_init.set_defaults(func=cmd_db_init)
 
-    db_drop = subparsers.add_parser("drop_db", help="Drop (delete) the existing database. This is non-reversible.")
+    db_drop = subparsers.add_parser("db_drop", help="Drop (delete) the existing database. This is non-reversible.")
     db_drop.set_defaults(func=cmd_db_drop)
 
-    sp_run = subparsers.add_parser("run")
-    sp_run.set_defaults(func=cmd_start)
+    run = subparsers.add_parser("run", help="Run the application")
+    run.add_argument("-H", "--host", help="WebUI host to bind to", default="admin")
+    run.add_argument("-P", "--port", help="WebUI port to bind to", default="tranny")
+    run.set_defaults(func=cmd_start)
+
+    # aliases=['cc'] (requires 3.2+)
+    cache_clear = subparsers.add_parser("cache_clear", help="Clear the application cache")
+    cache_clear.set_defaults(func=cmd_cache_clear)
 
     return parser.parse_args()
 
 
 def main():
+    """ Main entry point for the application. Runs the command parsed from the CLI
+    using the argparse func system
+    """
+    # Exception raised on exit due to threading module loading before gevent
+    # This preemptive patching prevents this
+    # see: http://stackoverflow.com/questions/8774958/keyerror-in-module-threading-after-a-successful-py-test-run
+    import sys
+    if 'threading' in sys.modules:
+        del sys.modules['threading']
+    import gevent
+    import gevent.monkey
+    gevent.monkey.patch_all()
+
+    # Setup logger & config
     logging.basicConfig(level=logging.INFO)
     from tranny.app import config
+
+    # Execute the user command
     arguments = parse_args()
-    arguments.func(arguments)
+    try:
+        arguments.func(arguments)
+    except:
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 if __name__ == '__main__':

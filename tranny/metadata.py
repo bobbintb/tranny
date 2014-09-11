@@ -5,6 +5,7 @@ from sqlalchemy import or_
 from sqlalchemy.exc import DBAPIError
 from tranny import tasks, constants, exceptions
 from tranny.app import Session
+from tranny.datastore import get_genre
 from tranny.service import trakt
 from tranny.util import raise_unless
 from tranny.models import Show, Episode, Movie, Genre
@@ -45,14 +46,15 @@ def update_trakt(release_key):
 
 
 def _update_trakt_tv(session, info, update_show=True):
-    """
+    """ Fetch trakt info and create or update the model instance with
+    the latest API data available.
 
     :param session:
     :type session: sqlalchemy.orm.session.Session
-    :param info:
-    :type info:
-    :return:
-    :rtype:
+    :param info: API response dict from trakt
+    :type info: dict
+    :return: Updated episode instance ready to be committed
+    :rtype: Episode
     """
     show_args = Show.build_model_or_args(Show.external_keys, info.get('show', {}))
     show = session.query(Show).filter(or_(*show_args)).first()
@@ -61,6 +63,12 @@ def _update_trakt_tv(session, info, update_show=True):
         session.add(show)
     if update_show or not show.show_id:
         show.update_properties(trakt.show_properties_map, info.get('show', {}))
+        for genre in [g.title() for g in info.get('show', {}).get('genres', [])]:
+            if not show.genres or not genre in [g.genre_name for g in show.genres]:
+                new_genre = get_genre(session, genre, create=True)
+                if new_genre:
+                    show.genres.append(new_genre)
+
     episode_args = Episode.build_model_or_args(Episode.external_keys, info.get('episode', {}))
     episode = session.query(Episode).filter(or_(*episode_args)).first()
     if not episode:
@@ -79,4 +87,3 @@ def _update_trakt_movie(session, info):
         movie = Movie()
         session.add(movie)
     return movie.update_properties(trakt.movie_property_map, info)
-

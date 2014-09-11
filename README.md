@@ -115,7 +115,7 @@ the ability to disable it completely.
 
 **Other**
 
-- [ ] Python 3 support. Tranny itself should be python3 compatible, but some libraries are not.
+- [ ] Python 3 support. Tranny itself should be python3 compatible, but some libraries are not (gevent).
 - [ ] API support
 
 
@@ -146,3 +146,8 @@ A list of the major library used.
 ## Setup
 
 For more in depth ways to start the service please see the [setup docs](docs/setup.md).
+
+
+## Contact
+
+I am generally available in the #tranny channel on freenode

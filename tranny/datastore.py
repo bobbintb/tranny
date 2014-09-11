@@ -4,7 +4,7 @@ from collections import defaultdict
 import logging
 from sqlalchemy.exc import DBAPIError
 from tranny import parser, constants
-from tranny.models import Section, Source, User, Download
+from tranny.models import Section, Source, User, Download, Genre
 
 log = logging.getLogger(__name__)
 
@@ -139,10 +139,18 @@ def get_source(session, source_name=None, source_id=None):
     if not source and source_name:
         source = Source(source_name)
         session.add(source)
-        #session.session.commit()
     elif not source:
         raise ValueError("Invalid source name")
     return source
+
+
+def get_genre(session, genre_name, create=True):
+    genre = session.query(Genre).filter(Genre.genre_name == genre_name.title()).first()
+    if not genre and create:
+        genre = Genre(genre_name)
+        session.add(genre)
+        log.info("Created new genre: {}".format(genre.genre_name))
+    return genre
 
 
 def fetch_download(session, release_key=None, download_id=None, limit=None):
@@ -187,6 +195,7 @@ def db_drop():
     for tbl in reversed(Base.metadata.sorted_tables):
         log.info("Dropping: {}".format(tbl.name))
         tbl.drop(engine)
+    return True
 
 
 def db_init(username="admin", password="tranny", wipe=False):
@@ -209,3 +218,5 @@ def db_init(username="admin", password="tranny", wipe=False):
             session.rollback()
         else:
             log.info("Created admin user successfully")
+            return True
+    return False

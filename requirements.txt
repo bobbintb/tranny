@@ -8,13 +8,10 @@ pathtools
 jinja2
 flask
 flask-login
-flask-script
 flask-mail
-flask-cache
 flask-babel
 flask-socketio
 flask-uploads
 flask-wtf
-imdbpy
 fuzzywuzzy
-dogile.cache
+dogpile.cache

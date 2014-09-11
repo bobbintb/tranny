@@ -51,6 +51,7 @@ class Configuration(ConfigParser):
             raise ConfigError("No config file found: {}".format(self.config_file))
         self.config_path = expanduser(path)
         self.cache_path = join(self.config_path, 'cache_path')
+        self.cache_file = join(self.cache_path, "cache.dbm")
 
     def rules(self):
         pass
