@@ -43,6 +43,16 @@ class PropUpdate(object):
         return self
 
 
+class GenreUpdate(object):
+    def update_genres(self, session, genres):
+        from tranny.datastore import get_genre
+        for genre in [g.title() for g in genres]:
+            if not self.genres or not genre in [g.genre_name for g in self.genres]:
+                new_genre = get_genre(session, genre, create=True)
+                if new_genre:
+                    self.genres.append(new_genre)
+
+
 class User(Base, ModelArgs):
     __tablename__ = "user"
 
@@ -138,7 +148,7 @@ class MediaInfo(Base, ModelArgs):
     tvrage_id = Column(Integer, nullable=True)
 
 
-class Show(Base, ModelArgs, PropUpdate):
+class Show(Base, ModelArgs, PropUpdate, GenreUpdate):
     __tablename__ = 'show'
 
     external_keys = ['imdb_id', 'tvrage_id', 'tvdb_id']
@@ -179,8 +189,9 @@ class Episode(Base, ModelArgs, PropUpdate):
     trakt_url = Column(Unicode(length=255))
     first_aired = Column(Integer)
 
+    show = relationship("Show")
 
-class Movie(Base, ModelArgs, PropUpdate):
+class Movie(Base, ModelArgs, PropUpdate, GenreUpdate):
     __tablename__ = 'movie'
 
     external_keys = ['tvdb_id', 'imdb_id']

@@ -164,7 +164,6 @@ def show_episode_summary_daily(show, day, month, year):
 def show_related(show):
     return _get_request('show/related', _find_slug(show, constants.MEDIA_TV))
 
-
 @cache.cache_on_arguments()
 def show_season(show, season):
     return _get_request('show/season', _find_slug(show, constants.MEDIA_TV), season)

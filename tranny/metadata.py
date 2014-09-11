@@ -28,7 +28,12 @@ def update_trakt(release_key):
 
     try:
         if release_key.media_type == constants.MEDIA_TV:
-            info = trakt.show_episode_summary(release_key.name, release_key.season, release_key.episode)
+            if release_key.daily:
+                info = trakt.show_episode_summary_daily(
+                    release_key.name, release_key.day, release_key.month, release_key.year
+                )
+            else:
+                info = trakt.show_episode_summary(release_key.name, release_key.season, release_key.episode)
             raise_unless(info, exceptions.ApiError, "Failed to fetch metadata for: {}".format(release_key))
             media_info = _update_trakt_tv(session, info)
         elif release_key.media_type == constants.MEDIA_MOVIE:
@@ -63,12 +68,7 @@ def _update_trakt_tv(session, info, update_show=True):
         session.add(show)
     if update_show or not show.show_id:
         show.update_properties(trakt.show_properties_map, info.get('show', {}))
-        for genre in [g.title() for g in info.get('show', {}).get('genres', [])]:
-            if not show.genres or not genre in [g.genre_name for g in show.genres]:
-                new_genre = get_genre(session, genre, create=True)
-                if new_genre:
-                    show.genres.append(new_genre)
-
+        show.update_genres(session, info.get('show', {}).get('genres'))
     episode_args = Episode.build_model_or_args(Episode.external_keys, info.get('episode', {}))
     episode = session.query(Episode).filter(or_(*episode_args)).first()
     if not episode:
@@ -86,4 +86,9 @@ def _update_trakt_movie(session, info):
     if not movie:
         movie = Movie()
         session.add(movie)
-    return movie.update_properties(trakt.movie_property_map, info)
+    movie.update_properties(trakt.movie_property_map, info)
+    movie.update_genres(session, info.get('genres', {}))
+    return movie
+
+
+
