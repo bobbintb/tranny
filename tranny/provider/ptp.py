@@ -29,7 +29,7 @@ class PTP(provider.TorrentProvider):
         password = app.config.get_default(self._config_section, 'password', None)
         passkey = app.config.get_default(self._config_section, 'passkey', None)
         if not user and password and passkey:
-            app.logger.warn("Cannot use PTP service, no username or password set")
+            self.log.warn("Cannot use PTP service, no username or password set")
             return False
         try:
             resp = self.session.post(
@@ -48,9 +48,9 @@ class PTP(provider.TorrentProvider):
             if not data['Result'].upper() == 'OK':
                 raise AuthenticationError(data['Message'])
         except (ApiError, AuthenticationError) as err:
-            app.logger.error(err.message)
+            self.log.error(err.message)
         except Exception as err:
-            app.logger.exception(err)
+            self.log.exception(err)
         else:
             self._authenticated = True
             return self._authenticated

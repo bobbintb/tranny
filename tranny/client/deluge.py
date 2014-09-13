@@ -77,7 +77,7 @@ class DelugeClient(client.TorrentClient):
             try:
                 self._request('web.get_hosts')
             except (requests.ConnectionError, ClientNotAvailable) as err:
-                #app.logger.debug("Failed to connect to {}".format(
+                #self.log.debug("Failed to connect to {}".format(
                 #    app.config.get_default("general", "client", "torrent client")))
                 self._host_up = False
                 sleep_time = 1
@@ -92,6 +92,8 @@ class DelugeClient(client.TorrentClient):
         #    return False
         if not self._host_up:
             raise ClientNotAvailable()
+
+        # This needs to recover/re-attempt later as it marks it as failed permanently right now
         if attempt > self.max_request_retries:
             self.log.error("Maximum number of retries reached: {} ({})".format(
                 method, self.max_request_retries))
@@ -199,6 +201,9 @@ class DelugeClient(client.TorrentClient):
         """ Establish a "connection" to the deluge/webui service. This grants us access to all available
         exposed api methods from deluge. The client must authenticate() before trying to connect().
 
+        TODO Handle the registered events to push new data to the webui as we are not notified
+        of new torrents if they are added externally from tranny
+
         :return: Connection attempt result
         :rtype: bool
         """
@@ -207,7 +212,7 @@ class DelugeClient(client.TorrentClient):
         if resp is None:
             # Flag us as connected, allowing further api requests
             self.connected = True
-            app.logger.info("Connected to deluge {}/{}".format(*self.client_version()))
+            self.log.info("Connected to deluge {}/{}".format(*self.client_version()))
             self._request('web.register_event_listener', ['PluginDisabledEvent'])
             self._request('web.register_event_listener', ['PluginEnabledEvent'])
             self._request('web.register_event_listener', ['TorrentAddedEvent'])

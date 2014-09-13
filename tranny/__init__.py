@@ -80,7 +80,8 @@ def main():
     arguments = parse_args()
     try:
         arguments.func(arguments)
-    except:
+    except Exception as err:
+        logging.exception("Fatal error!")
         sys.exit(1)
     else:
         sys.exit(0)

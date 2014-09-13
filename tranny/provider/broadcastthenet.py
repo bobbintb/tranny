@@ -42,11 +42,11 @@ class BroadcastTheNet(provider.TorrentProvider):
         except ProtocolError as err:
             self._handle_error(err)
         except socket.timeout:
-            app.logger.warn("Timeout accessing BTN API")
+            self.log.warn("Timeout accessing BTN API")
         except socket.error as err:
-            app.logger.error("There was a socket error trying to call BTN API")
+            self.log.error("There was a socket error trying to call BTN API")
         except Exception as err:
-            app.logger.exception("Unknown BTN API call error occurred")
+            self.log.exception("Unknown BTN API call error occurred")
         else:
             result = response
         finally:
@@ -64,10 +64,10 @@ class BroadcastTheNet(provider.TorrentProvider):
             msg = _errors[int(err.message[0])]
         except KeyError:
             msg = ""
-        app.logger.error("JSON-RPC Protocol error calling BTN API: {0}".format(msg))
+        self.log.error("JSON-RPC Protocol error calling BTN API: {0}".format(msg))
         if err.message[0] == -32002:
             self.last_update = int(time()) + 300
-            app.logger.info("Pausing for API cool down")
+            self.log.info("Pausing for API cool down")
 
     def user_info(self):
         return self.__call__(b"userInfo")
@@ -99,7 +99,7 @@ class BroadcastTheNet(provider.TorrentProvider):
         try:
             releases = self.get_torrents_browse(50)['torrents'].values()
         except (TypeError, KeyError) as err:
-            app.logger.debug("Failed to fetch releases")
+            self.log.debug("Failed to fetch releases")
         else:
             if scene_only:
                 releases = [rls for rls in releases if rls['Origin'] == "Scene"]
@@ -112,10 +112,11 @@ class BroadcastTheNet(provider.TorrentProvider):
                 if not section:
                     continue
                 if self.exists(session, release_key):
+                    # TODO add repack support as well
                     if app.config.get_default("general", "fetch_proper", True, bool):
                         if not ".proper." in release_name.lower():
                             # Skip releases unless they are considered propers
-                            app.logger.debug(
+                            self.log.debug(
                                 "Skipped previously downloaded release ({0}): {1}".format(
                                     release_key,
                                     release_name
@@ -125,7 +126,7 @@ class BroadcastTheNet(provider.TorrentProvider):
                 dl_url = self.get_torrent_url(entry['TorrentID'])
                 torrent_data = net.http_request(entry['DownloadURL'], json=False)
                 if not torrent_data:
-                    app.logger.error("Failed to download torrent data from server: {0}".format(entry['link']))
+                    self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue
                 data = release.TorrentData(str(release_name), torrent_data, section)
                 yield data
