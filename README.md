@@ -1,5 +1,9 @@
 # Tranny - A highly configurable torrent downloader and API wrapper
 
+
+**This is still early in the development process, i don't recommend users commit to using it yet as its still in a constant
+state of change.**
+
 Tranny is a python library, daemon and web interface designed to interact with a number of torrent clients via their respective
 API's. It shares some goals similar to [sickbeard](http://sickbeard.com/) but is tailored to torrents and
 specifically private tracker support. Its very unlikely [usenet/nbz](http://en.wikipedia.org/wiki/NZB) support will
