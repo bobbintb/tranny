@@ -5,18 +5,18 @@ import gevent
 from socketio.server import SocketIOServer
 from sqlalchemy.exc import DBAPIError
 from tranny import app, datastore, watch, client, metadata
-from tranny.app import config
+from tranny.app import config, Session, engine, Base
 from tranny.exceptions import ClientError
 from tranny.models import Download
 from tranny.provider.rss import RSSFeed
-from tranny.service import tmdb
 
 log = logging.getLogger(__name__)
 
 
 class ServiceManager(object):
     """
-    Manages all the backend services enabled in the config
+    Manages all the backend services enabled in the config. This would be considered
+    the core off the application containing its main event loop process
     """
 
     def __init__(self):
@@ -25,6 +25,7 @@ class ServiceManager(object):
         self.services = []
         self.webui = None
         self.client = None
+        self.init_db()
         self._updater = gevent.Greenlet(self.update_providers)
         self._updater.start_later(1)
         self.watch = None
@@ -32,24 +33,28 @@ class ServiceManager(object):
         if config.getboolean("webui", "enabled"):
             self.init_webui()
         app.torrent_client = client.init_client()
+        # TODO Watch service is hanging at the moment, needs to be looked into
         # if platform.system() == 'Linux':
         #    self.watch = watch.FileWatchService(self)
         #else:
         #    log.info("File watch service not supported under: {}".format(platform.system()))
 
     def reload(self):
-        pass
+        self._updater.kill()
+        config.initialize()
 
-    def init(self):
-        try:
-            tmdb_api_key = app.config.get("themoviedb", "api_key")
-        except:
-            pass
-        else:
-            tmdb.configure(tmdb_api_key)
-            # self.watch = watch.FileWatchService(self)
+    def init_db(self):
+        """ Bind our sqlalchemy engine and create any missing tables """
+        Session.configure(bind=engine)
+        Base.metadata.create_all(bind=engine)
 
     def init_webui(self):
+        """ Initialize and start the flask based webui. This does not check if it is
+        enabled, so that must happen prior to calling this
+
+        :return:
+        :rtype:
+        """
         host = config.get_default('flask', 'listen_host', 'localhost')
         port = config.get_default('flask', 'listen_port', 5000, int)
         from tranny.app import create_app
@@ -57,8 +62,6 @@ class ServiceManager(object):
         wsgi_app = create_app()
         socketio_app = SocketIOServer((host, port), wsgi_app, resource='socket.io')
         socketio_app.serve_forever()
-        #self.webui = pywsgi.WSGIServer((host, port), socketio_app)
-        #self.webui.serve_forever()
 
     def init_providers(self):
         """ Initialize and return the API based services.

@@ -74,9 +74,6 @@ def create_app(app_name="tranny"):
     :rtype: Flask
     """
 
-    Session.configure(bind=engine)
-    Base.metadata.create_all(bind=engine)
-
     app = Flask(app_name)
     configure_app(app)
     configure_extensions(app)
@@ -85,23 +82,7 @@ def create_app(app_name="tranny"):
     configure_logging(app)
     configure_template_filters(app)
     configure_error_handlers(app)
-    configure_services(app)
     return app
-
-
-def configure_services(app):
-    """ Setup and start the background downloader services thread
-
-    :param app: Application instance
-    :type app: Flask
-    """
-    global service_manager
-    from tranny.manager import ServiceManager
-
-    #service_manager = ServiceManager()
-    #service_manager.init()
-    #service_manager.start()
-    #app.services = service_manager
 
 
 def configure_app(app):

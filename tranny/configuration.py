@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 import logging
+import os
 from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
@@ -103,16 +104,19 @@ class Configuration(ConfigParser):
         :return:
         :rtype:
         """
-        # Try and get home dir config
-        home_config = expanduser("~/.config/tranny/{0}".format(config_name))
-        if exists(home_config):
-            return home_config
-
         # Try and get project source root config
         base_path = dirname(dirname(__file__))
         config_path = join(base_path, config_name)
         if exists(config_path):
             return config_path
+
+        # Try and get home dir config
+        xdg_home = os.environ.get("XDG_CONFIG_HOME")
+        if not xdg_home:
+            xdg_home = os.path.expanduser(os.path.join("~", ".config"))
+        home_config = join(xdg_home, "/tranny/{0}".format(config_name))
+        if exists(home_config):
+            return home_config
 
         # No configs were found
         return False
