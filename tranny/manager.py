@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import logging
 import gevent
-from gevent import pywsgi
 from socketio.server import SocketIOServer
 from sqlalchemy.exc import DBAPIError
 from tranny import app, datastore, watch, client, metadata
@@ -10,6 +10,8 @@ from tranny.exceptions import ClientError
 from tranny.models import Download
 from tranny.provider.rss import RSSFeed
 from tranny.service import tmdb
+
+log = logging.getLogger(__name__)
 
 
 class ServiceManager(object):
@@ -27,11 +29,13 @@ class ServiceManager(object):
         self._updater.start_later(1)
         self.watch = None
         self.init_providers()
-        self.init_webui()
+        if config.getboolean("webui", "enabled"):
+            self.init_webui()
+        app.torrent_client = client.init_client()
         # if platform.system() == 'Linux':
         #    self.watch = watch.FileWatchService(self)
         #else:
-        #    app.logger.info("File watch service not supported under: {}".format(platform.system()))
+        #    log.info("File watch service not supported under: {}".format(platform.system()))
 
     def reload(self):
         pass
@@ -101,7 +105,7 @@ class ServiceManager(object):
             res = client.get().add(torrent, download_dir=dl_path)
             if not res:
                 raise ClientError
-            app.logger.info("Added release: {0}".format(torrent.release_name))
+            log.info("Added release: {0}".format(torrent.release_name))
             release_key = datastore.generate_release_key(torrent.release_name)
             section = datastore.get_section(session, torrent.section)
             source = datastore.get_source(session, service.name)
@@ -110,12 +114,12 @@ class ServiceManager(object):
             session.add(download)
             session.commit()
         except DBAPIError as err:
-            app.logger.exception(err)
+            log.exception(err)
             session.rollback()
         except ClientError:
-            app.logger.warning("Could not add torrent to client backend")
+            log.warning("Could not add torrent to client backend")
         except Exception as err:
-            app.logger.exception(err)
+            log.exception(err)
         else:
             metadata.update_media_info(release_key)
 
@@ -131,3 +135,5 @@ class ServiceManager(object):
 
     def start(self):
         self._updater.start()
+        while True:
+            gevent.sleep(0.1)

@@ -86,14 +86,7 @@ def create_app(app_name="tranny"):
     configure_template_filters(app)
     configure_error_handlers(app)
     configure_services(app)
-    configure_torrent_client(app)
     return app
-
-
-def configure_torrent_client(app):
-    from tranny import client
-    global torrent_client
-    torrent_client = client.init_client()
 
 
 def configure_services(app):
