@@ -6,7 +6,9 @@ from __future__ import unicode_literals
 from functools import partial
 from flask import Blueprint
 import gevent
-from tranny import ui, api, client
+from tranny import ui
+from tranny import api
+from tranny import client
 from tranny.app import torrent_client
 from tranny.exceptions import ClientNotAvailable
 

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, absolute_import
 
 __author__ = "Leigh MacDonald <leigh.macdonald@gmail.com>"
 __license__ = "BSD 3-Clause"
 __copyright__ = "Copyright (c) 2013-2014 Leigh MacDonald"
 __version__ = '0.0.1'
-
 
 import argparse
 import logging
@@ -34,6 +34,8 @@ def parse_args():
         cache.invalidate()
 
     parser = argparse.ArgumentParser(prog="tranny-cli.py", description="Tranny torrent management system")
+    parser.add_argument("-c", "--config", help="Specify alternate config path", default=False)
+    parser.add_argument("-l", "--loglevel", help="Set logging level", default=False)
 
     subparsers = parser.add_subparsers(help="Command help")
 
@@ -73,15 +75,25 @@ def main():
     gevent.monkey.patch_all()
 
     # Setup logger & config
-    logging.basicConfig(level=logging.INFO)
     from tranny.app import config
-
     # Execute the user command
     arguments = parse_args()
+
     try:
+        if arguments.loglevel:
+            log_level = arguments.loglevel.upper()
+        elif config.has_option("log", "level"):
+            log_level = config.get_default("log", "level")
+        else:
+            log_level = "INFO"
+        log_fmt = config.get_default("log", "format", "%(asctime)s - %(message)s")
+        logging.basicConfig(level=logging.getLevelName(log_level), format=log_fmt)
+
+        if arguments.config:
+            config.initialize(arguments.config)
         arguments.func(arguments)
-    except Exception as err:
-        logging.exception("Fatal error!")
+    except Exception:
+        logging.exception("Fatal error, cannot start!")
         sys.exit(1)
     else:
         sys.exit(0)

@@ -9,7 +9,7 @@ try:
     from xmlrpc import client as xmlrpclib
 except ImportError:
     import xmlrpclib
-from tranny.app import config, logger
+from tranny.app import config
 from tranny import client
 
 __all__ = ['RTorrentClient']
@@ -128,9 +128,6 @@ class SCGITransport(xmlrpclib.Transport):
 
         # Remove SCGI headers from the response.
         response_header, response_body = re.split(r'\n\s*?\n', response_body, maxsplit=1)
-
-        if self.verbose:
-            logger.debug('body:', repr(response_body))
 
         p.feed(response_body)
         p.close()

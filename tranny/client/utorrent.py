@@ -9,7 +9,9 @@ from collections import namedtuple
 from logging import getLogger
 from requests import Session
 from requests.auth import HTTPBasicAuth
-from tranny import app, exceptions, client
+from tranny import app
+from tranny import exceptions
+from tranny import client
 
 
 class uTorrentException(exceptions.TrannyException):

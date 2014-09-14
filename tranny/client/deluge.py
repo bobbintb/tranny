@@ -11,7 +11,7 @@ import json
 import time
 import gevent
 import requests
-from tranny import client, app, util
+from tranny import client
 from tranny.exceptions import AuthenticationError, ApiError, ClientNotAvailable
 
 ERROR_AUTH = 1

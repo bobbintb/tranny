@@ -3,9 +3,8 @@
 
 """
 from __future__ import unicode_literals, absolute_import
-import requests
-from tranny import provider, app
-from tranny.exceptions import AuthenticationError, ApiError
+from tranny import provider
+from tranny.app import config
 
 
 class HDBits(provider.TorrentProvider):
@@ -14,9 +13,9 @@ class HDBits(provider.TorrentProvider):
     """
     def __init__(self, config_section):
         super(HDBits, self).__init__(config_section)
-        self.endpoint = app.config.get_default(self._config_section, 'endpoint', 'https://hdbits.org/api')
-        self.enabled = app.config.getboolean(self._config_section, 'enabled')
-        self.interval = app.config.get_default(self._config_section, 'interval', self.interval, int)
+        self.endpoint = config.get_default(self._config_section, 'endpoint', 'https://hdbits.org/api')
+        self.enabled = config.getboolean(self._config_section, 'enabled')
+        self.interval = config.get_default(self._config_section, 'interval', self.interval, int)
 
     def _request(self, method):
         pass

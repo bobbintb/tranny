@@ -14,4 +14,5 @@ flask-socketio
 flask-uploads
 flask-wtf
 fuzzywuzzy
+dogpile
 dogpile.cache

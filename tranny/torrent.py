@@ -13,7 +13,8 @@
 
 # Minor modifications made by Andrew Resch to replace the BTFailure errors with Exceptions
 from hashlib import sha1
-from tranny import util, exceptions
+from tranny import util
+from tranny import exceptions
 
 
 def decode_int(x, f):

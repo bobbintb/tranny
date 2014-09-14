@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from base64 import b64encode
-from tranny.app import config, logger
+from tranny.app import config
 from tranny import client
 try:
     from transmissionrpc import Client, TransmissionError
     from transmissionrpc.constants import DEFAULT_PORT
 except ImportError:
-    logger.error("""Please install the transmission python library available at
+    print("""Please install the transmission python library available at
         "http://pythonhosted.org/transmissionrpc/""")
     raise SystemExit()
 

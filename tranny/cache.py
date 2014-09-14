@@ -4,9 +4,6 @@
 """
 from __future__ import unicode_literals, absolute_import
 import logging
-from jsonrpclib import config
-from os.path import exists
-from os import unlink
 from dogpile.cache import make_region
 
 log = logging.getLogger(__name__)
@@ -21,10 +18,8 @@ def configure(config):
 
     # Todo: dont hardcode this
 
-    :param config:
-    :type config: tranny.config.Configuration
-    :return:
-    :rtype:
+    :param config: Application config instance
+    :type config: Configuration
     """
     region.configure_from_config(
         {

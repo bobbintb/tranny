@@ -4,7 +4,10 @@ from functools import partial
 import re
 import hashlib
 from fuzzywuzzy import fuzz
-from tranny import net, constants, util, cache
+from tranny import net
+from tranny import constants
+from tranny import util
+from tranny import cache
 from tranny.app import config
 
 _slug_cache = {
@@ -91,7 +94,7 @@ def _make_url(method, api_key, json=True):
 def _get_request(method, *args, **kwargs):
     params = kwargs.get('params', None)
     args = [i for i in args if i]
-    key = config.get_default('trakt', 'api_key', None)
+    key = config.get_default('service_trakt', 'api_key', None)
     if not key:
         return {}
     full_url = "".join([_make_url(method, key), '/' if args else "", '/'.join(map(unicode, args))])
@@ -99,11 +102,11 @@ def _get_request(method, *args, **kwargs):
 
 
 def _post_request(method, data):
-    key = config.get_default('trakt', 'api_key', None)
+    key = config.get_default('service_trakt', 'api_key', None)
     if not key:
         return {}
-    username = config.get("trakt", "username")
-    password = config.get("trakt", "password")
+    username = config.get("service_trakt", "username")
+    password = config.get("service_trakt", "password")
     url = _make_url(method, key, json=False)
     data['username'] = username
     data['password'] = hashlib.sha1(password).hexdigest()
@@ -163,6 +166,7 @@ def show_episode_summary_daily(show, day, month, year):
 @cache.cache_on_arguments()
 def show_related(show):
     return _get_request('show/related', _find_slug(show, constants.MEDIA_TV))
+
 
 @cache.cache_on_arguments()
 def show_season(show, season):

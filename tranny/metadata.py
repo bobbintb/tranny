@@ -3,18 +3,40 @@ from __future__ import unicode_literals, absolute_import
 import logging
 from sqlalchemy import or_
 from sqlalchemy.exc import DBAPIError
-from tranny import tasks, constants, exceptions
+from tranny import tasks
+from tranny import constants
+from tranny import exceptions
 from tranny.app import Session
 from tranny.datastore import get_genre
 from tranny.service import trakt
+from tranny.service import imdb
 from tranny.util import raise_unless
-from tranny.models import Show, Episode, Movie, Genre
+from tranny.models import Show, Episode, Movie
 
 log = logging.getLogger(__name__)
 
 
-def update_media_info(download):
-    tasks.add_task(tasks.Task(update_trakt, download))
+def update_media_info(release_key):
+    tasks.add_task(tasks.Task(update_metadata, release_key))
+
+
+def update_metadata(release_key):
+    media_info = update_trakt(release_key)
+    if media_info:
+        update_imdb(media_info=media_info)
+
+
+def update_imdb(media_info=None, release_key=None):
+    session = Session()
+    try:
+        if media_info.imdb_id:
+            movie_info = imdb.get_movie(media_info.imdb_id)
+
+    except DBAPIError:
+        session.rollback()
+    except exceptions.ApiError as e:
+        log.warn(e.message)
+    return media_info
 
 
 def update_trakt(release_key):

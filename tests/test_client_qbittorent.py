@@ -2,9 +2,9 @@
 """
 
 """
-from __future__ import unicode_literals, absolute_import
-from tranny.client import qbittorrent
+from __future__ import unicode_literals
 from testcase import TrannyTestCase
+from tranny.client import qbittorrent
 
 
 class MockQBittorrentClient(object):
@@ -14,23 +14,24 @@ class MockQBittorrentClient(object):
 
 class QBTTest(TrannyTestCase):
     def test_torrent_list(self):
-        torrents = [
-            {
-                u'hash': u'9a8777601b7dbe0c2ee1b1e730bd64bbc7ef0e78',
-                u'name': u'Jimmy.Fallon.2014.08.20.Jared.Leto.720p.HDTV.x264-CROOKS',
-                u'ratio': u'0.0',
-                u'priority': u'*',
-                u'state': u'downloading',
-                u'eta': u'1d 1h',
-                u'num_seeds': u'16 (23)',
-                u'num_leechs': u'0 (1)',
-                u'progress': 0.187561988830566,
-                u'size': u'1.0 GiB',
-                u'dlspeed': u'10.5 KiB/s',
-                u'upspeed': u'0 B/s'
-            }
-        ]
+        torrent = {
+            'hash': '9a8777601b7dbe0c2ee1b1e730bd64bbc7ef0e78',
+            'name': 'Jimmy.Fallon.2014.08.20.Jared.Leto.720p.HDTV.x264-CROOKS',
+            'ratio': '0.0',
+            'priority': '*',
+            'state': 'downloading',
+            'eta': '1d 1h',
+            'num_seeds': '16 (23)',
+            'num_leechs': '0 (1)',
+            'progress': 0.187561988830566,
+            'size': '1.0 GiB',
+            'dlspeed': '10.5 KiB/s',
+            'upspeed': '0 B/s'
+        }
 
         client = qbittorrent.QBittorrentClient(password='test')
-        torrents = client._parse_torrent_list(torrents)
-        self.assertTrue(torrents)
+        parsed_torrent = client.parse_torrent_info(torrent)
+        self.assertEqual(
+            parsed_torrent['info_hash'],
+            '9a8777601b7dbe0c2ee1b1e730bd64bbc7ef0e78'
+        )

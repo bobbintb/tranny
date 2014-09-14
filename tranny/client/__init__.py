@@ -2,7 +2,8 @@
 from __future__ import unicode_literals, absolute_import
 from collections import namedtuple
 import logging
-from tranny import util, app
+from tranny import util
+from tranny import app
 from tranny.app import config
 from tranny.exceptions import ConfigError
 
@@ -105,7 +106,6 @@ class ClientTorrentData(dict):
     def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size, size_completed,
                  leechers, total_leechers, peers, total_peers, priority, private, is_active, progress, **kwargs):
         super(ClientTorrentData, self).__init__(**kwargs)
-        self['DT_RowId'] = info_hash
         self['info_hash'] = info_hash
         self['name'] = name
         self['ratio'] = util.fmt_ratio(ratio)

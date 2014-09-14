@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import socket
 from time import time
 from jsonrpclib import Server
 from jsonrpclib.jsonrpc import ProtocolError
-from tranny import app, parser, provider, datastore, release, net
+from tranny import app
+from tranny import parser
+from tranny import provider
+from tranny import datastore
+from tranny import release
+from tranny import net
 
 _errors = {
     -32001: "Invalid API Key",
@@ -16,7 +21,7 @@ class BroadcastTheNet(provider.TorrentProvider):
     """
     Provides access to content via BTN's API.
     """
-    def __init__(self, config_section="service_broadcastthenet"):
+    def __init__(self, config_section="provider_broadcastthenet"):
         super(BroadcastTheNet, self).__init__(config_section)
         self.enabled = app.config.getboolean(self._config_section, "enabled")
         self._api_token = app.config.get(self._config_section, "api_token")

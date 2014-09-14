@@ -2,17 +2,19 @@
 """
 Functions used to download data over HTTP connections
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import logging
 from os.path import join
 from requests import get, RequestException, post
-from tranny import app, exceptions
+from tranny import app
+from tranny import exceptions
 
 log = logging.getLogger(__name__)
 
 # Conversion table mostly used for converting 3rd party API values into common bytes
 speed_multi = {
     # Binary JEDEC keys
+    'B': lambda v: v,
     'KB': lambda v: v * 1024,
     'MB': lambda v: v * 1024 ** 2,
     'GB': lambda v: v * 1024 ** 3,
@@ -27,6 +29,7 @@ speed_multi = {
     'PiB': lambda v: v * 1024 ** 5,
 
     # Decimal metric keys
+    'b': lambda v: v,
     'kb': lambda v: v * 1000,
     'mb': lambda v: v * 1000 ** 2,
     'gb': lambda v: v * 1000 ** 3,

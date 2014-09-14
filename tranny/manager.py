@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import logging
 import gevent
 from socketio.server import SocketIOServer
 from sqlalchemy.exc import DBAPIError
-from tranny import app, datastore, watch, client, metadata
+from tranny import app
+from tranny import datastore
+from tranny import watch
+from tranny import client
+from tranny import metadata
 from tranny.app import config, Session, engine, Base
 from tranny.exceptions import ClientError
 from tranny.models import Download
@@ -72,20 +76,20 @@ class ServiceManager(object):
         :rtype: []TorrentProvider
         """
         self.services = []
-        service_list = [s for s in app.config.find_sections("service_")]
+        service_list = [s for s in app.config.find_sections("provider_")]
         service_list += [s for s in app.config.find_sections("rss_")]
         for service_name in service_list:
             if service_name.startswith("rss_"):
                 self.services.append(RSSFeed(service_name))
-            elif service_name == "service_broadcastthenet":
+            elif service_name == "provider_broadcastthenet":
                 from tranny.provider.broadcastthenet import BroadcastTheNet
 
                 self.services.append(BroadcastTheNet(service_name))
-            elif service_name == 'service_ptp':
+            elif service_name == 'provider_ptp':
                 from tranny.provider.ptp import PTP
 
                 self.services.append(PTP(service_name))
-            elif service_name == 'service_hdbits':
+            elif service_name == 'provider_hdbits':
                 from tranny.provider.hdbits import HDBits
 
                 self.services.append(HDBits(service_name))

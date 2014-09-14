@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import datetime
 import hashlib
 from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table, \
@@ -191,6 +191,7 @@ class Episode(Base, ModelArgs, PropUpdate):
 
     show = relationship("Show")
 
+
 class Movie(Base, ModelArgs, PropUpdate, GenreUpdate):
     __tablename__ = 'movie'
 
@@ -209,6 +210,22 @@ class Movie(Base, ModelArgs, PropUpdate, GenreUpdate):
     rt_id = Column(Integer, unique=True, nullable=True)
 
     genres = relationship('Genre', secondary=genre_movie_assoc_table, backref="movies")
+
+
+class Person(Base):
+    __tablename__ = "person"
+
+    person_id = Column(Integer, primary_key=True)
+    imdb_person_id = Column(Integer, nullable=False, unique=True)
+    name = Column(Unicode(length=255), nullable=False)
+
+
+class Role(Base):
+    __tablename__ = "role"
+
+    role_id = Column(Integer, primary_key=True)
+    imdb_role_id = Column(Integer, unique=True, nullable=False)
+    name = Column(Unicode(length=255), nullable=False)
 
 
 class Download(Base, ModelArgs):

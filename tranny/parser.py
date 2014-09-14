@@ -2,7 +2,7 @@
 """
 File name parser/tokenizer functions
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from ConfigParser import NoSectionError, NoOptionError
 import logging
 from re import compile, I, match

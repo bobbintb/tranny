@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import hashlib
 from flask import Blueprint, redirect, url_for, request, flash
 from flask.ext.login import logout_user, login_user
-from tranny import models, ui
+from tranny import ui
 from tranny.app import Session
-import hashlib
+from tranny.models import User
 
 usr = Blueprint("user", __name__, url_prefix="/user")
 
@@ -23,7 +24,7 @@ def login_perform():
         pass
     else:
         session = Session()
-        user = session.query(models.User).filter_by(user_name=user_name).first()
+        user = session.query(User).filter_by(user_name=user_name).first()
         if not user or not user.password == hashlib.sha1(user_password).hexdigest():
             flash("Invalid credentials", "alert")
             return redirect(url_for(".login"))

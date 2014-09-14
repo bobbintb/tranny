@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request, flash, url_for, redirect
-
-from tranny import exceptions, app, torrent, release, forms
+from tranny import exceptions
+from tranny import app
+from tranny import torrent
+from tranny import release
+from tranny import forms
 
 upload = Blueprint("upload", __name__, url_prefix='/upload')
 
@@ -19,7 +22,7 @@ def handler():
             torrent_struct = torrent.Torrent.from_str(file_data)
 
             tor_data = release.TorrentData(torrent_struct.name, file_data, form.section.data)
-            if app.services.add(tor_data, HTTPUpload()):
+            if app.torrent_client.add(tor_data, HTTPUpload()):
                 flash("Torrent {} uploaded successfully".format(torrent_struct.name), "success")
             else:
                 flash("Failed to upload torrent", "alert")

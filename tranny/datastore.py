@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from collections import defaultdict
 import logging
 from sqlalchemy.exc import DBAPIError
-from tranny import parser, constants
+from tranny import parser
+from tranny import constants
 from tranny.models import Section, Source, User, Download, Genre
 
 log = logging.getLogger(__name__)

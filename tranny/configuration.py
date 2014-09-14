@@ -6,7 +6,6 @@ from os.path import exists, dirname, join, expanduser, isdir, abspath
 from os import makedirs, mkdir
 from errno import EEXIST
 from sys import version_info
-
 from tranny.exceptions import ConfigError
 
 log = logging.getLogger(__name__)
@@ -66,6 +65,8 @@ class Configuration(ConfigParser):
         :return: Return list of successfully read files.
         :rtype: []unicode
         """
+        if isinstance(file_names, basestring):
+            file_names = [file_names]
         loaded = ConfigParser.read(self, file_names)
         #map(logger.debug, loaded)
         return loaded
@@ -132,10 +133,10 @@ class Configuration(ConfigParser):
         if not exists(self.cache_path):
             mkdirp(self.cache_path)
 
-
     def initialize(self, file_path=False):
-        self.create_dirs()
         if not file_path:
+            # Only create default locations when we are not specifying a config explicitly
+            self.create_dirs()
             file_path = self.find_config()
         try:
             self.read(file_path)

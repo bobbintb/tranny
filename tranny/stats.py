@@ -2,9 +2,10 @@
 """
 Functions used to retrieve statistics from historical data.
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from collections import Counter
-from tranny import app, datastore
+from tranny import app
+from tranny import datastore
 
 
 class PieChart(Counter):
@@ -37,7 +38,7 @@ def service_type_totals(records):
     :rtype:
     """
     rss_feeds = [name.split("_")[1] for name in app.config.find_sections("rss_")]
-    services = [name.split("_")[1] for name in app.config.find_sections("service_")]
+    services = [name.split("_")[1] for name in app.config.find_sections("provider_")]
     counter = PieChart()
     for record in records:
         # TODO fix with joined value

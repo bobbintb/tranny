@@ -6,7 +6,7 @@ just overriding the fetch_releases method.
 from __future__ import unicode_literals
 import logging
 from time import time
-from tranny.app import config, logger, Session
+from tranny.app import config, Session
 from tranny.models import Download
 
 
@@ -63,5 +63,5 @@ class TorrentProvider(object):
         try:
             return session.query(Download).filter_by(release_key="{}".format(release_key)).all()
         except Exception as err:
-            logger.exception(err)
+            self.log.exception(err)
             return False

@@ -2,13 +2,15 @@
 from __future__ import unicode_literals
 from ConfigParser import NoOptionError
 from json import dumps
+import logging
 from flask import Blueprint, request, redirect, url_for
 from flask.ext.login import login_required
-from tranny.app import config, logger
+from tranny.app import config
 from tranny import ui
 
 rss = Blueprint("rss", __name__, url_prefix="/rss")
 
+log = logging.getLogger("web.rss")
 
 @rss.route("/", methods=['GET'])
 @login_required
@@ -79,9 +81,9 @@ def create():
         except KeyError:
             msg = "Failed to save config. Malformed request: {0}".format(feed)
     if status == 1:
-        logger.error(msg)
+        log.error(msg)
     else:
-        logger.info(msg)
+        log.info(msg)
     return redirect(url_for(".index"))
 
 

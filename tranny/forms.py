@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, absolute_import
 from os.path import join, dirname
 from flask.ext.wtf import Form
 from wtforms import HiddenField, SelectField, validators
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-
 from flask.ext import uploads
-from tranny import app
+from tranny.app import config
 
 torrent_file_set = uploads.UploadSet(
     'torrent',
@@ -23,5 +23,5 @@ class UploadForm(Form):
     def make(cls):
         ul_form = cls()
         ul_form.section.choices = [[s[len("section_"):], s[len("section_"):]]
-                                   for s in app.config.find_sections("section_")]
+                                   for s in config.find_sections("section_")]
         return ul_form

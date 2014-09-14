@@ -4,7 +4,12 @@ RSS backend provider functionality
 """
 from __future__ import unicode_literals
 import feedparser
-from tranny import app, provider, parser, datastore, release, net
+from tranny import app
+from tranny import provider
+from tranny import parser
+from tranny import datastore
+from tranny import release
+from tranny import net
 
 
 class RSSFeed(provider.TorrentProvider):

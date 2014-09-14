@@ -6,36 +6,14 @@ application.
 from __future__ import unicode_literals, absolute_import
 import httplib
 import os
-from functools import partial
 from json import dumps
-from flask import Flask, g, redirect, url_for, current_app, session, _app_ctx_stack
+from flask import Flask, g, redirect, url_for, session, _app_ctx_stack
 from flask.ext.login import current_user, confirm_login
 from flask.ext.uploads import configure_uploads, patch_request_class
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-
-def _log(msg, level="info"):
-    try:
-        getattr(current_app.logger, level)(msg)
-    except:
-        print(msg)
-
-
-class ProxyLogger(object):
-    """
-    Basic logger proxy which will print out to console if the flask app context is
-    not available
-    """
-    info = partial(_log, level='info')
-    warn = partial(_log, level='warn')
-    warning = warn
-    debug = partial(_log, level='debug')
-    error = partial(_log, level='error')
-    exception = partial(_log, level='exception')
-
-logger = ProxyLogger()
 
 # Setup global configuration
 from tranny import configuration

@@ -18,7 +18,7 @@ class DelugeTest(TrannyTestCase):
     def test_upload(self):
         torrent = TorrentData(
             'Jimmy.Fallon.2014.01.01.John.Smith.HDTV.x264-GROUP',
-            open(self.get_fixture('linux-iso.torrent'), 'rb').read(),
+            open(self.get_fixture('CentOS-6.3-x86_64-bin-DVD1to2.torrent'), 'rb').read(),
             'section_tv')
         self.assertTrue(self.client.add(torrent, config.get(torrent.section, 'dl_path')))
 

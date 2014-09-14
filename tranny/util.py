@@ -8,8 +8,9 @@ from psutil import Process, disk_partitions, disk_usage
 from flask import request, url_for, redirect
 from tranny import exceptions
 
+
 def fmt_ratio(ratio):
-    return "{:.2f}".format(ratio)
+    return "{:.2f}".format(float(ratio))
 
 
 def uptime_sys():

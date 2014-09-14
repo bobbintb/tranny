@@ -4,7 +4,10 @@
 """
 from __future__ import unicode_literals, absolute_import
 import requests
-from tranny import provider, app, parser, datastore
+from tranny import provider
+from tranny import parser
+from tranny import datastore
+from tranny.app import config
 from tranny.exceptions import AuthenticationError, ApiError
 
 
@@ -16,18 +19,18 @@ class PTP(provider.TorrentProvider):
     """
     def __init__(self, config_section):
         super(PTP, self).__init__(config_section)
-        self.endpoint = app.config.get_default(self._config_section, 'endpoint', 'https://tls.passthepopcorn.me')
-        self.enabled = app.config.getboolean(self._config_section, 'enabled')
-        self.interval = app.config.get_default(self._config_section, 'interval', self.interval, int)
+        self.endpoint = config.get_default(self._config_section, 'endpoint', 'https://tls.passthepopcorn.me')
+        self.enabled = config.getboolean(self._config_section, 'enabled')
+        self.interval = config.get_default(self._config_section, 'interval', self.interval, int)
         self._authenticated = False
         self.session = requests.Session()
         if self.enabled:
             self.login()
 
     def login(self):
-        user = app.config.get_default(self._config_section, 'user', None)
-        password = app.config.get_default(self._config_section, 'password', None)
-        passkey = app.config.get_default(self._config_section, 'passkey', None)
+        user = config.get_default(self._config_section, 'user', None)
+        password = config.get_default(self._config_section, 'password', None)
+        passkey = config.get_default(self._config_section, 'passkey', None)
         if not user and password and passkey:
             self.log.warn("Cannot use PTP service, no username or password set")
             return False

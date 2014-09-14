@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from testcase import TrannyTestCase
-from tranny import metadata, datastore
+from tranny import metadata
+from tranny import datastore
 
 
 class MetaDataTest(TrannyTestCase):
