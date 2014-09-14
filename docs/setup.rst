@@ -85,7 +85,7 @@ Using the editor of your choice, configure any options desired in your new confi
 
 You can now start the daemon process like so.
 
-    $ python tranny-daemon.py
+    $ python tranny-cli.py run
 
 I recommend running it like this for a while so you can monitor it for any issues that
 arise. Once you are confident in how its working you can proceed to enable it to start
@@ -112,7 +112,7 @@ the file as `/etc/supervisor.d/tranny.ini` or append this config to the standard
 `/etc/supervisord.conf` file::
 
     [program:tranny]
-    command=/home/user/tranny/virtenv/bin/python /home/user/tranny/tranny-daemon.py
+    command=/home/user/tranny/virtenv/bin/python /home/user/tranny/tranny-cli.py run
     directory=/home/user/tranny
     stdout_logfile=/home/user/tranny/tranny-supervisor.log
     redirect_stderr=true
