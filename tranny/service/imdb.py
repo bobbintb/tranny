@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+import re
 from imdb import IMDb
 from tranny import cache
+from tranny import constants
 from tranny.app import config
 
 config_section = 'service_imdb'
@@ -50,6 +52,25 @@ def _make_imdb():
 _imdb = _make_imdb()
 
 
+_runtime_rx = re.compile(r"(?P<runtime>\d+)")
+
+
+def find_runtime(run_times):
+    """ Parse the runtimes list looking for a runtime. Assume 1st is correct and
+    move on.
+
+    :param run_times: IMDB runtimes eg: [u'USA:60::(with commercials)'...]
+    :type run_times: list
+    :return: 1st parsed runtime
+    :rtype: int
+    """
+    for rt in run_times:
+        match = _runtime_rx.search(rt)
+        if match:
+            return match.groupdict()['runtime']
+    return None
+
+
 def get_movie(movie_id):
     try:
         int(_parse_imdb_id(movie_id))
@@ -59,14 +80,14 @@ def get_movie(movie_id):
         data = get_movie_by_id(movie_id)
     info = {}
     if data:
-        api_data = data.get('data')
+        api_data = data.data
         info['title'] = api_data['title']
-        info['genres'] = api_data['genres']
-        info['cover_url'] = api_data['cover_url']
+        info['genres'] = api_data.get('genres', [])
+        info['cover_url'] = api_data.get('cover url', "")
         info['director'] = []
         for person in api_data.get('director', []):
             info['director'].append({
-                'person_id': api_data['personID'],
+                'person_id': person.personID,
                 'name': "{}".format(person)
             })
         info['cast'] = []
@@ -74,21 +95,28 @@ def get_movie(movie_id):
             info['cast'].append({
                 'person': {
                     'name': "{}".format(person),
-                    'person_id': person['personID']
+                    'person_id': person.personID
                 },
                 'role': {
                     'name': "{}".format(person.currentRole[0]),
                     'role_id': person.currentRole[0].characterID
                 }
             })
-        if api_data['kind'] == "tv series":
+        kind = api_data.get('kind', False)
+        if kind == "tv series":
+            info["kind"] = constants.MEDIA_TV
             info["seasons"] = api_data["number of seasons"]
             try:
                 info["year"] = api_data["series years"].split("-")[0]
             except IndexError:
                 pass
-        info["rating"] = api_data["rating"]
-
+        elif kind == "movie":
+            info["kind"] == constants.MEDIA_MOVIE
+        else:
+            info["kind"] == constants.MEDIA_UNKNOWN
+        info["rating"] = api_data.get("rating", None)
+        info["votes"] = api_data.get("votes", 0)
+        info["runtime"] = find_runtime(api_data.get("runtimes", []))
     return info
 
 

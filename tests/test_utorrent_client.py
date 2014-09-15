@@ -1,18 +1,15 @@
 from unittest import TestCase, main
 from os.path import join, dirname
 from requests.exceptions import ConnectionError
-from tranny import init_config
 from tranny.client.utorrent import UTorrentClient
-from tests import get_fixture
-
-config = init_config(get_fixture("test_config.ini"))
+from testcase import TrannyTestCase
 
 
-class UTorrentClientTest(TestCase):
+class UTorrentClientTest(TrannyTestCase):
     def setUp(self):
         self.test_file_1 = join(dirname(__file__), 'test_data', 'CentOS-6.3-x86_64-bin-DVD1to2.torrent')
         try:
-            self.client = UTorrentClient(config)
+            self.client = UTorrentClient()
         except ConnectionError:
             self.skipTest("uTorrent not available")
 
