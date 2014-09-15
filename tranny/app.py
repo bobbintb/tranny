@@ -217,19 +217,20 @@ def configure_logging(app):
     #app.logger.info("testing info.")
     #app.logger.warn("testing warn.")
     #app.logger.error("testing error.")
-
-    mail_handler = SMTPHandler(app.config['MAIL_SERVER'],
-                               app.config['MAIL_USERNAME'],
-                               config.get("general", "email"),
-                               'O_ops... Tranny failed!',
-                               (app.config['MAIL_USERNAME'],
-                                app.config['MAIL_PASSWORD']))
-    mail_handler.setLevel(logging.ERROR)
-    mail_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]')
-    )
-    app.logger.addHandler(mail_handler)
+    
+    if config.has_option("general", "email"):
+        mail_handler = SMTPHandler(app.config['MAIL_SERVER'],
+                                   app.config['MAIL_USERNAME'],
+                                   config.get("general", "email"),
+                                   'O_ops... Tranny failed!',
+                                   (app.config['MAIL_USERNAME'],
+                                    app.config['MAIL_PASSWORD']))
+        mail_handler.setLevel(logging.ERROR)
+        mail_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]')
+        )
+        app.logger.addHandler(mail_handler)
 
 
 def configure_error_handlers(app):
