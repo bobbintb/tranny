@@ -139,7 +139,7 @@ class Configuration(ConfigParser):
             self.create_dirs()
             file_path = self.find_config()
         try:
-            self.read(file_path)
+            return self.read(file_path)
         except OSError:
             raise ConfigError("No suitable configuration found")
 

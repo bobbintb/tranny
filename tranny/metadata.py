@@ -31,6 +31,9 @@ def update_imdb(media_info=None, release_key=None):
     try:
         if media_info.imdb_id:
             movie_info = imdb.get_movie(media_info.imdb_id)
+            if movie_info:
+                media_info.imdb_score = media_info['rating']
+                media_info.imdb_votes = media_info['votes']
 
     except DBAPIError:
         session.rollback()

@@ -16,7 +16,7 @@ class TrannyTestCase(unittest.TestCase):
 
     def load_config(self, config_name="test_config.ini"):
         conf_file = self.get_fixture(config_name)
-        ok = 1 == len(config.read(conf_file))
+        ok = 1 == len(config.initialize(conf_file))
         return ok
 
     def get_config(self):

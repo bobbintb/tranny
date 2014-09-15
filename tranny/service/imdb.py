@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+from imdb.Character import Character
+from imdb.utils import RolesList
 import re
 from imdb import IMDb
 from tranny import cache
@@ -81,27 +83,40 @@ def get_movie(movie_id):
     info = {}
     if data:
         api_data = data.data
+        info['imdb_id'] = data.movieID
         info['title'] = api_data['title']
         info['genres'] = api_data.get('genres', [])
         info['cover_url'] = api_data.get('cover url', "")
         info['director'] = []
         for person in api_data.get('director', []):
-            info['director'].append({
-                'person_id': person.personID,
-                'name': "{}".format(person)
-            })
+            try:
+                info['director'].append({
+                    'person_id': person.personID,
+                    'name': "{}".format(person)
+                })
+            except Exception as err:
+                pass
         info['cast'] = []
         for person in api_data.get('cast', []):
-            info['cast'].append({
-                'person': {
-                    'name': "{}".format(person),
-                    'person_id': person.personID
-                },
-                'role': {
-                    'name': "{}".format(person.currentRole[0]),
-                    'role_id': person.currentRole[0].characterID
-                }
-            })
+            try:
+                if isinstance(person.currentRole, Character):
+                    role = person.currentRole
+                elif isinstance(person.currentRole, RolesList):
+                    role = person.currentRole[0]
+                else:
+                    continue
+                info['cast'].append({
+                    'person': {
+                        'name': "{}".format(person),
+                        'person_id': person.personID
+                    },
+                    'role': {
+                        'name': "{}".format(role),
+                        'role_id': role.characterID
+                    }
+                })
+            except Exception as err:
+                pass
         kind = api_data.get('kind', False)
         if kind == "tv series":
             info["kind"] = constants.MEDIA_TV
@@ -111,24 +126,22 @@ def get_movie(movie_id):
             except IndexError:
                 pass
         elif kind == "movie":
-            info["kind"] == constants.MEDIA_MOVIE
+            info["kind"] = constants.MEDIA_MOVIE
         else:
-            info["kind"] == constants.MEDIA_UNKNOWN
+            info["kind"] = constants.MEDIA_UNKNOWN
         info["rating"] = api_data.get("rating", None)
         info["votes"] = api_data.get("votes", 0)
         info["runtime"] = find_runtime(api_data.get("runtimes", []))
     return info
 
 
-
-
-@cache.cache_on_arguments()
+#@cache.cache_on_arguments()
 def get_movie_by_id(imdb_id):
     results = _imdb.get_movie(_parse_imdb_id(imdb_id))
     return results
 
 
-@cache.cache_on_arguments()
+#@cache.cache_on_arguments()
 def get_movie_by_title(title):
     results = _imdb.get_movie(title)
     return results

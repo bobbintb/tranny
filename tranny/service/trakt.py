@@ -124,14 +124,19 @@ def calendar_premiers():
     return _get_request('calendar/premieres')
 
 
-@cache.cache_on_arguments()
+#@cache.cache_on_arguments()
 def search(media_type, search_query):
     if media_type == constants.MEDIA_TV:
         method = 'search/shows'
     else:
         method = 'search/movies'
     results = _get_request(method, search_query)
-    return util.find_closest_match(search_query, results, 'title')
+    if not results:
+        return results
+    try:
+        return util.find_closest_match(search_query, results, 'title')
+    except IndexError as err:
+        return None
 
 
 search_tv = partial(search, constants.MEDIA_TV)

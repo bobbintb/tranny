@@ -23,4 +23,4 @@ class TestIMDB(TrannyTestCase):
     def test_get_movie(self):
         show = imdb.get_movie("tt1844624")
         show2 = imdb.get_movie("American Horror Story")
-        self.assertEqual(show.movieID, show2.movieID)
+        self.assertEqual(show['imdb_id'], show2['imdb_id'])

@@ -27,4 +27,10 @@ class MetaDataTest(TrannyTestCase):
         self.assertEqual(movie_data1, movie_data2)
         self.assertTrue(len(movie_data1.genres) >= 2)
 
+    def test_update_metadata(self):
+        key = datastore.MovieReleaseKey("The Mask 1994 720p BRRip x264-x0r", "the.mask", 1994)
+        movie_data = metadata.update_metadata(key)
+        self.assertTrue(movie_data)
+
+
 

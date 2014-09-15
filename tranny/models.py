@@ -122,6 +122,27 @@ genre_movie_assoc_table = Table(
     Column('genre_id', Integer, ForeignKey('genre.genre_id'))
 )
 
+person_role_assoc_table = Table(
+    'person_roles',
+    Base.metadata,
+    Column('person_id', Integer, ForeignKey("person.person_id")),
+    Column('role_id', Integer, ForeignKey("role.role_id"))
+)
+
+person_movie_director_assoc_table = Table(
+    'person_movie_director',
+    Base.metadata,
+    Column('person_id', Integer, ForeignKey("person.person_id")),
+    Column("movie_id", Integer, ForeignKey("movie.movie_id"))
+)
+
+person_show_director_assoc_table = Table(
+    'person_show_director',
+    Base.metadata,
+    Column('person_id', Integer, ForeignKey("person.person_id")),
+    Column("show_id", Integer, ForeignKey("show.show_id"))
+)
+
 
 class Genre(Base, ModelArgs):
     __tablename__ = 'genre'
@@ -208,7 +229,8 @@ class Movie(Base, ModelArgs, PropUpdate, GenreUpdate):
     imdb_id = Column(Unicode(length=10), unique=True, nullable=True)
     tmdb_id = Column(Integer, unique=True, nullable=True)
     rt_id = Column(Integer, unique=True, nullable=True)
-
+    imdb_score = Column(Integer, default=0)
+    imdb_votes = Column(Integer, default=0)
     genres = relationship('Genre', secondary=genre_movie_assoc_table, backref="movies")
 
 
@@ -218,12 +240,15 @@ class Person(Base):
     person_id = Column(Integer, primary_key=True)
     imdb_person_id = Column(Integer, nullable=False, unique=True)
     name = Column(Unicode(length=255), nullable=False)
+    roles = relationship('Role', secondary=person_role_assoc_table, backref="person")
+
 
 
 class Role(Base):
     __tablename__ = "role"
 
     role_id = Column(Integer, primary_key=True)
+    imdb_id = Column(Integer)
     imdb_role_id = Column(Integer, unique=True, nullable=False)
     name = Column(Unicode(length=255), nullable=False)
 
