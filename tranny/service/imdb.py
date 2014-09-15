@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+import logging
+from os.path import join
+import re
+from subprocess import check_call
+from ftplib import FTP
 from imdb.Character import Character
 from imdb.utils import RolesList
-import re
 from imdb import IMDb
 from tranny import cache
+from tranny import util
 from tranny import constants
 from tranny.app import config
 
+log = logging.getLogger(__name__)
+
 config_section = 'service_imdb'
+
 
 
 def _parse_imdb_id(imdb_id):
@@ -145,3 +153,51 @@ def get_movie_by_id(imdb_id):
 def get_movie_by_title(title):
     results = _imdb.get_movie(title)
     return results
+
+
+def fetch_database(output_dir):
+    """ Scan the FTP sources for data sets to use and download them to a temp folder
+
+    TODO Only download new data?
+
+    :param output_dir: Path to mirror the files too
+    :type output_dir: unicode
+    :return: download success status
+    :rtype: bool
+    """
+    hosts = [
+        ["ftp.fu-berlin.de", "/pub/misc/movies/database/"],
+        ["ftp.funet.fi", "/pub/mirrors/ftp.imdb.com/pub/"],
+        ["ftp.sunet.se", "/pub/tv+movies/imdb/"]
+    ]
+    for host, root in hosts:
+        try:
+            ftp = FTP(host)
+            ftp.set_debuglevel(1)
+            ftp.login()
+            ftp.cwd(root)
+            files = ftp.nlst()
+            for f in [f for f in files if f.endswith("gz")]:
+                ftp.retrbinary("RETR {}".format(f), open(join(output_dir, f), 'wb').write)
+        except Exception:
+            log.exception("Failed to download database files")
+        else:
+            return True
+    return False
+
+
+def load_sql(download=True):
+    """ Load the datasets into the database, optionally downloading the dataset before
+
+    :param download: Download a fresh dataset?
+    :type download: bool
+    :return: Load status
+    :rtype: bool
+    """
+    tmp_dir = join(config.config_path, 'imdb_temp')
+    util.mkdirp(tmp_dir)
+    if not download or fetch_database(tmp_dir):
+        args = ['imdbpy2sql.py', '-d', tmp_dir, '-u', config.get_db_uri()]
+        log.debug("Executing: {}".format(" ".join(args)))
+        ret_val = check_call(args)
+        log.debug(ret_val)
