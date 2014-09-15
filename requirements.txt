@@ -16,3 +16,4 @@ flask-wtf
 fuzzywuzzy
 dogpile
 dogpile.cache
+sqlalchemy
