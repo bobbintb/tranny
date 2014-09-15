@@ -61,8 +61,13 @@ def parse_args():
     cache_clear = subparsers.add_parser("cache_clear", help="Clear the application cache")
     cache_clear.set_defaults(func=cmd_cache_clear)
 
-    imdb = subparsers.add_parser("imdb", help="Load and manage the imdb SQL database")
-    imdb.add_argument("-n", "--nodownload", help="Do not download the datasets before loading", action="store_false")
+    imdb = subparsers.add_parser(
+        "imdb",
+        help="Load and manage the imdb SQL database (warn: This can take 1-10 hrs to complete"
+    )
+    imdb.add_argument("-n", "--nodownload",
+                      help="Do not download the datasets before loading (assumes existing data)",
+                      action="store_false")
     imdb.set_defaults(func=cmd_imdb)
     return parser.parse_args()
 
