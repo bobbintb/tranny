@@ -95,7 +95,8 @@ class TorrentClient(object):
     def disconnect(self):
         raise NotImplementedError("disconnect undefined")
 
-#client = TorrentClient()
+    def get_events(self):
+        raise NotImplementedError("get_events undefined")
 
 
 class ClientTorrentData(dict):
@@ -145,6 +146,8 @@ def init_client(client_type=None):
         raise NotImplementedError("Utorrent support is currently incomplete. Please use another client")
     elif client_type == "deluge":
         from tranny.client.deluge import DelugeClient as Client
+    elif client_type == "simplefile":
+        from tranny.client.simplefile import SimpleFileClient as Client
     else:
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
     config_values = config.get_section_values(Client.config_key)

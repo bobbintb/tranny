@@ -34,9 +34,10 @@ class ServiceManager(object):
         self._updater.start_later(1)
         self.watch = None
         self.init_providers()
+        app.torrent_client = client.init_client()
         if config.getboolean("webui", "enabled"):
             self.init_webui()
-        app.torrent_client = client.init_client()
+
         # TODO Watch service is hanging at the moment, needs to be looked into
         # if platform.system() == 'Linux':
         #    self.watch = watch.FileWatchService(self)

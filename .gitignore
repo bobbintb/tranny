@@ -46,3 +46,4 @@ rpctest.py
 docs/_build/*
 node_modules
 .idea/
+file_dir

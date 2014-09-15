@@ -28,7 +28,7 @@ class QBittorrentClient(client.TorrentClient):
     """
 
     # Configuration file section name
-    config_key = "qbittorrent"
+    config_key = "client_qbittorrent"
 
     # Number of request retry attempts to allow
     max_request_retries = 1

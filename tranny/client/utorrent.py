@@ -39,7 +39,7 @@ class UTorrentClient(client.TorrentClient):
     due to these design issues.
     """
     version = None
-    _config_key = "utorrent"
+    _config_key = "client_utorrent"
     _url_prefix = "/gui"
     _token = False
 

@@ -2,11 +2,10 @@
 from __future__ import unicode_literals, absolute_import
 import logging
 import os
-from os.path import exists, dirname, join, expanduser, isdir, abspath
-from os import makedirs, mkdir
-from errno import EEXIST
-from sys import version_info
+from os.path import exists, dirname, join, expanduser, abspath
+from os import mkdir
 from tranny.exceptions import ConfigError
+from tranny import util
 
 log = logging.getLogger(__name__)
 
@@ -15,21 +14,6 @@ try:
     from configparser import RawConfigParser, NoOptionError, NoSectionError, Error
 except ImportError:
     from ConfigParser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
-
-# Import a mkdir -p equivalent
-if version_info >= (3, 2):
-    def mkdirp(path):
-        # noinspection PyArgumentList
-        return makedirs(path, exist_ok=True)
-else:
-    def mkdirp(path):
-        try:
-            makedirs(path)
-        except OSError as err:  # Python >2.5
-            if err.errno == EEXIST and isdir(path):
-                pass
-            else:
-                raise
 
 
 class Configuration(ConfigParser):
@@ -129,9 +113,9 @@ class Configuration(ConfigParser):
         :rtype:
         """
         if not exists(self.config_path):
-            mkdirp(self.config_path)
+            util.mkdirp(self.config_path)
         if not exists(self.cache_path):
-            mkdirp(self.cache_path)
+            util.mkdirp(self.cache_path)
 
     def initialize(self, file_path=False):
         if not file_path:

@@ -30,7 +30,7 @@ class RTorrentClient(client.TorrentClient):
     scgi_port = localhost:5000
 
     """
-    _config_key = "rtorrent"
+    _config_key = "client_rtorrent"
 
     def __init__(self):
         self._server = SCGIServerProxy(config.get(self._config_key, 'uri'))

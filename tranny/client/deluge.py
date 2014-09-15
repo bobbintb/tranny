@@ -24,7 +24,7 @@ class DelugeClient(client.TorrentClient):
     """
 
     # Configuration file section name
-    config_key = "deluge"
+    config_key = "client_deluge"
 
     # Number of request retry attempts to allow
     max_request_retries = 1

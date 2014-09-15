@@ -4,6 +4,7 @@ Basic endpoints for the /torrent sections and the websocket api
 """
 from __future__ import unicode_literals
 from functools import partial
+import logging
 from flask import Blueprint
 import gevent
 from tranny import ui
@@ -16,12 +17,15 @@ section_name = 'torrents'
 renderer = partial(ui.render, section=section_name)
 torrents = Blueprint(section_name, __name__, url_prefix="/torrents")
 
+log = logging.getLogger("web.torrents")
+
 
 def client_event_update():
     while True:
         if torrent_client:
             events = torrent_client.get_events()
-            print(events)
+            if events:
+                log.debug(events)
         gevent.sleep(1)
 
 update_thread = gevent.Greenlet.spawn(client_event_update)

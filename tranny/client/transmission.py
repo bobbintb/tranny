@@ -13,7 +13,7 @@ except ImportError:
 
 
 class TransmissionClient(client.TorrentClient):
-    _config_key = "transmission"
+    _config_key = "client_transmission"
 
     def __init__(self, host=None, port=None, user=None, password=None):
         if not host:

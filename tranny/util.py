@@ -2,7 +2,10 @@
 from __future__ import unicode_literals
 from urlparse import urlparse, urljoin
 from time import time
-from os import getpid
+from os.path import isdir
+from os import getpid, makedirs
+from errno import EEXIST
+from sys import version_info
 from fuzzywuzzy import fuzz
 from psutil import Process, disk_partitions, disk_usage
 from flask import request, url_for, redirect
@@ -91,5 +94,19 @@ def raise_unless(v, exc=exceptions.TrannyException, msg=None):
     if not v:
         raise exc(msg)
 
+# Import a mkdir -p equivalent
+if version_info >= (3, 2):
+    def mkdirp(path):
+        # noinspection PyArgumentList
+        return makedirs(path, exist_ok=True)
+else:
+    def mkdirp(path):
+        try:
+            makedirs(path)
+        except OSError as err:  # Python >2.5
+            if err.errno == EEXIST and isdir(path):
+                pass
+            else:
+                raise
 
 contains = lambda seq, values: all([k in values for k in seq])
