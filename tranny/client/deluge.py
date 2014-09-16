@@ -143,33 +143,30 @@ class DelugeClient(client.TorrentClient):
             return ret_val
 
     def add(self, data, download_dir=None):
-        """
-        {
-          "method": "web.add_torrents",
-          "params": [
-            [
-              {
-                "path": "/tmp/delugeweb-WI1LET/tmpyjwB1B.torrent",
-                "options": {
-                  "file_priorities": [
-                    1
-                  ],Instant.Star.S02.DVDRip.XviD-HXR
-                  "add_paused": false,
-                  "compact_allocation": false,
-                  "download_location": "/home/leigh",
-                  "move_completed": false,
-                  "move_completed_path": "/home/leigh",
-                  "max_connections": -1,
-                  "max_download_speed": -1,
-                  "max_upload_slots": -1,
-                  "max_upload_speed": -1,
-                  "prioritize_first_last_pieces": false
-                }
-              }
-            ]
-          ],
-          "id": 52
-        }
+        """ Add a torrent to the backend deluge client
+
+        Example of post call::
+
+            {
+            "method": "web.add_torrents",
+            "params": [[{
+            "path": "/tmp/delugeweb-WI1LET/tmpyjwB1B.torrent",
+            "options": {
+            "file_priorities": [1],
+            Instant.Star.S02.DVDRip.XviD-HXR
+            "add_paused": false,
+            "compact_allocation": false,
+            "download_location": "/home/leigh",
+            "move_completed": false,
+            "move_completed_path": "/home/leigh",
+            "max_connections": -1,
+            "max_download_speed": -1,
+            "max_upload_slots": -1,
+            "max_upload_speed": -1,
+            "prioritize_first_last_pieces": false
+            }}]],"id": 52
+            }
+
         :param data: Torrent data to load in
         :type data: TorrentData
         :param download_dir: Path on deluge server to store download

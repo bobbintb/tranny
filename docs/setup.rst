@@ -9,9 +9,10 @@ Requirements
 
 One of the following torrent clients configured for remote API access
 
-- `rTorrent <http://rakshasa.github.io/rtorrent/>`_ (scgi)
-- `Transmission <http://www.transmissionbt.com/>`_ (jsonrpc)
-- `uTorrent 3.x <http://www.utorrent.com/>`_ (webui)
+- `deluge <http://deluge-torrent.org>_ ` This is currently the only client that will function with webui capabilities
+- `rTorrent <http://rakshasa.github.io/rtorrent/>`_ (scgi) (Partial support)
+- `Transmission <http://www.transmissionbt.com/>`_ (jsonrpc) (Not recommended yet)
+- `uTorrent 3.x <http://www.utorrent.com/>`_ (webui) (Not recommended yet)
 
 Along with a python distribution and required python libraries
 
@@ -68,24 +69,41 @@ A precompiled installer for pyimdb 32bit python 2.7.
 Common configuration setup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create your own config based of the example provided and rename it to `tranny.ini`.
+Create your own config based on the example provided and rename it to `tranny.ini`. We will
+also put this in the users config directory under ~/.config/tranny
 
-    $ cp tranny_dist.ini tranny.ini
+    $ mkdir ~/.config/tranny
+    $ cp tranny_dist.ini ~/.config/tranny/tranny.ini
 
 From this point you will want to take a moment and setup your configuration file. You should enable
 all the services you want to now. For more info check out the following setup doc pages:
 
-- :doc:`config_service_rss`
+- :doc:`services` Service configuration [imdb, trakt, tmdb, etc]
 
-- :doc:`config_service_btn`
+- :doc:`notifications`
 
 Using the editor of your choice, configure any options desired in your new configuration.
 
     $ vim tranny.ini
 
+Once you have configured your configuration file as desired, notable making sure the database uri
+is specified properly you can then initialize a blank database schema. There are 3 optional parameters
+that you can also set if you desire. -u/-p will set the credentials for the admin user. This is currently
+only used for the optional web ui. If you do not specify then default values of admin/tranny will be used
+for the user/password. -w If specified will wipe all existing tables and data from your database. This is not
+recoverable so be sure to do it only if you need to.
+
+    $ python tranny-cli.py db_init [-u admin_username] [-p admin_password] [-w wipe existing database]
+    2014-09-16 01:32:32,338 - Initialized db schema successfully
+    2014-09-16 01:32:32,363 - Created admin user successfully
+
 You can now start the daemon process like so.
 
     $ python tranny-cli.py run
+
+If you are having issues you can also run the application with debugging log level as well as follows:
+
+    $ python tranny-cli.py -l DEBUG run
 
 I recommend running it like this for a while so you can monitor it for any issues that
 arise. Once you are confident in how its working you can proceed to enable it to start
@@ -114,11 +132,12 @@ the file as `/etc/supervisor.d/tranny.ini` or append this config to the standard
     [program:tranny]
     command=/home/user/tranny/virtenv/bin/python /home/user/tranny/tranny-cli.py run
     directory=/home/user/tranny
-    stdout_logfile=/home/user/tranny/tranny-supervisor.log
+    stdout_logfile=/home/user/.config/tranny/tranny-supervisor.log
     redirect_stderr=true
     user=user
 
 Windows
 ~~~~~~~
 
-todo
+Who knows... but [this](http://stackoverflow.com/questions/32404/is-it-possible-to-run-a-python-script-as-a-service-in-windows-if-possible-how)
+can probably help you get started. Please let me know if you have success.

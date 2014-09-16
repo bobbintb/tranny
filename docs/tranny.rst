@@ -94,6 +94,14 @@ tranny.net module
     :undoc-members:
     :show-inheritance:
 
+tranny.notification module
+--------------------------
+
+.. automodule:: tranny.notification
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 tranny.parser module
 --------------------
 
