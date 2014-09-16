@@ -90,7 +90,7 @@ def configure_app(app):
         except KeyError:
             pass
         # Upload form is included in all pages so its injected globally.
-        kwargs['upload_form'] = forms.UploadForm.make()
+        kwargs['upload_form'] = forms.UploadForm()
         return kwargs
 
 

@@ -96,7 +96,8 @@ class ServiceManager(object):
                 self.services.append(HDBits(service_name))
         return self.services
 
-    def add(self, session, torrent, service, dl_path=None):
+    @staticmethod
+    def add(session, torrent, service, dl_path=None):
         """ Handles adding a new torrent to the system. This should be considered the
         main entry point of doing this to make sure things are consistent, this cannot
         be guaranteed otherwise
@@ -107,6 +108,7 @@ class ServiceManager(object):
         :type service: TorrentProvider
         :param dl_path: Optional download path to use for the torrent
         """
+        status = False
         try:
             if not dl_path:
                 dl_path = app.config.get_download_path(torrent.section, torrent.release_name)
@@ -130,6 +132,8 @@ class ServiceManager(object):
             log.exception(err)
         else:
             metadata.update_media_info(release_key)
+            status = True
+        return status
 
     def update_providers(self):
         """ This is the primary process loop used to process TorrentProvider

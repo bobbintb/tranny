@@ -1,4 +1,4 @@
-<div id="upload-modal" class="reveal-modal">
+<div id="upload-modal" class="reveal-modal"  data-reveal>
     <form action="{{ url_for("upload.handler") }}" method="POST" enctype="multipart/form-data" class="custom">
         <fieldset>
             <legend>Torrent Upload Form</legend>
@@ -19,9 +19,9 @@
                             <span class="prefix"><label for="section">Section</label></span>
                         </div>
                         <div class="large-8 columns">
-                            <select id="section">
+                            <select id="section" name="section">
                                 {% for section in upload_form.section.choices %}
-                                    <option value="{{ section }}">{{ section }}</option>
+                                    <option value="{{ section[0] }}">{{ section[1] }}</option>
                                 {% endfor %}
                             </select>
                         </div>

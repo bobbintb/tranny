@@ -337,6 +337,7 @@ def parse_release_info(release_name):
 
 stop_words = set('hdtv')
 
+
 def parse_release(release_name):
     """ Fetch just the release name title from the release name provided
 
