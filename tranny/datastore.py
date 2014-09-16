@@ -5,7 +5,7 @@ import logging
 from sqlalchemy.exc import DBAPIError
 from tranny import parser
 from tranny import constants
-from tranny.models import Section, Source, User, Download, Genre
+from tranny.models import Section, Source, User, Download, Genre, Person
 
 log = logging.getLogger(__name__)
 
@@ -154,6 +154,15 @@ def get_genre(session, genre_name, create=True):
     return genre
 
 
+def get_person_imdb(session, imdb_person_id, name=None, create=True):
+    person = session.query(Person).filter(Person.imdb_person_id == imdb_person_id).first()
+    if not person and create:
+        person = Person(imdb_person_id, name=name)
+        session.add(person)
+        log.info("Created new person: {}".format(name))
+    return person
+
+
 def fetch_download(session, release_key=None, download_id=None, limit=None):
     if release_key:
         data_set = session.query(Download).query.filter_by(release_key=release_key).first()
@@ -169,7 +178,6 @@ def fetch_download(session, release_key=None, download_id=None, limit=None):
 
 def fetch_user(session, user_name=None, user_id=None, limit=None):
     """
-
 
     :param session:
     :type session: sqlalchemy.orm.session.Session

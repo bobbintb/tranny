@@ -26,6 +26,9 @@ cache.configure(config)
 
 # Init db
 engine = create_engine(config.get_db_uri())
+if engine.url.drivername == "sqlite":
+    # http://www.sqlite.org/pragma.html#pragma_journal_mode
+    engine.execute("pragma journal_mode = wal")
 # Setup sqlalchemy session factory
 Base = declarative_base()
 session_factory = sessionmaker()

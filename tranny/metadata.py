@@ -7,7 +7,7 @@ from tranny import tasks
 from tranny import constants
 from tranny import exceptions
 from tranny.app import Session
-from tranny.datastore import get_genre
+from tranny.datastore import get_genre, get_person_imdb
 from tranny.service import trakt
 from tranny.service import imdb
 from tranny.util import raise_unless
@@ -23,7 +23,8 @@ def update_media_info(release_key):
 def update_metadata(release_key):
     media_info = update_trakt(release_key)
     if media_info:
-        update_imdb(media_info=media_info)
+        media_info = update_imdb(media_info=media_info)
+    return media_info
 
 
 def update_imdb(media_info=None, release_key=None):
@@ -32,8 +33,19 @@ def update_imdb(media_info=None, release_key=None):
         if media_info.imdb_id:
             movie_info = imdb.get_movie(media_info.imdb_id)
             if movie_info:
-                media_info.imdb_score = media_info['rating']
-                media_info.imdb_votes = media_info['votes']
+                media_info.imdb_score = movie_info['rating']
+                media_info.imdb_votes = movie_info['votes']
+                media_info.cover_url = movie_info['cover_url']
+                for director in movie_info.get('director', []):
+                    person = get_person_imdb(session, director['person_id'], name=director['name'])
+                    if not person in media_info.directors:
+                        media_info.directors.append(person)
+                # for member in movie_info.get('cast', []):
+                #     person = get_person_imdb(session, director['person_id'], name=director['name'])
+                #     if not person in media_info.directors:
+                #         media_info.directors.append(get_person_imdb)
+        session.commit()
+
 
     except DBAPIError:
         session.rollback()
@@ -68,10 +80,13 @@ def update_trakt(release_key):
         else:
             return None
         session.commit()
-    except DBAPIError:
+    except DBAPIError as e:
+        log.exception("Error querying media info")
         session.rollback()
     except exceptions.ApiError as e:
         log.warn(e.message)
+    except Exception as e:
+        log.exception("Could not update trakt info")
     return media_info
 
 

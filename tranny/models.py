@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 import datetime
 import hashlib
 from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table, \
-    UnicodeText
+    UnicodeText, Numeric
 from sqlalchemy.orm import relationship
 from tranny import constants
 from tranny.app import Base
@@ -136,6 +136,13 @@ person_movie_director_assoc_table = Table(
     Column("movie_id", Integer, ForeignKey("movie.movie_id"))
 )
 
+person_movie_cast_assoc_table = Table(
+    'person_movie_cast',
+    Base.metadata,
+    Column('person_id', Integer, ForeignKey("person.person_id")),
+    Column("movie_id", Integer, ForeignKey("movie.movie_id"))
+)
+
 person_show_director_assoc_table = Table(
     'person_show_director',
     Base.metadata,
@@ -223,15 +230,19 @@ class Movie(Base, ModelArgs, PropUpdate, GenreUpdate):
     year = Column(Integer, CheckConstraint('year > 1900 AND year < 2050'))
     released = Column(Integer)
     trakt_url = Column(Unicode(length=255))
+    cover_url = Column(Unicode(255), nullable=True)
     trailer = Column(Unicode(length=255))
     runtime = Column(Integer)
     tag_line = Column(UnicodeText)
     imdb_id = Column(Unicode(length=10), unique=True, nullable=True)
     tmdb_id = Column(Integer, unique=True, nullable=True)
     rt_id = Column(Integer, unique=True, nullable=True)
-    imdb_score = Column(Integer, default=0)
+    imdb_score = Column(Numeric(asdecimal=False), default=0.0)
     imdb_votes = Column(Integer, default=0)
+
     genres = relationship('Genre', secondary=genre_movie_assoc_table, backref="movies")
+    directors = relationship('Person', secondary=person_movie_director_assoc_table, backref="movies")
+    actors = relationship('Person', secondary=person_movie_cast_assoc_table)
 
 
 class Person(Base):
@@ -242,6 +253,9 @@ class Person(Base):
     name = Column(Unicode(length=255), nullable=False)
     roles = relationship('Role', secondary=person_role_assoc_table, backref="person")
 
+    def __init__(self, imdb_person_id, name=None):
+        self.imdb_person_id = imdb_person_id
+        self.name = name
 
 
 class Role(Base):

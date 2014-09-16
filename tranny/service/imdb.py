@@ -80,7 +80,7 @@ def find_runtime(run_times):
             return match.groupdict()['runtime']
     return None
 
-
+@cache.cache_on_arguments()
 def get_movie(movie_id):
     try:
         int(_parse_imdb_id(movie_id))
@@ -143,13 +143,11 @@ def get_movie(movie_id):
     return info
 
 
-#@cache.cache_on_arguments()
 def get_movie_by_id(imdb_id):
     results = _imdb.get_movie(_parse_imdb_id(imdb_id))
     return results
 
 
-#@cache.cache_on_arguments()
 def get_movie_by_title(title):
     results = _imdb.get_movie(title)
     return results
