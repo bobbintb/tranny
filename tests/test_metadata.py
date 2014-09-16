@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from testcase import TrannyTestCase
+from testcase import TrannyDBTestCase
 from tranny import metadata
 from tranny import datastore
 
 
-class MetaDataTest(TrannyTestCase):
+class MetaDataTest(TrannyDBTestCase):
 
     def test_update_trakt_show(self):
         key = datastore.TVReleaseKey("The.Simpsons.S10E11.720p.HDTV.x264-GRP", "the.simpsons", 10, 11)
