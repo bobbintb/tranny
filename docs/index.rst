@@ -15,6 +15,7 @@ Contents:
     scripts
     clients
     config_ratings
+    providers
     services
     deluge_api
     modules
