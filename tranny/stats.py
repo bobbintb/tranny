@@ -6,6 +6,7 @@ from __future__ import unicode_literals, absolute_import
 from collections import Counter
 from tranny import app
 from tranny import datastore
+from tranny.app import Session
 
 
 class PieChart(Counter):
@@ -21,11 +22,11 @@ def service_totals(records):
     :return: Dict with totals for each key corresponding to a providers name
     :rtype: dict[]
     """
-    return PieChart(datastore.get_source(source_id=r.source_id).source_name for r in records).graph_data()
+    return PieChart(datastore.get_source(Session(), source_id=r.source_id).source_name for r in records).graph_data()
 
 
 def section_totals(records):
-    data_set = (datastore.get_section(section_id=r.section_id).section_name.split("_")[1] for r in records)
+    data_set = (datastore.get_section(Session(), section_id=r.section_id).section_name.split("_")[1] for r in records)
     return PieChart(data_set).graph_data()
 
 
@@ -42,7 +43,7 @@ def service_type_totals(records):
     counter = PieChart()
     for record in records:
         # TODO fix with joined value
-        source_name = datastore.get_source(source_id=record.source_id).source_name
+        source_name = datastore.get_source(Session(), source_id=record.source_id).source_name
         if source_name in rss_feeds:
             counter['RSS'] += 1
         elif source_name in services:

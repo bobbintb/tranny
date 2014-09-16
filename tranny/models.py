@@ -159,12 +159,9 @@ class MediaInfo(Base, ModelArgs):
     __tablename__ = 'media_info'
 
     media_id = Column(Integer, primary_key=True)
-    media_type = Column(Integer, CheckConstraint('media_type = "{}" OR media_type = "{}"'.format(
-        constants.MEDIA_TV, constants.MEDIA_MOVIE
-    )))
+    media_type = Column(Unicode, nullable=False)
     imdb_id = Column(Integer, nullable=True)
     tvdb_id = Column(Integer, nullable=True)
-    # themovieorg ID
     tmdb_id = Column(Integer, nullable=True)
     tvrage_id = Column(Integer, nullable=True)
 

@@ -135,7 +135,7 @@ def get_source(session, source_name=None, source_id=None):
             source = session.query(Source).filter_by(source_id=source_id).first()
             cache_source[source.source_name] = source
     else:
-        return session.query(Source).query.all()
+        return session.query(Source).all()
     if not source and source_name:
         source = Source(source_name)
         session.add(source)
