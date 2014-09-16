@@ -9,7 +9,7 @@ Requirements
 
 One of the following torrent clients configured for remote API access
 
-- `deluge <http://deluge-torrent.org>_ ` This is currently the only client that will function with webui capabilities
+- `deluge <http://deluge-torrent.org>`_ This is currently the only client that will function with webui capabilities
 - `rTorrent <http://rakshasa.github.io/rtorrent/>`_ (scgi) (Partial support)
 - `Transmission <http://www.transmissionbt.com/>`_ (jsonrpc) (Not recommended yet)
 - `uTorrent 3.x <http://www.utorrent.com/>`_ (webui) (Not recommended yet)
@@ -70,7 +70,7 @@ Common configuration setup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create your own config based on the example provided and rename it to `tranny.ini`. We will
-also put this in the users config directory under ~/.config/tranny
+also put this in the user's config directory under ~/.config/tranny
 
     $ mkdir ~/.config/tranny
     $ cp tranny_dist.ini ~/.config/tranny/tranny.ini
@@ -86,8 +86,8 @@ Using the editor of your choice, configure any options desired in your new confi
 
     $ vim tranny.ini
 
-Once you have configured your configuration file as desired, notable making sure the database uri
-is specified properly you can then initialize a blank database schema. There are 3 optional parameters
+Once you have configured your configuration file as desired, notably making sure the database uri
+is specified properly, you can then initialize a blank database schema. There are 3 optional parameters
 that you can also set if you desire. -u/-p will set the credentials for the admin user. This is currently
 only used for the optional web ui. If you do not specify then default values of admin/tranny will be used
 for the user/password. -w If specified will wipe all existing tables and data from your database. This is not
