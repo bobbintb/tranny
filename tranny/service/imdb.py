@@ -18,7 +18,6 @@ log = logging.getLogger(__name__)
 config_section = 'service_imdb'
 
 
-
 def _parse_imdb_id(imdb_id):
     """ Parse the int value from a imdb id format ttNNNNNN if the prefix is found
      on the input value. If the input is an int just return it.
@@ -198,6 +197,10 @@ def load_sql(download=True):
     util.mkdirp(tmp_dir)
     if not download or fetch_database(tmp_dir):
         args = ['imdbpy2sql.py', '-d', tmp_dir, '-u', config.get_db_uri()]
+        if 'sqlite' in config.get_db_uri():
+            # SQLite is laughably slow without this flag making, Using it
+            # makes it possibly the fasted to import
+            args.append('--sqlite-transactions')
         log.debug("Executing: {}".format(" ".join(args)))
         ret_val = check_call(args)
         log.debug(ret_val)

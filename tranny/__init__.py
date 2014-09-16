@@ -10,7 +10,10 @@ import argparse
 import logging
 
 
-def parse_args():
+def parse_args(args=None):
+    """ Parse command line argument and launch the appropriate command specifid
+    by the user input
+    """
     def cmd_start(options):
         import gevent
         import signal
@@ -69,7 +72,7 @@ def parse_args():
                       help="Do not download the datasets before loading (assumes existing data)",
                       action="store_false")
     imdb.set_defaults(func=cmd_imdb)
-    return parser.parse_args()
+    return parser.parse_args(args=args)
 
 
 def main():
