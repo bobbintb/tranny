@@ -122,13 +122,6 @@ genre_movie_assoc_table = Table(
     Column('genre_id', Integer, ForeignKey('genre.genre_id'))
 )
 
-person_role_assoc_table = Table(
-    'person_roles',
-    Base.metadata,
-    Column('person_id', Integer, ForeignKey("person.person_id")),
-    Column('role_id', Integer, ForeignKey("role.role_id"))
-)
-
 person_movie_director_assoc_table = Table(
     'person_movie_director',
     Base.metadata,
@@ -242,7 +235,7 @@ class Movie(Base, ModelArgs, PropUpdate, GenreUpdate):
 
     genres = relationship('Genre', secondary=genre_movie_assoc_table, backref="movies")
     directors = relationship('Person', secondary=person_movie_director_assoc_table, backref="movies")
-    actors = relationship('Person', secondary=person_movie_cast_assoc_table)
+    cast = relationship('Person', secondary=person_movie_cast_assoc_table, backref="cast")
 
 
 class Person(Base):
@@ -251,20 +244,10 @@ class Person(Base):
     person_id = Column(Integer, primary_key=True)
     imdb_person_id = Column(Integer, nullable=False, unique=True)
     name = Column(Unicode(length=255), nullable=False)
-    roles = relationship('Role', secondary=person_role_assoc_table, backref="person")
 
     def __init__(self, imdb_person_id, name=None):
         self.imdb_person_id = imdb_person_id
         self.name = name
-
-
-class Role(Base):
-    __tablename__ = "role"
-
-    role_id = Column(Integer, primary_key=True)
-    imdb_id = Column(Integer)
-    imdb_role_id = Column(Integer, unique=True, nullable=False)
-    name = Column(Unicode(length=255), nullable=False)
 
 
 class Download(Base, ModelArgs):

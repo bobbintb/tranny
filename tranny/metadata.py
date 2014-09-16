@@ -40,13 +40,13 @@ def update_imdb(media_info=None, release_key=None):
                     person = get_person_imdb(session, director['person_id'], name=director['name'])
                     if not person in media_info.directors:
                         media_info.directors.append(person)
-                # for member in movie_info.get('cast', []):
-                #     person = get_person_imdb(session, director['person_id'], name=director['name'])
-                #     if not person in media_info.directors:
-                #         media_info.directors.append(get_person_imdb)
+                for cast_member in movie_info.get('cast', []):
+                    person = get_person_imdb(session,
+                                             cast_member['person']['person_id'],
+                                             name=cast_member['person']['name'])
+                    if not person in media_info.cast:
+                        media_info.cast.append(person)
         session.commit()
-
-
     except DBAPIError:
         session.rollback()
     except exceptions.ApiError as e:

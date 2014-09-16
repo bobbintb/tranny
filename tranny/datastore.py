@@ -118,7 +118,6 @@ def get_section(session, section_name=None, section_id=None):
     if not section and section_name:
         section = Section(section_name)
         session.add(section)
-        #session.session.commit()
     return section
 
 

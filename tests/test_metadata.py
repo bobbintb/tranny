@@ -31,6 +31,3 @@ class MetaDataTest(TrannyDBTestCase):
         key = datastore.MovieReleaseKey("The Mask 1994 720p BRRip x264-x0r", "the.mask", 1994)
         movie_data = metadata.update_metadata(key)
         self.assertTrue(movie_data)
-
-
-
