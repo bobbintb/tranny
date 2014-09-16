@@ -122,7 +122,7 @@ Linux (supervisord)
 ~~~~~~~~~~~~~~~~~~~
 
 This is the easiest method, mostly because its the method most tested with. You will of
-course need to install the [supervisor](http://supervisord.org/) daemon and make sure
+course need to install the `supervisor <http://supervisord.org/>`_ daemon and make sure
 its enable to start at system boot.
 
 Below is a sample configuration file that should be customized according to your setup. Save
