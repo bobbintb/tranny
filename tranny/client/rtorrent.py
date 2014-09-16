@@ -30,10 +30,10 @@ class RTorrentClient(client.TorrentClient):
     scgi_port = localhost:5000
 
     """
-    _config_key = "client_rtorrent"
+    config_key = "client_rtorrent"
 
-    def __init__(self):
-        self._server = SCGIServerProxy(config.get(self._config_key, 'uri'))
+    def __init__(self, uri):
+        self._server = SCGIServerProxy(uri)
 
     def client_version(self):
         client = self._server.system.client_version()
@@ -76,8 +76,9 @@ class RTorrentClient(client.TorrentClient):
             'd.is_private=',
             'd.is_active='
         )
-        torrent_data = [ClientTorrentData(*t) for t in torrents]
-        return torrent_data
+        # Missing fields: leechers, total leechers
+        torrent_data = [t[:9] + ['0', '0'] + t[9:] + [(t[7]/t[8])*100] for t in torrents]
+        return [ClientTorrentData(*t) for t in torrents]
 
     def torrent_stop(self, torrents):
         for torrent in torrents:
@@ -89,6 +90,12 @@ class RTorrentClient(client.TorrentClient):
             self._server.d.start(torrent)
         return {}
 
+    def get_capabilities(self):
+        return ['torrent_add', 'torrent_list']
+
+    def get_events(self):
+        # Wouldn't be impossible to implement in the future
+        return {}
 
 class SCGITransport(xmlrpclib.Transport):
     def single_request(self, host, handler, request_body, verbose=0):
