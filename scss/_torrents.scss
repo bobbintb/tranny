@@ -17,7 +17,7 @@
         margin-bottom: 2px;
         background-color: inherit;
         &:hover {
-            background-color: $primary-color;
+            background-color: $alert-color;
         }
     }
 }
@@ -28,8 +28,12 @@
 
 #torrent_table_head {
     margin-bottom: 0;
+    width: 100%;
     th.completed {
         width: 100px;
+    }
+    th.filler{
+        width: 20px;
     }
 }
 
@@ -68,14 +72,15 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+        width: 100%;
     div.progress {
         margin-bottom: 0;
         background-color: inherit;
         border: 0;
         .count {
             float: left;
-            color: $white;
-            margin-top: 2px;
+            color: $body-font-color;
+            margin-top: 3px;
             margin-left: 2px;
         }
     }
@@ -94,7 +99,7 @@
         }
     }
     tr.selected {
-        background-color: lighten($success-color, 50%);
+        background-color: lighten($body-bg, 8%);
     }
     tr {
         cursor: pointer;
@@ -102,6 +107,9 @@
 }
 
 #torrent_detail {
+    margin-top: $column-gutter /2;
+    height: 300px;
+    overflow-y: scroll;
     .torrent_detail_value, .torrent_detail_label {
         font-size: 60%;
     }

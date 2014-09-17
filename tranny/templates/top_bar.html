@@ -10,36 +10,25 @@
         <!-- Left Nav Section -->
         <ul class="left">
 
-            <li class="divider"></li>
             <li {% if section == "stats" %}class="active"{% endif %}>
                 {{ button(icon("chart-bar")+ " Dashboard", link=url_for("home.index"), button_class="") }}
             </li>
-
-            <li class="divider"></li>
 
             <li {% if section == "torrents" %}class="active"{% endif %}>
                 {{ button(icon("th-list")+ " Torrents", link=url_for("torrents.index"), button_class="") }}
             </li>
 
-            <li class="divider"></li>
-
             <li {% if section == "filters" %}class="active"{% endif %}>
                 {{ button(icon("filter")+ " Filters", link=url_for("filters.index"), button_class="") }}
             </li>
-
-            <li class="divider"></li>
 
             <li {% if section == "services" %}class="active"{% endif %}>
                 {{ button(icon("cog-alt")+ " API", link=url_for("services.index"), button_class="") }}
             </li>
 
-            <li class="divider"></li>
-
             <li {% if section == "rss" %}class="active"{% endif %}>
                 {{ button(icon("rss")+ " RSS", link=url_for("rss.index"), button_class="") }}
              </li>
-
-            <li class="divider"></li>
 
             <li class="has-form">
                 <form>
@@ -50,8 +39,6 @@
                     </div>
                 </form>
             </li>
-            <li class="divider"></li>
-
         </ul>
 
         <!-- Right Nav Section -->

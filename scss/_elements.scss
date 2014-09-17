@@ -1,0 +1,10 @@
+@import "settings";
+
+.custom_switch {
+    @include switch($radius: false, $base-style: false);
+    //border: 2px solid red;
+}
+
+input[type=text] {
+    background-color: $body-bg !important;
+}
