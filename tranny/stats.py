@@ -14,7 +14,7 @@ class PieChart(Counter):
         return [{'label': section, "data": total} for section, total in self.most_common()]
 
 
-def service_totals(records):
+def service_totals(session, records):
     """ Get the download totals for each provider registered in the database
 
     :param records: list of history records
@@ -22,7 +22,10 @@ def service_totals(records):
     :return: Dict with totals for each key corresponding to a providers name
     :rtype: dict[]
     """
-    return PieChart(datastore.get_source(Session(), source_id=r.source_id).source_name for r in records).graph_data()
+    counts = Counter()
+    for download in records:
+        counts[download.source.source_name] += 1
+    return counts
 
 
 def section_totals(records):

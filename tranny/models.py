@@ -259,6 +259,8 @@ class Download(Base, ModelArgs):
     updated_on = Column(DateTime, default=datetime.datetime.utcnow)
     media_id = Column(Integer, ForeignKey(MediaInfo.media_id))
 
+    source = relationship(Source, lazy='joined')
+
     def __init__(self, release_key, release_name, section_id, source_id):
         self.release_key = release_key
         self.release_name = release_name

@@ -177,6 +177,54 @@ class TorrentTable
 
 torrent_table = null
 
+make_pie_chart = (id, data, title="") ->
+    $('#container').highcharts {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: 1,
+                plotShadow: false
+            },
+            title: {
+                text: title
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme and Highcharts.theme.contrastTextColor) or 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Browser share',
+                data: [
+                    ['Firefox',   45.0],
+                    ['IE',       26.8],
+                    {
+                        name: 'Chrome',
+                        y: 12.8,
+                        sliced: true,
+                        selected: true
+                    },
+                    ['Safari',    8.5],
+                    ['Opera',     6.2],
+                    ['Others',   0.7]
+                ]
+            }]
+        }
+
+init_service_totals_chart ->
+    make_pie_chart "#service_totals", null, "Provider source totals"
+
 init_traffic_chart = ->
     $('#detail-traffic-chart').highcharts {
         chart: {
@@ -530,6 +578,7 @@ window_resize_handler = ->
 
 
 jQuery ->
+
     if in_url "/torrents/"
         torrent_table = new TorrentTable "#torrent_table"
         root.t = torrent_table
@@ -579,3 +628,6 @@ jQuery ->
             torrent_table.fnAdjustColumnSizing true
         window_resize_handler()
         jQuery(window).on 'resize', window_resize_handler
+
+    if in_url "/home"
+        init_service_totals_chart()

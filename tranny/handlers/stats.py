@@ -13,7 +13,7 @@ stats = Blueprint("stats", __name__, url_prefix="/stats")
 @stats.route("/service_totals")
 @login_required
 def svc_totals():
-    data_set = stat.service_totals(Session.query(Download).all())
+    data_set = stat.service_totals(Session().query(Download).all())
     return dumps(data_set)
 
 
