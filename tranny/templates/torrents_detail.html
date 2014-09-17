@@ -1,7 +1,7 @@
 {% from "torrents_funcs.html" import torrent_detail_item %}
-<div id="torrent_detail">
 
-    <ul class="tabs" data-tab>
+
+<ul class="tabs" data-tab id="torrent_detail_tabs">
         <li class="tab-title active"><a href="#detail-status">Status</a></li>
         <li class="tab-title"><a href="#detail-detail">Details</a></li>
         <li class="tab-title"><a href="#detail-files">Files</a></li>
@@ -9,6 +9,7 @@
         <li class="tab-title"><a href="#detail-traffic">Traffic</a></li>
     </ul>
 
+<div id="torrent_detail">
     <div class="tabs-content">
         <div class="content active" id="detail-status">
             <div class="row">
@@ -60,7 +61,7 @@
         </div>
         <div class="content" id="detail-peers">
             <div class="row">
-                <div class="large-8 columns">
+                <div class="small-12 columns">
                     <table id="peer_list" style="width: 100%">
                         <thead>
                         <tr>
@@ -76,24 +77,31 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="large-4 columns">
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <h2 style="text-align: center"><small>Peer Countries</small></h2>
-                            <div id="peer_chart" class="epoch graph_colours" style="width: 300px; height: 300px"></div>
-                        </div>
-                        <div class="large-12 columns">
-                            <h2 style="text-align: center"><small>Peer Clients</small></h2>
-                            <div id="client_chart" class="epoch graph_colours" style="width: 300px; height: 300px"></div>
-                        </div>
-                    </div>
-
-
-                </div>
+{#                <div class="large-4 columns">#}
+{#                    <div class="row">#}
+{#                        <div class="large-12 columns">#}
+{#                            <h2 style="text-align: center">#}
+{#                                <small>Peer Countries</small>#}
+{#                            </h2>#}
+{#                            <div id="peer_chart" class="epoch graph_colours"#}
+{#                                 style="width: 300px; height: 300px"></div>#}
+{#                        </div>#}
+{#                        <div class="large-12 columns">#}
+{#                            <h2 style="text-align: center">#}
+{#                                <small>Peer Clients</small>#}
+{#                            </h2>#}
+{#                            <div id="client_chart" class="epoch graph_colours"#}
+{#                                 style="width: 300px; height: 300px"></div>#}
+{#                        </div>#}
+{#                    </div>#}
+{##}
+{##}
+{#                </div>#}
             </div>
         </div>
         <div class="content" id="detail-traffic">
-            <div id="detail-traffic-chart" class="epoch graph_colours" style="width: 960px; height: 200px"></div>
+            <div id="detail-traffic-chart"></div>
         </div>
     </div>
 </div>
+

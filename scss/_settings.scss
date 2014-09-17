@@ -432,7 +432,7 @@ $header-font-color: $warning-color;
 
 // We use these to control button text styles.
 // $button-font-family: $body-font-family;
-$button-font-color: darken($body-font-color, 15%);
+$button-font-color: $body-font-color;
 $button-font-color-alt: $button-font-color;
 // $button-font-tny: rem-calc(11);
 // $button-font-sml: rem-calc(13);
@@ -1298,8 +1298,8 @@ $table-line-height: rem-calc(18);
 // $include-html-tabs-classes: $include-html-classes;
 
 // $tabs-navigation-padding: rem-calc(16);
-$tabs-navigation-bg-color: $oil;
-$tabs-navigation-active-bg-color: $jet;
+$tabs-navigation-bg-color: darken($body-bg, 5%);
+$tabs-navigation-active-bg-color: $primary-color;
 // $tabs-navigation-hover-bg-color: scale-color($tabs-navigation-bg-color, $lightness: -6%);
 $tabs-navigation-font-color: $body-font-color;
 // $tabs-navigation-active-font-color: $tabs-navigation-font-color;

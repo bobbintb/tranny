@@ -37,6 +37,12 @@
     }
 }
 
+#peer_list {
+    th {
+        padding: 5px 10px 5px 10px;
+    }
+}
+
 #torrent_table, #torrent_table_head {
     .name {
         overflow-x: hidden;
@@ -105,22 +111,36 @@
         cursor: pointer;
     }
 }
+#peer_details {
+    overflow-y: auto;
+}
+#torrent_detail_tabs {
+    margin-top: $column-gutter /2;
+    .tab-title a {
+        padding: 4px 8px 4px 8px;
+    }
+}
 
 #torrent_detail {
-    margin-top: $column-gutter /2;
-    height: 300px;
-    overflow-y: scroll;
+
+    height: 270px;
+    overflow-x: hidden;
+    padding-bottom: 0;
+    margin-bottom: 0;
     .torrent_detail_value, .torrent_detail_label {
         font-size: 60%;
     }
     .torrent_detail_label {
         font-weight: 700;
     }
-    .tab-title a {
-        padding: 4px 8px 4px 8px;
-    }
+
     .tabs-content {
         border: 1px solid $tabs-navigation-bg-color;
         padding: 4px;
     }
+}
+
+#detail-traffic-chart {
+    height: 170px;
+    width: 80%;
 }

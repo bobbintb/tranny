@@ -2,32 +2,24 @@
 
 {% block content %}
     <!-- Torrent control box -->
-{#    <div class="row">#}
-        <div class="columns" id="torrent_controls">
+    <div class="row">
+        <div class="small-12 columns" id="torrent_controls">
             {% include "torrents_controls.html" %}
         </div>
-{#    </div>#}
+    </div>
 
     <!-- Torrent listings -->
-{#    <div class="row">#}
-        <div class="columns">
+    <div class="row">
+        <div class="small-12 columns">
             {% include "torrents_table.html" %}
         </div>
-{#    </div>#}
+    </div>
 
     <!-- Torrent details -->
-{#    <div class="row">#}
-        <div class="columns epoch-theme-dark">
+    <div class="row">
+        <div class="small-12 columns">
             {% include "torrents_detail.html" %}
         </div>
-{#    </div>#}
+    </div>
 
-{% endblock %}
-
-{% block footer %}
-    <link rel="stylesheet" href="{{ url_for("static", filename="vendor/epoch/epoch.min.css") }}"/>
-    <script src="{{ url_for("static", filename="vendor/lodash/dist/lodash.js") }}"></script>
-    <script src="{{ url_for("static", filename="vendor/d3/d3.js") }}"></script>
-    <script src="{{ url_for("static", filename="vendor/epoch/epoch.min.js") }}"></script>
-    <script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
 {% endblock %}

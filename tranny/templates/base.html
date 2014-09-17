@@ -32,13 +32,18 @@
 
 {% block content %}{% endblock %}
 
+
+
 <script src="{{ url_for("static", filename="vendor/jquery/dist/jquery.js") }}"></script>
 <script src="{{ url_for("static", filename="vendor/fastclick/lib/fastclick.js") }}"></script>
 <script src="{{ url_for("static", filename="vendor/foundation/js/foundation.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/highcharts/highcharts.js") }}"></script>
+<script src="{{ url_for("static", filename="js/highcharts-theme.js") }}"></script>
 <script src="{{ url_for("static", filename="js/tranny.js") }}"></script>
+<script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
 
 
-{% block footer %}{% endblock %}
+
 {% include "modal_upload.html" %}
 </body>
 </html>

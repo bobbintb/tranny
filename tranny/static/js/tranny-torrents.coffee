@@ -55,6 +55,9 @@ user_messages = jQuery("#user_messages")
 speed_up = jQuery("#speed_up")
 speed_dn = jQuery("#speed_dn")
 
+### Traffic chart instance ###
+detail_traffic_chart = null
+
 STATUS_OK = 0
 STATUS_FAIL = 1
 STATUS_INTERNAL_ERROR = 3
@@ -173,6 +176,7 @@ class TorrentTable
             action_torrent_details()
             action_torrent_speed()
             action_torrent_peers()
+            init_traffic_chart()
             @setAttribute "class", selected_class
 
 torrent_table = null
@@ -230,48 +234,86 @@ init_provider_type_totals_chart = ->
     }]
     make_pie_chart "#provider_type_totals", null, series_data_obj, null
 
-init_traffic_chart = ->
-    $('#detail-traffic-chart').highcharts {
+rand_int = ->
+    Math.floor(Math.random() * 100000000)
+
+speed_data = []
+_chart_interval_timer = null
+
+###
+    (re)Initialize the speed detail graph. This needs to be called each time a new single
+    torrent is selected for details.
+
+    This function will clear memory of existing charts and remove the existing interval
+    timer used to update it.
+###
+init_traffic_chart = (id="#detail-traffic-chart", title=null) ->
+    if detail_traffic_chart
+        detail_traffic_chart.highcharts().destroy()
+    if _chart_interval_timer
+        clearInterval _chart_interval_timer
+    detail_traffic_chart = jQuery(id).highcharts {
         chart: {
-            type: 'areaspline'
+            alignTicks: true,
+            reflow: true,
+            type: 'areaspline',
+            events: {
+                load: ->
+                    series_up = @series[0]
+                    series_dn = @series[1]
+                    # set up the updating of the chart each second
+                    _chart_interval_timer = setInterval((->
+                        speed = speed_data.pop()
+                        if not speed
+                            speed = [0, 0]
+                        x = (new Date()).getTime()
+                        series_up.addPoint([x, speed[0]], true, false)
+                        series_dn.addPoint([x, speed[1]], true, false)
+                    ), 1000)
+
+            }
         },
         title: {
-            text: 'Average fruit consumption during one week'
+            text: title
         },
         legend: {
             layout: 'vertical',
             align: 'left',
             verticalAlign: 'top',
-            x: 150,
-            y: 100,
+            x: 90,
+            y: 30,
             floating: true,
             borderWidth: 1,
             backgroundColor: (Highcharts.theme and Highcharts.theme.legendBackgroundColor) or '#FFFFFF'
         },
         xAxis: {
-            categories: [
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday',
-                'Sunday'
-            ],
-            plotBands: [{
-                from: 4.5,
-                to: 6.5,
-                color: 'rgba(68, 170, 213, .2)'
-            }]
+            type: 'datetime',
+            tickPixelInterval: 150,
+
         },
         yAxis: {
             title: {
-                text: 'Fruit units'
-            }
+                text: 'Speed'
+            },
+            min: 0,
+            floor: 0,
+            startOnTick: true,
+            showEmpty: false
         },
         tooltip: {
             shared: true,
-            valueSuffix: ' units'
+            #valueSuffix: ' units',
+            formatter: (->
+                d = new Date(@x)
+                hours = d.getHours();
+                minutes = d.getMinutes();
+                seconds = d.getSeconds();
+                formattedTime = hours + ':' + minutes + ':' + seconds
+                s = "<b>#{formattedTime}</b>"
+                jQuery.each this.points, ->
+                    s += "<br/>#{@series.name}: #{bytes_to_size(@y, true)}"
+                return s
+            ),
         },
         credits: {
             enabled: false
@@ -282,11 +324,9 @@ init_traffic_chart = ->
             }
         },
         series: [{
-            name: 'John',
-            data: [3, 4, 3, 5, 4, 10, 12]
+            name: 'Upload Speed',
         }, {
-            name: 'Jane',
-            data: [1, 3, 4, 3, 3, 5, 4]
+            name: 'Download Speed',
         }]
     }
 
@@ -404,7 +444,10 @@ handle_event_speed_overall_response = (message) ->
 
 
 handle_event_torrent_speed_response = (message) ->
-    chart_update message['data']['download_payload_rate'], message['data']['upload_payload_rate']
+    speed_data.push [
+        message['data']['upload_payload_rate'],
+        message['data']['download_payload_rate']
+    ]
 
 
 handle_event_torrent_peers_response = (message) ->
@@ -415,8 +458,6 @@ handle_event_torrent_peers_response = (message) ->
         peer_chart_data.push {label: country, value: count}
     for client, count of _.countBy message['data']['peers'], sort_client
         client_chart_data.push {label: client, value: count}
-    peer_chart.update peer_chart_data
-    client_chart.update client_chart_data
     render_peers message['data']['peers']
 
 handle_event_torrent_remove_response = (message) ->
@@ -470,15 +511,6 @@ show_alert = (msg, msg_type='info', ttl=5) ->
     return _alert_num
 
 
-### Update the chart values with the latest speed values ###
-chart_update = (upload, download) ->
-    update_data = [
-        {time: ts(), y: upload},
-        {time: ts(), y: download}
-    ]
-    detail_traffic_chart.push update_data
-
-
 fmt_timestamp = (ts) ->
     moment.unix(ts).format 'D/M/YYYY hh:mm:s'
 
@@ -498,7 +530,7 @@ bytes_to_size = (bytes, per_sec=false) ->
         return if per_sec then "#{bytes} B/s" else "#{bytes} B"
     k = 1000
     i = Math.floor(Math.log(bytes) / Math.log(k))
-    human_size = (bytes / Math.pow(k, i)).toPrecision(2) + ' ' + _sizes[i]
+    human_size = (bytes / Math.pow(k, i)).toFixed(2) + ' ' + _sizes[i]
     if per_sec
         human_size = "#{human_size}/s"
     return human_size
@@ -523,33 +555,33 @@ render_peers = (peer_list) ->
 ### Return the current unix timestamp in seconds ###
 ts = -> Math.round(new Date().getTime() / 1000)|0
 
-#detail_traffic_chart = null
+
 
 ### Cache all the detail element nodes ###
 detail_elements =
-    detail_downloaded: jQuery("#detail_downloaded")
-    detail_uploaded: jQuery("#detail_uploaded")
-    detail_ratio: jQuery("#detail_ratio")
-    detail_next_announce: jQuery("#detail_next_announce")
-    detail_tracker_status: jQuery("#detail_tracker_status")
-    detail_speed_dl: jQuery("#detail_speed_dl")
-    detail_speed_ul: jQuery("#detail_speed_ul")
-    detail_eta: jQuery("#detail_eta")
-    detail_pieces: jQuery("#detail_pieces")
-    detail_seeders: jQuery("#detail_seeders")
-    detail_peers: jQuery("#detail_peers")
-    detail_availability: jQuery("#detail_availability")
-    detail_active_time: jQuery("#detail_active_time")
-    detail_seeding_time: jQuery("#detail_seeding_time")
-    detail_added_on: jQuery("#detail_added_on")
-    detail_name: jQuery("#detail_name")
-    detail_hash: jQuery("#detail_hash")
-    detail_path: jQuery("#detail_path")
-    detail_total_size: jQuery("#detail_total_size")
-    detail_num_files: jQuery("#detail_num_files")
-    detail_comment: jQuery("#detail_comment")
-    detail_status: jQuery("#detail_status")
-    detail_tracker: jQuery("#detail_tracker")
+    detail_downloaded: jQuery "#detail_downloaded"
+    detail_uploaded: jQuery "#detail_uploaded"
+    detail_ratio: jQuery "#detail_ratio"
+    detail_next_announce: jQuery "#detail_next_announce"
+    detail_tracker_status: jQuery "#detail_tracker_status"
+    detail_speed_dl: jQuery "#detail_speed_dl"
+    detail_speed_ul: jQuery "#detail_speed_ul"
+    detail_eta: jQuery "#detail_eta"
+    detail_pieces: jQuery "#detail_pieces"
+    detail_seeders: jQuery "#detail_seeders"
+    detail_peers: jQuery "#detail_peers"
+    detail_availability: jQuery "#detail_availability"
+    detail_active_time: jQuery "#detail_active_time"
+    detail_seeding_time: jQuery "#detail_seeding_time"
+    detail_added_on: jQuery "#detail_added_on"
+    detail_name: jQuery "#detail_name"
+    detail_hash: jQuery "#detail_hash"
+    detail_path: jQuery "#detail_path"
+    detail_total_size: jQuery "#detail_total_size"
+    detail_num_files: jQuery "#detail_num_files"
+    detail_comment: jQuery "#detail_comment"
+    detail_status: jQuery "#detail_status"
+    detail_tracker: jQuery "#detail_tracker"
 
 ### Check for the existence of a string in the URL ###
 in_url = (text) ->
@@ -557,14 +589,14 @@ in_url = (text) ->
 
 torrent_wrapper = document.querySelector "#table_wrap"
 window_resize_handler = ->
-    torrent_wrapper.style.height = "#{window.innerHeight - 395}px";
+    torrent_wrapper.style.height = "#{window.innerHeight - 465}px";
 
 
 jQuery ->
-
     if in_url "/torrents/"
         torrent_table = new TorrentTable "#torrent_table"
         root.t = torrent_table
+        detail_traffic_chart = init_traffic_chart "#detail-traffic-chart"
     socket = io.connect endpoint
     socket.on 'connect', ->
         if has_connected
@@ -588,6 +620,7 @@ jQuery ->
         error_handler handle_event_speed_overall_response, message
 
     if in_url "/torrents/"
+        # Bind websocket event handlers
         socket.on 'event_torrent_recheck', (message) =>
             error_handler handle_event_torrent_recheck_response, message
         socket.on 'event_torrent_peers_response', handle_event_torrent_peers_response
@@ -601,16 +634,16 @@ jQuery ->
         socket.on 'event_torrent_reannounce_response', handle_event_torrent_reannounce_response
         socket.on 'event_torrent_stop_response', handle_event_torrent_stop_response
 
+        # Bind button event handlers
         jQuery('#action_stop').on 'click', action_stop
         jQuery('#action_start').on 'click', action_start
         jQuery('#action_recheck').on 'click', action_recheck
         jQuery('#action_reannounce').on 'click', action_reannounce
         jQuery('#action_remove').on 'click', action_remove
         jQuery('#action_remove_data').on 'click', action_remove_data
-        jQuery('#resize_columns').on 'click', ->
-            torrent_table.fnAdjustColumnSizing true
         window_resize_handler()
         jQuery(window).on 'resize', window_resize_handler
+
 
     if in_url "/home"
         init_provider_totals_chart()
