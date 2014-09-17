@@ -9,31 +9,23 @@ from tranny import datastore
 from tranny.app import Session
 
 
-class PieChart(Counter):
-    def graph_data(self):
-        return [{'label': section, "data": total} for section, total in self.most_common()]
-
-
-def service_totals(session, records):
+def count_totals(records, key_getter):
     """ Get the download totals for each provider registered in the database
 
+    :param key_getter: Function used to determine the key of the object
+    :type key_getter: callable
     :param records: list of history records
-    :type records: tranny.models.Download[]
+    :type records: tranny.models.Base[]
     :return: Dict with totals for each key corresponding to a providers name
     :rtype: dict[]
     """
     counts = Counter()
-    for download in records:
-        counts[download.source.source_name] += 1
+    for r in records:
+        counts[key_getter(r)] += 1
     return counts
 
 
-def section_totals(records):
-    data_set = (datastore.get_section(Session(), section_id=r.section_id).section_name.split("_")[1] for r in records)
-    return PieChart(data_set).graph_data()
-
-
-def service_type_totals(records):
+def provider_type_counter(records):
     """
 
     :param records:
@@ -42,17 +34,19 @@ def service_type_totals(records):
     :rtype:
     """
     rss_feeds = [name.split("_")[1] for name in app.config.find_sections("rss_")]
-    services = [name.split("_")[1] for name in app.config.find_sections("provider_")]
-    counter = PieChart()
+    providers = [name.split("_")[1] for name in app.config.find_sections("provider_")]
+    counter = Counter()
     for record in records:
         # TODO fix with joined value
-        source_name = datastore.get_source(Session(), source_id=record.source_id).source_name
+        source_name = record.source.source_name.lower()
         if source_name in rss_feeds:
             counter['RSS'] += 1
-        elif source_name in services:
-            counter["{0} (api)".format(source_name)] += 1
+        elif source_name in providers:
+            counter["API"] += 1
         elif source_name == "watch":
             counter["Watch"] += 1
+        elif source_name == "web":
+            counter['WebUI'] += 1
         else:
             counter['Unknown'] += 1
-    return counter.graph_data()
+    return counter

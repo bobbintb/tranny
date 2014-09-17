@@ -169,11 +169,7 @@ settings_save = (evt) ->
 
 
 jQuery ->
-    if window.location.pathname.indexOf("home") != -1
-        render_service_totals()
-        render_section_totals()
-        render_service_type_totals()
-    else if window.location.pathname.indexOf("filters") != -1
+    if window.location.pathname.indexOf("filters") != -1
         jQuery(".filter_remove").on "click", filter_remove
         jQuery(".filter_add").on "click", filter_add
     else if window.location.pathname.indexOf("services") != -1

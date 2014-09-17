@@ -3,48 +3,43 @@
 {% block content %}
     <div class="row">
         <div class="large-4 columns">
-            <h3>
+            <h3 class="text-center">
                 <small>Provider Download Totals</small>
             </h3>
-            <div id="service_totals" style="height: 400px"></div>
+            <div id="provider_totals" ></div>
         </div>
         <div class="large-4 columns">
-            <h3><small>Matched Section Totals</small></h3>
-            <div id="section_totals" style="height: 400px"></div>
+            <h3 class="text-center"><small>Matched Section Totals</small></h3>
+            <div id="section_totals"></div>
         </div>
         <div class="large-4 columns">
-            <h3>
+            <h3 class="text-center">
                 <small>Top Provider Service Types</small>
             </h3>
-            <div id="service_type_totals" style="height: 400px"></div>
+            <div id="provider_type_totals"></div>
         </div>
     </div>
-{#    <div class="row">#}
-{#        <div class="large-6 columns">#}
-{#            <h3>#}
-{#                <small>Top Provider Service Types</small>#}
-{#            </h3>#}
-{#            <div id="service_type_totals" style="height: 400px"></div>#}
-{#        </div>#}
-{#    </div>#}
     <div class="row">
         <div class="large-12 columns">
             <h3>
-                <small>Most recent matched downloads</small>
+                <small>Most recent downloads</small>
             </h3>
             {% for rls in newest %}
                 <div class="release_item">
-                    <span>{{ rls.created_on }}</span> {{ rls.release_name }}
+                    <span>{{ rls.created_on|format_date("%d-%m-%Y @ %H:%M") }}</span> {{ rls.release_name }}
                 </div>
             {% endfor %}
         </div>
     </div>
+        <script>
+        // Chart data to load
+        var provider_totals = {{ provider_totals|tojson }};
+        var section_totals = {{ section_totals|tojson }};
+        var provider_type_totals = {{ provider_type_totals|tojson }};
+    </script>
 {% endblock %}
 {% block footer %}
-    <script type="text/javascript"
-            src="{{ url_for("static", filename="js/vendor/flot/jquery.flot.js") }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for("static", filename="js/vendor/flot/jquery.flot.resize.js") }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for("static", filename="js/vendor/flot/jquery.flot.pie.js") }}"></script>
+    <script src="{{ url_for("static", filename="vendor/highcharts/highcharts.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/highcharts-theme.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
 {% endblock %}

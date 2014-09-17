@@ -177,8 +177,8 @@ class TorrentTable
 
 torrent_table = null
 
-make_pie_chart = (id, data, title="") ->
-    $('#container').highcharts {
+make_pie_chart = (id, data, series, title="") ->
+    jQuery(id).highcharts {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: 1,
@@ -195,35 +195,40 @@ make_pie_chart = (id, data, title="") ->
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        style: {
-                            color: (Highcharts.theme and Highcharts.theme.contrastTextColor) or 'black'
-                        }
-                    }
+                        enabled: false,
+                    },
+                    showInLegend: true
                 }
             },
-            series: [{
-                type: 'pie',
-                name: 'Browser share',
-                data: [
-                    ['Firefox',   45.0],
-                    ['IE',       26.8],
-                    {
-                        name: 'Chrome',
-                        y: 12.8,
-                        sliced: true,
-                        selected: true
-                    },
-                    ['Safari',    8.5],
-                    ['Opera',     6.2],
-                    ['Others',   0.7]
-                ]
-            }]
+            series: series,
+            credits: {
+                enabled: false
+            }
         }
 
-init_service_totals_chart ->
-    make_pie_chart "#service_totals", null, "Provider source totals"
+init_provider_totals_chart = ->
+    series_data_obj = [{
+        type: 'pie',
+        name: 'Provider Totals',
+        data: provider_totals
+    }]
+    make_pie_chart "#provider_totals", null, series_data_obj, null
+
+init_section_totals_chart = ->
+    series_data_obj = [{
+        type: 'pie',
+        name: 'Section Totals',
+        data: section_totals
+    }]
+    make_pie_chart "#section_totals", null, series_data_obj, null
+
+init_provider_type_totals_chart = ->
+    series_data_obj = [{
+        type: 'pie',
+        name: 'Section Totals',
+        data: provider_type_totals
+    }]
+    make_pie_chart "#provider_type_totals", null, series_data_obj, null
 
 init_traffic_chart = ->
     $('#detail-traffic-chart').highcharts {
@@ -284,28 +289,6 @@ init_traffic_chart = ->
             data: [1, 3, 4, 3, 3, 5, 4]
         }]
     }
-
-
-### Initialize epoch chart on the traffic tab ###
-#detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
-#    type: graph_type,
-#    data: [{label: "upload", values: []}, {label: "download", values: []}],
-#    axes: ['left', 'right'],
-#    fps: graph_fps,
-#    windowSize: graph_window_size,
-#    queueSize: queue_size
-#}
-
-### Initialize peer chart on the peers tab ###
-peer_chart = jQuery("#peer_chart").epoch {
-    type: 'pie',
-    inner: 50
-}
-
-client_chart = jQuery("#client_chart").epoch {
-    type: 'pie',
-    inner: 50
-}
 
 
 ###
@@ -630,4 +613,6 @@ jQuery ->
         jQuery(window).on 'resize', window_resize_handler
 
     if in_url "/home"
-        init_service_totals_chart()
+        init_provider_totals_chart()
+        init_section_totals_chart()
+        init_provider_type_totals_chart()

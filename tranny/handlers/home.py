@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+/home handlers
+"""
 from __future__ import unicode_literals
 import platform
 import time
@@ -20,9 +23,16 @@ home = Blueprint("home", __name__, url_prefix="/home")
 def index():
     session = Session()
     downloads = session.query(Download).filter(Download.source_id > 0).all()
-    service_totals = stats.service_totals(session, downloads)
-    newest = Session.query(Download).limit(25).all()
-    return ui.render_template("index.html", newest=newest, section="stats")
+    provider_totals = stats.count_totals(downloads, lambda v: v.source.source_name).items()
+    section_totals = stats.count_totals(downloads, lambda v: v.section.section_name).items()
+    provider_type_totals = stats.provider_type_counter(downloads).items()
+    newest = Session.query(Download).order_by(Download.entity_id.desc()).limit(25).all()
+    return ui.render_template(
+        "index.html", newest=newest, section="stats",
+        provider_totals=provider_totals,
+        section_totals=section_totals,
+        provider_type_totals=provider_type_totals
+    )
 
 
 @home.route("/syslog")
