@@ -222,7 +222,7 @@ make_pie_chart = (id, data, title="") ->
             }]
         }
 
-init_service_totals_chart ->
+init_service_totals_chart = ->
     make_pie_chart "#service_totals", null, "Provider source totals"
 
 init_traffic_chart = ->

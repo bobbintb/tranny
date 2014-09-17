@@ -30,10 +30,10 @@ class RTorrentClient(client.TorrentClient):
     scgi_port = localhost:5000
 
     """
-    _config_key = "client_rtorrent"
+    config_key = "client_rtorrent"
 
-    def __init__(self):
-        self._server = SCGIServerProxy(config.get(self._config_key, 'uri'))
+    def __init__(self, uri):
+        self._server = SCGIServerProxy(uri)
 
     def client_version(self):
         client = self._server.system.client_version()
@@ -76,8 +76,58 @@ class RTorrentClient(client.TorrentClient):
             'd.is_private=',
             'd.is_active='
         )
-        torrent_data = [ClientTorrentData(*t) for t in torrents]
-        return torrent_data
+        # Missing fields: leechers, total leechers
+        torrent_data = [t[:9] + ['0', '0'] + t[9:] + [(t[7]/t[8])*100] for t in torrents]
+        return [ClientTorrentData(*t) for t in torrent_data]
+
+    def torrent_speed(self, info_hash):
+        return self._server.d.get_down_rate(info_hash), self._server.d.get_up_rate(info_hash)
+
+    def torrent_status(self, info_hash):
+        status_map = {
+            'total_done': 'd.get_down_total',
+            'total_uploaded': 'd.get_up_total',
+            'ratio': 'd.get_ratio',
+            'name': 'd.name',
+            'save_path': 'd.get_directory_base',
+            'total_size': 'd.get_size_bytes',
+            'piece_length': 'd.get_chunk_size',
+            'num_pieces': 'd.size_chunks',
+            'num_peers': 'd.get_peers_connected',
+            'download_payload_rate': 'd.get_down_rate',
+            'upload_payload_rate': 'd.get_up_rate',
+        }
+        # Predefine unimplmented items here
+        data = {
+            'next_announce': 'N/A',
+            'tracker_status': 'N/A',
+            'num_seeds': '0',
+            'total_seeds': '0',
+            'total_peers': '0',
+            'distributed_copies': 'N/A',
+            'time_added': '1970-01-01',
+            'active_time': '0',
+            'seeding_time': '0',
+        }
+        for field, call in status_map.items():
+            data[field] = getattr(self._server, call)(info_hash)
+        return data
+
+    def torrent_peers(self, info_hash):
+        data_mapping = {
+            'client': 'p.get_client_version=',
+            'progress': 'p.completed_percent=',
+            'down_speed': 'p.get_down_rate=',
+            'up_speed': 'p.get_up_rate=',
+            'ip': 'p.address='
+        }
+        pdata = self._server.p.multicall(info_hash, *data_mapping.values())
+        for peer in pdata:
+            for index, value in enumerate(data_mapping.keys()):
+                peer[value] = peer[index]
+            # Country data not implemented yet
+            peer['country'] = 'CA'
+        return {'peers': pdata}
 
     def torrent_stop(self, torrents):
         for torrent in torrents:
@@ -89,6 +139,12 @@ class RTorrentClient(client.TorrentClient):
             self._server.d.start(torrent)
         return {}
 
+    def get_capabilities(self):
+        return ['torrent_add', 'torrent_list']
+
+    def get_events(self):
+        # Wouldn't be impossible to implement in the future
+        return {}
 
 class SCGITransport(xmlrpclib.Transport):
     def single_request(self, host, handler, request_body, verbose=0):
