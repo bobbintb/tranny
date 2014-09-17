@@ -80,6 +80,39 @@ class RTorrentClient(client.TorrentClient):
         torrent_data = [t[:9] + ['0', '0'] + t[9:] + [(t[7]/t[8])*100] for t in torrents]
         return [ClientTorrentData(*t) for t in torrents]
 
+    def torrent_speed(self, info_hash):
+        return self._server.d.get_down_rate(info_hash), self._server.d.get_up_rate(info_hash)
+
+    def torrent_status(self, info_hash):
+        status_map = {
+            'total_done': 'd.get_down_total',
+            'total_uploaded': 'd.get_up_total',
+            'ratio': 'd.get_ratio',
+            'name': 'd.name',
+            'save_path': 'd.get_directory_base',
+            'total_size': 'd.get_size_bytes',
+            'piece_length': 'd.get_chunk_size',
+            'num_pieces': 'd.size_chunks',
+            'num_peers': 'd.get_peers_connected',
+            'download_payload_rate': 'd.get_down_rate',
+            'upload_payload_rate': 'd.get_up_rate',
+        }
+        # Predefine unimplmented items here
+        data = {
+            'next_announce': 'N/A',
+            'tracker_status': 'N/A',
+            'num_seeds': '0',
+            'total_seeds': '0',
+            'total_peers': '0',
+            'distributed_copies': 'N/A',
+            'time_added': '1970-01-01',
+            'active_time': '0',
+            'seeding_time': '0',
+        }
+        for field, call in status_map.items():
+            data[field] = getattr(self._server, call)(info_hash)
+        return data
+
     def torrent_stop(self, torrents):
         for torrent in torrents:
             self._server.d.stop(torrent)
