@@ -127,7 +127,7 @@ class RTorrentClient(client.TorrentClient):
                 peer[value] = peer[index]
             # Country data not implemented yet
             peer['country'] = 'CA'
-        return {'peers': data}
+        return {'peers': pdata}
 
     def torrent_stop(self, torrents):
         for torrent in torrents:
