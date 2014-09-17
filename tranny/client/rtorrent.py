@@ -78,7 +78,7 @@ class RTorrentClient(client.TorrentClient):
         )
         # Missing fields: leechers, total leechers
         torrent_data = [t[:9] + ['0', '0'] + t[9:] + [(t[7]/t[8])*100] for t in torrents]
-        return [ClientTorrentData(*t) for t in torrents]
+        return [ClientTorrentData(*t) for t in torrent_data]
 
     def torrent_speed(self, info_hash):
         return self._server.d.get_down_rate(info_hash), self._server.d.get_up_rate(info_hash)
