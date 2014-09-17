@@ -1,7 +1,7 @@
 @import "settings";
 
 .custom_switch {
-    @include switch($radius: false, $base-style: false);
+    @include switch($radius: false, $base-style: true);
     //border: 2px solid red;
 }
 

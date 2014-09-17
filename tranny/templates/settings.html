@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="row">
+    <div class="small-12 columns">
     <form class="custom" action="{{ url_for("settings.save") }}" id="settings_form" method="post">
     <ul class="small-block-grid-1 large-block-grid-2">
         {% for k, v in settings.iteritems() %}
-
             <li>
                 <div class="row">
                     <div class="large-12 columns">
@@ -15,7 +16,7 @@
                             <div class="row collapse">
                             {% if key in select_values %}
                                 <div class="small-3 columns">
-                                    <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ k }}</label></span>
+                                    <span class="prefix">{{ k }}</span>
                                 </div>
                                 <div class="small-9 columns">
                                     <select id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}">
@@ -26,23 +27,18 @@
                                 </div>
                             {% elif key in bool_values %}
                                 <div class="small-3 columns">
-                                    <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
+                                    <span class="prefix">{{ key.replace("_", " ")|title }}</span>
                                 </div>
                                 <div class="small-9 columns">
-                                    <div class="inline-switch">
-
-                                        <input id="{{ k.lower() }}__{{ key }}" name="{{ k.lower() }}__{{ key }}" type="radio"
-                                               {% if not value %}checked{% endif %}>
-                                        <label for="{{ k }}__{{ key }}">Disabled</label>
-                                        <input id="{{ k.lower() }}__{{ key }}1" name="{{ k.lower() }}__{{ key }}" type="radio"
-                                               {% if value %}checked{% endif %}>
-                                        <label for="{{ k.lower() }}__{{ key }}1">Enabled</label>
-                                        <span></span>
+                                    <div class="custom_switch">
+                                        <input id="{{ k.lower() }}__{{ key }}" type="checkbox" {% if value|lower == "true" %}checked{% endif %}>
+                                        <label for="{{ k.lower() }}__{{ key }}"></label>
                                     </div>
+
                                 </div>
                             {% else %}
                                 <div class="small-3 columns">
-                                    <span class="prefix"><label for="{{ k.lower() }}__{{ key }}">{{ key.replace("_", " ")|title }}</label></span>
+                                    <span class="prefix">{{ key.replace("_", " ")|title }}</span>
                                 </div>
                                 <div class="small-9 columns">
                                     <input type="text" name="{{ k.lower() }}__{{ key }}" id="{{ k.lower() }}__{{ key }}" value="{{ value }}">
@@ -65,4 +61,6 @@
         </div>
     </div>
     </form>
+    </div>
+        </div>
 {% endblock %}

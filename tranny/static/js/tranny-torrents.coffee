@@ -177,16 +177,76 @@ class TorrentTable
 
 torrent_table = null
 
+init_traffic_chart = ->
+    $('#detail-traffic-chart').highcharts {
+        chart: {
+            type: 'areaspline'
+        },
+        title: {
+            text: 'Average fruit consumption during one week'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            verticalAlign: 'top',
+            x: 150,
+            y: 100,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: (Highcharts.theme and Highcharts.theme.legendBackgroundColor) or '#FFFFFF'
+        },
+        xAxis: {
+            categories: [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday'
+            ],
+            plotBands: [{
+                from: 4.5,
+                to: 6.5,
+                color: 'rgba(68, 170, 213, .2)'
+            }]
+        },
+        yAxis: {
+            title: {
+                text: 'Fruit units'
+            }
+        },
+        tooltip: {
+            shared: true,
+            valueSuffix: ' units'
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            areaspline: {
+                fillOpacity: 0.5
+            }
+        },
+        series: [{
+            name: 'John',
+            data: [3, 4, 3, 5, 4, 10, 12]
+        }, {
+            name: 'Jane',
+            data: [1, 3, 4, 3, 3, 5, 4]
+        }]
+    }
+
 
 ### Initialize epoch chart on the traffic tab ###
-detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
-    type: graph_type,
-    data: [{label: "upload", values: []}, {label: "download", values: []}],
-    axes: ['left', 'right'],
-    fps: graph_fps,
-    windowSize: graph_window_size,
-    queueSize: queue_size
-}
+#detail_traffic_chart = jQuery('#detail-traffic-chart').epoch {
+#    type: graph_type,
+#    data: [{label: "upload", values: []}, {label: "download", values: []}],
+#    axes: ['left', 'right'],
+#    fps: graph_fps,
+#    windowSize: graph_window_size,
+#    queueSize: queue_size
+#}
 
 ### Initialize peer chart on the peers tab ###
 peer_chart = jQuery("#peer_chart").epoch {
