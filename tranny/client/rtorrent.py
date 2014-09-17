@@ -113,6 +113,22 @@ class RTorrentClient(client.TorrentClient):
             data[field] = getattr(self._server, call)(info_hash)
         return data
 
+    def torrent_peers(self, info_hash):
+        data_mapping = {
+            'client': 'p.get_client_version=',
+            'progress': 'p.completed_percent=',
+            'down_speed': 'p.get_down_rate=',
+            'up_speed': 'p.get_up_rate=',
+            'ip': 'p.address='
+        }
+        pdata = self._server.p.multicall(info_hash, *data_mapping.values())
+        for peer in pdata:
+            for index, value in enumerate(data_mapping.keys()):
+                peer[value] = peer[index]
+            # Country data not implemented yet
+            peer['country'] = 'CA'
+        return {'peers': data}
+
     def torrent_stop(self, torrents):
         for torrent in torrents:
             self._server.d.stop(torrent)
