@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import os.path
 import re
 import socket
 import urllib
+import logging
+import shutil
 from tranny.client import ClientTorrentData
 
 try:
@@ -14,6 +18,7 @@ from tranny import client
 
 __all__ = ['RTorrentClient']
 
+log = logging.getLogger(__name__)
 
 class RTorrentClient(client.TorrentClient):
     """ rTorrent client support module. This class will talk to rtorrent over its
@@ -40,24 +45,28 @@ class RTorrentClient(client.TorrentClient):
         lib = self._server.system.library_version()
         return "rTorrent {}/{}".format(client, lib)
 
-    def add(self, data, download_dir=None):
-        payload = xmlrpclib.Binary(data)
+    def add(self, torrent, download_dir=None):
+        payload = xmlrpclib.Binary(torrent.torrent_data)
         # Make sure the xml-rpc size limit doesnt overflow
-        self._server.set_xmlrpc_size_limit(len(payload.data) * 2)
+        self._server.set_xmlrpc_size_limit(len(torrent.torrent_data) * 2)
         return self._server.load_raw_start(payload) == 0
 
     def current_speeds(self):
         dn = self._server.get_down_rate()
         up = self._server.get_up_rate()
-        return client.client_speed(up/1024, dn/1024)
+        return client.client_speed(up, dn)
 
-    def _multi(self, *args):
-        """ Trivial wrapper to d.multicall using the 'main' view
+    def _multi(self, *args, **kwargs):
+        """ Trivial wrapper to d.multicall, defaulting to the 'main' view
 
         :param args: Arguments to pass in
         :type args: list
         """
-        return self._server.d.multicall('main', *args)
+        if 'view' in kwargs.keys():
+            view = kwargs['view']
+        else:
+            view = 'main'
+        return self._server.d.multicall(view, *args)
 
     def torrent_list(self):
         torrents = self._multi(
@@ -74,14 +83,40 @@ class RTorrentClient(client.TorrentClient):
             'd.get_peers_complete=',
             'd.get_priority=',
             'd.is_private=',
-            'd.is_active='
+            'd.is_active=',
+            'd.is_hash_checking=',
+            'd.is_open=',
+            'd.get_complete=',
+            'd.get_message='
         )
         # Missing fields: leechers, total leechers
-        torrent_data = [t[:9] + ['0', '0'] + t[9:] + [(t[7]/t[8])*100] for t in torrents]
-        return [ClientTorrentData(*t) for t in torrent_data]
+        tdata = []
+        for t in torrents:
+            if t[17]:
+                status='Error'
+            elif t[14]:
+                status='Hashing'
+            elif not t[15]:
+                status='Closed'
+            elif not t[13]:
+                status='Paused'
+            elif t[16]:
+                status='Seeding'
+            elif not t[16]:
+                status='Leeching'
+            else:
+                status='Unknown'
+            if t[8] == 0:
+                ratio = 0
+            else:
+                ratio = (float(t[8]) / t[7]) * 100
+            torrent_data = t[:9] + ['0', '0'] + t[9:13] + [status, ratio]
+            tdata.append(ClientTorrentData(*torrent_data))
+        return tdata
 
     def torrent_speed(self, info_hash):
-        return self._server.d.get_down_rate(info_hash), self._server.d.get_up_rate(info_hash)
+        return {'upload_payload_rate': self._server.d.get_down_rate(info_hash),
+                'download_payload_rate': self._server.d.get_up_rate(info_hash)}
 
     def torrent_status(self, info_hash):
         status_map = {
@@ -116,28 +151,59 @@ class RTorrentClient(client.TorrentClient):
     def torrent_peers(self, info_hash):
         data_mapping = {
             'client': 'p.get_client_version=',
-            'progress': 'p.completed_percent=',
             'down_speed': 'p.get_down_rate=',
+            'progress': 'p.completed_percent=',
+            'ip': 'p.address=',
             'up_speed': 'p.get_up_rate=',
-            'ip': 'p.address='
         }
-        pdata = self._server.p.multicall(info_hash, *data_mapping.values())
-        for peer in pdata:
-            for index, value in enumerate(data_mapping.keys()):
-                peer[value] = peer[index]
+        parray = self._server.p.multicall(info_hash, '+0', *data_mapping.values())
+        pdata = []
+        for peer in parray:
             # Country data not implemented yet
-            peer['country'] = 'CA'
+            peer_dict = {'country': 'CA'}
+            for index, value in enumerate(data_mapping.keys()):
+                peer_dict[value] = peer[index]
+            pdata.append(peer_dict)
         return {'peers': pdata}
 
+    def torrent_files(self, info_hash):
+        # This isn't ready for use with the web UI, it's just a placeholder
+        return self._server.f.multicall(info_hash, '+0', 'f.get_path=')
+
+    def torrent_remove(self, info_hash, remove_data=False):
+        if remove_data:
+            # Release the files first
+            self._server.d.close(info_hash)
+            if self._server.d.is_multi_file(info_hash):
+                for f in self._server.f.multicall(info_hash, 0, 'f.get_frozen_path='):
+                    if os.path.isdir(f[0]):
+                        shutil.rmtree(f[0])
+                    elif os.path.isfile(f[0]):
+                        os.unlink(f[0])
+                shutil.rmtree(self._server.d.get_base_path(info_hash))
+            else:
+                os.unlink(self._server.d.get_base_path(info_hash))
+        self._server.d.erase(info_hash)
+
+    def torrent_reannounce(self, info_hash):
+        for info_hash in info_hash:
+            self._server.d.tracker_announce(info_hash)
+
+    def torrent_pause(self, torrents):
+        for info_hash in torrents:
+            self._server.d.stop(info_hash)
+
     def torrent_stop(self, torrents):
-        for torrent in torrents:
-            self._server.d.stop(torrent)
-        return {}
+        for info_hash in torrents:
+            self._server.d.close(info_hash)
 
     def torrent_start(self, torrents):
-        for torrent in torrents:
-            self._server.d.start(torrent)
-        return {}
+        for info_hash in torrents:
+            self._server.d.start(info_hash)
+
+    def torrent_recheck(self, torrents):
+        for info_hash in torrents:
+            self._server.d.check_hash(info_hash)
 
     def get_capabilities(self):
         return ['torrent_add', 'torrent_list']
@@ -166,7 +232,7 @@ class SCGITransport(xmlrpclib.Transport):
 
             self.verbose = verbose
 
-            sock.send(request_body)
+            sock.sendall(request_body)
             return self.parse_response(sock.makefile())
         finally:
             if sock:
