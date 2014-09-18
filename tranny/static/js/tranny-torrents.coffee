@@ -77,47 +77,27 @@ template =
     ratio: _.template """<span class="{{ class_name }}">{{ data }}</span>"""
     peer_info: _.template "{{ num }} ({{ total }})"
 
-class ContextMenu
-    self = {}
-
-    constructor: (selector, config) ->
-        @trigger_nodes = document.querySelectorAll selector
-        @trigger_nodes.onclick @show
-        @menu = document.createElement "ul"
-        document.querySelector 'body'.appendChild @menu
-        @confugure config
-
-    show: () ->
-        alert("showing!")
-
-    configure: (config) ->
-        @kill_children()
-        for item in config
-            li = document.createElement 'li'
-            li.innerHTML = "<span>#{item['text']}</span>"
-            li.onclick = item['fn']
-            @menu.appendChild li
-
-    kill_children: () ->
-        while @menu.firstChild
-            @menu.removeChild @menu.firstChild
-
-
-config = [
-    {
-        text: "Option A"
-        fn: alert "a"
-    },
-    {
-        text: "Option B"
-        fn: alert("b")
-    },
-    {
-        text: "Option C"
-        fn: alert("c")
+init_context_menu = ->
+    context.init {
+        fadeSpeed: 100,
+        above: 'auto',
+        preventDoubleContext: true,
+        compress: false
     }
-]
-menu = ContextMenu "#test", config
+    context.attach '#torrent_table tbody', [
+        {header: 'Options'},
+        {text: '<i class="icon-play"></i> Start', href: '#', action: -> action_start()},
+        {text: '<i class="icon-pause"></i> Stop', href: '#', action: -> action_stop()},
+        {divider: true},
+        {text: '<i class="icon-minus"></i> Remove', href: '#', action: -> action_remove()},
+        {text: '<i class="icon-minus"></i> Remove Data', href: '#', action: -> action_remove_data()},
+        {divider: true},
+        {text: '<i class="icon-arrows-cw"></i> Recheck Data', href: '#', action: -> action_recheck()},
+        {text: '<i class="icon-signal"></i> Reannounce', href: '#', action: -> action_reannounce()}
+    ]
+
+
+
 ###
     Class to handle interactions and rendering of the torrent table.
 
@@ -146,7 +126,7 @@ class TorrentTable
             return
         tr = document.createElement "tr"
         tr.setAttribute 'id', row['info_hash']
-        tr.setAttribute 'class', "iw-mTrigger"
+        tr.setAttribute 'class', "torrent_context_menu"
         tr.onclick = @row_select_handler
         for key in @cols
             td = document.createElement "td"
@@ -177,7 +157,6 @@ class TorrentTable
 
     add_rows: (rows) ->
         rows = (@insert_row row for row in rows)
-        jQuery("#torrent_table tr").contextMenu 'refresh'
 
     update: (data) ->
 
@@ -204,21 +183,29 @@ class TorrentTable
             else
                 @removeAttribute "class"
         else
-            for element in self.table_body.querySelectorAll(".selected")
-                element.removeAttribute "class"
-            selected_rows = [row_id]
-            selected_detail_id = row_id
-            if detail_update_timer != null
-                clearTimeout detail_update_timer
-            if speed_update_timer != null
-                clearTimeout speed_update_timer
-            if peer_update_timer != null
-                clearTimeout peer_update_timer
-            action_torrent_details()
-            action_torrent_speed()
-            action_torrent_peers()
-            init_traffic_chart()
-            @setAttribute "class", selected_class
+            self.select_row row_id
+
+    ###
+        Will select a row outside of an event context so it can be called from
+        any context. eg: context menus
+    ###
+    select_row: (row_id) ->
+        for element in self.table_body.querySelectorAll(".selected")
+            element.removeAttribute "class"
+        selected_element = document.getElementById row_id
+        selected_rows = [row_id]
+        selected_detail_id = row_id
+        if detail_update_timer != null
+            clearTimeout detail_update_timer
+        if speed_update_timer != null
+            clearTimeout speed_update_timer
+        if peer_update_timer != null
+            clearTimeout peer_update_timer
+        action_torrent_details()
+        action_torrent_speed()
+        action_torrent_peers()
+        init_traffic_chart()
+        selected_element.setAttribute "class", selected_class
 
 torrent_table = null
 
@@ -638,6 +625,7 @@ window_resize_handler = ->
 
 jQuery ->
     if in_url "/torrents/"
+        init_context_menu()
         torrent_table = new TorrentTable "#torrent_table"
         root.t = torrent_table
         detail_traffic_chart = init_traffic_chart "#detail-traffic-chart"
