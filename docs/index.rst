@@ -14,7 +14,7 @@ Contents:
     setup
     scripts
     clients
-    config_ratings
+    metadata
     providers
     services
     notifications
