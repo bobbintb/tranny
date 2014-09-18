@@ -13,6 +13,7 @@ from flask.ext.login import login_required
 from tranny import ui
 from tranny import util
 from tranny import stats
+from tranny import client
 from tranny.app import Session
 from tranny.models import Download
 

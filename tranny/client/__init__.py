@@ -58,12 +58,12 @@ class TorrentClient(object):
         return self.client_version()
 
     def client_information(self):
-        """ Fetch optional information about the client, for display purposes only
+        """ Fetch information about the client, for display purposes only
 
         :return: Client info
         :rtype: dict
         """
-        return {}
+        return {'Client': self.client_version()}
 
     def current_speeds(self):
         """ Fetch a tuple of the current upload and download speeds in the client
