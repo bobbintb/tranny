@@ -14,7 +14,7 @@ from tranny import ui
 from tranny import util
 from tranny import stats
 from tranny import client
-from tranny.app import Session
+from tranny.app import Session, config
 from tranny.models import Download
 
 section_name = "home"
@@ -96,6 +96,7 @@ def system():
         sorted_disk_info[key] = disk_info[key]
 
     # Get arbitary client information
+    client_name = config.get("general", "client")
     client_info = client.get().client_information()
 
-    return dict(info=about_info, disk_info=sorted_disk_info, client_info=client_info)
+    return dict(info=about_info, disk_info=sorted_disk_info, client_name=client_name, client_info=client_info)
