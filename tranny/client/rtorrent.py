@@ -47,9 +47,14 @@ class RTorrentClient(client.TorrentClient):
 
     def add(self, torrent, download_dir=None):
         payload = xmlrpclib.Binary(torrent.torrent_data)
+        info_hash = Torrent.from_str(torrent.torrent_data).info_hash.upper()
         # Make sure the xml-rpc size limit doesnt overflow
         self._server.set_xmlrpc_size_limit(len(torrent.torrent_data) * 2)
-        return self._server.load_raw_start(payload) == 0
+        self._server.load_raw(payload)
+        if download_dir:
+            self._server.d.set_directory_base(info_hash, download_dir)
+        self._server.d.start(info_hash)
+        return True
 
     def current_speeds(self):
         dn = self._server.get_down_rate()
