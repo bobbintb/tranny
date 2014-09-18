@@ -9,6 +9,7 @@ Subpackages
     tranny.client
     tranny.handlers
     tranny.provider
+    tranny.notification
     tranny.service
 
 Submodules

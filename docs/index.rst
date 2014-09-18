@@ -17,6 +17,7 @@ Contents:
     config_ratings
     providers
     services
+    notifications
     deluge_api
     modules
 

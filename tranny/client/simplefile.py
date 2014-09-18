@@ -51,7 +51,7 @@ class SimpleFileClient(client.TorrentClient):
         return True
 
     def client_version(self):
-        return "SimpleFile, 0.0"
+        return "SimpleFile, 0.1"
 
     def torrent_add(self, data, download_dir=None):
         pass

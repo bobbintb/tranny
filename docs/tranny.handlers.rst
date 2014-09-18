@@ -31,7 +31,7 @@ tranny.handlers.rss module
 tranny.handlers.services module
 -------------------------------
 
-.. automodule:: tranny.handlers.services
+.. automodule:: tranny.handlers.providers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,14 +40,6 @@ tranny.handlers.settings module
 -------------------------------
 
 .. automodule:: tranny.handlers.settings
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-tranny.handlers.stats module
-----------------------------
-
-.. automodule:: tranny.handlers.stats
     :members:
     :undoc-members:
     :show-inheritance:
