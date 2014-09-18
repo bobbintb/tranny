@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Base classes and methods shared between torrent client implementations
+"""
 from __future__ import unicode_literals, absolute_import
 from collections import namedtuple
 import logging
@@ -92,6 +95,9 @@ class TorrentClient(object):
     def torrent_priority(self, torrent):
         raise NotImplementedError("torrent_priority undefined")
 
+    def torrent_peers(self, info_hash):
+        raise NotImplementedError("torrent_peers undefined")
+
     def disconnect(self):
         raise NotImplementedError("disconnect undefined")
 
@@ -157,6 +163,11 @@ def init_client(client_type=None):
 
 def get():
     """ Return a reference to the current torrent client in use
+
+    TODO remove references to this as its no longer needed
+
+    .. deprecated:: 0.1
+        Use the app.torrent_client reference directly
 
     :return: Current torrent client backend in use
     :rtype: tranny.client.TorrentClient()

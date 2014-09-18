@@ -1,17 +1,30 @@
 # -*- coding: utf-8 -*-
+"""
+Settings routes for settings outside of providers/services/filters
+"""
 from __future__ import unicode_literals
+from functools import partial
 from json import dumps
 from flask import request, Blueprint
 from flask.ext.login import login_required
 from tranny.app import config
 from tranny import ui
+from tranny import api
 
-settings = Blueprint("settings", __name__, url_prefix="/settings")
+section_name = "settings"
+settings = Blueprint(section_name, __name__, url_prefix="/settings")
+renderer = partial(ui.render, section=section_name)
 
 
 @settings.route("/")
+@renderer("settings.html")
 @login_required
 def index():
+    """ Generate config data for all the sections in the config
+
+    :return: Config data
+    :rtype: dict
+    """
     keys = [
         'General',
         'WebUI',
@@ -32,9 +45,7 @@ def index():
     for k, v in settings_set.items():
         for key in [i for i in v.keys() if i in ignore_keys]:
             del settings_set[k][key]
-    return ui.render_template(
-        "settings.html",
-        section="settings",
+    return dict(
         settings=settings_set,
         bool_values=bool_values,
         select_values=select_values
@@ -42,8 +53,14 @@ def index():
 
 
 @settings.route("/save", methods=['POST'])
+@renderer(fmt="json")
 @login_required
 def save():
+    """ Save the settings for the posted config section
+
+    :return: Save status response
+    :rtype: dict
+    """
     for name, value in request.values.items():
         section, key = name.split("__")
         if value == "on":
@@ -52,9 +69,9 @@ def save():
             value = "false"
         config.set(section, key, value)
     if config.save():
-        status = 0
+        status = api.STATUS_OK
         msg = "Saved settings successfully"
     else:
-        status = 1
+        status = api.STATUS_FAIL
         msg = "Error saving settings"
     return dumps({'msg': msg, 'status': status})

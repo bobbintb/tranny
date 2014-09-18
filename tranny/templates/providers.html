@@ -4,12 +4,12 @@
     <div class="row">
         <div class="large-12 columns">
             <ul class="small-block-grid-1 medium-block-grid-2">
-                {% for service, values in service_info.items() %}
+                {% for provider, values in provider_info.items() %}
                     <li>
                         <h2>
-                            <small>{{ service }}</small>
+                            <small>{{ provider }}</small>
                         </h2>
-                        <form action="/services/save/{{ service }}" method="post">
+                        <form action="/providers/save/{{ provider }}" method="post">
                             {% for k, v in values.items() %}
                                 <div class="row">
                                     <div class="large-12 columns">
@@ -20,9 +20,9 @@
                                                 </div>
                                                 <div class="small-10 columns">
                                                     <div class="switch">
-                                                        <input id="{{ service }}_{{ k }}" type="checkbox"
+                                                        <input id="{{ provider }}_{{ k }}" type="checkbox"
                                                                {% if v %}checked{% endif %}>
-                                                        <label for="{{ service }}_{{ k }}"></label>
+                                                        <label for="{{ provider }}_{{ k }}"></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -32,8 +32,8 @@
                                                     <span class="prefix">{{ k|title }}</span>
                                                 </div>
                                                 <div class="small-10 columns">
-                                                    <input type="text" name="{{ service }}_{{ k }}"
-                                                           id="{{ service }}_{{ k }}"
+                                                    <input type="text" name="{{ provider }}_{{ k }}"
+                                                           id="{{ provider }}_{{ k }}"
                                                            value="{{ v }}">
                                                 </div>
                                             </div>
@@ -43,7 +43,7 @@
                             {% endfor %}
                             <div class="row">
                                 <div class="large-12 columns">
-                                    <button class="small button success {{ service }}_save">
+                                    <button class="small button success {{ provider }}_save">
                                         <i class="icon-ok"></i> Save
                                     </button>
                                 </div>
@@ -55,7 +55,7 @@
             </ul>
             {#        #}
             {#            <h2><small>BroadcastTheNet</small></h2>#}
-            {#            <form action="/services/btn/save" method="post">#}
+            {#            <form action="/providers/btn/save" method="post">#}
             {#                <div class="row collapse">#}
             {#                    <div class="small-2 columns">#}
             {#                        <span class="prefix"><label for="btn_api_token">API Token</label></span>#}

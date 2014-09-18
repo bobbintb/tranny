@@ -10,7 +10,7 @@
         <!-- Left Nav Section -->
         <ul class="left">
 
-            <li {% if section == "stats" %}class="active"{% endif %}>
+            <li {% if section == "home" %}class="active"{% endif %}>
                 {{ button(icon("chart-bar")+ " Dashboard", link=url_for("home.index"), button_class="") }}
             </li>
 
@@ -22,8 +22,8 @@
                 {{ button(icon("filter")+ " Filters", link=url_for("filters.index"), button_class="") }}
             </li>
 
-            <li {% if section == "services" %}class="active"{% endif %}>
-                {{ button(icon("cog-alt")+ " API", link=url_for("services.index"), button_class="") }}
+            <li {% if section == "providers" %}class="active"{% endif %}>
+                {{ button(icon("cog-alt")+ " API", link=url_for("providers.index"), button_class="") }}
             </li>
 
             <li {% if section == "rss" %}class="active"{% endif %}>

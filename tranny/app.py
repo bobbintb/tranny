@@ -165,12 +165,15 @@ def configure_blueprints(app):
     from tranny.handlers.filters import filters
     from tranny.handlers.home import home
     from tranny.handlers.rss import rss
-    from tranny.handlers.services import services
+    from tranny.handlers.providers import providers
     from tranny.handlers.settings import settings
     from tranny.handlers.user import usr
     from tranny.handlers.upload import upload
     from tranny.handlers.torrents import torrents
-    map(app.register_blueprint, [filters, home, rss, services, settings, usr, upload, torrents])
+    map(
+        app.register_blueprint,
+        [filters, home, rss, providers, settings, usr, upload, torrents]
+    )
 
 
 def configure_template_filters(app):

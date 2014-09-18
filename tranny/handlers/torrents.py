@@ -21,6 +21,13 @@ log = logging.getLogger("web.torrents")
 
 
 def client_event_update():
+    """ This greenlet is meant to check the torrent clients for new events and
+    broadcast them out over the ws api to le the webui handle it accordingly.
+
+    TODO make this actually do something since clients implements (or dont) events
+    very differently.
+
+    """
     while True:
         if torrent_client:
             events = torrent_client.get_events()
@@ -34,7 +41,10 @@ update_thread = gevent.Greenlet.spawn(client_event_update)
 @torrents.route("/")
 @renderer("torrents.html")
 def index():
-    return dict()
+    """
+    Render the template for the torrents, everything else happens over the API
+    """
+    pass
 
 
 @api.on(api.EVENT_TORRENT_RECHECK)

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Upload handler
+"""
 from flask import Blueprint, request, flash, url_for, redirect
 from tranny import exceptions
 from tranny import torrent
@@ -8,11 +11,17 @@ from tranny.app import Session
 from tranny.manager import ServiceManager
 from tranny.provider.web import WebProvider
 
+section_name = "upload"
 upload = Blueprint("upload", __name__, url_prefix='/upload')
 
 
 @upload.route("/", methods=['POST'])
 def handler():
+    """ Called when a user used the popup modal to upload a torrent manually
+
+    :return: Redirect response
+    :rtype: Response
+    """
     form = forms.UploadForm()
     if form.validate_on_submit():
         file_data = request.files['torrent_file'].stream.read()

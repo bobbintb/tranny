@@ -1,20 +1,33 @@
 # -*- coding: utf-8 -*-
+"""
+RSS Configuration routes
+"""
 from __future__ import unicode_literals
 from ConfigParser import NoOptionError
-from json import dumps
+from functools import partial
 import logging
 from flask import Blueprint, request, redirect, url_for
 from flask.ext.login import login_required
 from tranny.app import config
 from tranny import ui
+from tranny import api
 
-rss = Blueprint("rss", __name__, url_prefix="/rss")
-
+section_name = "rss"
+rss = Blueprint(section_name, __name__, url_prefix="/rss")
+renderer = partial(ui.render, section=section_name)
 log = logging.getLogger("web.rss")
 
+
 @rss.route("/", methods=['GET'])
+@renderer("rss.html")
 @login_required
 def index():
+    """ Generate feed configuration data from the local config and show
+    it to the user to allow editing
+
+    :return: RSS Configuration
+    :rtype: dict
+    """
     feed_data = {}
     for section in config.find_sections("rss_"):
         settings = config.get_section_values(section)
@@ -28,13 +41,19 @@ def index():
             settings['enabled'] = "0" if enabled else "1"
         tpl_key = section.split("_")[1]
         feed_data[tpl_key] = settings
-    return ui.render_template("rss.html", section="rss", feeds=feed_data)
+    return dict(feeds=feed_data)
 
 
 @rss.route("/delete", methods=['POST'])
+@renderer(fmt="json")
 @login_required
 def delete():
-    status = 1
+    """ Delete a RSS feed from the config over XHR
+
+    :return: Deletion status response
+    :rtype: dict
+    """
+    status = api.STATUS_FAIL
     try:
         feed = "rss_{0}".format(request.values['feed'])
         if not config.has_section(feed):
@@ -42,23 +61,28 @@ def delete():
     except KeyError:
         msg = "Invalid feed name"
     else:
-
         if config.remove_section(feed) and config.save():
             msg = "RSS Feed deleted successfully: {0}".format(request.values['feed'])
-            status = 0
+            status = api.STATUS_OK
         else:
             msg = "Failed to remove configuration section: {0}".format(feed)
     response = {
         'msg': msg,
         'status': status
     }
-    return dumps(response)
+    return response
 
 
 @rss.route("/create", methods=['POST'])
+@renderer()
 @login_required
 def create():
-    status = 1
+    """ Create a new RSS feed over XHR
+
+    :return: Feed creation status response
+    :rtype: Response
+    """
+    status = api.STATUS_FAIL
     try:
         feed = "rss_{0}".format(request.values['new_short_name'])
         if config.has_section(feed):
@@ -72,25 +96,27 @@ def create():
             config.set(feed, "url", request.values['new_url'])
             config.set(feed, "interval", request.values['new_interval'])
             config.set(feed, "enabled", request.values['new_enabled'])
-
             if config.save():
                 msg = "RSS Feed saved successfully: {0}".format(request.values['new_short_name'])
-                status = 0
+                status = api.STATUS_OK
             else:
                 msg = "Error saving config to disk."
         except KeyError:
             msg = "Failed to save config. Malformed request: {0}".format(feed)
-    if status == 1:
-        log.error(msg)
-    else:
-        log.info(msg)
+    log.error(msg) if status == api.STATUS_FAIL else log.info(msg)
     return redirect(url_for(".index"))
 
 
 @rss.route("/rss/save", methods=['POST'])
+@renderer(fmt='json')
 @login_required
 def save():
-    status = 1
+    """ Save the new config values of an existing feed over XHR
+
+    :return: Save status response
+    :rtype: dict
+    """
+    status = api.STATUS_FAIL
     try:
         feed = "rss_{0}".format(request.values['feed'])
         if not config.has_section(feed):
@@ -103,7 +129,7 @@ def save():
             config.set(feed, "interval", request.values['interval'])
             config.set(feed, "enabled", request.values['enabled'])
             msg = "RSS Feed saved successfully: {0}".format(request.values['feed'])
-            status = 0
+            status = api.STATUS_OK
         except KeyError:
             msg = "Failed to save config. Malformed request: {0}".format(feed)
-    return dumps({'msg': msg, 'status': status})
+    return dict(msg=msg, status=status)

@@ -3,6 +3,7 @@
 /home handlers
 """
 from __future__ import unicode_literals
+from functools import partial
 import platform
 import time
 import sys
@@ -15,20 +16,32 @@ from tranny import stats
 from tranny.app import Session
 from tranny.models import Download
 
-home = Blueprint("home", __name__, url_prefix="/home")
+section_name = "home"
+home = Blueprint(section_name, __name__, url_prefix="/home")
+renderer = partial(ui.render, section=section_name)
 
 
 @home.route("/")
+@renderer("index.html")
 @login_required
 def index():
+    """ Show the home view which is mostly a dashboard type view so we are calculating
+    metrics for various areas
+
+    TODO remove the 2nd download query once we fix not having a source_id, or at least make sure
+    its not actually a problem
+
+    :return: Mostly metric data and newest releases
+    :rtype: dict
+    """
     session = Session()
     downloads = session.query(Download).filter(Download.source_id > 0).all()
     provider_totals = stats.count_totals(downloads, lambda v: v.source.source_name).items()
     section_totals = stats.count_totals(downloads, lambda v: v.section.section_name).items()
     provider_type_totals = stats.provider_type_counter(downloads).items()
     newest = Session.query(Download).order_by(Download.entity_id.desc()).limit(25).all()
-    return ui.render_template(
-        "index.html", newest=newest, section="stats",
+    return dict(
+        newest=newest,
         provider_totals=provider_totals,
         section_totals=section_totals,
         provider_type_totals=provider_type_totals
@@ -36,14 +49,29 @@ def index():
 
 
 @home.route("/syslog")
+@renderer("syslog.html")
 @login_required
 def syslog():
-    return ui.render_template("syslog.html", section="syslog", logs=[])
+    """ This is currently a placeholder for showing application logs which we do not
+    currently have a method to actually show over webui right now
+
+    :return: Log data
+    :rtype: dict
+    """
+    return dict(logs=[])
 
 
 @home.route("/system")
+@renderer("system.html")
 @login_required
 def system():
+    """ Show system / OS info
+
+    # TODO Better Win/OSX/BSD? support.
+
+    :return: System info
+    :rtype: dict
+    """
     about_info = OrderedDict()
     about_info['Hostname'] = platform.node()
     about_info['Platform'] = "{0} ({1})".format(platform.platform(), platform.architecture()[0])
@@ -51,7 +79,6 @@ def system():
     about_info['Uptime-Sys'] = time.strftime("%H:%M:%S", time.gmtime(util.uptime_sys()))
     about_info['Uptime-App'] = time.strftime("%H:%M:%S", time.gmtime(util.uptime_app()))
     try:
-        # TODO Win/OSX support
         if hasattr(sys, "real_prefix"):
             about_info['Distribution'] = "VirtualEnv"
         else:
@@ -67,4 +94,4 @@ def system():
     for key in sorted(disk_info.keys()):
         sorted_disk_info[key] = disk_info[key]
 
-    return ui.render_template("system.html", section="tranny", info=about_info, disk_info=sorted_disk_info)
+    return dict(info=about_info, disk_info=sorted_disk_info)

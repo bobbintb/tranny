@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Basic class which emulates basic components of a torrent client, but just writes out
-torrent files to a configured directory
+torrent files to a configured directory. This can be used for example to output
+the files to a non-supported torrent clients watch folder for at least some
+basic type of integration support
 """
 from __future__ import unicode_literals, absolute_import, with_statement
 from os.path import exists, expanduser, join, isdir
