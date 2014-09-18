@@ -13,6 +13,7 @@ from flask.ext.login import login_required
 from tranny import ui
 from tranny import util
 from tranny import stats
+from tranny import client
 from tranny.app import Session
 from tranny.models import Download
 
@@ -94,4 +95,7 @@ def system():
     for key in sorted(disk_info.keys()):
         sorted_disk_info[key] = disk_info[key]
 
-    return dict(info=about_info, disk_info=sorted_disk_info)
+    # Get arbitary client information
+    client_info = client.get().client_information()
+
+    return dict(info=about_info, disk_info=sorted_disk_info, client_info=client_info)
