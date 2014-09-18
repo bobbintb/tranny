@@ -77,8 +77,47 @@ template =
     ratio: _.template """<span class="{{ class_name }}">{{ data }}</span>"""
     peer_info: _.template "{{ num }} ({{ total }})"
 
+class ContextMenu
+    self = {}
+
+    constructor: (selector, config) ->
+        @trigger_nodes = document.querySelectorAll selector
+        @trigger_nodes.onclick @show
+        @menu = document.createElement "ul"
+        document.querySelector 'body'.appendChild @menu
+        @confugure config
+
+    show: () ->
+        alert("showing!")
+
+    configure: (config) ->
+        @kill_children()
+        for item in config
+            li = document.createElement 'li'
+            li.innerHTML = "<span>#{item['text']}</span>"
+            li.onclick = item['fn']
+            @menu.appendChild li
+
+    kill_children: () ->
+        while @menu.firstChild
+            @menu.removeChild @menu.firstChild
 
 
+config = [
+    {
+        text: "Option A"
+        fn: alert "a"
+    },
+    {
+        text: "Option B"
+        fn: alert("b")
+    },
+    {
+        text: "Option C"
+        fn: alert("c")
+    }
+]
+menu = ContextMenu "#test", config
 ###
     Class to handle interactions and rendering of the torrent table.
 
@@ -107,6 +146,7 @@ class TorrentTable
             return
         tr = document.createElement "tr"
         tr.setAttribute 'id', row['info_hash']
+        tr.setAttribute 'class', "iw-mTrigger"
         tr.onclick = @row_select_handler
         for key in @cols
             td = document.createElement "td"
@@ -137,6 +177,7 @@ class TorrentTable
 
     add_rows: (rows) ->
         rows = (@insert_row row for row in rows)
+        jQuery("#torrent_table tr").contextMenu 'refresh'
 
     update: (data) ->
 
@@ -267,6 +308,9 @@ init_traffic_chart = (id="#detail-traffic-chart", title=null) ->
                         if not speed
                             speed = [0, 0]
                         x = (new Date()).getTime()
+                        if series_up.data.length >= 100
+                            series_up.data[0].remove()
+                            series_dn.data[0].remove()
                         series_up.addPoint([x, speed[0]], true, false)
                         series_dn.addPoint([x, speed[1]], true, false)
                     ), 1000)
@@ -643,7 +687,6 @@ jQuery ->
         jQuery('#action_remove_data').on 'click', action_remove_data
         window_resize_handler()
         jQuery(window).on 'resize', window_resize_handler
-
 
     if in_url "/home"
         init_provider_totals_chart()
