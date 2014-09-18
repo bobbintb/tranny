@@ -34,4 +34,21 @@
             {% endfor %}
         </div>
     </div>
+    {% if client_info %}
+    <div class="row">
+        <div class="large-6 columns">
+        <h2><small>Client Information</small></h2>
+            {% for key in client_info %}
+                <div class="row collapse">
+                <div class="small-4 columns">
+                    <span class="prefix">{{ key }}</span>
+                </div>
+                <div class="small-8 columns">
+                <input type="text" name="client_info_{{ key }}" id="client_info_{{ key }}" value="{{ client_info[key] }}" readonly>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}
