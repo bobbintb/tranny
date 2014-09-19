@@ -4,7 +4,7 @@ Settings routes for settings outside of providers/services/filters
 """
 from __future__ import unicode_literals
 from functools import partial
-import logging
+from collections import OrderedDict
 from json import dumps
 from flask import request, Blueprint
 from flask.ext.login import login_required
@@ -25,32 +25,28 @@ def index():
     :return: Config data
     :rtype: dict
     """
-    groups = { 'General': [ 'General',
-                            'WebUI',
-                            'Ignore',
-                            'Log',
-                            'Proxy'],
-               'Clients': [ 'client_uTorrent',
-                            'client_Transmission',
-                            'client_rTorrent',
-                            'client_Deluge'],
-               'Services': [ 'service_IMDB',
-                             'service_TheMovieDB'],
-               'Sections': [ 'section_TV',
-                             'section_Movies']
-             }
-    settings_data = {}
+    groups = OrderedDict([( 'General', [ 'General',
+                                         'WebUI',
+                                         'Ignore',
+                                         'Log',
+                                         'Proxy']),
+                          ('Services', [ 'service_IMDB',
+                                         'service_TheMovieDB']),
+                          ('Sections', [ 'section_TV',
+                                         'section_Movies'])
+                          ('Clients', [ 'client_uTorrent',
+                                        'client_Transmission',
+                                        'client_rTorrent',
+                                        'client_Deluge']),
+                        ])
+    settings_data = OrderedDict()
     for group, sections in groups.iteritems():
         settings_data[group] = {}
         for s in sections:
             settings_data[group][s] = config.get_section_values(s.lower())
-    #settings_set = {k: config.get_section_values(k.lower()) for k in keys}
     bool_values = ['enabled', 'sort_seasons', 'group_name', 'fetch_proper']
     select_values = ['type']
     ignore_keys = ['quality_sd', 'quality_hd', 'quality_any']
-    #for k, v in settings_set.items():
-    #    for key in [i for i in v.keys() if i in ignore_keys]:
-    #        del settings_set[k][key]
     return dict(
         settings=settings_data,
         bool_values=bool_values,
