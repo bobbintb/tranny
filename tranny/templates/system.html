@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% from "funcs.html" import progress_bar %}
 {% block content %}
     <div class="row">
         <div class="large-6 columns">
@@ -28,9 +28,7 @@
                            value="{{ disk_info[key].used|human_size }} / {{ disk_info[key].total|human_size }} ({{ disk_info[key].free|human_size }} free)" readonly>
                     </div>
                 </div>
-                <div class="progress-bar">
-                    <span class="meter {% if disk_info[key].percent >= 90 %}alert-bg{% endif %}" style="width: {{ disk_info[key].percent }}%"></span>
-                </div>
+                {{ progress_bar(disk_info[key].percent) }}
             {% endfor %}
         </div>
     </div>

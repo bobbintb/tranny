@@ -5,3 +5,26 @@
 {% macro button(text, button_class="tiny button", class="", link="#", id="", extra="") -%}
     <a href="{{ link }}" class="{{ button_class }} {{ class }}" id="{{ id }}" {{ extra }}>{{ text }}</a>
 {%- endmacro %}
+
+{% macro progress_bar(pct, full_good=False) %}
+    {% if full_good %}
+        {% if pct >= 100 %}
+            {% set prog_class = 'success' %}
+        {% elif pct >= 50 %}
+            {% set prog_class = 'primary' %}
+        {% else %}
+            {% set prog_class = 'alert' %}
+        {% endif %}
+    {% else %}
+        {% if pct >= 100 %}
+            {% set prog_class = 'alert' %}
+        {% elif pct >= 50 %}
+            {% set prog_class = 'primary' %}
+        {% else %}
+            {% set prog_class = 'success' %}
+        {% endif %}
+    {% endif %}
+    <div class="progress {{ prog_class }}">
+        <span class="meter" style="width: {{ pct }}%"></span>
+    </div>
+{% endmacro %}

@@ -639,12 +639,12 @@ $input-focus-border-color: scale-color($body-bg, $lightness: -40%);
 // We use these to style the fieldset border and spacing.
 // $fieldset-border-style: solid;
 // $fieldset-border-width: 1px;
-// $fieldset-border-color: $gainsboro;
+$fieldset-border-color: lighten($body-bg, 10%);
 // $fieldset-padding: rem-calc(20);
 // $fieldset-margin: rem-calc(18 0);
 
 // We use these to style the legends when you use them
-// $legend-bg: $white;
+$legend-bg: inherit;
 // $legend-font-weight: $font-weight-bold;
 // $legend-padding: rem-calc(0 3);
 
@@ -675,7 +675,7 @@ $input-prefix-border-color: $input-border-color;
 // $glowing-effect-color: $input-focus-border-color;
 
 // Select variables
-// $select-bg-color: $ghost;
+$select-bg-color: $input-bg-color;
 // $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%);
 
 // 12. Icon Bar
@@ -785,7 +785,7 @@ $input-prefix-border-color: $input-border-color;
 // We use these to style the label text
 // $label-font-sizing: rem-calc(11);
 // $label-font-weight: $font-weight-normal;
-// $label-font-color: $oil;
+$label-font-color: $body-font-color;
 // $label-font-color-alt: $white;
 // $label-font-family: $body-font-family;
 
@@ -1029,10 +1029,10 @@ $input-prefix-border-color: $input-border-color;
 
 // We use this to set the progress bar height
 // $progress-bar-height: rem-calc(25);
-// $progress-bar-color: $vapor  ;
+$progress-bar-color: darken($body-bg, 5%);
 
 // We use these to control the border styles
-// $progress-bar-border-color: scale-color($white, $lightness: 20%);
+$progress-bar-border-color: scale-color($progress-bar-color, $lightness: 20%);
 // $progress-bar-border-size: 1px;
 // $progress-bar-border-style: solid;
 // $progress-bar-border-radius: $global-radius;
@@ -1042,7 +1042,7 @@ $input-prefix-border-color: $input-border-color;
 // $progress-bar-margin-bottom: rem-calc(10);
 
 // We use these to set the meter colors
-// $progress-meter-color: $primary-color;
+$progress-meter-color: $primary-color;
 // $progress-meter-secondary-color: $secondary-color;
 // $progress-meter-success-color: $success-color;
 // $progress-meter-alert-color: $alert-color;
@@ -1090,7 +1090,7 @@ $input-prefix-border-color: $input-border-color;
 // $reveal-overlay-bg-old: $black;
 
 // We use these to control the style of the modal itself.
-// $reveal-modal-bg: $white;
+$reveal-modal-bg: $body-bg;
 // $reveal-position-top: rem-calc(100);
 // $reveal-default-width: 80%;
 // $reveal-modal-padding: rem-calc(20);
@@ -1100,7 +1100,7 @@ $input-prefix-border-color: $input-border-color;
 // $reveal-close-font-size: rem-calc(40);
 // $reveal-close-top: rem-calc(8);
 // $reveal-close-side: rem-calc(11);
-// $reveal-close-color: $base;
+$reveal-close-color: $alert-color;
 // $reveal-close-weight: $font-weight-bold;
 
 // We use this to set the default radius used throughout the core.
