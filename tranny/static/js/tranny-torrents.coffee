@@ -135,10 +135,10 @@ class TorrentTable
             switch key
                 when "progress"
                     style = if Math.floor row[key] >= 100 then "success" else "alert"
-                    td.innerHTML = template['progress'] {'style': style, 'data': row[key]}
+                    td.innerHTML = template['progress'] {'style': style, 'data': row[key].toFixed(2)}
                 when "ratio"
                     class_name = if row[key] < 1 then 'alert' else 'success'
-                    td.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key]}
+                    td.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key].toFixed(2)}
                 when "leechers"
                     td.appendChild document.createTextNode template['peer_info'] {
                         'num': row[key], 'total': row['total_leechers']
@@ -147,6 +147,10 @@ class TorrentTable
                     td.appendChild document.createTextNode template['peer_info'] {
                         'num': row[key], 'total': row['total_peers']
                     }
+                when "size"
+                    td.appendChild document.createTextNode bytes_to_size row[key]
+                when "up_rate", "dn_rate"
+                    td.appendChild document.createTextNode bytes_to_size row[key], true
                 else
                     td.appendChild document.createTextNode row[key]
 
@@ -500,7 +504,7 @@ handle_event_torrent_details_response = (message) ->
     eta = if data['eta'] == 0 then '∞' else fmt_duration data['eta']
     seeds = "#{data['num_seeds']} (#{data['total_seeds']})"
     peers = "#{data['num_peers']} (#{data['total_peers']})"
-    pieces = "#{data['num_pieces']} (#{data['piece_length']})"
+    pieces = "#{data['num_pieces']} (#{bytes_to_iec_size data['piece_length']})"
     detail_elements.detail_downloaded.text bytes_to_size data['total_done']
     detail_elements.detail_uploaded.text bytes_to_size data['total_uploaded']
     detail_elements.detail_tracker_status.text data['tracker_status']
@@ -549,7 +553,6 @@ fmt_timestamp = (ts) ->
 fmt_duration = (seconds) ->
     moment.duration(seconds, 'seconds').humanize()
 
-
 overall_speed_update = ->
     socket.emit 'event_speed_overall', {}
     overall_speed_update_timer = setTimeout overall_speed_update, update_speed
@@ -560,6 +563,17 @@ bytes_to_size = (bytes, per_sec=false) ->
     if bytes <= 1000
         return if per_sec then "#{bytes} B/s" else "#{bytes} B"
     k = 1000
+    i = Math.floor(Math.log(bytes) / Math.log(k))
+    human_size = (bytes / Math.pow(k, i)).toFixed(2) + ' ' + _sizes[i]
+    if per_sec
+        human_size = "#{human_size}/s"
+    return human_size
+
+_iec_sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+bytes_to_iec_size = (bytes, per_sec=false) ->
+    if bytes <= 1024
+        return if per_sec then "#{bytes} B/s" else "#{bytes} B"
+    k = 1024
     i = Math.floor(Math.log(bytes) / Math.log(k))
     human_size = (bytes / Math.pow(k, i)).toFixed(2) + ' ' + _sizes[i]
     if per_sec

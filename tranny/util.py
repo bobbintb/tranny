@@ -12,10 +12,6 @@ from flask import request, url_for, redirect
 from tranny import exceptions
 
 
-def fmt_ratio(ratio):
-    return "{:.2f}".format(float(ratio))
-
-
 def uptime_sys():
     with open('/proc/uptime', 'r') as f:
         uptime_data = f.readline()

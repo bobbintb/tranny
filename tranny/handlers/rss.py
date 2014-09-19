@@ -107,7 +107,7 @@ def create():
     return redirect(url_for(".index"))
 
 
-@rss.route("/rss/save", methods=['POST'])
+@rss.route("/save", methods=['POST'])
 @renderer(fmt='json')
 @login_required
 def save():

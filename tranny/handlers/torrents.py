@@ -74,7 +74,7 @@ def handle_list_all():
     """ Return a list of all torrents currently being tracked """
     try:
         torrent_list = client.get().torrent_list()
-    except Exception as exc:
+    except ClientNotAvailable as exc:
         api.error_handler(exc, api.EVENT_TORRENT_LIST_RESPONSE)
     else:
         api.emit(api.EVENT_TORRENT_LIST_RESPONSE, data=torrent_list)
