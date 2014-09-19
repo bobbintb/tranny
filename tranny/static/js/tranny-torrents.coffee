@@ -504,7 +504,7 @@ handle_event_torrent_details_response = (message) ->
     eta = if data['eta'] == 0 then '∞' else fmt_duration data['eta']
     seeds = "#{data['num_seeds']} (#{data['total_seeds']})"
     peers = "#{data['num_peers']} (#{data['total_peers']})"
-    pieces = "#{data['num_pieces']} (#{data['piece_length']})"
+    pieces = "#{data['num_pieces']} (#{bytes_to_iec_size data['piece_length']})"
     detail_elements.detail_downloaded.text bytes_to_size data['total_done']
     detail_elements.detail_uploaded.text bytes_to_size data['total_uploaded']
     detail_elements.detail_tracker_status.text data['tracker_status']
@@ -563,6 +563,17 @@ bytes_to_size = (bytes, per_sec=false) ->
     if bytes <= 1000
         return if per_sec then "#{bytes} B/s" else "#{bytes} B"
     k = 1000
+    i = Math.floor(Math.log(bytes) / Math.log(k))
+    human_size = (bytes / Math.pow(k, i)).toFixed(2) + ' ' + _sizes[i]
+    if per_sec
+        human_size = "#{human_size}/s"
+    return human_size
+
+_iec_sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+bytes_to_iec_size = (bytes, per_sec=false) ->
+    if bytes <= 1024
+        return if per_sec then "#{bytes} B/s" else "#{bytes} B"
+    k = 1024
     i = Math.floor(Math.log(bytes) / Math.log(k))
     human_size = (bytes / Math.pow(k, i)).toFixed(2) + ' ' + _sizes[i]
     if per_sec
