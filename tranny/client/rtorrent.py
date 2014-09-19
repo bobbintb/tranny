@@ -15,6 +15,7 @@ except ImportError:
     import xmlrpclib
 from tranny.app import config
 from tranny import client
+from tranny.torrent import Torrent
 
 __all__ = ['RTorrentClient']
 
