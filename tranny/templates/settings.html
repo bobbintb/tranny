@@ -19,6 +19,7 @@
                             <small>{{ k.replace("_", " ") }}</small>
                         </h3>
                         {% for key, value in sections[k].iteritems() %}
+                        {% if not key.lower() in ignore_keys %}
                             <div class="row collapse">
                             {% if key in select_values %}
                                 <div class="small-3 columns">
@@ -51,6 +52,7 @@
                                 </div>
                             {% endif %}
                             </div>
+                        {% endif %}
                         {% endfor %}
                     </div>
                 </div>

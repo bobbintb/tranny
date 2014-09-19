@@ -30,10 +30,10 @@ def index():
                                          'Ignore',
                                          'Log',
                                          'Proxy']),
+                          ('Sections', [ 'section_TV',
+                                         'section_Movies']),
                           ('Services', [ 'service_IMDB',
                                          'service_TheMovieDB']),
-                          ('Sections', [ 'section_TV',
-                                         'section_Movies'])
                           ('Clients', [ 'client_uTorrent',
                                         'client_Transmission',
                                         'client_rTorrent',
@@ -50,7 +50,8 @@ def index():
     return dict(
         settings=settings_data,
         bool_values=bool_values,
-        select_values=select_values
+        select_values=select_values,
+        ignore_keys=ignore_keys
     )
 
 
