@@ -1,25 +1,33 @@
 <!-- bs hacks to make scrollable tables.. -->
-<table id="torrent_table_head"  class="display" cellspacing="0">
-    <thead>
-        <tr>
-            <th class="name">Name</th>
-            <th class="size">Size</th>
-            <th class="completed">Progress</th>
-            <th class="ratio">Ratio</th>
-            <th class="up_rate">UL</th>
-            <th class="dn_rate">DL</th>
-            <th class="leechers">Leech</th>
-            <th class="peers">Peers</th>
-            <th class="priority">Priority</th>
-            <th class="is_active">Status</th>
+<section id="torrents">
+    <header>
+        <div class="row">
+            <div class="name">Name</div>
+            <div class="size">Size</div>
+            <div class="completed">Progress</div>
+            <div class="ratio">Ratio</div>
+            <div class="up_rate">UL</div>
+            <div class="dn_rate">DL</div>
+            <div class="leechers">Leech</div>
+            <div class="peers">Peers</div>
+        </div>
+    </header>
+    <article>
+{#        <div class="row">#}
+{#            <div class="name">The.Colbert.Report.2014.08.06.Michael.Fassbender.HDTV.x264-BATV.mp4</div>#}
+{#            <div class="size">104.4 MB</div>#}
+{#            <div class="completed">#}
+{#                <div class="progress success">#}
+{#                    <span class="count">100.00 %</span>#}
+{#                    <span class="meter" style="width: 100%"></span>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="ratio"><span class="alert">0.03</span></div>#}
+{#            <div class="up_rate">0</div>#}
+{#            <div class="dn_rate">0</div>#}
+{#            <div class="leechers">55 (434)</div>#}
+{#            <div class="peers">66 (44)</div>#}
+{#        </div>#}
+    </article>
+</section>
 
-            {# Used to align the columns nicely when there is a scrollbar #}
-            <th class="filler"></th>
-        </tr>
-    </thead>
-</table>
-<div id="table_wrap">
-    <table id="torrent_table" class="display">
-        <tbody></tbody>
-    </table>
-</div>

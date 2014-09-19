@@ -84,7 +84,7 @@ init_context_menu = ->
         preventDoubleContext: true,
         compress: false
     }
-    context.attach '#torrent_table tbody', [
+    context.attach '.row', [
         {header: 'Options'},
         {text: '<i class="icon-play"></i> Start', href: '#', action: -> action_start()},
         {text: '<i class="icon-pause"></i> Stop', href: '#', action: -> action_stop()},
@@ -95,6 +95,30 @@ init_context_menu = ->
         {text: '<i class="icon-arrows-cw"></i> Recheck Data', href: '#', action: -> action_recheck()},
         {text: '<i class="icon-signal"></i> Reannounce', href: '#', action: -> action_reannounce()}
     ]
+
+has_class = (elem, className) ->
+    new RegExp(' ' + className + ' ').test(' ' + elem.className + ' ')
+
+add_class = (elem, className) ->
+    if !has_class(elem, className)
+        elem.className += ' ' + className
+
+remove_class = (elem, className) ->
+    newClass = ' ' + elem.className.replace( /[\t\r\n]/g, ' ') + ' '
+    if has_class elem, className
+        while newClass.indexOf(' ' + className + ' ') >= 0
+            newClass = newClass.replace(' ' + className + ' ', ' ')
+        elem.className = newClass.replace(/^\s+|\s+$/g, '')
+
+
+toggle_class = (elem, className) ->
+    newClass = " #{elem.className.replace( /[\t\r\n]/g, ' ' )} "
+    if has_class elem, className
+        while (newClass.indexOf(' ' + className + ' ') >= 0 )
+            newClass = newClass.replace ' ' + className + ' ' , ' '
+        elem.className = newClass.replace /^\s+|\s+$/g, ''
+    else
+        elem.className += ' ' + className;
 
 
 
@@ -111,8 +135,8 @@ class TorrentTable
     torrents = {}
     constructor: (@dom_id) ->
         self = @
-        @table = document.getElementById dom_id
-        @table_body = document.querySelector dom_id + "> tbody"
+        #@table = document.getElementById dom_id
+        @table_body = document.querySelector dom_id + " article"
         @cols = ['name', 'size', 'progress', 'ratio', 'up_rate',
                  'dn_rate', 'leechers', 'peers', 'priority', 'is_active']
         @info_hashes = {}
@@ -124,36 +148,38 @@ class TorrentTable
         if row['info_hash'] in @info_hashes
             # Don't re-add known data
             return
-        tr = document.createElement "tr"
-        tr.setAttribute 'id', row['info_hash']
-        tr.setAttribute 'class', "torrent_context_menu"
-        tr.onclick = @row_select_handler
+        div_row = document.createElement "div"
+        div_row.setAttribute 'id', row['info_hash']
+        div_row.className = "row torrent_context_menu"
+        div_row.onclick = @row_select_handler
         for key in @cols
-            td = document.createElement "td"
+            div_col = document.createElement "div"
             key_name = if key == 'progress' then 'completed' else key
-            td.setAttribute "class", key_name
+            div_col.setAttribute "class", key_name
+            if key in ["priority", "is_active"]
+                break
             switch key
                 when "progress"
                     style = if Math.floor row[key] >= 100 then "success" else "alert"
-                    td.innerHTML = template['progress'] {'style': style, 'data': row[key]}
+                    div_col.innerHTML = template['progress'] {'style': style, 'data': row[key]}
                 when "ratio"
                     class_name = if row[key] < 1 then 'alert' else 'success'
-                    td.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key]}
+                    div_col.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key]}
                 when "leechers"
-                    td.appendChild document.createTextNode template['peer_info'] {
+                    div_col.appendChild document.createTextNode template['peer_info'] {
                         'num': row[key], 'total': row['total_leechers']
                     }
                 when "peers"
-                    td.appendChild document.createTextNode template['peer_info'] {
+                    div_col.appendChild document.createTextNode template['peer_info'] {
                         'num': row[key], 'total': row['total_peers']
                     }
                 else
-                    td.appendChild document.createTextNode row[key]
+                    div_col.appendChild document.createTextNode row[key]
 
             torrents[row['info_hash']] = {
-                row: tr.appendChild td
+                row: div_row.appendChild div_col
             }
-        @table_body.appendChild tr
+        @table_body.appendChild div_row
 
     add_rows: (rows) ->
         rows = (@insert_row row for row in rows)
@@ -177,11 +203,12 @@ class TorrentTable
                 selected_rows.push row_id
             else
                 selected_rows.splice index, 1
-            attr = @getAttribute "class"
-            if attr != "selected"
-                @setAttribute "class", selected_class
-            else
-                @removeAttribute "class"
+            toggle_class @, selected_class
+#            attr = @getAttribute "class"
+#            if attr != "selected"
+#                @setAttribute "class", selected_class
+#            else
+#                @removeAttribute "class"
         else
             self.select_row row_id
 
@@ -191,7 +218,7 @@ class TorrentTable
     ###
     select_row: (row_id) ->
         for element in self.table_body.querySelectorAll(".selected")
-            element.removeAttribute "class"
+            remove_class element, "selected"
         selected_element = document.getElementById row_id
         selected_rows = [row_id]
         selected_detail_id = row_id
@@ -205,7 +232,8 @@ class TorrentTable
         action_torrent_speed()
         action_torrent_peers()
         init_traffic_chart()
-        selected_element.setAttribute "class", selected_class
+        if not has_class selected_element, selected_class
+            add_class selected_element, selected_class
 
 torrent_table = null
 
@@ -618,7 +646,7 @@ detail_elements =
 in_url = (text) ->
     window.location.pathname.indexOf(text) != -1
 
-torrent_wrapper = document.querySelector "#table_wrap"
+torrent_wrapper = document.querySelector "#torrents article"
 window_resize_handler = ->
     torrent_wrapper.style.height = "#{window.innerHeight - 465}px";
 
@@ -626,7 +654,7 @@ window_resize_handler = ->
 jQuery ->
     if in_url "/torrents/"
         init_context_menu()
-        torrent_table = new TorrentTable "#torrent_table"
+        torrent_table = new TorrentTable "#torrents"
         root.t = torrent_table
         detail_traffic_chart = init_traffic_chart "#detail-traffic-chart"
     socket = io.connect endpoint

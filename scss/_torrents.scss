@@ -7,9 +7,17 @@
     }
 }
 
-.start { @include hover_shade($success-color) }
-.pause { @include hover_shade($warning-color) }
-.remove { @include hover_shade($alert-color) }
+.start {
+    @include hover_shade($success-color)
+}
+
+.pause {
+    @include hover_shade($warning-color)
+}
+
+.remove {
+    @include hover_shade($alert-color)
+}
 
 #torrent_controls {
     margin-top: 20px;
@@ -21,18 +29,19 @@
         }
     }
 }
+
 #table_wrap {
     height: 400px;
     overflow: auto;
 }
 
 #torrent_table_head {
-    margin-bottom: 0;
-    width: 100%;
-    th.completed {
-        width: 100px;
+    th {
+        font-size: 60%;
     }
-    th.filler{
+    margin-bottom: 0;
+
+    th.filler {
         width: 20px;
     }
 }
@@ -46,7 +55,7 @@
 #torrent_table, #torrent_table_head {
     .name {
         overflow-x: hidden;
-        //width: 100%;
+        width: 700px !important;
     }
     .peers, .leechers {
         width: 60px;
@@ -70,6 +79,7 @@
         width: 80px;
     }
 }
+
 #torrent_table {
     // Prevent annoying hilighting
     -webkit-touch-callout: none;
@@ -78,7 +88,9 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-        width: 100%;
+
+    //width: 100%;
+
     div.progress {
         margin-bottom: 0;
         background-color: inherit;
@@ -111,9 +123,11 @@
         cursor: pointer;
     }
 }
+
 #peer_details {
     overflow-y: auto;
 }
+
 #torrent_detail_tabs {
     margin-top: $column-gutter /2;
     .tab-title a {
@@ -143,4 +157,72 @@
 #detail-traffic-chart {
     height: 170px;
     width: 80%;
+}
+
+#torrents {
+    // Prevent annoying hilighting
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    .row {
+        cursor: pointer;
+        -o-transition:.3s;
+        -ms-transition:.3s;
+        -moz-transition:.3s;
+        -webkit-transition:.3s;
+        transition:.3s;
+    }
+    header {
+        background-color: $table-head-bg;
+        font-size:75%;
+    }
+    .name {
+        overflow-x: hidden;
+
+    }
+    .name {
+        @extend .large-5;
+        @extend .columns;
+        line-height: 20px;
+        white-space: nowrap;
+
+    }
+    .size, .completed, .ratio, .up_rate, .dn_rate, .leechers, .peers {
+        @extend .large-1;
+        @extend .columns;
+        line-height: 20px;
+    }
+    article {
+        height: 400px;
+        overflow: hidden;
+        div.progress {
+            margin-bottom: 0;
+            background-color: inherit;
+            border: 0;
+            .count {
+                float: left;
+                color: $body-font-color;
+                margin-top: 3px;
+                margin-left: 2px;
+            }
+        }
+        font-size: 70%;
+
+        .row:nth-child(odd) {
+            background-color: darken($body-bg, 2%)
+        }
+        .row:nth-child(even) {
+            background-color: darken($body-bg, 4%)
+        }
+        .row:hover {
+            background-color: $primary-color;
+        }
+        .selected {
+            background-color: $primary-color !important;
+        }
+    }
 }

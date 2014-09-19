@@ -98,7 +98,7 @@ var context = context || (function () {
 
             // Find the torrent row containing the info_hash
             var target = e.target;
-            while (target.nodeName.toUpperCase() != "TR") {
+            while (!_.contains(target.classList, "row")) {
                 target = target.parentNode;
             }
             window.t.select_row(target.id);
