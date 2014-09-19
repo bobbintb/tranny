@@ -5,14 +5,16 @@
     <div class="small-12 columns">
     <form class="custom" action="{{ url_for("settings.save") }}" id="settings_form" method="post">
     <ul class="small-block-grid-1 large-block-grid-2">
-        {% for k, v in settings.iteritems() %}
+        {% for name, sections in settings.iteritems() %}
+	    <h2><small>{{ name }}</small></h2>
+        {% for k, v in sections.iteritems() %}
             <li>
                 <div class="row">
                     <div class="large-12 columns">
                         <h3>
                             <small>{{ k.replace("_", " ") }}</small>
                         </h3>
-                        {% for key, value in settings[k].iteritems() %}
+                        {% for key, value in sections[k].iteritems() %}
                             <div class="row collapse">
                             {% if key in select_values %}
                                 <div class="small-3 columns">
@@ -50,6 +52,7 @@
                 </div>
             </li>
         {% endfor %}
+	{% endfor %}
     </ul>
 
     <div class="row">
