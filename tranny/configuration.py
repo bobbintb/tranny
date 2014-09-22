@@ -74,6 +74,9 @@ class Configuration(ConfigParser):
             value = self.get(section, option)
         except (NoSectionError, NoOptionError):
             value = default
+        else:
+            if value == '':
+                value = default
         if cast and callable(cast):
             return cast(value)
         return value
