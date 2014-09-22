@@ -194,7 +194,7 @@
       feed: feed_name,
       url: jQuery("#" + ("" + feed_name + "_url")).val(),
       interval: jQuery("#" + ("" + feed_name + "_interval")).val(),
-      enabled: !jQuery("#" + ("" + feed_name + "_enabled")).is(':checked')
+      enabled: jQuery("#" + ("" + feed_name + "_enabled")).is(':checked')
     };
     return jQuery.post("/rss/save", data, handle_response);
   };

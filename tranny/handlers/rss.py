@@ -117,17 +117,16 @@ def save():
     :rtype: dict
     """
     status = api.STATUS_FAIL
-    try:
-        feed = "rss_{0}".format(request.values['feed'])
-        if not config.has_section(feed):
-            raise KeyError()
-    except KeyError:
+
+    feed = "rss_{0}".format(request.values['feed'])
+    if not config.has_section(feed):
         msg = "Invalid feed name"
     else:
         try:
             config.set(feed, "url", request.values['url'])
             config.set(feed, "interval", request.values['interval'])
             config.set(feed, "enabled", request.values['enabled'])
+            config.save()
             msg = "RSS Feed saved successfully: {0}".format(request.values['feed'])
             status = api.STATUS_OK
         except KeyError:

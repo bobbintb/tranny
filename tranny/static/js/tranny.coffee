@@ -137,7 +137,7 @@ feed_save = (evt) ->
         feed: feed_name
         url: jQuery("#" + "#{feed_name}_url").val()
         interval: jQuery("#" + "#{feed_name}_interval").val()
-        enabled: not jQuery("#" + "#{feed_name}_enabled").is(':checked')
+        enabled: jQuery("#" + "#{feed_name}_enabled").is(':checked')
     jQuery.post "/rss/save", data, handle_response
 
 
