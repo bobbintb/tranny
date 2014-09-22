@@ -80,8 +80,8 @@ def valid_score(release_name, section_name="section_movies"):
     release_name = parse_release(release_name)
     if not release_name:
         return None
-    score_min = app.config.get_default(section_name, "score_min", 0, int)
-    score_max = app.config.get_default(section_name, "score_max", 0, int)
+    score_min = app.config.get_default(section_name, "score_min", 0, float)
+    score_max = app.config.get_default(section_name, "score_max", 0, float)
     if not (score_min and score_max and release_name):
         return False
     score_votes = app.config.get_default(section_name, "score_votes", 0, int)

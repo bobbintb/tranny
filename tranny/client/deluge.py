@@ -272,23 +272,23 @@ class DelugeClient(client.TorrentClient):
             return torrent_data
         for info_hash, detail in resp.get('torrents', {}).items():
             torrent_info = client.ClientTorrentData(
-                info_hash,
-                detail['name'],
-                detail['ratio'],
-                detail['upload_payload_rate'],
-                detail['download_payload_rate'],
-                detail['total_uploaded'],
-                detail['total_done'],
-                detail['total_size'],
-                detail['total_done'],
-                detail['num_peers'],
-                detail['total_peers'],
-                detail['num_seeds'],
-                detail['total_seeds'],
-                '1',
-                '1',
-                detail['state'],
-                detail['progress']
+                info_hash = info_hash,
+                name = detail['name'],
+                ratio = detail['ratio'],
+                up_rate = detail['upload_payload_rate'],
+                dn_rate = detail['download_payload_rate'],
+                up_total = detail['total_uploaded'],
+                dn_total = detail['total_done'],
+                size = detail['total_size'],
+                size_completed = detail['total_done'],
+                peers = detail['num_peers'],
+                total_peers = detail['total_peers'],
+                seeders = detail['num_seeds'],
+                total_seeders = detail['total_seeds'],
+                priority = '1',
+                private = '1',
+                state = detail['state'],
+                progress = detail['progress']
             )
             torrent_data.append(torrent_info)
         return torrent_data
@@ -297,17 +297,44 @@ class DelugeClient(client.TorrentClient):
         return self._request('web.get_torrent_status', [info_hash, ["download_payload_rate", "upload_payload_rate"]])
 
     def torrent_status(self, info_hash):
-        params = [
-            "total_done", "total_payload_download", "total_uploaded", "total_payload_upload",
-            "next_announce", "tracker_status", "num_pieces", "piece_length", "is_auto_managed",
-            "active_time", "seeding_time", "seed_rank", "queue", "name", "total_size", "state",
-            "progress", "num_seeds", "total_seeds", "num_peers", "total_peers",
-            "download_payload_rate", "upload_payload_rate", "eta", "ratio", "distributed_copies",
-            "is_auto_managed", "time_added", "tracker_host", "save_path", "total_done", "total_uploaded",
-            "max_download_speed", "max_upload_speed", "seeds_peers_ratio"
+
+        # These fields have a 1:1 mapping with the client.ClientTorrentDataDetail
+        # fields, unlike the dictionary below
+        detail_array = [
+            'active_time',
+            'save_path',
+            'eta',
+            'ratio',
+            'total_peers',
+            'name',
+            'state',
+            'num_pieces',
+            'tracker_status',
+            'piece_length',
+            'time_added',
+            'active_time',
+            'tracker_status',
+            'progress',
+            'distributed_copies'
         ]
-        resp = self._request('web.get_torrent_status', [info_hash, params])
-        return resp
+
+        detail_map = {
+            'total_uploaded': 'up_total',
+            'total_payload_download': 'dn_total',
+            'download_payload_rate': 'dn_rate',
+            'upload_payload_rate': 'up_rate',
+            'num_seeds': 'seeders',
+            'num_peers': 'peers',
+            'total_size': 'size',
+            'total_done': 'size_completed',
+            'total_seeds': 'total_seeders'
+        }   
+        
+        resp = self._request('web.get_torrent_status', [info_hash, detail_array + list(detail_map.keys())])
+        detail = client.ClientTorrentDataDetail(info_hash=info_hash)
+        detail.update({k: resp[k] for k in detail_array})
+        detail.update({v: resp[k] for k, v in detail_map.iteritems()})
+        return detail
 
     def torrent_pause(self, info_hash):
         resp = self._request('core.pause_torrent', [info_hash])
@@ -341,7 +368,7 @@ class DelugeClient(client.TorrentClient):
 
     def torrent_peers(self, info_hash):
         resp = self._request('web.get_torrent_status', [info_hash, ['peers']])
-        return resp
+        return resp['peers']
 
     def disconnect(self):
         return self._request('web.disconnect')

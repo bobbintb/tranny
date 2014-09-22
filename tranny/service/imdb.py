@@ -44,9 +44,12 @@ def _make_imdb():
     :return: Imdb instance for querying
     :rtype: IMDbBase
     """
+    # TODO fix this sillyness
     access_method = config.get_default(config_section, 'sql', 'http')
     if access_method.lower() in ["1", "true"]:
         access_method = "sql"
+    elif access_method.lower() in ["0", "false"]:
+        access_method = "http"
     kwargs = {}
     if access_method == 'sql':
         kwargs = {
