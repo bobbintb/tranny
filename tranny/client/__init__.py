@@ -123,12 +123,12 @@ class ClientTorrentData(dict):
         super(ClientTorrentData, self).__init__(**kwargs)
         self['info_hash'] = info_hash
         self['name'] = name
-        self['ratio'] = util.fmt_ratio(ratio)
+        self['ratio'] = ratio
         self['up_rate'] = up_rate
         self['dn_rate'] = dn_rate
         self['up_total'] = up_total
         self['dn_total'] = dn_total
-        self['size'] = util.file_size(size)
+        self['size'] = size
         self['size_completed'] = size_completed
         self['leechers'] = leechers
         self['total_leechers'] = total_leechers
@@ -137,7 +137,7 @@ class ClientTorrentData(dict):
         self['priority'] = priority
         self['private'] = private
         self['is_active'] = is_active
-        self['progress'] = util.fmt_ratio(progress)
+        self['progress'] = progress
 
 
 def init_client(client_type=None):
