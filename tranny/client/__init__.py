@@ -5,7 +5,6 @@ Base classes and methods shared between torrent client implementations
 from __future__ import unicode_literals, absolute_import
 from collections import namedtuple
 import logging
-from tranny import util
 from tranny import app
 from tranny.app import config
 from tranny.exceptions import ConfigError
@@ -112,6 +111,7 @@ class TorrentClient(object):
     def get_events(self):
         raise NotImplementedError("get_events undefined")
 
+
 class ClientDataStruct(dict):
     """
     A base class for any data structures that will be returned by clients
@@ -121,24 +121,22 @@ class ClientDataStruct(dict):
     def __init__(self, **kwargs):
         for key in self._keys:
             self[key] = None
-        self.update(kwargs)
+        super(ClientDataStruct, self).__init__(**kwargs)
 
     def __getitem__(self, key):
         if key not in self._keys:
             raise KeyError("'" + key + "'" + " is not a valid key")
-        return dict.__getitem__(self, key)
+        return super(ClientDataStruct, self).__getitem__(key)
 
     def __setitem__(self, key, value):
         if key not in self._keys:
             raise KeyError("'" + key + "'" + " is not a valid key")
-        dict.__setitem__(self, key, value)
+        super(ClientDataStruct, self).__setitem__(key, value)
 
-    def is_complete():
+    def is_complete(self):
         """Test if all keys have a value, even if that value is empty, e.g. {}"""
-        for key in self._keys:
-            if key is None:
-                return False
-        return True
+        return all(self.get(key, None) is not None for key in self._keys)
+
 
 class ClientPeerData(ClientDataStruct):
     """
@@ -152,6 +150,7 @@ class ClientPeerData(ClientDataStruct):
         'ip',
         'country'
     ]
+
 
 class ClientTorrentData(ClientDataStruct):
     """
@@ -176,6 +175,7 @@ class ClientTorrentData(ClientDataStruct):
         'state',
         'progress',
     ]
+
 
 class ClientTorrentDataDetail(ClientDataStruct):
     """
@@ -213,6 +213,7 @@ class ClientTorrentDataDetail(ClientDataStruct):
         'comment'
     ]
 
+
 class ClientFileData(ClientDataStruct):
     """
     A struct to hold information about the files inside a torrent
@@ -223,6 +224,7 @@ class ClientFileData(ClientDataStruct):
         'priority',
         'progress'
     ]
+
 
 def init_client(client_type=None):
     """ Import & initialize the client set in the configuration file and return the
@@ -240,7 +242,7 @@ def init_client(client_type=None):
     elif client_type == "transmission":
         from tranny.client.transmission import TransmissionClient as Client
     elif client_type == "utorrent":
-        #from tranny.client.utorrent import UTorrentClient as TorrentClient
+        # from tranny.client.utorrent import UTorrentClient as TorrentClient
         raise NotImplementedError("Utorrent support is currently incomplete. Please use another client")
     elif client_type == "deluge":
         from tranny.client.deluge import DelugeClient as Client
