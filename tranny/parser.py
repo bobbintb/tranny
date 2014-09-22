@@ -4,31 +4,34 @@ File name parser/tokenizer functions
 """
 from __future__ import unicode_literals, absolute_import
 import logging
+from guessit import guess_file_info
+import re
 from imdb._exceptions import IMDbDataAccessError
-from re import compile, I, match
-from datetime import date
+from datetime import date, datetime
 from tranny import app
+from tranny import constants
+from tranny.exceptions import ParseError
 from tranny.service import rating
 
 log = logging.getLogger(__name__)
 
 pattern_info = [
-    compile(r"\b(?P<year>(19|20)\d{2}).(?P<month>\d{1,2}).(?P<day>\d{1,2})", I),
-    compile(r"\bS?(?P<season>\d+)[xe](?P<episode>\d+)\b", I),
-    compile(r"\b(?P<year>(19|20)\d{2}).", I)
+    re.compile(r"\b(?P<year>(19|20)\d{2}).(?P<month>\d{1,2}).(?P<day>\d{1,2})", re.I),
+    re.compile(r"\bS?(?P<season>\d+)[xe](?P<episode>\d+)\b", re.I),
+    re.compile(r"\b(?P<year>(19|20)\d{2}).", re.I)
 ]
 
 pattern_release = [
-    compile(r"^(?P<name>.+?)\bS?\d+[xe]\d+.+?$", I),
-    compile(r"^(?P<name>.+?)\b(?P<year>(19|20)\d{2})", I),
+    re.compile(r"^(?P<title>.+?)\bS?\d+[xe]\d+.+?$", re.I),
+    re.compile(r"^(?P<title>.+?)\b(?P<year>(19|20)\d{2})", re.I),
 ]
 
 pattern_date = [
-    compile(r"(?P<year>(19|20)\d{2})", I)
+    re.compile(r"(?P<year>(19|20)\d{2})", re.I)
 ]
 
 pattern_season = [
-    compile(r"[\.\s]s\d{1,2}[\.\s]", I)
+    re.compile(r"[\.\s]s\d{1,2}[\.\s]", re.I)
 ]
 
 
@@ -173,7 +176,7 @@ def valid_tv(release_name, section_name="section_tv"):
             continue
         patterns = app.config.build_regex_fetch_list(section_name, key)
         for pattern in patterns:
-            if match(pattern, release_name, I):
+            if re.match(pattern, release_name, re.I):
                 section_name = app.config.get_unique_section_name(section_name)
                 return section_name
     return False
@@ -224,7 +227,7 @@ def is_ignored(release_name, section_name="ignore"):
                 log.debug("Matched string ignore pattern {0} {1}".format(key, release_name))
                 return True
         elif key.startswith("rx"):
-            if match(value, release_name, I):
+            if re.match(value, release_name, re.I):
                 log.debug("Matched regex ignore pattern {0} {1}".format(key, release_name))
                 return True
         else:
@@ -274,7 +277,7 @@ def find_year(release_name):
     :rtype: int, bool
     """
     for pattern in pattern_date:
-        p_match = pattern.search(release_name, I)
+        p_match = pattern.search(release_name, re.I)
         if not p_match:
             continue
         values = p_match.groupdict()
@@ -290,11 +293,11 @@ def parse_release_info(release_name):
 
     :param release_name:
     :type release_name: unicode
-    :return:
-    :rtype:
+    :return: Parsed release info
+    :rtype: dict
     """
     for pattern in pattern_info:
-        p_match = pattern.search(release_name, I)
+        p_match = pattern.search(release_name, re.I)
         if not p_match:
             continue
         values = p_match.groupdict()
@@ -326,13 +329,178 @@ def parse_release(release_name):
 
     :param release_name: A full release string Conan.2013.04.15.Chelsea.Handler.HDTV.x264-2HD
     :type release_name: unicode, unicode
-    :return: Normalized release name found or False on no match
-    :rtype: unicode, bool
+    :return: Parsed release info instance
+    :rtype: ReleaseInfo
     """
-    for pattern in pattern_release:
-        p_match = pattern.search(release_name)
-        if p_match:
-            if p_match.lastgroup == "year":
-                pass
-            return normalize(p_match.groupdict()['name'])
+    # Guessit sucks when you don't have an extension, so we add .fake for those without
+    try:
+        try:
+            file_info = guess_file_info(normalize(release_name), options={'name_only': True})
+        except AttributeError:
+            file_info = {}
+        if not file_info or file_info.get('type', 'unknown') == 'unknown':
+            _name = normalize(release_name)
+            for pattern in pattern_release:
+                p_match = pattern.search(_name)
+                if p_match:
+                    parsed_title = normalize(p_match.groupdict()['title'])
+                    parsed_info = parse_release_info(_name)
+                    if not parsed_title and parsed_info:
+                        continue
+                    info = ReleaseInfo.from_internal_parser(release_name, parsed_title, **parsed_info)
+                    break
+            else:
+                raise ValueError()
+        else:
+            info = ReleaseInfo.from_guessit(release_name, file_info)
+    except ValueError:
+        raise ParseError("Failed to parse release name: {}".format(release_name))
+    return info
+
+_has_ext = re.compile(r"\.\S{2,4}^", re.I)
+
+
+def has_valid_ext(release_name):
+    if _has_ext.match(release_name):
+        return True
     return False
+
+
+class ReleaseInfo(dict):
+    def __init__(self, release_name, guess_info, **kwargs):
+        super(ReleaseInfo, self).__init__(**guess_info)
+        self['release_name'] = release_name
+
+    @property
+    def release_name(self):
+        return self['release_name']
+
+    @property
+    def release_title_norm(self):
+        return normalize(self['title']).lower()
+
+    @classmethod
+    def from_guessit(cls, release_name, guess_info):
+        args = dict()
+        for key, value in guess_info.items():
+            if key == 'series':
+                args['title'] = value
+            elif key == 'episodeNumber':
+                args['episode'] = value
+            else:
+                args[key] = value
+        return cls(release_name, args)
+
+    @classmethod
+    def from_internal_parser(cls, release_name, title, year=None, season=None, episode=None, day=None, month=None):
+        return cls(release_name, dict(
+            title=title,
+            year=year,
+            season=season,
+            episode=episode,
+            day=day,
+            month=month
+        ))
+
+    @property
+    def release_key(self):
+        if self.get('type', False) == "episode" and self.get('date', False):
+            release_key = TVDailyReleaseKey(self.release_name, self.release_title_norm,
+                                            self['date'].day, self['date'].month, self['date'].year)
+        elif self.get('type', False) == "episode":
+            release_key = TVReleaseKey(self.release_name, self.release_title_norm,
+                                       self['season'], self['episode'])
+        elif self.get('type') == "movie":
+            # Very likely a  movie
+            release_key = MovieReleaseKey(self.release_name, self.release_title_norm, self['year'])
+        elif all([self.get('season', False), self.get('episode', False)]):
+            release_key = TVReleaseKey(self.release_name, self.release_title_norm,
+                                       self['season'], self['episode'])
+        elif all([self.get('year', False), self.get('day', False), self.get('month', False)]):
+            release_key = TVDailyReleaseKey(self.release_name, self.release_title_norm,
+                                            self['day'], self['month'], self['year'])
+        elif self.get("year", False):
+            if any([k in self.release_name.lower() for k in ['hdtv', 'sdtv', 'pdtv', 'satrip']]):
+                # assume tv if all params exist
+                # TODO this needs something more robust since this will obviously not work in all cases.
+                week_num = datetime.now().isocalendar()[1]
+                release_key = TVSingleReleaseKey(self.release_name, self.release_title_norm, week_num)
+            else:
+                # assume movie as fallback
+                release_key = MovieReleaseKey(self.release_name, self.release_title_norm, self['year'])
+        else:
+            raise ParseError("Cannot create release key")
+        return release_key
+
+
+class BaseReleaseKey(object):
+    """
+    Basic info for a release used to make a unique identifier for a release name
+    """
+    def __init__(self, release_name, name, release_key=None, media_type=constants.MEDIA_UNKNOWN):
+        self.release_name = release_name
+        self.name = name
+        self.release_key = release_key or name
+        self.media_type = media_type
+
+    def __unicode__(self):
+        return self.release_key
+
+    def __str__(self):
+        return self.release_key.encode("utf-8")
+
+    def __eq__(self, other):
+        return other == self.release_key
+
+    def as_unicode(self):
+        return "{}".format(self)
+
+
+class TVReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, season, episode, year=None):
+        super(TVReleaseKey, self).__init__(
+            release_name,
+            name,
+            "{}-{}_{}".format(name, season, episode),
+            media_type=constants.MEDIA_TV
+        )
+        self.season = season
+        self.episode = episode
+        self.year = year
+        self.daily = False
+
+
+class TVSingleReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, show_title):
+        super(TVSingleReleaseKey, self).__init__(
+            release_name,
+            name,
+            "{}-{}".format(name, show_title),
+            media_type=constants.MEDIA_TV
+        )
+        self.show_title = show_title
+
+
+class TVDailyReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, day, month, year):
+        super(TVDailyReleaseKey, self).__init__(
+            release_name,
+            name,
+            release_key="{}-{}_{:0>2}_{:0>2}".format(name, year, month, day),
+            media_type=constants.MEDIA_TV
+        )
+        self.day = day
+        self.month = month
+        self.year = year
+        self.daily = True
+
+
+class MovieReleaseKey(BaseReleaseKey):
+    def __init__(self, release_name, name, year):
+        super(MovieReleaseKey, self).__init__(
+            release_name,
+            name,
+            "{}-{}".format(name, year),
+            media_type=constants.MEDIA_MOVIE
+        )
+        self.year = year

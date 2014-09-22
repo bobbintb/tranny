@@ -38,7 +38,6 @@ Session = scoped_session(session_factory, scopefunc=_app_ctx_stack.__ident_func_
 
 torrent_client = None
 
-from tranny.models import User
 from tranny.util import file_size
 from tranny import ui
 from tranny.extensions import mail, login_manager, socketio
@@ -123,6 +122,8 @@ def configure_extensions(app):
     # flask-login
     login_manager.login_view = 'user.login'
     login_manager.refresh_view = 'frontend.reauth'
+
+    from tranny.models import User
 
     @login_manager.user_loader
     def user_loader(user_id):

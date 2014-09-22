@@ -267,16 +267,16 @@
         switch (key) {
           case "progress":
             style = Math.floor(row[key] >= 100) ? "success" : "alert";
-            td.innerHTML = template['progress']({
+            div_col.innerHTML = template['progress']({
               'style': style,
-              'data': row[key].toFixed(2)
+              'data': row[key]
             });
             break;
           case "ratio":
             class_name = row[key] < 1 ? 'alert' : 'success';
-            td.innerHTML = template['ratio']({
+            div_col.innerHTML = template['ratio']({
               'class_name': class_name,
-              'data': row[key].toFixed(2)
+              'data': row[key]
             });
             break;
           case "leechers":
@@ -290,13 +290,6 @@
               'num': row[key],
               'total': row['total_peers']
             })));
-            break;
-          case "size":
-            td.appendChild(document.createTextNode(bytes_to_size(row[key])));
-            break;
-          case "up_rate":
-          case "dn_rate":
-            td.appendChild(document.createTextNode(bytes_to_size(row[key], true)));
             break;
           default:
             div_col.appendChild(document.createTextNode(row[key]));

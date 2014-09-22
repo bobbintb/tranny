@@ -5,7 +5,6 @@ import hashlib
 from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table, \
     UnicodeText, Numeric
 from sqlalchemy.orm import relationship
-from tranny import constants
 from tranny.app import Base
 from tranny.constants import ROLE_USER
 

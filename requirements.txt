@@ -17,3 +17,4 @@ fuzzywuzzy
 dogpile
 dogpile.cache
 sqlalchemy
+guessit

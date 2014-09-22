@@ -3,7 +3,6 @@ from __future__ import unicode_literals, absolute_import
 from collections import defaultdict
 import logging
 from sqlalchemy.exc import DBAPIError
-from tranny import parser
 from tranny import constants
 from tranny.models import Section, Source, User, Download, Genre, Person
 
@@ -14,98 +13,36 @@ cache_release = defaultdict(lambda: False)
 cache_source = defaultdict(lambda: False)
 
 
-class BaseReleaseKey(object):
-    """
-    Basic info for a release used to make a unique identifier for a release name
-    """
-    def __init__(self, release_name, name, release_key=None, media_type=constants.MEDIA_UNKNOWN):
-        self.release_name = release_name
-        self.name = name
-        self.release_key = release_key or name
-        self.media_type = media_type
-
-    def __unicode__(self):
-        return self.release_key
-
-    def __str__(self):
-        return bytes(self.release_key)
-
-    def __eq__(self, other):
-        return other == self.release_key
-
-    def as_unicode(self):
-        return "{}".format(self)
-
-
-class TVReleaseKey(BaseReleaseKey):
-    def __init__(self, release_name, name, season, episode, year=None):
-        super(TVReleaseKey, self).__init__(
-            release_name,
-            name,
-            "{}-{}_{}".format(name, season, episode),
-            media_type=constants.MEDIA_TV
-        )
-        self.season = season
-        self.episode = episode
-        self.year = year
-        self.daily = False
-
-
-class TVDailyReleaseKey(BaseReleaseKey):
-    def __init__(self, release_name, name, day, month, year):
-        super(TVDailyReleaseKey, self).__init__(
-            release_name,
-            name,
-            release_key="{}-{}_{}_{}".format(name, year, month, day),
-            media_type=constants.MEDIA_TV
-        )
-        self.day = day
-        self.month = month
-        self.year = year
-        self.daily = True
-
-
-class MovieReleaseKey(BaseReleaseKey):
-    def __init__(self, release_name, name, year):
-        super(MovieReleaseKey, self).__init__(
-            release_name,
-            name,
-            "{}-{}".format(name, year),
-            media_type=constants.MEDIA_MOVIE
-        )
-        self.year = year
-
-
-def generate_release_key(release_name):
-    """ Generate a key suitable for using as a database key value
-
-    :param release_name: Release name to generate a key from
-    :type release_name: str, unicode
-    :return: Database suitable key name
-    :rtype: BaseReleaseKey
-    """
-    release_name = parser.normalize(release_name)
-    name = parser.parse_release(release_name)
-    if not name:
-        return False
-    name = name.lower()
-    release_info = BaseReleaseKey(release_name, name)
-    try:
-        info = parser.parse_release_info(release_name)
-    except TypeError:
-        # No release info parsed use default value for key: name
-        pass
-    else:
-        if info:
-            key_set = set(info.keys())
-            if key_set == {"season", "episode"}:
-                release_info = TVReleaseKey(release_name, name, info['season'], info['episode'])
-            elif key_set == {"year", "day", "month"}:
-                release_info = TVDailyReleaseKey(release_name, name, info['day'], info['month'], info['year'])
-            elif key_set == {"year"}:
-                release_info = MovieReleaseKey(release_name, name, info['year'])
-    finally:
-        return release_info
+# def __generate_release_key(release_name):
+#     """ Generate a key suitable for using as a database key value
+#
+#     :param release_name: Release name to generate a key from
+#     :type release_name: ReleaseInfo
+#     :return: Database suitable key name
+#     :rtype: BaseReleaseKey
+#     """
+#     release_info = parser.parse_release(release_name)
+#     if not release_info:
+#         return False
+#     release_name = parser.normalize(name)
+#     name = name.lower()
+#     release_info = BaseReleaseKey(release_name, name)
+#     try:
+#         info = parser.parse_release_info(release_name)
+#     except TypeError:
+#         # No release info parsed use default value for key: name
+#         pass
+#     else:
+#         if info:
+#             key_set = set(info.keys())
+#             if key_set == {"season", "episode"}:
+#                 release_info = TVReleaseKey(release_name, name, info['season'], info['episode'])
+#             elif key_set == {"year", "day", "month"}:
+#                 release_info = TVDailyReleaseKey(release_name, name, info['day'], info['month'], info['year'])
+#             elif key_set == {"year"}:
+#                 release_info = MovieReleaseKey(release_name, name, info['year'])
+#     finally:
+#         return release_info
 
 
 def get_section(session, section_name=None, section_id=None):

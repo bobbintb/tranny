@@ -37,3 +37,6 @@ class AuthenticationError(ApiError):
 
 class ClientNotAvailable(InvalidResponse):
     pass
+
+class ParseError(BotchedTranny):
+    pass

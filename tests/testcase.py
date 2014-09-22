@@ -8,11 +8,11 @@ from os.path import join, dirname
 from sqlalchemy import create_engine
 from tranny.app import config, Session, Base
 
+
 class TrannyTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(TrannyTestCase, self).__init__(methodName=methodName)
         self.load_config()
-        self.init_db()
 
     def load_config(self, config_name="test_config.ini"):
         conf_file = self.get_fixture(config_name)
