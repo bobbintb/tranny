@@ -7,7 +7,6 @@ import socket
 import urllib
 import logging
 import shutil
-from tranny.client import ClientTorrentData
 
 try:
     from xmlrpc import client as xmlrpclib
@@ -95,30 +94,49 @@ class RTorrentClient(client.TorrentClient):
             'd.get_complete=',
             'd.get_message='
         )
-        # Missing fields: leechers, total leechers
-        tdata = []
+        # Missing fields: seeders, total seederss
+        torrent_array = []
         for t in torrents:
+            tdata = client.ClientTorrentData(
+                seeders = '0',
+                total_seeders = '0'
+            )
+            # Do all the easy stuff first
+            tdata.update(dict(zip([
+                'info_hash',
+                'name',
+                'ratio',
+                'up_rate',
+                'dn_rate',
+                'up_total',
+                'dn_total',
+                'size',
+                'size_completed',
+                'peers',
+                'total_peers',
+                'priority',
+                'private'
+            ], t[:13])))
+
             if t[17]:
-                status='Error'
+                tdata['state'] = 'Error'
             elif t[14]:
-                status='Hashing'
+                tdata['state'] = 'Hashing'
             elif not t[15]:
-                status='Closed'
+                tdata['state'] = 'Closed'
             elif not t[13]:
-                status='Paused'
+                tdata['state'] = 'Paused'
             elif t[16]:
-                status='Seeding'
+                tdata['state'] = 'Seeding'
             elif not t[16]:
-                status='Leeching'
+                tdata['state'] = 'Leeching'
             else:
-                status='Unknown'
-            if t[8] == 0:
-                ratio = 0
-            else:
-                ratio = (float(t[8]) / t[7]) * 100
-            torrent_data = t[:9] + ['0', '0'] + t[9:13] + [status, ratio]
-            tdata.append(ClientTorrentData(*torrent_data))
-        return tdata
+                tdata['state'] = 'Unknown'
+
+            tdata['progress'] = (float(t[8]) / t[7]) * 100
+            
+            torrent_array.append(tdata)
+        return torrent_array
 
     def torrent_speed(self, info_hash):
         return {'upload_payload_rate': self._server.d.get_down_rate(info_hash),
@@ -126,30 +144,32 @@ class RTorrentClient(client.TorrentClient):
 
     def torrent_status(self, info_hash):
         status_map = {
-            'total_done': 'd.get_down_total',
-            'total_uploaded': 'd.get_up_total',
+            'dn_total': 'd.get_down_total',
+            'up_total': 'd.get_up_total',
             'ratio': 'd.get_ratio',
             'name': 'd.name',
             'save_path': 'd.get_directory_base',
-            'total_size': 'd.get_size_bytes',
+            'size': 'd.get_size_bytes',
             'piece_length': 'd.get_chunk_size',
             'num_pieces': 'd.size_chunks',
-            'num_peers': 'd.get_peers_connected',
-            'download_payload_rate': 'd.get_down_rate',
-            'upload_payload_rate': 'd.get_up_rate',
+            'peers': 'd.get_peers_connected',
+            'dn_rate': 'd.get_down_rate',
+            'up_rate': 'd.get_up_rate',
         }
         # Predefine unimplmented items here
-        data = {
+        data = client.ClientTorrentDataDetail(**{
+            'info_hash': info_hash,
             'next_announce': 'N/A',
             'tracker_status': 'N/A',
-            'num_seeds': '0',
-            'total_seeds': '0',
+            'seeders': '0',
+            'total_seeders': '0',
             'total_peers': '0',
             'distributed_copies': 'N/A',
             'time_added': '1970-01-01',
             'active_time': '0',
             'seeding_time': '0',
-        }
+            'eta': 0
+        })
         for field, call in status_map.items():
             data[field] = getattr(self._server, call)(info_hash)
         return data
@@ -166,15 +186,24 @@ class RTorrentClient(client.TorrentClient):
         pdata = []
         for peer in parray:
             # Country data not implemented yet
-            peer_dict = {'country': 'CA'}
+            peer_dict = client.ClientPeerData({'country': 'CA'})
             for index, value in enumerate(data_mapping.keys()):
                 peer_dict[value] = peer[index]
             pdata.append(peer_dict)
-        return {'peers': pdata}
+        return pdata
 
     def torrent_files(self, info_hash):
-        # This isn't ready for use with the web UI, it's just a placeholder
-        return self._server.f.multicall(info_hash, '+0', 'f.get_path=')
+        files = self._server.f.multicall(info_hash, '+0', 'f.get_path=', 'f.get_size_bytes=', 'f.get_size_chunks=', 'f.get_completed_chunks=', 'f.get_priority=')
+        file_data = []
+        for f in files:
+            file_data.append(client.ClientFileData(
+                path = f[0],
+                size = f[1],
+                priority = f[4],
+                progress = (float(f[3])/f[2])*100
+            ))
+
+        
 
     def torrent_remove(self, info_hash, remove_data=False):
         if remove_data:

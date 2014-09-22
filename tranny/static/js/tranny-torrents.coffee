@@ -126,7 +126,7 @@ class TorrentTable
         #@table = document.getElementById dom_id
         @table_body = document.querySelector dom_id + " article"
         @cols = ['name', 'size', 'progress', 'ratio', 'up_rate',
-                 'dn_rate', 'leechers', 'peers', 'priority', 'is_active']
+                 'dn_rate', 'seeders', 'peers', 'priority', 'is_active']
         @info_hashes = {}
 
     ###
@@ -153,9 +153,9 @@ class TorrentTable
                 when "ratio"
                     class_name = if row[key] < 1 then 'alert' else 'success'
                     div_col.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key].toFixed(2)}
-                when "leechers"
+                when "seeders"
                     div_col.appendChild document.createTextNode template['peer_info'] {
-                        'num': row[key], 'total': row['total_leechers']
+                        'num': row[key], 'total': row['total_seeders']
                     }
                 when "peers"
                     div_col.appendChild document.createTextNode template['peer_info'] {
@@ -505,11 +505,11 @@ handle_event_torrent_peers_response = (message) ->
     sort_client = (peer) -> return (peer['client'].split " ")[0..-2].toString()
     peer_chart_data = []
     client_chart_data = []
-    for country, count of _.countBy message['data']['peers'], 'country'
+    for country, count of _.countBy message['data'], 'country'
         peer_chart_data.push {label: country, value: count}
-    for client, count of _.countBy message['data']['peers'], sort_client
+    for client, count of _.countBy message['data'], sort_client
         client_chart_data.push {label: client, value: count}
-    render_peers message['data']['peers']
+    render_peers message['data']
 
 handle_event_torrent_remove_response = (message) ->
     if message['status'] == 0
@@ -518,16 +518,16 @@ handle_event_torrent_remove_response = (message) ->
 handle_event_torrent_details_response = (message) ->
     data = message['data']
     eta = if data['eta'] == 0 then '∞' else fmt_duration data['eta']
-    seeds = "#{data['num_seeds']} (#{data['total_seeds']})"
-    peers = "#{data['num_peers']} (#{data['total_peers']})"
+    seeds = "#{data['seeders']} (#{data['total_seeders']})"
+    peers = "#{data['peers']} (#{data['total_peers']})"
     pieces = "#{data['num_pieces']} (#{bytes_to_iec_size data['piece_length']})"
-    detail_elements.detail_downloaded.text bytes_to_size data['total_done']
-    detail_elements.detail_uploaded.text bytes_to_size data['total_uploaded']
+    detail_elements.detail_downloaded.text bytes_to_size data['dn_total']
+    detail_elements.detail_uploaded.text bytes_to_size data['up_total']
     detail_elements.detail_tracker_status.text data['tracker_status']
     detail_elements.detail_ratio.text data['ratio'].toFixed(2)
     detail_elements.detail_next_announce.text data['next_announce']
-    detail_elements.detail_speed_dl.text bytes_to_size data['download_payload_rate'], true
-    detail_elements.detail_speed_ul.text bytes_to_size data['upload_payload_rate'], true
+    detail_elements.detail_speed_dl.text bytes_to_size data['dn_rate'], true
+    detail_elements.detail_speed_ul.text bytes_to_size data['up_rate'], true
     detail_elements.detail_eta.text eta
     detail_elements.detail_pieces.text pieces
     detail_elements.detail_seeders.text seeds
@@ -539,11 +539,11 @@ handle_event_torrent_details_response = (message) ->
     detail_elements.detail_name.text data['name']
     detail_elements.detail_hash.text selected_detail_id
     detail_elements.detail_path.text data['save_path']
-    detail_elements.detail_total_size.text data['total_size']
-    detail_elements.detail_num_files.text data['detail_num_files']
-    #detail_elements.detail_comment.text data['detail_comment']
-    detail_elements.detail_status.text data['detail_status']
-    detail_elements.detail_tracker.text data['tracker_host']
+    detail_elements.detail_total_size.text data['size']
+    detail_elements.detail_num_files.text data['num_files']
+    #detail_elements.detail_comment.text data['comment']
+    detail_elements.detail_status.text data['state']
+    detail_elements.detail_tracker.text data['tracker_status']
 
 _alert_num = 0
 ###

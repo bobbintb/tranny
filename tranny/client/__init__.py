@@ -112,33 +112,117 @@ class TorrentClient(object):
     def get_events(self):
         raise NotImplementedError("get_events undefined")
 
+class ClientDataStruct(dict):
+    """
+    A base class for any data structures that will be returned by clients
+    """
+    _keys = []
 
-class ClientTorrentData(dict):
+    def __init__(self, **kwargs):
+        for key in self._keys:
+            self[key] = None
+        self.update(kwargs)
+
+    def __getitem__(self, key):
+        if key not in self._keys:
+            raise KeyError("'" + key + "'" + " is not a valid key")
+        return dict.__getitem__(self, key)
+
+    def __setitem__(self, key, value):
+        if key not in self._keys:
+            raise KeyError("'" + key + "'" + " is not a valid key")
+        dict.__setitem__(self, key, value)
+
+    def is_complete():
+        """Test if all keys have a value, even if that value is empty, e.g. {}"""
+        for key in self._keys:
+            if key is None:
+                return False
+        return True
+
+class ClientPeerData(ClientDataStruct):
+    """
+    A structure to hold peer data from the client
+    """
+    _keys = [
+        'client',
+        'down_speed',
+        'up_speed',
+        'progress',
+        'ip',
+        'country'
+    ]
+
+class ClientTorrentData(ClientDataStruct):
     """
     A struct used to hold data regarding torrent info sent from the backend client in use
     """
+    _keys = [
+        'info_hash',
+        'name',
+        'ratio',
+        'up_rate',
+        'dn_rate',
+        'up_total',
+        'dn_total',
+        'size',
+        'size_completed',
+        'seeders',
+        'total_seeders',
+        'peers',
+        'total_peers',
+        'priority',
+        'private',
+        'state',
+        'progress',
+    ]
 
-    def __init__(self, info_hash, name, ratio, up_rate, dn_rate, up_total, dn_total, size, size_completed,
-                 leechers, total_leechers, peers, total_peers, priority, private, is_active, progress, **kwargs):
-        super(ClientTorrentData, self).__init__(**kwargs)
-        self['info_hash'] = info_hash
-        self['name'] = name
-        self['ratio'] = ratio
-        self['up_rate'] = up_rate
-        self['dn_rate'] = dn_rate
-        self['up_total'] = up_total
-        self['dn_total'] = dn_total
-        self['size'] = size
-        self['size_completed'] = size_completed
-        self['leechers'] = leechers
-        self['total_leechers'] = total_leechers
-        self['peers'] = peers
-        self['total_peers'] = total_peers
-        self['priority'] = priority
-        self['private'] = private
-        self['is_active'] = is_active
-        self['progress'] = progress
+class ClientTorrentDataDetail(ClientDataStruct):
+    """
+    A struct to hold more in depth information about a torrent
+    """
+    _keys = [
+        'info_hash',
+        'name',
+        'ratio',
+        'up_rate',
+        'dn_rate',
+        'up_total',
+        'dn_total',
+        'size',
+        'size_completed',
+        'eta',
+        'seeders',
+        'total_seeders',
+        'peers',
+        'total_peers',
+        'priority',
+        'private',
+        'state',
+        'progress',
+        'tracker_status',
+        'next_announce',
+        'save_path',
+        'piece_length',
+        'num_pieces',
+        'time_added',
+        'distributed_copies',
+        'active_time',
+        'seeding_time',
+        'num_files',
+        'comment'
+    ]
 
+class ClientFileData(ClientDataStruct):
+    """
+    A struct to hold information about the files inside a torrent
+    """
+    _keys = [
+        'path',
+        'size',
+        'priority',
+        'progress'
+    ]
 
 def init_client(client_type=None):
     """ Import & initialize the client set in the configuration file and return the
