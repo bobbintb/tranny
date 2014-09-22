@@ -534,7 +534,7 @@ handle_event_torrent_details_response = (message) ->
     detail_elements.detail_peers.text peers
     detail_elements.detail_availability.text data['distributed_copies']
     detail_elements.detail_active_time.text fmt_duration data['active_time']
-    detail_elements.detail_seeding_time.text fmt_duration data['seeding_time']
+    detail_elements.detail_seeding_time.text if data['seeding_time'] then fmt_duration data['seeding_time'] else "n/a"
     detail_elements.detail_added_on.text fmt_timestamp data['time_added']
     detail_elements.detail_name.text data['name']
     detail_elements.detail_hash.text selected_detail_id
