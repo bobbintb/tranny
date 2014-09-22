@@ -149,10 +149,10 @@ class TorrentTable
             switch key
                 when "progress"
                     style = if Math.floor row[key] >= 100 then "success" else "alert"
-                    td.innerHTML = template['progress'] {'style': style, 'data': row[key].toFixed(2)}
+                    div_col.innerHTML = template['progress'] {'style': style, 'data': row[key].toFixed(2)}
                 when "ratio"
                     class_name = if row[key] < 1 then 'alert' else 'success'
-                    td.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key].toFixed(2)}
+                    div_col.innerHTML = template['ratio'] {'class_name': class_name, 'data': row[key].toFixed(2)}
                 when "leechers"
                     div_col.appendChild document.createTextNode template['peer_info'] {
                         'num': row[key], 'total': row['total_leechers']
@@ -162,9 +162,9 @@ class TorrentTable
                         'num': row[key], 'total': row['total_peers']
                     }
                 when "size"
-                    td.appendChild document.createTextNode bytes_to_size row[key]
+                    div_col.appendChild document.createTextNode bytes_to_size row[key]
                 when "up_rate", "dn_rate"
-                    td.appendChild document.createTextNode bytes_to_size row[key], true
+                    div_col.appendChild document.createTextNode bytes_to_size row[key], true
                 else
                     div_col.appendChild document.createTextNode row[key]
 
