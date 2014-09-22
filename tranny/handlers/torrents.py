@@ -30,9 +30,13 @@ def client_event_update():
     """
     while True:
         if torrent_client:
-            events = torrent_client.get_events()
-            if events:
-                log.debug(events)
+            try:
+                events = torrent_client.get_events()
+            except ClientNotAvailable:
+                pass
+            else:
+                if events:
+                    log.debug(events)
         gevent.sleep(1)
 
 update_thread = gevent.Greenlet.spawn(client_event_update)

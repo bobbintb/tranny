@@ -159,6 +159,7 @@
     width: 80%;
 }
 
+$fade_time: .2s;
 #torrents {
     // Prevent annoying hilighting
     -webkit-touch-callout: none;
@@ -170,15 +171,16 @@
 
     .row {
         cursor: pointer;
-        -o-transition:.3s;
-        -ms-transition:.3s;
-        -moz-transition:.3s;
-        -webkit-transition:.3s;
-        transition:.3s;
+        -o-transition: $fade_time;
+        -ms-transition: $fade_time;
+        -moz-transition: $fade_time;
+        -webkit-transition: $fade_time;
+        transition: $fade_time;
     }
     header {
         background-color: $table-head-bg;
         font-size:75%;
+        padding: 4px 8px;
     }
     .name {
         overflow-x: hidden;
@@ -199,15 +201,22 @@
     article {
         height: 400px;
         overflow: hidden;
+        position: relative;
+        .row {
+            padding: 5px 3px 1px 4px;
+        }
         div.progress {
             margin-bottom: 0;
             background-color: inherit;
             border: 0;
+            margin-top: -1px;
+            top: -1px;
             .count {
                 float: left;
                 color: $body-font-color;
-                margin-top: 3px;
+                margin-top: -1px;
                 margin-left: 2px;
+                font-size: 80%;
             }
         }
         font-size: 70%;

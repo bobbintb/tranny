@@ -93,7 +93,7 @@ def _imdb_score(title, min_votes=0):
     """
     info = imdb_info(title)
     if info:
-        if min_votes and info['votes'] < min_votes:
+        if min_votes and info.get('votes', 0) < min_votes:
             return 0
         return info['rating']
     return 0

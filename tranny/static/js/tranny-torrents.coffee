@@ -1,6 +1,6 @@
 root = exports ? this
 
-### Contains a list of currently selected DT_RowId (info_hash's) ###
+### Contains a list of currently selected row id's (info_hash's) ###
 selected_rows = []
 
 ### class defining selected rows in the torrent listing ###
@@ -14,18 +14,6 @@ endpoint = "http://#{document.domain}:#{location.port}/ws"
 
 ### Update interval for the traffic graph in ms ###
 update_speed = 1000
-
-### Type of graph to draw. time.area is an alternate ###
-graph_type = 'time.line'
-
-### Number of frames per second that transitions animations should use. ###
-graph_fps = 60
-
-### Number of entries to keep in working memory while the chart is not animating transitions. ###
-queue_size = 240
-
-### Number of entries to display in the graph. ###
-graph_window_size = 60
 
 ### Update interval for the stats/detail tabs ###
 detail_update_speed = update_speed * 2
@@ -657,6 +645,9 @@ jQuery ->
         torrent_table = new TorrentTable "#torrents"
         root.t = torrent_table
         detail_traffic_chart = init_traffic_chart "#detail-traffic-chart"
+        jQuery('#torrents article').perfectScrollbar {
+            suppressScrollX: true
+        }
     socket = io.connect endpoint
     socket.on 'connect', ->
         if has_connected

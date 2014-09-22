@@ -3,8 +3,8 @@
 File name parser/tokenizer functions
 """
 from __future__ import unicode_literals, absolute_import
-from ConfigParser import NoSectionError, NoOptionError
 import logging
+from imdb._exceptions import IMDbDataAccessError
 from re import compile, I, match
 from datetime import date
 from tranny import app
@@ -33,7 +33,7 @@ pattern_season = [
 
 
 def normalize(name):
-    return str('.'.join(clean_split(name)))
+    return '.'.join(clean_split(name))
 
 
 def clean_split(string):
@@ -58,18 +58,11 @@ def valid_year(release_name, none_is_cur_year=True, section_name="section_movies
     elif not release_year:
         log.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
         return False
-    try:
-        year_min = app.config.get_default(section_name, "year_min", 0, int)
-    except (NoOptionError, NoSectionError, ValueError):
-        year_min = 0
+    year_min = app.config.get_default(section_name, "year_min", 0, int)
     if year_min and release_year < year_min:
-        # Too old
+        log.debug("Release year is too old. Minimum {}, Found {}".format(year_min, release_year))
         return False
-    try:
-        year_max = app.config.get_default(section_name, "year_max", 0, int)
-    except (NoOptionError, NoSectionError, ValueError):
-        year_max = 0
-
+    year_max = app.config.get_default(section_name, "year_max", 0, int)
     if year_max and release_year > year_max:
         # Too new
         return False
@@ -87,20 +80,11 @@ def valid_score(release_name, section_name="section_movies"):
     release_name = parse_release(release_name)
     if not release_name:
         return None
-    try:
-        score_min = app.config.get_default(section_name, "score_min", 0, int)
-    except (NoOptionError, NoSectionError, ValueError):
-        score_min = 0
-    try:
-        score_max = app.config.get_default(section_name, "score_max", 0, int)
-    except (NoOptionError, NoSectionError, ValueError):
-        score_max = 0
+    score_min = app.config.get_default(section_name, "score_min", 0, int)
+    score_max = app.config.get_default(section_name, "score_max", 0, int)
     if not (score_min and score_max and release_name):
         return False
-    try:
-        score_votes = app.config.get_default(section_name, "score_votes", 0, int)
-    except (NoOptionError, NoSectionError, ValueError):
-        score_votes = 0
+    score_votes = app.config.get_default(section_name, "score_votes", 0, int)
     if release_name:
         found_score = rating.score(release_name, min_votes=score_votes)
         return bool(found_score)
@@ -118,36 +102,36 @@ def is_movie(release_name, strict=True):
     release_name = release_name.lower()
 
     # Remove obvious non-movies
-    if any([n in release_name for n in ["hdtv"]]):
+    if any([n in release_name for n in ["hdtv", "pdtv"]]):
         return False
 
     orig_title = parse_release(release_name)
 
     # Add a year to the name, helps with imdb quite a bit
     year = find_year(release_name)
-    if year:
-        title = "{0}.{1}".format(orig_title, year)
-        info = rating.imdb_info(title.replace(".", " "))
-    else:
-        info = rating.imdb_info(orig_title.replace(".", " "))
-    if info:
-        try:
-            kind = info['kind']
-        except KeyError:
-            pass
+    try:
+        if year:
+            title = "{0}.{1}".format(orig_title, year)
+            info = rating.imdb_info(title.replace(".", " "))
         else:
+            info = rating.imdb_info(orig_title.replace(".", " "))
+    except IMDbDataAccessError:
+        log.error("Could not connect to IMDB server")
+    else:
+        if info:
+            kind = info.get('kind', None)
             if kind in ["tv series"]:
                 return False
             elif kind in ["movie", "video movie"]:
                 return True
-    else:
-        try:
-            info = rating.tmdb_info(orig_title.replace(".", " "))
-        except:
-            pass
         else:
-            if info:
-                return True
+            try:
+                info = rating.tmdb_info(orig_title.replace(".", " "))
+            except:
+                pass
+            else:
+                if info:
+                    return True
     log.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
 
@@ -232,9 +216,8 @@ def is_ignored(release_name, section_name="ignore"):
     if any((pattern.search(release_name) for pattern in pattern_season)):
         return True
     for key in app.config.options(section_name):
-        try:
-            value = app.config.get(section_name, key)
-        except (NoSectionError, NoOptionError):
+        value = app.config.get_default(section_name, key, None)
+        if value is None:
             continue
         if key.startswith("string"):
             if value.lower() in release_name:

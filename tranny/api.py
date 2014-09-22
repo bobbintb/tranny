@@ -92,7 +92,7 @@ def error_handler(exc, event_name='internal_error'):
         emit(event_name, {
             'msg': "Client is not available",
             'event': event_name,
-            'exc': exc.message,
+            'exc': "{}".format(exc),
         }, status=STATUS_CLIENT_NOT_AVAILABLE)
     else:
         emit(event_name, {

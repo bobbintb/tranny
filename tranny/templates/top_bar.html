@@ -1,8 +1,8 @@
 {% from "funcs.html" import icon, button %}
 <div class="sticky">
 <nav class="top-bar" data-topbar>
-    <ul class="title-area" style="background-color: #F08A24">
-        <li class="name"><h1><a href="{{ url_for("home.index") }}"><i class="icon-gauge" style="color: #000"></i></a></h1></li>
+    <ul class="title-area">
+        <li class="name"><h1><a href="{{ url_for("home.index") }}"><i class="icon-gauge"></i></a></h1></li>
         <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
 
@@ -43,7 +43,7 @@
 
         <!-- Right Nav Section -->
         <ul class="right">
-            <li>
+            <li style="margin-right: 10px">
                 <div class="row collapse has-dropdown" id="speed_indicator">
                     <div>▲ <div id="speed_up" style="display: inline-block">n/a</div> ▼ <div id="speed_dn" style="display: inline-block">n/a</div></div>
                 </div>

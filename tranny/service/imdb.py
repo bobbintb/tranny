@@ -45,8 +45,8 @@ def _make_imdb():
     :rtype: IMDbBase
     """
     access_method = config.get_default(config_section, 'sql', 'http')
-    if access_method.lower() == "false":
-        access_method = "http"
+    if access_method.lower() in ["1", "true"]:
+        access_method = "sql"
     kwargs = {}
     if access_method == 'sql':
         kwargs = {
