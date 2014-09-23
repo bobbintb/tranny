@@ -7,7 +7,7 @@ from jsonrpclib.jsonrpc import ProtocolError
 from tranny import app
 from tranny import parser
 from tranny import provider
-from tranny import datastore
+from tranny import constants
 from tranny import release
 from tranny import net
 
@@ -21,6 +21,7 @@ class BroadcastTheNet(provider.TorrentProvider):
     """
     Provides access to content via BTN's API.
     """
+
     def __init__(self, config_section="provider_broadcastthenet"):
         super(BroadcastTheNet, self).__init__(config_section)
         self.enabled = app.config.getboolean(self._config_section, "enabled")
@@ -110,25 +111,20 @@ class BroadcastTheNet(provider.TorrentProvider):
                 releases = [rls for rls in releases if rls['Origin'] == "Scene"]
             for entry in releases:
                 release_name = entry['ReleaseName']
-                release_key = datastore.generate_release_key(release_name)
-                if not release_key:
+                release_info = parser.parse_release(release_name, guess_type=constants.MEDIA_TV)
+                if not release_info:
                     continue
                 section = parser.find_section(release_name)
                 if not section:
                     continue
-                if self.exists(session, release_key):
-                    # TODO add repack support as well
-                    if app.config.get_default("general", "fetch_proper", True, bool):
-                        if not ".proper." in release_name.lower():
-                            # Skip releases unless they are considered propers
-                            self.log.debug(
-                                "Skipped previously downloaded release ({0}): {1}".format(
-                                    release_key,
-                                    release_name
-                                )
-                            )
-                            continue
-                dl_url = self.get_torrent_url(entry['TorrentID'])
+                fetch_proper = app.config.get_default("general", "fetch_proper", True, bool)
+                if self.exists(session, release_info.release_key):
+                    # Skip releases unless they are considered propers or repacks
+                    if fetch_proper and not (release_info.is_repack or release_info.is_repack):
+                        self.log.debug("Skipped previously downloaded release ({0}): {1}".format(
+                            release_info.release_key, release_name))
+                        continue
+                #dl_url = self.get_torrent_url(entry['TorrentID'])
                 torrent_data = net.http_request(entry['DownloadURL'], json=False)
                 if not torrent_data:
                     self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
