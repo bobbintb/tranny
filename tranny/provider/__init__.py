@@ -48,8 +48,8 @@ class TorrentProvider(object):
             raise StopIteration
         self.last_update = t0
         session = Session()
-        for torrent in self.fetch_releases(session):
-            yield torrent, session
+        for torrent, release_info in self.fetch_releases(session):
+            yield session, [torrent, release_info]
 
     def fetch_releases(self, session):
         """
@@ -65,3 +65,16 @@ class TorrentProvider(object):
         except Exception as err:
             self.log.exception(err)
             return False
+
+    def is_replacement(self, release_info):
+        """
+
+        :param release_info:
+        """
+        fetch_proper = config.get_default("general", "fetch_proper", True, bool)
+        # Skip releases unless they are considered propers or repacks
+        if fetch_proper and not (release_info.is_repack or release_info.is_repack):
+            self.log.debug("Skipped previously downloaded release ({0}): {1}".format(
+                release_info.release_key, release_info.release_name))
+            return False
+        return True

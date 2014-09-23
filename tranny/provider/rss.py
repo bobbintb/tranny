@@ -58,25 +58,18 @@ class RSSFeed(provider.TorrentProvider):
         if not release_name:
             self.log.warning("No title parsed from RSS feed. Malformed?")
             return None
-
-        release_key = datastore.generate_release_key(release_name)
-        if not release_key:
+        release_info = parser.parse_release(release_name)
+        if not release_info.release_key:
             self.log.warning("No release key parsed from release name: {}".format(release_name))
             return None
-
-        section = parser.find_section(release_name)
-        if not section:
+        release_key = release_info.release_key
+        section = parser.find_section(release_info)
+        if not section or section == "section_movie":
             return None
-        if self.exists(session, release_key):
-            if app.config.get_default("general", "fetch_proper", True, bool):
-                if not ".proper." in release_name.lower():
-                    # Skip releases unless they are considered proper's
-                    self.log.debug(
-                        "Skipped previously downloaded release ({0}): {1}".format(
-                            release_key, release_name))
-                    return None
+        if self.exists(session, release_key) and not self.is_replacement(release_info):
+            return False
         torrent_data = net.http_request(entry['link'], json=False)
         if not torrent_data:
             self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
             return None
-        return release.TorrentData(bytes(release_name), torrent_data, section)
+        return release.TorrentData(bytes(release_name), torrent_data, section), release_info

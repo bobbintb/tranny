@@ -97,7 +97,7 @@ class ServiceManager(object):
         return self.services
 
     @staticmethod
-    def add(session, torrent, service, dl_path=None):
+    def add(session, service, torrent, release_info, dl_path=None):
         """ Handles adding a new torrent to the system. This should be considered the
         main entry point of doing this to make sure things are consistent, this cannot
         be guaranteed otherwise
@@ -111,12 +111,12 @@ class ServiceManager(object):
         status = False
         try:
             if not dl_path:
-                dl_path = app.config.get_download_path(torrent.section, torrent.release_name)
+                dl_path = app.config.get_download_path(torrent.section, release_info)
             res = client.get().add(torrent, download_dir=dl_path)
             if not res:
                 raise ClientError
             log.info("Added release: {0}".format(torrent.release_name))
-            release_key = datastore.generate_release_key(torrent.release_name)
+            release_key = release_info.release_key
             section = datastore.get_section(session, torrent.section)
             source = datastore.get_source(session, service.name)
             download = Download(release_key.as_unicode(), torrent.release_name, section.section_id,
@@ -141,8 +141,8 @@ class ServiceManager(object):
         thread """
         while True:
             for service in self.services:
-                for torrent, session in service.find_matches():
-                    self.add(session, torrent, service)
+                for session, release_data in service.find_matches():
+                    self.add(session, service, *release_data)
             gevent.sleep(1)
 
     def start(self):

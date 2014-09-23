@@ -36,6 +36,7 @@ class Configuration(ConfigParser):
         self.config_path = expanduser(path)
         self.cache_path = join(self.config_path, 'cache_path')
         self.cache_file = join(self.cache_path, "cache.dbm")
+        self.configured = False
 
     def rules(self):
         pass
@@ -121,14 +122,19 @@ class Configuration(ConfigParser):
             util.mkdirp(self.cache_path)
 
     def initialize(self, file_path=False):
+        if os.environ.get('TEST', False):
+            file_path = join(dirname(dirname(__file__)), 'tests', 'fixtures', 'test_config.ini')
         if not file_path:
             # Only create default locations when we are not specifying a config explicitly
             self.create_dirs()
             file_path = self.find_config()
         try:
-            return self.read(file_path)
+            resp = self.read(file_path)
         except OSError:
             raise ConfigError("No suitable configuration found")
+        else:
+            self.configured = True
+            return resp
 
     def find_sections(self, prefix):
         sections = [section for section in self.sections() if section.startswith(prefix)]
@@ -181,13 +187,17 @@ class Configuration(ConfigParser):
         except Exception:
             return section_name
 
-    def get_download_path(self, section, release_name):
-        from .parser import parse_release
+    def get_download_path(self, section, release_info):
+        """
+
+        :param section:
+        :param release_info: tranny.parser.ReleaseInfo
+        :return: :rtype:
+        """
         dl_path = self.get(section, "dl_path")
         #if not exists(dl_path):
         #    raise IOError("Invalid download path root: {0}".format(dl_path))
-        dir_name = parse_release(release_name)
-        full_dl_path = join(dl_path, dir_name)
+        full_dl_path = join(dl_path, ".".join(release_info['title'].split(" ")))
         if not exists(full_dl_path):
             try:
                 mkdir(full_dl_path)

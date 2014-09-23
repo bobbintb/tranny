@@ -333,7 +333,7 @@ class DelugeClient(client.TorrentClient):
         resp = self._request('web.get_torrent_status', [info_hash, detail_array + list(detail_map.keys())])
         detail = client.ClientTorrentDataDetail(info_hash=info_hash)
         detail.update({k: resp[k] for k in detail_array})
-        detail.update({v: resp[k] for k, v in detail_map.iteritems()})
+        detail.update({v: resp[k] for k, v in detail_map.items()})
         return detail
 
     def torrent_pause(self, info_hash):

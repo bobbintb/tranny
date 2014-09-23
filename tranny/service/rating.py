@@ -26,8 +26,7 @@ except (ImportError, configparser.Error):
 
 # Try and load themoviedb
 try:
-    from ..service import tmdb
-
+    from tranny.service import tmdb
     _tmdb_enabled = True
 except (ImportError, configparser.Error):
     tmdb, _tmdb_enabled = False, False
@@ -47,10 +46,10 @@ def score(title, min_votes=0, precision=1):
     :rtype: float
     """
     scores = []
-    if imdb and _imdb_enabled and app.config.getboolean("imdb", "enabled"):
+    if imdb and _imdb_enabled and app.config.getboolean("service_imdb", "enabled"):
         scores.append(_imdb_score(title, min_votes=min_votes))
-    if tmdb and _tmdb_enabled and app.config.getboolean("themoviedb", "enabled"):
-        scores.append(_tmdb_score(title, min_votes=min_votes))
+    #if tmdb and _tmdb_enabled and app.config.getboolean("service_themoviedb", "enabled"):
+    #    scores.append(_tmdb_score(title, min_votes=min_votes))
     if not scores:
         return 0
     return round(sum(scores) / float(len(scores)), precision)

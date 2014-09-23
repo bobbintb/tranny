@@ -10,6 +10,7 @@ from tranny import release
 
 log = logging.getLogger(__name__)
 
+
 class FileWatchService(FileSystemEventHandler):
     """
     Provides a TorrentProvider service for handling any number of watch folders.

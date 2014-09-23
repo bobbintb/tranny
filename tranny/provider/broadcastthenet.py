@@ -114,20 +114,16 @@ class BroadcastTheNet(provider.TorrentProvider):
                 release_info = parser.parse_release(release_name, guess_type=constants.MEDIA_TV)
                 if not release_info:
                     continue
-                section = parser.find_section(release_name)
+                section = parser.find_section(release_info)
                 if not section:
                     continue
-                fetch_proper = app.config.get_default("general", "fetch_proper", True, bool)
-                if self.exists(session, release_info.release_key):
-                    # Skip releases unless they are considered propers or repacks
-                    if fetch_proper and not (release_info.is_repack or release_info.is_repack):
-                        self.log.debug("Skipped previously downloaded release ({0}): {1}".format(
-                            release_info.release_key, release_name))
-                        continue
+
+                if self.exists(session, release_info.release_key) and not self.is_replacement(release_info):
+                    continue
                 #dl_url = self.get_torrent_url(entry['TorrentID'])
                 torrent_data = net.http_request(entry['DownloadURL'], json=False)
                 if not torrent_data:
                     self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue
                 data = release.TorrentData(str(release_name), torrent_data, section)
-                yield data
+                yield data, release_info
