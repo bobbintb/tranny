@@ -94,66 +94,67 @@ def valid_score(release_name, section_name="section_movies"):
     return False
 
 
-def is_movie(release_name, strict=True):
+def is_movie(release_info, strict=True):
     """ Check the release to see if its a movie.
 
-    :param release_name:
-    :type release_name:
+    :param release_info:
+    :type release_info: ReleaseInfo
     :return:
-    :rtype:
+    :rtype: bool
     """
-    release_name = release_name.lower()
+    release_name = release_info.release_name.lower()
 
     # Remove obvious non-movies
-    if any([n in release_name for n in ["hdtv", "pdtv"]]):
+    if any([n in release_info.release_name for n in ["hdtv", "pdtv"]]):
         return False
 
-    orig_title = parse_release(release_name)
-
-    # Add a year to the name, helps with imdb quite a bit
-    year = find_year(release_name)
+    if not isinstance(release_info.release_key, MovieReleaseKey):
+        log.warn("Received wrong type of release_key")
+        return False
+    if release_info.media_type == constants.MEDIA_MOVIE:
+        # we know enough to determine its a movie and exit early
+        return True
+    try:
+        year = release_info.release_key.year
+    except AttributeError:
+        year = find_year(release_name)
     try:
         if year:
-            title = "{0}.{1}".format(orig_title, year)
+            title = "{0}.{1}".format(release_info.release_title_norm, year)
             info = rating.imdb_info(title.replace(".", " "))
         else:
-            info = rating.imdb_info(orig_title.replace(".", " "))
+            info = rating.imdb_info(release_info.release_title_norm.replace(".", " "))
+        if not info:
+            raise ValueError()
+    except ValueError:
+        log.warn("Received no data from IMDB source")
     except IMDbDataAccessError:
         log.error("Could not connect to IMDB server")
     else:
-        if info:
-            kind = info.get('kind', None)
-            if kind in ["tv series"]:
-                return False
-            elif kind in ["movie", "video movie"]:
-                return True
-        else:
-            try:
-                info = rating.tmdb_info(orig_title.replace(".", " "))
-            except:
-                pass
-            else:
-                if info:
-                    return True
+        kind = info.get('kind', None)
+        if kind in ["tv series"]:
+            return False
+        elif kind in ["movie", "video movie"]:
+            return True
     log.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
 
 
-def valid_movie(release_name, section_name="section_movies"):
+def valid_movie(release_info, section_name="section_movies"):
     """
 
-    :param release_name:
-    :type release_name: unicode
+    :param release_info:
+    :type release_info: ReleaseInfo
     :param section_name:
     :type section_name: unicode
     :return:
     :rtype:
     """
-    if not is_movie(release_name):
+    if not is_movie(release_info):
         return False
-    if not valid_year(release_name, section_name=section_name):
+    if not valid_year(release_info, section_name=section_name):
         return False
-    if not valid_score(release_name, section_name=section_name):
+    if not valid_score(release_info, section_name=section_name):
         return False
     return True
 
@@ -324,9 +325,11 @@ def parse_release_info(release_name):
 stop_words = set('hdtv')
 
 
-def parse_release(release_name):
+def parse_release(release_name, guess_type=None):
     """ Fetch just the release name title from the release name provided
 
+    :param guess_type: Hint at the media type being parsed. values: movie, episode, None
+    :type guess_type: unicode
     :param release_name: A full release string Conan.2013.04.15.Chelsea.Handler.HDTV.x264-2HD
     :type release_name: unicode, unicode
     :return: Parsed release info instance
@@ -335,7 +338,13 @@ def parse_release(release_name):
     # Guessit sucks when you don't have an extension, so we add .fake for those without
     try:
         try:
-            file_info = guess_file_info(normalize(release_name), options={'name_only': True})
+            if guess_type == 'tv':
+                guess_type = 'episode'
+            options = {
+                'name_only': True,
+                'type': guess_type
+            }
+            file_info = guess_file_info(normalize(release_name), options=options)
         except AttributeError:
             file_info = {}
         if not file_info or file_info.get('type', 'unknown') == 'unknown':
@@ -367,33 +376,30 @@ def has_valid_ext(release_name):
 
 
 class ReleaseInfo(dict):
+    """
+    Common structure for info parsed from a release name. Use the guessit or internal factory functions
+    depending on if guessit parsed the release properly
+    """
     def __init__(self, release_name, guess_info, **kwargs):
         super(ReleaseInfo, self).__init__(**guess_info)
         self['release_name'] = release_name
 
-    @property
-    def release_name(self):
-        return self['release_name']
-
-    @property
-    def release_title_norm(self):
-        return normalize(self['title']).lower()
-
     @classmethod
-    def from_guessit(cls, release_name, guess_info):
-        args = dict()
-        for key, value in guess_info.items():
-            if key == 'series':
-                args['title'] = value
-            elif key == 'episodeNumber':
-                args['episode'] = value
-            else:
-                args[key] = value
-        return cls(release_name, args)
+    def from_internal_parser(cls, release_name, title,
+                             year=None, season=None, episode=None, day=None, month=None, media_type=None):
+        """ Create a release info instance from internal parsers
 
-    @classmethod
-    def from_internal_parser(cls, release_name, title, year=None, season=None, episode=None, day=None, month=None):
-        return cls(release_name, dict(
+        :param release_name: Full release name
+        :param title: Parse release title
+        :param year: Parsed year
+        :param season: Parsed season
+        :param episode: Parsed episode number
+        :param day: Parsed episode day
+        :param month: Parsed episode month
+        :return: Configured ReleaseInfo instance
+        :rtype: ReleaseInfo
+        """
+        ri_instance = cls(release_name, dict(
             title=title,
             year=year,
             season=season,
@@ -401,9 +407,92 @@ class ReleaseInfo(dict):
             day=day,
             month=month
         ))
+        if media_type:
+            ri_instance['type'] = media_type
+        else:
+            key = ri_instance.release_key
+            if type(key) in [TVReleaseKey, TVDailyReleaseKey, TVSingleReleaseKey]:
+                ri_instance['type'] = constants.MEDIA_TV
+            elif type(key) == MovieReleaseKey:
+                ri_instance['type'] = constants.MEDIA_MOVIE
+            else:
+                ri_instance['type'] = constants.MEDIA_UNKNOWN
+        return ri_instance
+
+    @classmethod
+    def from_guessit(cls, release_name, guess_info):
+        """ Generate a ReleaseInfo instance from a guessit result set
+
+        :param release_name: Full release name
+        :param guess_info: Guess instance returned from guessit library
+        :type guess_info: Guess
+        :return: :rtype:
+        """
+        args = dict()
+        for key, value in guess_info.items():
+            if key == 'series':
+                args['title'] = value
+            elif key == 'episodeNumber':
+                args['episode'] = value
+            elif key == 'type':
+                if value == 'episode':
+                    args[key] = constants.MEDIA_TV
+                elif value == 'movie':
+                    args[key] = constants.MEDIA_MOVIE
+                else:
+                    args[key] = constants.MEDIA_UNKNOWN
+            else:
+                args[key] = value
+        return cls(release_name, args)
+
+    @property
+    def media_type(self):
+        try:
+            return self['type']
+        except:
+            return constants.MEDIA_UNKNOWN
+
+    @property
+    def release_name(self):
+        """ Simple shortcut """
+        return self['release_name']
+
+    @property
+    def release_title_norm(self):
+        """
+        :return: Clean title useful for comparisons and key generation
+        :rtype: unicode
+        """
+        return normalize(self['title']).lower()
+
+    @property
+    def is_proper(self):
+        """
+        :return: Is this release marked as a "proper"
+        :rtype: bool
+        """
+        return ".proper." in self.release_name.lower()
+
+    @property
+    def is_repack(self):
+        """
+        :return: Is this release marked as a "proper"
+        :rtype: bool
+        """
+        return ".repack." in self.release_name.lower()
 
     @property
     def release_key(self):
+        """ Generate a comparable key used as a form of a primary key for a release
+        to be used when comparing releases pulled from different sources as well as testing
+        for existence internally.
+
+        TODO: clean this up, use the guess['type'] keys better
+
+        :return: Release key instance with parsed data loaded
+        :rtype: BaseReleaseKey, TVReleaseKey, MovieReleaseKey, TVDailyReleaseKey, TVSingleReleaseKey
+        :raise ParseError: Failed to find a suitable key format
+        """
         if self.get('type', False) == "episode" and self.get('date', False):
             release_key = TVDailyReleaseKey(self.release_name, self.release_title_norm,
                                             self['date'].day, self['date'].month, self['date'].year)
@@ -411,7 +500,6 @@ class ReleaseInfo(dict):
             release_key = TVReleaseKey(self.release_name, self.release_title_norm,
                                        self['season'], self['episode'])
         elif self.get('type') == "movie":
-            # Very likely a  movie
             release_key = MovieReleaseKey(self.release_name, self.release_title_norm, self['year'])
         elif all([self.get('season', False), self.get('episode', False)]):
             release_key = TVReleaseKey(self.release_name, self.release_title_norm,
@@ -453,10 +541,23 @@ class BaseReleaseKey(object):
         return other == self.release_key
 
     def as_unicode(self):
+        """ This only exists because the database will not try to coerce the key to unicode
+        automatically, so we explicitly return the unicode value.
+
+        .. note: unicode(self) will achieve the same result except the function does not exist in py3.3+
+
+        :return: Release key as unicode
+        :rtype: unicode
+        """
         return "{}".format(self)
 
 
 class TVReleaseKey(BaseReleaseKey):
+    """
+    Used for a standard tv episode with a season and episode number
+
+    eg: Game.of.Kitties.S03E03.720p.HDTV.x264-XX
+    """
     def __init__(self, release_name, name, season, episode, year=None):
         super(TVReleaseKey, self).__init__(
             release_name,
@@ -471,6 +572,12 @@ class TVReleaseKey(BaseReleaseKey):
 
 
 class TVSingleReleaseKey(BaseReleaseKey):
+    """
+    Used for a show that does not use season/episode markers. This is far less reliable
+    as a primary key than the other key classes since its much harder to parse correctly
+
+    eg: F1.2012.Canadian.Grand.Prix.Qualifying.720p.HDTV.x264-XX
+    """
     def __init__(self, release_name, name, show_title):
         super(TVSingleReleaseKey, self).__init__(
             release_name,
@@ -482,6 +589,11 @@ class TVSingleReleaseKey(BaseReleaseKey):
 
 
 class TVDailyReleaseKey(BaseReleaseKey):
+    """
+    A show that uses date markers instead of season/episodes
+
+    eg: Conan.2013.4.15.Chelsea.Handler.HDTV.x264-XX
+    """
     def __init__(self, release_name, name, day, month, year):
         super(TVDailyReleaseKey, self).__init__(
             release_name,
