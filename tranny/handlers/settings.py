@@ -15,6 +15,7 @@ section_name = "settings"
 settings = Blueprint(section_name, __name__, url_prefix="/settings")
 renderer = partial(ui.render, section=section_name)
 
+
 @settings.route("/")
 @renderer("settings.html")
 @login_required
@@ -24,25 +25,19 @@ def index():
     :return: Config data
     :rtype: dict
     """
-    groups = OrderedDict([( 'General', [ 'General',
-                                         'WebUI',
-                                         'Ignore',
-                                         'Log',
-                                         'Proxy']),
-                          ('Sections', [ 'section_TV',
-                                         'section_Movies']),
-                          ('Services', [ 'service_IMDB',
-                                         'service_TheMovieDB']),
-                          ('Clients', [ 'client_uTorrent',
-                                        'client_Transmission',
-                                        'client_rTorrent',
-                                        'client_Deluge']),
-                        ])
+    groups = OrderedDict([
+        ('General', ['General', 'WebUI', 'Ignore', 'Log', 'Proxy']),
+        ('Sections', ['section_TV', 'section_Movie']),
+        ('Services', ['service_IMDB', 'service_TheMovieDB']),
+        ('Clients', ['client_uTorrent', 'client_Transmission',
+                     'client_rTorrent', 'client_Deluge']),
+    ])
     settings_data = OrderedDict()
-    for group, sections in groups.iteritems():
+    for group, sections in groups.items():
         settings_data[group] = {}
         for s in sections:
             settings_data[group][s] = config.get_section_values(s.lower())
+    # TODO Remove these hardcoded keys and look for bool like values instead?
     bool_values = ['enabled', 'sort_seasons', 'group_name', 'fetch_proper']
     select_values = ['type']
     ignore_keys = ['quality_sd', 'quality_hd', 'quality_any']

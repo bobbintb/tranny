@@ -82,7 +82,7 @@ def index():
     :rtype: dict
     """
     section_data = []
-    for section in ['tv', 'movies']:
+    for section in ['tv', 'movie']:
         config_section = "section_{0}".format(section)
         section_info = {}
         for key in ['dl_path', 'group_name', 'sort_seasons']:
