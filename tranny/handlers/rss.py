@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from ConfigParser import NoOptionError
 from functools import partial
 import logging
+import re
 from flask import Blueprint, request, redirect, url_for
 from flask.ext.login import login_required
 from tranny.app import config
@@ -39,7 +40,7 @@ def index():
             except NoOptionError:
                 enabled = False
             settings['enabled'] = "0" if enabled else "1"
-        tpl_key = section.split("_")[1]
+        tpl_key = section.partition("_")[2]
         feed_data[tpl_key] = settings
     return dict(feeds=feed_data)
 
@@ -54,11 +55,9 @@ def delete():
     :rtype: dict
     """
     status = api.STATUS_FAIL
-    try:
-        feed = "rss_{0}".format(request.values['feed'])
-        if not config.has_section(feed):
-            raise KeyError()
-    except KeyError:
+
+    feed = "rss_{0}".format(re.sub('[^0-9a-zA-Z]+', '_', request.values['feed'].lower()))
+    if not config.has_section(feed):
         msg = "Invalid feed name"
     else:
         if config.remove_section(feed) and config.save():
@@ -66,15 +65,11 @@ def delete():
             status = api.STATUS_OK
         else:
             msg = "Failed to remove configuration section: {0}".format(feed)
-    response = {
-        'msg': msg,
-        'status': status
-    }
-    return response
+    return dict(msg=msg, status=status)
 
 
 @rss.route("/create", methods=['POST'])
-@renderer()
+@renderer(fmt='json')
 @login_required
 def create():
     """ Create a new RSS feed over XHR
@@ -83,28 +78,25 @@ def create():
     :rtype: Response
     """
     status = api.STATUS_FAIL
-    try:
-        feed = "rss_{0}".format(request.values['new_short_name'])
-        if config.has_section(feed):
-            raise KeyError()
-        else:
-            config.add_section(feed)
-    except KeyError:
+
+    feed = "rss_{0}".format(re.sub('[^0-9a-zA-Z]+', '_', request.values['feed'].lower()))
+    if config.has_section(feed):
         msg = "Duplicate feed name"
     else:
+        config.add_section(feed)
         try:
-            config.set(feed, "url", request.values['new_url'])
-            config.set(feed, "interval", request.values['new_interval'])
-            config.set(feed, "enabled", request.values['new_enabled'])
+            config.set(feed, "url", request.values['url'])
+            config.set(feed, "interval", request.values['interval'])
+            config.set(feed, "enabled", request.values['enabled'])
             if config.save():
-                msg = "RSS Feed saved successfully: {0}".format(request.values['new_short_name'])
+                msg = "Feed {0} saved successfully, reloading page.".format(request.values['feed'])
                 status = api.STATUS_OK
             else:
                 msg = "Error saving config to disk."
         except KeyError:
             msg = "Failed to save config. Malformed request: {0}".format(feed)
     log.error(msg) if status == api.STATUS_FAIL else log.info(msg)
-    return redirect(url_for(".index"))
+    return dict(msg=msg, status=status)
 
 
 @rss.route("/save", methods=['POST'])
@@ -117,17 +109,16 @@ def save():
     :rtype: dict
     """
     status = api.STATUS_FAIL
-    try:
-        feed = "rss_{0}".format(request.values['feed'])
-        if not config.has_section(feed):
-            raise KeyError()
-    except KeyError:
+
+    feed = "rss_{0}".format(request.values['feed'])
+    if not config.has_section(feed):
         msg = "Invalid feed name"
     else:
         try:
             config.set(feed, "url", request.values['url'])
             config.set(feed, "interval", request.values['interval'])
             config.set(feed, "enabled", request.values['enabled'])
+            config.save()
             msg = "RSS Feed saved successfully: {0}".format(request.values['feed'])
             status = api.STATUS_OK
         except KeyError:

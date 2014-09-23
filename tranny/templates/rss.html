@@ -62,9 +62,8 @@
                                     <ul class="button-group even-3">
                                         <li><a href="#" class="small button success feed_save" data-feed="{{ feed }}"><i
                                                 class="icon-ok"></i> Save</a></li>
-                                        <li>
-                                            <button class="small button"><i class="icon-arrows-cw"></i> Reset</button>
-                                        </li>
+                                        <li><a href="#" class="small button feed_reset" data-feed="{{ feed }}"><i
+                                                class="icon-arrows-cw"></i> Reset</a></li>
                                         <li><a href="#" class="small button alert feed_delete" data-feed="{{ feed }}"><i
                                                 class="icon-cancel"></i> Delete</a></li>
                                     </ul>
@@ -82,25 +81,13 @@
         <h1>
             <small>Create New RSS Feed</small>
         </h1>
-        <form action="{{ url_for("rss.create") }}" method="post">
-
-            <div class="row collapse">
-                <div class="small-2 columns">
-                    <span class="prefix">Long Name</span>
-                </div>
-                <div class="small-10 columns">
-                    <input type="url" name="new_long_name" id="new_long_name" value=""
-                           placeholder="New Site Name">
-                </div>
-            </div>
-
             <div class="row collapse">
                 <div class="small-2 columns">
                     <span class="prefix">Short Name</span>
                 </div>
                 <div class="small-10 columns">
-                    <input type="url" name="new_short_name" id="new_short_name" value="" required
-                           placeholder="nsn">
+                    <input type="text" name="new_feed_name" id="new_feed_name" value="" required
+                           placeholder="Feed name">
                 </div>
             </div>
 
@@ -126,30 +113,28 @@
             <div class="row collapse">
 
                 <div class="small-2 columns">
-                    <span class="prefix">Active</span>
+                    <span class="prefix">Enabled</span>
                 </div>
 
                 <div class="small-10 columns">
-                    <div class="inline-switch">
-                        <input id="new_enabled" name="new_enabled" type="radio">
-                        <label for="new_enabled" onclick="">Disabled</label>
-                        <input id="new_enabled1" name="new_enabled" type="radio" checked>
-                        <label for="new_enabled1" onclick="">Enabled</label>
-                        <span></span>
-                    </div>
+                  <div class="custom_switch">
+                    <input id="new_enabled" type="checkbox" checked name="switch-z">
+                    <label for="new_enabled"></label>
+                  </div>                  
                 </div>
+            </div>
+
+            <div class="row collapse">
 
                 <ul class="button-group even-2">
                     <li>
                         <button class="small button"><i class="icon-arrows-cw"></i> Reset</button>
                     </li>
                     <li>
-                        <button class="small button success"><i class="icon-plus"></i> Create Feed</button>
+                        <button class="small button success feed_create"><i class="icon-plus"></i> Create Feed</button>
                     </li>
                 </ul>
             </div>
-        </form>
-
         <a class="close-reveal-modal">&#215;</a>
     </div>
 {% endblock %}
