@@ -43,23 +43,24 @@ def clean_split(string):
     return [p for p in string.replace(".", " ").split(" ") if p]
 
 
-def valid_year(release_name, none_is_cur_year=True, section_name="section_movies"):
-    """ Check if a release name is too new
+def valid_year(release_info, none_is_cur_year=True, section_name="section_movies"):
+    """ Check if a release name is too new based on parsed year
 
-    :param none_is_cur_year: If no year is found, assume current year
+    :param none_is_cur_year: If no year is found, assume current year if set to true.
+    Generally only applies to movies.
     :type none_is_cur_year: bool
-    :param release_name:
-    :type release_name: unicode
+    :param release_info: Release info instance
+    :type release_info: ReleaseInfo
     :param section_name:
     :type section_name: unicode
-    :return:
-    :rtype:
+    :return: Valid status
+    :rtype: bool
     """
-    release_year = find_year(release_name)
+    release_year = release_info.get('year', None)
     if not release_year and none_is_cur_year:
         release_year = date.today().year
     elif not release_year:
-        log.warning("Failed to find a valid year and no default was allowed: {0}".format(release_name))
+        log.warning("Failed to find a valid year and no default was allowed: {0}".format(release_info))
         return False
     year_min = app.config.get_default(section_name, "year_min", 0, int)
     if year_min and release_year < year_min:
@@ -67,31 +68,27 @@ def valid_year(release_name, none_is_cur_year=True, section_name="section_movies
         return False
     year_max = app.config.get_default(section_name, "year_max", 0, int)
     if year_max and release_year > year_max:
-        # Too new
+        log.info("Release year is too new. Max: {}, Found {}".format(year_max, release_year))
         return False
     return True
 
 
-def valid_score(release_name, section_name="section_movies"):
-    """
+def valid_score(release_info, section_name="section_movies"):
+    """ Check services to determine if the release has a score within the
+    accepted range defined in the config
 
-    :type release_name: unicode
-    :type section_name: unicode
-    :return:
-    :rtype: bool, None
+    :param release_info: Release info instance
+    :type release_info: ReleaseInfo
+    :return: Valid score status
+    :rtype: bool
     """
-    release_name = parse_release(release_name)
-    if not release_name:
-        return None
     score_min = app.config.get_default(section_name, "score_min", 0, float)
     score_max = app.config.get_default(section_name, "score_max", 0, float)
-    if not (score_min and score_max and release_name):
+    if not (score_min or score_max):
         return False
     score_votes = app.config.get_default(section_name, "score_votes", 0, int)
-    if release_name:
-        found_score = rating.score(release_name, min_votes=score_votes)
-        return bool(found_score)
-    return False
+    found_score = rating.score(release_info.release_title_norm, min_votes=score_votes)
+    return bool(found_score)
 
 
 def is_movie(release_info, strict=True):
@@ -141,7 +138,8 @@ def is_movie(release_info, strict=True):
 
 
 def valid_movie(release_info, section_name="section_movies"):
-    """
+    """ Run through the checks to determine if the movie passes all minimum filters
+     as specified in the configuration
 
     :param release_info:
     :type release_info: ReleaseInfo
@@ -159,17 +157,17 @@ def valid_movie(release_info, section_name="section_movies"):
     return True
 
 
-def valid_tv(release_name, section_name="section_tv"):
+def valid_tv(release_info, section_name="section_tv"):
     """
 
-    :param release_name:
-    :type release_name: unicode
+    :param release_info:
+    :type release_info: ReleaseInfo
     :param section_name:
     :type section_name: unicode
     :return:
     :rtype:
     """
-    quality = find_quality(release_name)
+    quality = find_quality(release_info)
     for key_type in [quality, "any"]:
         key = "quality_{0}".format(key_type)
         if not app.config.has_option(section_name, key):
@@ -177,46 +175,46 @@ def valid_tv(release_name, section_name="section_tv"):
             continue
         patterns = app.config.build_regex_fetch_list(section_name, key)
         for pattern in patterns:
-            if re.match(pattern, release_name, re.I):
+            if re.match(pattern, release_info.release_name, re.I):
                 section_name = app.config.get_unique_section_name(section_name)
                 return section_name
     return False
 
 
-def find_section(release_name, prefix="section_"):
+def find_section(release_info, prefix="section_"):
     """ Attempt to find the configuration section the release provided matches with.
 
-    :param release_name:
-    :type release_name: unicode
+    :param release_info:
+    :type release_info: ReleaseInfo
     :param prefix:
     :type prefix: unicode
     :return:
     :rtype: str, bool
     """
-    if is_ignored(release_name):
+    if is_ignored(release_info):
         return False
     sections = app.config.find_sections(prefix)
     for section in sections:
         if section.lower() == "section_movies":
-            if valid_movie(release_name):
+            if valid_movie(release_info):
                 return section
         elif section.lower() == "section_tv":
-            if valid_tv(release_name):
+            if valid_tv(release_info):
                 return section
     return False
 
 
-def is_ignored(release_name, section_name="ignore"):
+def is_ignored(release_info, section_name="ignore"):
     """ Check if the release should be ignored no matter what other conditions are matched
 
     :param section_name:
     :type section_name: unicode
-    :param release_name: Release name to match against
-    :type release_name: unicode
-    :return: Ignored status
+    :param release_info: Release name to match against
+    :type release_info: ReleaseInfo
+    :return: release_info status
     :rtype: bool
     """
-    release_name = release_name.lower()
+    release_name = release_info.release_name.lower()
     if any((pattern.search(release_name) for pattern in pattern_season)):
         return True
     for key in app.config.options(section_name):
@@ -256,14 +254,14 @@ def _is_sd(release_name):
     return False
 
 
-def find_quality(release_name):
+def find_quality(release_info):
     """
-    :param release_name: Release name to parse
-    :type release_name: unicode
+    :param release_info: Release name to parse
+    :type release_info: ReleaseInfo
     :return:
     :rtype: unicode
     """
-    if _is_hd(release_name):
+    if _is_hd(release_info.release_name):
         return "hd"
     else:
         return "sd"
@@ -447,10 +445,7 @@ class ReleaseInfo(dict):
 
     @property
     def media_type(self):
-        try:
-            return self['type']
-        except:
-            return constants.MEDIA_UNKNOWN
+        return self.get('type', constants.MEDIA_UNKNOWN)
 
     @property
     def release_name(self):

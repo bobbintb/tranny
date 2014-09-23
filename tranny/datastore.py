@@ -13,39 +13,16 @@ cache_release = defaultdict(lambda: False)
 cache_source = defaultdict(lambda: False)
 
 
-# def __generate_release_key(release_name):
-#     """ Generate a key suitable for using as a database key value
-#
-#     :param release_name: Release name to generate a key from
-#     :type release_name: ReleaseInfo
-#     :return: Database suitable key name
-#     :rtype: BaseReleaseKey
-#     """
-#     release_info = parser.parse_release(release_name)
-#     if not release_info:
-#         return False
-#     release_name = parser.normalize(name)
-#     name = name.lower()
-#     release_info = BaseReleaseKey(release_name, name)
-#     try:
-#         info = parser.parse_release_info(release_name)
-#     except TypeError:
-#         # No release info parsed use default value for key: name
-#         pass
-#     else:
-#         if info:
-#             key_set = set(info.keys())
-#             if key_set == {"season", "episode"}:
-#                 release_info = TVReleaseKey(release_name, name, info['season'], info['episode'])
-#             elif key_set == {"year", "day", "month"}:
-#                 release_info = TVDailyReleaseKey(release_name, name, info['day'], info['month'], info['year'])
-#             elif key_set == {"year"}:
-#                 release_info = MovieReleaseKey(release_name, name, info['year'])
-#     finally:
-#         return release_info
-
-
 def get_section(session, section_name=None, section_id=None):
+    """ Fetch a section model from the DB, creating a new instance if it does
+    not exist yet.
+
+    :param session: sqlalchemy.orm.session.Session
+    :param section_name: Fetch section by name
+    :param section_id: Fetch section by its id
+    :return: Section instance
+    :rtype: Section
+    """
     if section_name:
         section = session.query(Section).filter_by(section_name=section_name).first()
     elif section_id:
