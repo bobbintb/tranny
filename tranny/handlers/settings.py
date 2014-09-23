@@ -5,7 +5,6 @@ Settings routes for settings outside of providers/services/filters
 from __future__ import unicode_literals
 from functools import partial
 from collections import OrderedDict
-from json import dumps
 from flask import request, Blueprint
 from flask.ext.login import login_required
 from tranny.app import config
@@ -77,4 +76,4 @@ def save():
     else:
         status = api.STATUS_FAIL
         msg = "Error saving settings"
-    return dumps({'msg': msg, 'status': status})
+    return {'msg': msg, 'status': status}
