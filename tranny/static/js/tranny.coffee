@@ -5,7 +5,9 @@ label_formatter = (label, series) ->
     "<div class=\"pie_label\">#{label}<br/>#{pct}% (#{series.data[0][1]})</div>";
 
 parse_json = (json_string) ->
-    JSON and JSON.parse json_string or jQuery.parseJSON json_string
+    if json_string.constructor == String
+        return jQuery.parseJSON json_string
+    return json_string
 
 msg_cur_id = 0
 
@@ -129,6 +131,17 @@ filter_add = (evt) ->
             console.log "added ok"
             input_element.val ""
 
+feed_create = (evt) ->
+    evt.preventDefault()
+    data =
+        feed: jQuery("#new_feed_name").val()
+        url: jQuery("#new_url").val()
+        interval: jQuery("#new_interval").val()
+        enabled: jQuery("#new_enabled").val()
+    jQuery.post "/rss/create", data, (response) ->
+        jQuery("#rss_add").foundation('reveal', 'close')
+        if handle_response(response).ok()
+            location.reload()
 
 feed_save = (evt) ->
     evt.preventDefault()
@@ -140,7 +153,6 @@ feed_save = (evt) ->
         enabled: jQuery("#" + "#{feed_name}_enabled").is(':checked')
     jQuery.post "/rss/save", data, handle_response
 
-
 feed_delete = (evt) ->
     evt.preventDefault()
     if not confirm "Are you sure you want to delete this RSS feed? This is a non reversable action."
@@ -149,6 +161,11 @@ feed_delete = (evt) ->
     jQuery.post "/rss/delete", {feed: feed_name}, (response) ->
         if handle_response(response).ok()
             jQuery("#feed_#{feed_name}").fadeOut 500
+
+feed_reset = (evt) ->
+    evt.preventDefault()
+    feed_name = jQuery(@).data "feed"
+    jQuery("#" + feed_name + "_form")[0].reset()
 
 btn_save = (evt) ->
     evt.preventDefault()
@@ -179,5 +196,7 @@ jQuery ->
     else if window.location.pathname.indexOf("rss") != -1
         jQuery(".feed_save").on "click", feed_save
         jQuery(".feed_delete").on "click", feed_delete
+        jQuery(".feed_create").on "click", feed_create
+        jQuery(".feed_reset").on "click", feed_reset
 
     jQuery(document).foundation()
