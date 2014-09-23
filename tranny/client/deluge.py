@@ -360,7 +360,15 @@ class DelugeClient(client.TorrentClient):
 
     def torrent_files(self, info_hash):
         resp = self._request('web.get_torrent_files', [info_hash])
-        return resp
+        file_data = []
+        for f in resp['contents'].values():
+            file_data.append(client.ClientFileData(
+                path = f['path'],
+                progress = int(f['progress']) * 100,
+                size = f['size'],
+                priority = f['priority']
+                ))
+        return file_data
 
     def torrent_add(self, info_hash):
         resp = self._request('web.add_torrents', [info_hash])

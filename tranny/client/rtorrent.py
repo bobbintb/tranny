@@ -193,15 +193,16 @@ class RTorrentClient(client.TorrentClient):
         return pdata
 
     def torrent_files(self, info_hash):
-        files = self._server.f.multicall(info_hash, '+0', 'f.get_path=', 'f.get_size_bytes=', 'f.get_size_chunks=', 'f.get_completed_chunks=', 'f.get_priority=')
+        files = self._server.f.multicall(info_hash, 0, 'f.get_path=', 'f.get_size_bytes=', 'f.get_size_chunks=', 'f.get_completed_chunks=', 'f.get_priority=')
         file_data = []
         for f in files:
             file_data.append(client.ClientFileData(
                 path = f[0],
                 size = f[1],
                 priority = f[4],
-                progress = (float(f[3])/f[2])*100
+                progress = (float(f[3])/float(f[2]))*100
             ))
+        return file_data
 
         
 
