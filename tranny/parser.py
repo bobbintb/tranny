@@ -74,10 +74,11 @@ def valid_year(release_info, none_is_cur_year=True, section_name="section_movies
     return True
 
 
-def valid_score(release_info, section_name="section_movies"):
+def valid_score(release_info, section_name="section_movie"):
     """ Check services to determine if the release has a score within the
     accepted range defined in the config
 
+    :param section_name: Config section key to use for value lookups
     :param release_info: Release info instance
     :type release_info: ReleaseInfo
     :return: Valid score status
@@ -86,7 +87,7 @@ def valid_score(release_info, section_name="section_movies"):
     score_min = app.config.get_default(section_name, "score_min", 0, float)
     score_max = app.config.get_default(section_name, "score_max", 0, float)
     if not (score_min or score_max):
-        return False
+        return None
     score_votes = app.config.get_default(section_name, "score_votes", 0, int)
     found_score = rating.score(release_info.release_title_norm, min_votes=score_votes)
     return bool(found_score)
@@ -136,7 +137,7 @@ def is_movie(release_info, strict=True):
     return False
 
 
-def valid_movie(release_info, section_name="section_movies"):
+def valid_movie(release_info, section_name="section_movie"):
     """ Run through the checks to determine if the movie passes all minimum filters
      as specified in the configuration
 
@@ -151,8 +152,9 @@ def valid_movie(release_info, section_name="section_movies"):
         return False
     if not valid_year(release_info, section_name=section_name):
         return False
-    if not valid_score(release_info, section_name=section_name):
-        return False
+    score_is_valid = valid_score(release_info, section_name=section_name)
+    if score_is_valid is not None and not not score_is_valid:
+        return None
     return True
 
 
@@ -181,7 +183,7 @@ def valid_tv(release_info, section_name="section_tv"):
     return False
 
 
-def find_section(release_info, prefix="section_"):
+def validate_section(release_info, prefix="section_"):
     """ Attempt to find the configuration section the release provided matches with.
 
     :param release_info:
@@ -517,7 +519,12 @@ class ReleaseInfo(dict):
                 week_num = datetime.now().isocalendar()[1]
                 release_key = TVSingleReleaseKey(self.release_name, self.release_title_norm, week_num)
         elif self.get('type') == constants.MEDIA_MOVIE:
-            release_key = MovieReleaseKey(self.release_name, self.release_title_norm, self.get('year', None))
+            year = self.get('year', None)
+            if not year:
+                year = find_year(self.release_name)
+                if not year:
+                    year = date.today().year
+            release_key = MovieReleaseKey(self.release_name, self.release_title_norm, year)
         elif all([self.get('season', False), self.get('episode', False)]):
             # A single episode of a show
             release_key = TVReleaseKey(self.release_name, self.release_title_norm,
@@ -656,9 +663,7 @@ class MovieReleaseKey(BaseReleaseKey):
     """
     Key used for a movie release. Year is auto set to current year if not specified
     """
-    def __init__(self, release_name, name, year=None):
-        if not year:
-            year = date.today().year
+    def __init__(self, release_name, name, year):
         super(MovieReleaseKey, self).__init__(
             release_name,
             name,

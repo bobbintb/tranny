@@ -114,7 +114,7 @@ class BroadcastTheNet(provider.TorrentProvider):
                 release_info = parser.parse_release(release_name, guess_type=constants.MEDIA_TV)
                 if not release_info:
                     continue
-                section = parser.find_section(release_info)
+                section = parser.validate_section(release_info)
                 if not section:
                     continue
 

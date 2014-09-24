@@ -63,7 +63,7 @@ class RSSFeed(provider.TorrentProvider):
             self.log.warning("No release key parsed from release name: {}".format(release_name))
             return None
         release_key = release_info.release_key
-        section = parser.find_section(release_info)
+        section = parser.validate_section(release_info)
         if not section or section == "section_movie":
             return None
         if self.exists(session, release_key) and not self.is_replacement(release_info):

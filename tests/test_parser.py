@@ -40,7 +40,7 @@ class ReleaseTest(TrannyTestCase):
         ]
         for params in test_data:
             release_info = parser.ReleaseInfo.from_internal_parser(params[1], **params[2])
-            self.assertEqual(params[0], parser.find_section(release_info), params[1])
+            self.assertEqual(params[0], parser.validate_section(release_info), params[1])
 
         config.set("section_tv", "ignore")
         self.assertFalse()
@@ -152,3 +152,25 @@ class ReleaseTest(TrannyTestCase):
         self.assertFalse(parser.valid_year(release_info_2, section_name=section_name))
 
         self.assertFalse(parser.valid_year(release_info_2, section_name=section_name, none_is_cur_year=False))
+
+    def test_valid_movie(self):
+        release_info_1 = parser.ReleaseInfo.from_internal_parser(
+            "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC",
+            **{'title': 'teen.wolf', 'media_type': constants.MEDIA_MOVIE}
+        )
+        section_name = "section_movie"
+        config.set(section_name, "year_min", 0)
+        config.set(section_name, "year_max", 0)
+        self.assertTrue(parser.valid_movie(release_info_1))
+
+    @unittest.skipUnless(config.getboolean("service_imdb", "enable"), "IMDB not enabled")
+    def test_valid_movie_lookup(self):
+        release_info_1 = parser.ReleaseInfo.from_internal_parser(
+            "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC",
+            **{'title': 'teen.wolf', 'media_type': constants.MEDIA_MOVIE}
+        )
+        section_name = "section_movie"
+        config.set(section_name, "year_min", 0)
+        config.set(section_name, "year_max", 0)
+        config.set(section_name, "score_min", 1)
+        self.assertTrue(parser.valid_movie(release_info_1))

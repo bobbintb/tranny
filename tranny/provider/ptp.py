@@ -78,4 +78,4 @@ class PTP(provider.TorrentProvider):
                     release_key = datastore.generate_release_key(release_name)
                     if not release_key:
                         continue
-                    section = parser.find_section(release_name)
+                    section = parser.validate_section(release_name)
