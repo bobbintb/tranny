@@ -206,7 +206,7 @@ class Torrent(BDict):
         :rtype: str,int
         """
         try:
-            total = sum([f['length'] for f in self['info']['files']])
+            total = (len(self['info']['pieces']) // 20) * self['info']['piece length']
         except KeyError:
             total = self['info']['length']
         return util.file_size(total) if human else total

@@ -10,6 +10,7 @@ from tranny import provider
 from tranny import constants
 from tranny import release
 from tranny import net
+from tranny.torrent import Torrent
 
 _errors = {
     -32001: "Invalid API Key",
@@ -114,10 +115,9 @@ class BroadcastTheNet(provider.TorrentProvider):
                 release_info = parser.parse_release(release_name, guess_type=constants.MEDIA_TV)
                 if not release_info:
                     continue
-                section = parser.validate_section(release_info)
-                if not section:
+                section_name = parser.validate_section(release_info)
+                if not section_name:
                     continue
-
                 if self.exists(session, release_info.release_key) and not self.is_replacement(release_info):
                     continue
                 #dl_url = self.get_torrent_url(entry['TorrentID'])
@@ -125,5 +125,8 @@ class BroadcastTheNet(provider.TorrentProvider):
                 if not torrent_data:
                     self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
                     continue
-                data = release.TorrentData(str(release_name), torrent_data, section)
+                data = release.TorrentData(str(release_name), torrent_data, section_name)
+                torrent = Torrent.from_str(torrent_data)
+                if not parser.valid_size(torrent, section_name):
+                    continue
                 yield data, release_info

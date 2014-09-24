@@ -13,6 +13,7 @@ from tranny import app
 from tranny import constants
 from tranny.exceptions import ParseError
 from tranny.service import rating
+from tranny import net
 
 log = logging.getLogger(__name__)
 
@@ -135,6 +136,26 @@ def is_movie(release_info, strict=True):
             return True
     log.warning("Skipped release due to inability to determine type: {0}".format(release_name))
     return False
+
+
+def valid_size(torrent, section_name):
+    """ Check that the release falls within any size constraints
+
+    :param torrent: Torrent instance to check
+    :type torrent: tranny.torrent.Torrent
+    :param section_name: Config section key
+    :type section_name: unicode
+    """
+    size_min = app.config.get_default(section_name, "size_min", 0, int)
+    size_max = app.config.get_default(section_name, "size_max", 0, int)
+    size = (torrent.size() / 1024.0) / 1024.0
+    if size_min and size <= size_min:
+        log.debug("Release size too small: {} MB".format(size))
+        return False
+    if size_max and size >= size_max:
+        log.debug("Release size too large: {} MB".format(size))
+        return False
+    return True
 
 
 def valid_movie(release_info, section_name="section_movie"):

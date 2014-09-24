@@ -7,9 +7,9 @@ import feedparser
 from tranny import app
 from tranny import provider
 from tranny import parser
-from tranny import datastore
 from tranny import release
 from tranny import net
+from tranny.torrent import Torrent
 
 
 class RSSFeed(provider.TorrentProvider):
@@ -57,19 +57,23 @@ class RSSFeed(provider.TorrentProvider):
         release_name = entry.get('title', "")
         if not release_name:
             self.log.warning("No title parsed from RSS feed. Malformed?")
-            return None
+            return False
         release_info = parser.parse_release(release_name)
         if not release_info.release_key:
             self.log.warning("No release key parsed from release name: {}".format(release_name))
-            return None
+            return False
         release_key = release_info.release_key
-        section = parser.validate_section(release_info)
-        if not section or section == "section_movie":
-            return None
+        section_name = parser.validate_section(release_info)
+        if not section_name or section_name == "section_movie":
+            return False
         if self.exists(session, release_key) and not self.is_replacement(release_info):
             return False
         torrent_data = net.http_request(entry['link'], json=False)
         if not torrent_data:
             self.log.error("Failed to download torrent data from server: {0}".format(entry['link']))
-            return None
-        return release.TorrentData(bytes(release_name), torrent_data, section), release_info
+            return False
+        data = release.TorrentData(bytes(release_name), torrent_data, section_name), release_info
+        torrent = Torrent.from_str(torrent_data)
+        if not parser.valid_size(torrent, section_name):
+            return False
+        return data

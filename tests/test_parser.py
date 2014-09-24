@@ -5,10 +5,11 @@ Tests for the parser module
 from __future__ import unicode_literals
 from datetime import datetime, date
 import unittest
-from testcase import TrannyTestCase
+from testcase import TrannyTestCase, get_fixture
 from tranny import parser
 from tranny import constants
 from tranny.app import config
+from tranny.torrent import Torrent
 
 
 class ReleaseTest(TrannyTestCase):
@@ -71,7 +72,7 @@ class ReleaseTest(TrannyTestCase):
         )
         self.assertFalse(parser.is_movie(fake_release_info))
 
-    @unittest.skipUnless(config.getboolean("service_imdb", "enable"), "IMDB not enabled")
+    @unittest.skipUnless(config.getboolean("service_imdb", "enabled"), "IMDB not enabled")
     def test_is_movie_lookup(self):
         release_info = parser.ReleaseInfo.from_internal_parser(
             "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC",
@@ -163,7 +164,7 @@ class ReleaseTest(TrannyTestCase):
         config.set(section_name, "year_max", 0)
         self.assertTrue(parser.valid_movie(release_info_1))
 
-    @unittest.skipUnless(config.getboolean("service_imdb", "enable"), "IMDB not enabled")
+    @unittest.skipUnless(config.getboolean("service_imdb", "enabled"), "IMDB not enabled")
     def test_valid_movie_lookup(self):
         release_info_1 = parser.ReleaseInfo.from_internal_parser(
             "Teen.Wolf.1985.720P.BRRIP.XVID.AC3-MAJESTiC",
@@ -174,3 +175,17 @@ class ReleaseTest(TrannyTestCase):
         config.set(section_name, "year_max", 0)
         config.set(section_name, "score_min", 1)
         self.assertTrue(parser.valid_movie(release_info_1))
+
+    def test_valid_size(self):
+        t = Torrent.from_file(get_fixture("CentOS-6.3-x86_64-bin-DVD1to2.torrent"))
+        section_name = "section_movie"
+        config.set(section_name, "size_min", 1)
+        config.set(section_name, "size_max", 10000)
+        self.assertTrue(parser.valid_size(t, section_name))
+
+        config.set(section_name, "size_max", 1000)
+        self.assertFalse(parser.valid_size(t, section_name))
+
+        config.set(section_name, "size_min", 7000)
+        config.set(section_name, "size_max", 10000)
+        self.assertFalse(parser.valid_size(t, section_name))
