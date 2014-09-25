@@ -18,6 +18,7 @@ Contents:
     providers
     services
     notifications
+    devel
     deluge_api
     modules
 
