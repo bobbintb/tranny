@@ -1,5 +1,5 @@
-Tranny - A highly configurable torrent downloader and API wrapper
-=================================================================
+# Tranny - A highly configurable torrent downloader and API wrapper
+
 
 **This is still early in the development process, i don't recommend users commit to using it yet as its still in a constant
 state of change.**
@@ -9,8 +9,7 @@ API's. It shares some goals similar to [sickbeard](http://sickbeard.com/) but is
 specifically private tracker support. Its very unlikely [usenet/nbz](http://en.wikipedia.org/wiki/NZB) support will
 ever be considered as an alternate to torrent backends, so stick to sickbeard if that is your poison of choice.
 
-Design Goal
------------
+## Design Goal
 
 This tools primary goal was to attempt to automate repetitive downloading tasks as efficiently as possible. This
 means that there will be support for loading torrents from many different sources, hopefully without loading
@@ -19,8 +18,7 @@ any duplicates. In addition to this support has expanded to also support a gener
 others. All of these function essentially in the same manner so supporting all of the different torrent
 back-ends relatively easy, similar to the [transdroid](http://www.transdroid.org/) application.
 
-Features Status
----------------
+## Features Status
 
 **Torrent clients**
 
@@ -38,8 +36,7 @@ Alternatively I would also accept pull requests for these 2 clients as long as t
 - [ ] [qBittorent](http://www.qbittorrent.org/) (partial support)
 
 
-Auto Sorting & Downloading
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Auto Sorting & Downloading**
 
 - [x] Auto sorting of releases into the correct destination folders based on the name of the torrent. For example
 when downloading a TV episode, it will be placed in the configured TV download path automatically.
@@ -60,8 +57,7 @@ matches.
 - [ ] Skip releases which are not available under predb (Usually P2P)
 - [ ] Check for disk space available and set a minimum disk space buffer to provide
 
-Notifications
-~~~~~~~~~~~~~
+**Notifications**
 
 The notification features are likely to be the lowest priority at the moment and will only come along in something
 like a version 2 of the application. Their support is absolutely planned however.
@@ -72,8 +68,7 @@ like a version 2 of the application. Their support is absolutely planned however
 - [ ] Growl
 
 
-Service Providers
-~~~~~~~~~~~~~~~~~
+**Service Providers**
 
 These are backend services that are continually updates either by polling, or events broadcasted depending
 on the service.
@@ -88,16 +83,14 @@ on the service.
 - [ ] [mIRC](http://www.mirc.com/) If someone wants to develop this... :)
 - [ ] IRC PreDB scraper support. Using the internal IRC client record pre logs for local lookup
 
-OS Support
-~~~~~~~~~~
+**OS Support**
 
 - [x] Linux (Tested only on linux currently)
 - [ ] Windows (may work, untested..)
 - [ ] OSX (likely works, untested..)
 - [ ] Open/Free/NetBSD (likely works, untested..)
 
-RDBMS datastore backend
-~~~~~~~~~~~~~~~~~~~~~~~
+**RDBMS datastore backend**
 
 - [x] [SQLite](http://www.sqlite.org/) Default, built-in to python generally by default.
 - [x] [postgres](http://www.postgresql.org/)
@@ -105,8 +98,7 @@ RDBMS datastore backend
 - [x] [oracle](http://oracle.com)
 
 
-WebUI
-~~~~~
+**WebUI**
 
 This was something i was not originally interested in, but later decided to include as it is a relatively simple
 addition with nice rewards for having complete integration with backend services that really make it stand out
@@ -126,20 +118,17 @@ the ability to disable it completely.
 - [ ] Right click context menu action support
 - [ ] Multi user support (I am unsure how i want to proceed with this, but its something i would like to have)
 
-Other
-~~~~~
+**Other**
 
 - [ ] Python 3 support. Tranny itself should be python3 compatible, but some libraries are not (gevent).
 - [ ] API support
 
 
-Libraries used
---------------
+## Libraries used
 
 A list of the major library used.
 
-Python
-~~~~~~
+**Python**
 
 - [gevent](http://www.gevent.org/)
 - [feedparser](https://code.google.com/p/feedparser/)
@@ -150,8 +139,7 @@ Python
 - [Jinja2](https://github.com/mitsuhiko/jinja2)
 - [Sphinx](http://sphinx-doc.org/)
 
-Web
-~~~
+**Web**
 
 - [Foundation](http://foundation.zurb.com/)
 - [Epoch](https://github.com/fastly/epoch)
@@ -160,19 +148,17 @@ Web
 - [fontello](http://fontello.com/)
 
 
-Setup
------
+## Setup
 
 For more in depth ways to start the service please see the [setup docs](docs/setup.md).
 
-Contributing
-------------
+## Contributing
 
-Please read the `developer guide`_ to get started. Contributions are welcomed.
+If you would like to start contributing to the project, please fork it and read the 
+developer guide to get started. Contributions are welcomed.
 
-.. _developer guide: docs/devel.rst
 
-Contact
--------
+
+## Contact
 
 I am generally available in the #tranny channel on freenode
