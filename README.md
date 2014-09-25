@@ -47,6 +47,7 @@ matches.
 - [x] Support for handling "Proper" releases
 - [x] Global ignore patterns
 - [x] Persistent download history
+- [x] Minimum/Maximum file size filtering
 - [ ] Handle daily broadcast show properties (ex. Delete daily shows over a week old)
 - [ ] Custom regex matching
 - [ ] Filter to only accept private torrents
@@ -58,7 +59,7 @@ matches.
 
 **Notifications**
 
-The notification features are likly to be the lowest priority at the moment and will only come along in something
+The notification features are likely to be the lowest priority at the moment and will only come along in something
 like a version 2 of the application. Their support is absolutely planned however.
 
 - [ ] IRC Bot

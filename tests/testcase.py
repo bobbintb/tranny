@@ -15,10 +15,16 @@ from os.path import join, dirname
 from sqlalchemy import create_engine
 from tranny.app import config, Session, Base
 from tranny.configuration import Configuration
+import vcr
 
 
 def get_fixture(fixture_file):
     return join(dirname(__file__), "fixtures", fixture_file)
+
+tapedeck = vcr.VCR(
+    serializer='json',
+    cassette_library_dir='fixtures'
+)
 
 
 def _make_config():
