@@ -174,7 +174,7 @@ def valid_movie(release_info, section_name="section_movie"):
     if not valid_year(release_info, section_name=section_name):
         return False
     score_is_valid = valid_score(release_info, section_name=section_name)
-    if score_is_valid is not None and not not score_is_valid:
+    if score_is_valid is not None and not score_is_valid:
         return None
     return True
 
@@ -218,7 +218,7 @@ def validate_section(release_info, prefix="section_"):
         return False
     sections = app.config.find_sections(prefix)
     for section in sections:
-        if section.lower() == "section_movies":
+        if section.lower() == "section_movie":
             if valid_movie(release_info):
                 return section
         elif section.lower() == "section_tv":
@@ -227,7 +227,7 @@ def validate_section(release_info, prefix="section_"):
     return False
 
 
-def is_ignored(release_info, section_name="ignore"):
+def is_ignored(release_info, section_name="filter_ignore"):
     """ Check if the release should be ignored no matter what other conditions are matched
 
     :param section_name:
