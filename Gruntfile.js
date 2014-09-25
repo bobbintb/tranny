@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
     grunt.initConfig({
+
         pkg: grunt.file.readJSON('package.json'),
+
         concat: {
             options: {
                 separator: ';'
@@ -19,9 +21,10 @@ module.exports = function (grunt) {
                     'tranny/static/js/highcharts-theme.js',
                     'tranny/static/js/context.js'
                 ],
-                dest: 'tranny/static/js/vendor.js'
+                dest: 'tranny/static/js/vendor/vendor.js'
             }
         },
+
         sass: {
             options: {
                 includePaths: ['tranny/static/vendor/foundation/scss']
@@ -48,6 +51,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         watch: {
             grunt: { files: ['Gruntfile.js'] },
 
@@ -62,6 +66,7 @@ module.exports = function (grunt) {
             }
         }
     });
+
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-sass');
