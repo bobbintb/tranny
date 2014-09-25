@@ -13,12 +13,7 @@
     <link rel="stylesheet" href="{{ url_for("static", filename="vendor/perfect-scrollbar/src/perfect-scrollbar.css") }}"/>
     <link rel="stylesheet" href="{{ url_for("static", filename="css/tranny.css") }}"/>
 
-
-    <script src="{{ url_for("static", filename="vendor/modernizr/modernizr.js") }}"></script>
-    <script src="{{ url_for("static", filename="vendor/moment/moment.js") }}"></script>
-    <script src="{{ url_for("static", filename="vendor/lodash/dist/lodash.js") }}"></script>
-    <script src="{{ url_for("static", filename="js/vendor/socket.io.js") }}"></script>
-
+    <script src="{{ url_for("static", filename="js/vendor.js") }}"></script>
 </head>
 <body>
 
@@ -33,19 +28,7 @@
 
 {% block content %}{% endblock %}
 
-
-
-<script src="{{ url_for("static", filename="vendor/jquery/dist/jquery.js") }}"></script>
-<script src="{{ url_for("static", filename="vendor/perfect-scrollbar/src/perfect-scrollbar.js") }}"></script>
-<script src="{{ url_for("static", filename="vendor/fastclick/lib/fastclick.js") }}"></script>
-<script src="{{ url_for("static", filename="vendor/foundation/js/foundation.js") }}"></script>
-<script src="{{ url_for("static", filename="vendor/highcharts/highcharts.js") }}"></script>
-<script src="{{ url_for("static", filename="js/context.js") }}"></script>
-<script src="{{ url_for("static", filename="js/highcharts-theme.js") }}"></script>
-<script src="{{ url_for("static", filename="js/tranny.js") }}"></script>
-<script src="{{ url_for("static", filename="js/tranny-torrents.js") }}"></script>
-
-
+<script src="{{ url_for("static", filename="js/app.js") }}"></script>
 
 {% include "modal_upload.html" %}
 </body>

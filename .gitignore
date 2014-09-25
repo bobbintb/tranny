@@ -49,3 +49,4 @@ node_modules
 file_dir
 .DS_Store
 *.map
+vendor/*

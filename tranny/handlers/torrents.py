@@ -155,7 +155,7 @@ def handle_files(message):
 def handle_peers(message):
     info_hash = message.get('info_hash', None)
     data = client.get().torrent_peers(info_hash)
-    api.emit(api.EVENT_TORRENT_PEERS_RESPONSE, data=data)
+    api.emit(api.EVENT_TORRENT_PEERS_RESPONSE, data=dict(peers=data))
 
 
 @api.on(api.EVENT_TORRENT_REMOVE)

@@ -26,9 +26,7 @@ class ClientError(TrannyException):
 
 
 class ApiError(BotchedTranny):
-    def __init__(self, error):
-        self.message = error['message']
-        self.err_code = error['code']
+    pass
 
 
 class AuthenticationError(ApiError):
