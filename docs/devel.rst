@@ -59,7 +59,7 @@ Basic steps on linux (# denoting root or sudo command)::
 
 With all of the base tools installed we can pull in our JS dependencies using bower::
 
-    $ bower update --config.directory=tranny/static/vendor
+    $ bower install --config.directory=tranny/static/vendor
 
 Now we will install the grunt tasks that we take advantage of::
 
@@ -118,4 +118,8 @@ To fix this go to line 13 of tranny/static/vendor/foundation/scss/foundation/fun
 the !global declaration so it looks like this::
 
     $modules: append($modules, $name);
+
+
+Building Release Versions
+-------------------------
 

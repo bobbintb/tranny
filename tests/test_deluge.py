@@ -12,7 +12,6 @@ from tranny.release import TorrentData
 
 class DelugeTest(TrannyTestCase):
     def setUp(self):
-        self.load_config(self.get_fixture("test_config.ini"))
         self.client = DelugeClient()
 
     def test_upload(self):

@@ -22,8 +22,17 @@ setup(
     author="Leigh MacDonald",
     author_email="leigh.macdonald@gmail.com",
     long_description=open(join(dirname(__file__), "README.md")).read(),
-    packages="tranny",
-    requires=requirements,
+    scripts=['tranny-cli.py'],
+    packages=[
+        "tranny",
+        "tranny.client",
+        "tranny.handlers",
+        "tranny.notification",
+        "tranny.provider",
+        "tranny.service"
+    ],
+    package_data={'tranny': ['tranny/templates']},
+    install_requires=requirements,
     test_suite="tests",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
@@ -31,7 +40,6 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2.7",
-        "License :: Other/Proprietary License"
-    ],
-
+        "License :: OSI Approved :: BSD License"
+    ]
 )

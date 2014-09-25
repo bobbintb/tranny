@@ -155,7 +155,7 @@ For more in depth ways to start the service please see the [setup docs](docs/set
 ## Contributing
 
 If you would like to start contributing to the project, please fork it and read the 
-developer guide to get started. Contributions are welcomed.
+[developer guide](http://torrent-tranny.readthedocs.org/en/latest/devel.html) to get started. Contributions are welcomed.
 
 
 

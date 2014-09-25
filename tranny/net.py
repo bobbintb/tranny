@@ -53,12 +53,14 @@ def download(release_name, url, dest_path="./", extension=".torrent"):
     :rtype:
     """
     log.info("Downloading release [{0}]: {1}".format(release_name, url))
-    file_path = join(dest_path, release_name) + extension
+    file_path = join(dest_path, release_name)
+    if extension and not file_path.endswith(extension):
+        file_path += extension
     dl_ok = False
     response = http_request(url)
     if response:
         with open(file_path, 'wb') as torrent_file:
-            torrent_file.write(response)
+            torrent_file.write(response.content)
         dl_ok = True
     return dl_ok
 
@@ -99,6 +101,13 @@ def http_request(url, auth=None, json=True, timeout=30, method='get', data=None,
 
 
 def parse_net_speed_value(input_speed):
+    """ Convert a string like 10 kb/s into a byte count
+
+    :param input_speed: Net speed string with suffix
+    :type input_speed: unicode
+    :return: Speed in bytes
+    :rtype: int
+    """
     value, suffix = input_speed.replace("/s", "").split()
     parsed_value = float(speed_multi[suffix](float(value)))
     return parsed_value

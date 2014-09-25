@@ -10,21 +10,22 @@ SQL Mode
 ~~~~~~~~
 
 You can optionally import the entire imdb into a local databse for faster lookup
-times.
+times.::
 
     $ tranny-cli.py imdb
 
 Using SQLite on a very fast machine with SSD's this took about 30 minutes to complete. Other databases are
-likely to be considerably slower than this.
+likely to be considerably slower than this. For reference i have seen postgres take 2 days with a default
+configuration.
 
-Once complete the config flag for sql must be set to true:
+Once complete the config flag for sql must be set to true::
 
     [service_imdb]
     enabled = true
     sql = true
 
 If using postgresql there are some parameters you can tune in the database to speed up this load
-time.
+time.::
 
     fsync = off
     full_page_writes = off

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import vcr
 from testcase import TrannyTestCase, get_fixture, tapedeck
 from tranny.service import imdb
 

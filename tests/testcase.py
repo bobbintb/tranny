@@ -10,7 +10,7 @@ import unittest
 # directory
 import os
 os.environ['TEST'] = "1"
-
+import pickle
 from os.path import join, dirname
 from sqlalchemy import create_engine
 from tranny.app import config, Session, Base
@@ -21,10 +21,22 @@ import vcr
 def get_fixture(fixture_file):
     return join(dirname(__file__), "fixtures", fixture_file)
 
+
+class Pickler(object):
+    """
+    Pickled based serializer
+    """
+    def serialize(self, obj):
+        return pickle.dumps(obj)
+
+    def deserialize(self, s):
+        return pickle.loads(s)
+
 tapedeck = vcr.VCR(
-    serializer='json',
-    cassette_library_dir='fixtures'
+    serializer='pickle',
+    cassette_library_dir=get_fixture('cassettes'),
 )
+tapedeck.register_serializer('pickle', Pickler())
 
 
 def _make_config():
@@ -43,6 +55,8 @@ class TrannyTestCase(unittest.TestCase):
         for expected, data in test_data:
             self.assertEqual(expected, fn(data), data)
 
+    def track(self, track_name):
+        return track_name + ".pickle"
 
 class TrannyDBTestCase(TrannyTestCase):
     def __init__(self, methodName='runTest'):

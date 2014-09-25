@@ -1,12 +1,16 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals, with_statement
 import unittest
-from testcase import TrannyTestCase
+from testcase import TrannyTestCase, tapedeck
+from tranny.app import config
 from tranny.provider.broadcastthenet import BroadcastTheNet
 
+btn_api = config.get_default("provider_broadcastthenet", "api_token", False)
 
-#@unittest.skipUnless(btn_api, "No API Key set for BTN")
+
+@unittest.skipUnless(btn_api, "No API Key set for BTN")
 class BTNAPITest(TrannyTestCase):
     def setUp(self):
-        self.load_config(self.get_fixture("test_config.ini"))
         self.api = BroadcastTheNet()
 
     def test_user_info(self):
@@ -18,8 +22,11 @@ class BTNAPITest(TrannyTestCase):
         self.assertEqual(10, len(response['torrents']))
 
     def test_get_torrent_url(self):
-        for torrent_id in self.api.get_torrents_browse(1)['torrents'].keys():
-            url = self.api.get_torrent_url(torrent_id)
+        with tapedeck.use_cassette(self.track("test_get_torrent_url_a")):
+            torrent_ids = self.api.get_torrents_browse(1)['torrents'].keys()
+        for torrent_id in torrent_ids:
+            with tapedeck.use_cassette(self.track("test_get_torrent_url_{}".format(torrent_id))):
+                url = self.api.get_torrent_url(torrent_id)
             self.assertTrue(torrent_id in url)
 
     def test_find_matches(self):
