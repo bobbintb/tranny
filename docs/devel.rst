@@ -65,6 +65,8 @@ Now we will install the grunt tasks that we take advantage of::
 
     $ npm install grunt-contrib-concat --save-dev
     $ npm install grunt-contrib-coffee --save-dev
+    $ npm install grunt-contrib-uglify --save-dev
+    $ npm install grunt-contrib-cssmin --save-dev
 
 If that all completed successfully you should be able to run the following with
 a similar result, notably the last line.::

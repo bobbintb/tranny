@@ -3,6 +3,28 @@ module.exports = function (grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
+        cssmin: {
+            combine: {
+                files: {
+                    'tranny/static/css/app.min.css': [
+                        'tranny/static/css/normalize.css',
+                        'tranny/static/css/tranny.css',
+                        'tranny/static/vendor/perfect-scrollbar/src/perfect-scrollbar.css',
+                        'tranny/static/css/app.css'
+                    ]
+                }
+            }
+        },
+
+        uglify: {
+            release: {
+                files: {
+                    'tranny/static/js/vendor/vendor.min.js': ['tranny/static/js/vendor/vendor.js'],
+                    'tranny/static/js/app.min.js': ['tranny/static/js/app.js']
+                }
+            }
+        },
+
         concat: {
             options: {
                 separator: ';'
@@ -19,7 +41,7 @@ module.exports = function (grunt) {
                     'tranny/static/vendor/foundation/js/foundation.js',
                     'tranny/static/vendor/highcharts/highcharts.js',
                     'tranny/static/js/highcharts-theme.js',
-                    'tranny/static/js/context.js'
+                    'tranny/static/js/vendor/context.js'
                 ],
                 dest: 'tranny/static/js/vendor/vendor.js'
             }
@@ -47,7 +69,11 @@ module.exports = function (grunt) {
                     bare: true
                 },
                 files: {
-                    'tranny/static/js/app.js': ['tranny/static/js/tranny.coffee', 'tranny/static/js/tranny-torrents.coffee'] // concat then compile into single file
+                    'tranny/static/js/app.js': [
+                        'tranny/static/js/tranny.coffee',
+                        'tranny/static/js/tranny-torrents.coffee',
+                        'tranny/static/js/highcharts-theme.coffee'
+                    ] // concat then compile into single file
                 }
             }
         },
@@ -71,7 +97,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
+    grunt.registerTask('release', ['sass', 'coffee', 'concat', 'uglify:release', 'cssmin']);
     grunt.registerTask('build', ['sass', 'coffee', 'concat']);
     grunt.registerTask('default', ['build', 'watch', 'concat']);
 };
