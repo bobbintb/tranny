@@ -123,3 +123,18 @@ the !global declaration so it looks like this::
 Building Release Versions
 -------------------------
 
+todo
+
+Testing
+-------
+
+When running unit tests there are 2 environment variables used to configure what
+is tested and loaded. By setting ``TEST=`` you will load the test configuration
+in the fixtures folder. There are additional values used to flag the testing of specific
+clients since we do not currently test them all and do not mock everything yet.
+
+    TEST_TRANSMISSION=1/0
+    TEST_DELUGE=1/0
+    TEST_RTORRENT=1/0
+    TEST_QBITTORRENT=1/0
+    TEST_UTORRENT=1/0

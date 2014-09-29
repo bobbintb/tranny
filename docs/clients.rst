@@ -34,4 +34,13 @@ Support coming soon
 Transmission
 ------------
 
-Support coming soon
+For tranny to be able to communicate with the transmission client you must enable remove access.
+You can find this in the ``preferences -> remote`` menu of the client.
+
+If you are accessing the client from a remote connection, as in your client is not on the
+same computer as tranny, you must enable the rpc-whitelist for your ip::
+
+    "rpc-whitelist": "127.0.0.1,192.168.10.*,10.0.0.*",
+    "rpc-whitelist-enabled": true,
+
+You can set this in transmissions settings.json
