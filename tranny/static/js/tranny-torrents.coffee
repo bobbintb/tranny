@@ -222,6 +222,7 @@ class TorrentTable
         action_torrent_details()
         action_torrent_speed()
         action_torrent_peers()
+        action_torrent_files()
         init_traffic_chart()
         if not has_class selected_element, selected_class
             add_class selected_element, selected_class
@@ -444,10 +445,14 @@ action_torrent_speed = ->
     speed_update_timer = setTimeout action_torrent_speed, update_speed
 
 
-action_torrent_peers= ->
+action_torrent_peers = ->
     if selected_detail_id
         socket.emit 'event_torrent_peers', {info_hash: selected_detail_id}
     peer_update_timer = setTimeout action_torrent_peers, update_speed
+
+action_torrent_files = ->
+    if selected_detail_id
+        socket.emit 'event_torrent_files', {info_hash: selected_detail_id}
 
 special_alerts = {}
 
@@ -463,7 +468,7 @@ error_handler = (func, message) ->
 
 
 handle_event_torrent_files_response = (message) ->
-    false
+    render_files message['data']
 
 
 handle_event_torrent_reannounce_response = (message) ->
@@ -614,6 +619,20 @@ render_peers = (peer_list) ->
             """
     jQuery("#peer_list tbody").html output_html.join("")
 
+render_files = (file_list) ->
+    output_html = []
+    for file in file_list
+        output_html.push """
+           <tr>
+               <td>#{file['path']}</td>
+               <td><div class="progress"><span class="meter" style="#{file['progress']}"></span></div></td>
+               <td>#{bytes_to_size file['size']}</td>
+               <td>#{file['priority']}</td>
+           <tr>
+           """
+    console.log output_html.join("")
+    jQuery("#file_list tbody").html output_html.join("")
+
 
 ### Return the current unix timestamp in seconds ###
 ts = -> Math.round(new Date().getTime() / 1000)|0
@@ -693,7 +712,7 @@ jQuery ->
         socket.on 'event_torrent_peers_response', handle_event_torrent_peers_response
         socket.on 'event_torrent_speed_response', handle_event_torrent_speed_response
         socket.on 'event_torrent_details_response', handle_event_torrent_details_response
-        socket.on 'event_torrent_files', handle_event_torrent_files_response
+        socket.on 'event_torrent_files_response', handle_event_torrent_files_response
         socket.on 'event_torrent_list_response', (message) =>
             error_handler handle_event_torrent_list_response, message
         socket.on 'event_torrent_remove_response', handle_event_torrent_remove_response
