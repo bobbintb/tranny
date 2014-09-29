@@ -3,13 +3,15 @@
 
 """
 from __future__ import unicode_literals
-
+import unittest
+import os
 from testcase import TrannyTestCase
 from tranny.app import config
 from tranny.client.deluge import DelugeClient
 from tranny.release import TorrentData
 
 
+@unittest.skipUnless(os.environ.get('TEST_DELUGE', False), "Not configured for live tests")
 class DelugeTest(TrannyTestCase):
     def setUp(self):
         self.client = DelugeClient()

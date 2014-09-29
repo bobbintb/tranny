@@ -3,6 +3,8 @@
 
 """
 from __future__ import unicode_literals
+import unittest
+import os
 from testcase import TrannyTestCase
 from tranny.client import qbittorrent
 
@@ -12,6 +14,7 @@ class MockQBittorrentClient(object):
         return
 
 
+@unittest.skipUnless(os.environ.get('TEST_QBITTORRENT', False), "Not configured for live tests")
 class QBTTest(TrannyTestCase):
     def test_torrent_list(self):
         torrent = {

@@ -1,10 +1,14 @@
-from unittest import TestCase, main
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import unittest
+import os
 from os.path import join, dirname
 from requests.exceptions import ConnectionError
 from tranny.client.utorrent import UTorrentClient
 from testcase import TrannyTestCase
 
 
+@unittest.skipUnless(os.environ.get('TEST_UTORRENT', False), "Not configured for live tests")
 class UTorrentClientTest(TrannyTestCase):
     def setUp(self):
         self.test_file_1 = join(dirname(__file__), 'test_data', 'CentOS-6.3-x86_64-bin-DVD1to2.torrent')
@@ -31,4 +35,4 @@ class UTorrentClientTest(TrannyTestCase):
 
 
 if __name__ == '__main__':
-    main()
+    unittest.main()

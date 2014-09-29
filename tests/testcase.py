@@ -3,12 +3,14 @@
 
 """
 from __future__ import unicode_literals, absolute_import, with_statement
+from contextlib import contextmanager
 import unittest
 # This env var tells the config loader to use the special test config located at:
 # $project_root/tests/fixtures/test_config.ini
 # This file must be created from the example config (test_config_dist.ini) in the same
 # directory
 import os
+
 os.environ['TEST'] = "1"
 import pickle
 from os.path import join, dirname
@@ -26,11 +28,13 @@ class Pickler(object):
     """
     Pickled based serializer
     """
+
     def serialize(self, obj):
         return pickle.dumps(obj)
 
     def deserialize(self, s):
         return pickle.loads(s)
+
 
 tapedeck = vcr.VCR(
     serializer='pickle',
@@ -46,6 +50,25 @@ def _make_config():
     return c
 
 
+@contextmanager
+def client_env(track, live_test=False, **kwargs):
+    """ Context manager wrapper for simple integration with vcrpy. Since we want to sometimes test
+    against a live client this will wrap and yield the vcrpy context call only when the live_test
+    value is False
+
+    :param track: Name of fixture passed to vcrpy
+    :type track: unicode
+    :param live_test: Is this a live test
+    :type live_test: bool
+    :param kwargs: Extra vcrpy use_cassette parameters
+    """
+    if live_test:
+        yield
+    else:
+        with tapedeck.use_cassette(track, **kwargs):
+            yield
+
+
 class TrannyTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(TrannyTestCase, self).__init__(methodName=methodName)
@@ -57,6 +80,7 @@ class TrannyTestCase(unittest.TestCase):
 
     def track(self, track_name):
         return track_name + ".pickle"
+
 
 class TrannyDBTestCase(TrannyTestCase):
     def __init__(self, methodName='runTest'):
