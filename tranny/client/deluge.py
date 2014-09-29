@@ -77,7 +77,7 @@ class DelugeClient(client.TorrentClient):
             try:
                 self._request('web.get_hosts')
             except (requests.ConnectionError, ClientNotAvailable) as err:
-                #self.log.debug("Failed to connect to {}".format(
+                # self.log.debug("Failed to connect to {}".format(
                 #    app.config.get_default("general", "client", "torrent client")))
                 self._host_up = False
                 sleep_time = 1
@@ -89,7 +89,7 @@ class DelugeClient(client.TorrentClient):
     def _request(self, method, args=None, attempt=0):
         # Prevent requests other than ones used to connect while not connected
         # if not self.connected and not method in self.allowed_pre_connect_methods:
-        #    return False
+        # return False
         if not self._host_up:
             raise ClientNotAvailable()
 
@@ -191,6 +191,8 @@ class DelugeClient(client.TorrentClient):
         else:
             return False
 
+    torrent_add = add
+
     def is_connected(self):
         return self._request('web.connected')
 
@@ -272,23 +274,23 @@ class DelugeClient(client.TorrentClient):
             return torrent_data
         for info_hash, detail in resp.get('torrents', {}).items():
             torrent_info = client.ClientTorrentData(
-                info_hash = info_hash,
-                name = detail['name'],
-                ratio = detail['ratio'],
-                up_rate = detail['upload_payload_rate'],
-                dn_rate = detail['download_payload_rate'],
-                up_total = detail['total_uploaded'],
-                dn_total = detail['total_done'],
-                size = detail['total_size'],
-                size_completed = detail['total_done'],
-                peers = detail['num_peers'],
-                total_peers = detail['total_peers'],
-                seeders = detail['num_seeds'],
-                total_seeders = detail['total_seeds'],
-                priority = '1',
-                private = '1',
-                state = detail['state'],
-                progress = detail['progress']
+                info_hash=info_hash,
+                name=detail['name'],
+                ratio=detail['ratio'],
+                up_rate=detail['upload_payload_rate'],
+                dn_rate=detail['download_payload_rate'],
+                up_total=detail['total_uploaded'],
+                dn_total=detail['total_done'],
+                size=detail['total_size'],
+                size_completed=detail['total_done'],
+                peers=detail['num_peers'],
+                total_peers=detail['total_peers'],
+                seeders=detail['num_seeds'],
+                total_seeders=detail['total_seeds'],
+                priority='1',
+                private='1',
+                state=detail['state'],
+                progress=detail['progress']
             )
             torrent_data.append(torrent_info)
         return torrent_data
@@ -328,8 +330,8 @@ class DelugeClient(client.TorrentClient):
             'total_size': 'size',
             'total_done': 'size_completed',
             'total_seeds': 'total_seeders'
-        }   
-        
+        }
+
         resp = self._request('web.get_torrent_status', [info_hash, detail_array + list(detail_map.keys())])
         detail = client.ClientTorrentDataDetail(info_hash=info_hash)
         detail.update({k: resp[k] for k in detail_array})
@@ -360,10 +362,6 @@ class DelugeClient(client.TorrentClient):
 
     def torrent_files(self, info_hash):
         resp = self._request('web.get_torrent_files', [info_hash])
-        return resp
-
-    def torrent_add(self, info_hash):
-        resp = self._request('web.add_torrents', [info_hash])
         return resp
 
     def torrent_peers(self, info_hash):

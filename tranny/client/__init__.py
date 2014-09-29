@@ -24,15 +24,6 @@ class TorrentClient(object):
         self.connected = False
         self.log = logging.getLogger(__name__)
 
-    def list(self):
-        """ Retrieve a list of torrents loaded in the client. This list includes all
-        torrents, meaning started/stopped/paused/leeching.
-
-        :return: Loaded torrent list
-        :rtype: []dict
-        """
-        raise NotImplementedError("list is not implemented")
-
     def add(self, data, download_dir=None):
         """ Upload a new torrent to the backend client.
 
@@ -136,6 +127,24 @@ class ClientDataStruct(dict):
     def is_complete(self):
         """Test if all keys have a value, even if that value is empty, e.g. {}"""
         return all(self.get(key, None) is not None for key in self._keys)
+
+    def __unicode__(self):
+        return "{} [{}]".format(self['info_hash'], self['name'])
+
+    def __str__(self):
+        return self.__unicode__().encode("utf-8")
+
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise
+
+    def __setattr__(self, name, value):
+        if name in self:
+            self[name] = value
+        else:
+            raise AttributeError("Invalid property name: {}".format(name))
 
 
 class ClientPeerData(ClientDataStruct):
