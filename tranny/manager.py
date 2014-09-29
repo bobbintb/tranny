@@ -102,6 +102,10 @@ class ServiceManager(object):
         main entry point of doing this to make sure things are consistent, this cannot
         be guaranteed otherwise
 
+        :param release_info: Release info instance
+        :type release_info: ReleaseInfo
+        :param session: DB Session
+        :type session: sqlalchemy.orm.session.Session
         :param torrent: Torrent data named tuple containing relevant values
         :type torrent: TorrentData
         :param service: The TorrentProvider instanced used to get the torrent

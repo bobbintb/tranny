@@ -20,6 +20,7 @@ __all__ = ['RTorrentClient']
 
 log = logging.getLogger(__name__)
 
+
 class RTorrentClient(client.TorrentClient):
     """ rTorrent client support module. This class will talk to rtorrent over its
     scgi+xmlrpc API interface. (Why not just xml-rpc?, arg..). This means that
@@ -98,25 +99,26 @@ class RTorrentClient(client.TorrentClient):
         torrent_array = []
         for t in torrents:
             tdata = client.ClientTorrentData(
-                seeders = '0',
-                total_seeders = '0'
+                seeders='0',
+                total_seeders='0'
             )
             # Do all the easy stuff first
-            tdata.update(dict(zip([
-                'info_hash',
-                'name',
-                'ratio',
-                'up_rate',
-                'dn_rate',
-                'up_total',
-                'dn_total',
-                'size',
-                'size_completed',
-                'peers',
-                'total_peers',
-                'priority',
-                'private'
-            ], t[:13])))
+            tdata.update(dict(zip(
+                [
+                    'info_hash',
+                    'name',
+                    'ratio',
+                    'up_rate',
+                    'dn_rate',
+                    'up_total',
+                    'dn_total',
+                    'size',
+                    'size_completed',
+                    'peers',
+                    'total_peers',
+                    'priority',
+                    'private'
+                ], t[:13])))
 
             if t[17]:
                 tdata['state'] = 'Error'
@@ -134,7 +136,7 @@ class RTorrentClient(client.TorrentClient):
                 tdata['state'] = 'Unknown'
 
             tdata['progress'] = (float(t[8]) / t[7]) * 100
-            
+
             torrent_array.append(tdata)
         return torrent_array
 
@@ -193,17 +195,16 @@ class RTorrentClient(client.TorrentClient):
         return pdata
 
     def torrent_files(self, info_hash):
-        files = self._server.f.multicall(info_hash, '+0', 'f.get_path=', 'f.get_size_bytes=', 'f.get_size_chunks=', 'f.get_completed_chunks=', 'f.get_priority=')
+        files = self._server.f.multicall(info_hash, '+0', 'f.get_path=', 'f.get_size_bytes=', 'f.get_size_chunks=',
+                                         'f.get_completed_chunks=', 'f.get_priority=')
         file_data = []
         for f in files:
             file_data.append(client.ClientFileData(
-                path = f[0],
-                size = f[1],
-                priority = f[4],
-                progress = (float(f[3])/f[2])*100
+                path=f[0],
+                size=f[1],
+                priority=f[4],
+                progress=(float(f[3]) / f[2]) * 100
             ))
-
-        
 
     def torrent_remove(self, info_hash, remove_data=False):
         if remove_data:
@@ -246,6 +247,7 @@ class RTorrentClient(client.TorrentClient):
     def get_events(self):
         # Wouldn't be impossible to implement in the future
         return {}
+
 
 class SCGITransport(xmlrpclib.Transport):
     def single_request(self, host, handler, request_body, verbose=0):

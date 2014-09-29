@@ -122,6 +122,16 @@ class Configuration(ConfigParser):
             util.mkdirp(self.cache_path)
 
     def initialize(self, file_path=False):
+        """ Find and load the configuration file
+
+        .. note:: By setting the environment variable `TEST=1`, the config from the test fixture location
+         will be loaded instead of the standard config locations.
+
+        :param file_path: Optional forced file path
+        :type file_path:
+        :return:
+        :rtype:
+        """
         if os.environ.get('TEST', False):
             file_path = join(dirname(dirname(__file__)), 'tests', 'fixtures', 'test_config.ini')
         if not file_path:
@@ -133,6 +143,7 @@ class Configuration(ConfigParser):
         except OSError:
             raise ConfigError("No suitable configuration found")
         else:
+            log.info("Loaded config: {}".format(file_path))
             self.configured = True
             return resp
 
