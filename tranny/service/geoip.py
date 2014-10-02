@@ -7,12 +7,13 @@ from zipfile import ZipFile
 import logging
 from os.path import join
 import csv
-from sqlalchemy import and_, between
+from sqlalchemy import and_
 from sqlalchemy.exc import DBAPIError
 from tranny import net
-from tranny.app import config, Session
 from tranny import util
 from tranny import models
+from tranny import cache
+from tranny.app import config
 
 _db_url = 'http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip'
 
@@ -56,7 +57,17 @@ def update(session, db_file_path):
     return False
 
 
+@cache.cache_on_arguments(expiration_time=3600*7)
 def find_country(session, ip_address):
+    """ Return the 2 letter country code for the ip address provided
+
+    :param session:
+    :type session:
+    :param ip_address:
+    :type ip_address:
+    :return:
+    :rtype:
+    """
     try:
         ip_int = int(ip_address)
     except ValueError:
