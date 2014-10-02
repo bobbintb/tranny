@@ -248,6 +248,7 @@ class RTorrentClient(client.TorrentClient):
         # Wouldn't be impossible to implement in the future
         return {}
 
+
 class SCGITransport(xmlrpclib.Transport):
     def single_request(self, host, handler, request_body, verbose=0):
         # Add SCGI headers to the request.

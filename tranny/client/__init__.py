@@ -3,6 +3,7 @@
 Base classes and methods shared between torrent client implementations
 """
 from __future__ import unicode_literals, absolute_import
+from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 import logging
 from tranny import app
@@ -12,11 +13,21 @@ from tranny.exceptions import ConfigError
 client_speed = namedtuple('client_speed', ['up', 'dn'])
 
 
+class TorrentState(object):
+    STARTED = 'started'
+    STOPPED = 'stopped'
+    PAUSED = STOPPED
+    CHECKING = 'checking'
+    DOWNLOADING = 'downloading'
+
+
 class TorrentClient(object):
     """
     Base class to provide a interface for interacting with backend torrent
     clients.
     """
+
+    __metaclass__ = ABCMeta
 
     config_key = 'undefined'
 
@@ -36,6 +47,7 @@ class TorrentClient(object):
         """
         raise NotImplementedError("add is not implemented")
 
+    @abstractmethod
     def client_version(self):
         """ Fetch and return the client version if available
 
@@ -55,6 +67,7 @@ class TorrentClient(object):
         """
         return {'Version': self.client_version()}
 
+    @abstractmethod
     def current_speeds(self):
         """ Fetch a tuple of the current upload and download speeds in the client
 
@@ -63,44 +76,73 @@ class TorrentClient(object):
         """
         return client_speed(0.0, 0.0)
 
+    @abstractmethod
     def torrent_list(self):
         raise NotImplementedError('torrent_list undefined')
 
+    @abstractmethod
     def torrent_status(self, info_hash):
         raise NotImplementedError("torrent_status undefined")
 
+    @abstractmethod
     def torrent_pause(self, info_hash):
         raise NotImplementedError("torrent_pause undefined")
 
+    @abstractmethod
     def torrent_start(self, info_hash):
         raise NotImplementedError("torrent_start undefined")
 
+    @abstractmethod
     def torrent_remove(self, info_hash):
         raise NotImplementedError("torrent_remove undefined")
 
+    @abstractmethod
     def torrent_reannounce(self, info_hash):
         raise NotImplementedError("torrent_reannounce undefined")
 
+    @abstractmethod
     def torrent_recheck(self, info_hash):
         raise NotImplementedError("torrent_recheck undefined")
 
+    @abstractmethod
     def torrent_files(self, info_hash):
         raise NotImplementedError("torrent_files undefined")
 
+    @abstractmethod
     def torrent_add(self, torrent):
         raise NotImplementedError("torrent_add undefined")
 
-    def torrent_priority(self, torrent):
-        raise NotImplementedError("torrent_priority undefined")
-
+    @abstractmethod
     def torrent_peers(self, info_hash):
         raise NotImplementedError("torrent_peers undefined")
 
-    def disconnect(self):
-        raise NotImplementedError("disconnect undefined")
+    @abstractmethod
+    def torrent_queue_up(self, info_hash):
+        pass
 
+    @abstractmethod
+    def torrent_queue_down(self, info_hash):
+        pass
+
+    @abstractmethod
+    def torrent_queue_top(self, info_hash):
+        pass
+
+    @abstractmethod
+    def torrent_queue_bottom(self, info_hash):
+        pass
+
+    @abstractmethod
+    def disconnect(self):
+        pass
+
+    @abstractmethod
     def get_events(self):
-        raise NotImplementedError("get_events undefined")
+        pass
+
+    @abstractmethod
+    def torrent_move_data(self, info_hash, dest):
+        pass
 
 
 class ClientDataStruct(dict):
@@ -145,6 +187,15 @@ class ClientDataStruct(dict):
             self[name] = value
         else:
             raise AttributeError("Invalid property name: {}".format(name))
+
+    @property
+    def key_list(self):
+        """ Returns the list of valid keys
+
+        :return: Struct keys
+        :rtype: []unicode
+        """
+        return self._keys
 
 
 class ClientPeerData(ClientDataStruct):
@@ -219,7 +270,8 @@ class ClientTorrentDataDetail(ClientDataStruct):
         'active_time',
         'seeding_time',
         'num_files',
-        'comment'
+        'comment',
+        'queue_position'
     ]
 
 

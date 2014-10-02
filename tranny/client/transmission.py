@@ -4,6 +4,7 @@ Transmission support module
 """
 from __future__ import unicode_literals
 from base64 import b64encode
+import functools
 from tranny.app import config
 from tranny import client
 from tranny.torrent import Torrent
@@ -59,8 +60,11 @@ class TransmissionClient(client.TorrentClient):
 
         try:
             torrent = Torrent.from_str(data)
-            loaded = [t.info_hash for t in self.torrent_list()]
-            if torrent.info_hash in loaded:
+            try:
+                self.torrent_status(torrent.info_hash)
+            except KeyError:
+                pass
+            else:
                 self.log.warn("Tried to load duplicate info hash: {}".format(torrent.info_hash))
                 return True
             encoded_data = b64encode(data)
@@ -137,7 +141,7 @@ class TransmissionClient(client.TorrentClient):
         self.client.remove_torrent(torrent_id, delete_data=remove_data)
 
     def get_events(self):
-        pass
+        return []
 
     def torrent_peers(self, info_hash):
         torrent = self.client.get_torrent(info_hash, arguments=['id', 'hashString', 'peers'])
@@ -156,27 +160,72 @@ class TransmissionClient(client.TorrentClient):
 
     def torrent_start(self, info_hash):
         self.client.start_torrent(info_hash)
+        return True
 
     def torrent_pause(self, info_hash):
         self.client.stop(info_hash)
+        return True
 
     def torrent_files(self, info_hash):
         files = []
         file_set = self.client.get_files(info_hash)
-        for k, v in file_set.items():
-            for file_info in v.values():
+        for v in file_set.values():
+            for file_info in [f for f in v.values()]:
                 files.append({
                     'client': file_info['name'],
                     'down_speed': file_info['size'],
                     'up_speed': file_info['priority'],
                     'progress': file_info['completed']
                 })
-            break
+                break
         return files
 
     def torrent_speed(self, info_hash):
         speed = self.client.get_torrent(info_hash, arguments=['id', 'hashString', 'rateDownload', 'rateUpload'])
         return speed.rateDownload, speed.rateUpload
+
+    def disconnect(self):
+        return True
+
+    def torrent_status(self, info_hash):
+        key_map = {
+            'info_hash': 'hashString',
+            'up_rate': 'rateUpload',
+            'dn_rate': 'rateDownload',
+            'up_total': 'uploadedEver',
+            'dn_total': 'downloadedEver',
+            'size': 'totalSize',
+            'size_completed': 'percentDone',  # wrong
+            'seeders': lambda t: len(t.peers),
+            'total_seeders': lambda t: len(t.peers),
+            'peers': 'peersConnected',
+            'total_peers': lambda t: len(t.peers),
+            'priority': 'queue_position',
+            'private': 'isPrivate',
+            'state': 'status',
+            'progress': '',
+            'tracker_status': '',
+            'next_announce': lambda t: t.trackerStats[0]['nextAnnounceTime'],
+            'save_path': 'downloadDir',
+            'piece_length': 'pieceSize',
+            'num_pieces': 'pieceCount',
+            'time_added': 'addedDate',
+            'distributed_copies': lambda t: functools.reduce(lambda a,b: a+b, [p['progress'] for p in t.peers], 0),
+            'active_time': '',
+            'seeding_time': 'secondsSeeding',
+            'num_files': lambda t: len(torrent.files()),
+            'queue_position': 'queue_position'
+        }
+        torrent = self.client.get_torrent(info_hash)
+        detail = client.ClientTorrentDataDetail(info_hash=info_hash)
+        for key in detail.key_list:
+            val = key_map.get(key, None)
+            if val:
+                if callable(val):
+                    detail[key] = val(torrent)
+                else:
+                    detail[key] = getattr(torrent, val)
+        return detail
 
     def torrent_recheck(self, info_hash):
         self.client.verify_torrent(info_hash)
@@ -184,4 +233,24 @@ class TransmissionClient(client.TorrentClient):
 
     def torrent_reannounce(self, info_hash):
         self.client.reannounce_torrent(info_hash)
+        return True
+
+    def torrent_queue_up(self, info_hash):
+        self.client.queue_up(info_hash)
+        return True
+
+    def torrent_queue_down(self, info_hash):
+        self.client.queue_down(info_hash)
+        return True
+
+    def torrent_queue_top(self, info_hash):
+        self.client.queue_top(info_hash)
+        return True
+
+    def torrent_queue_bottom(self, info_hash):
+        self.client.queue_bottom(info_hash)
+        return True
+
+    def torrent_move_data(self, info_hash, dest):
+        self.client.move_torrent_data(info_hash, dest)
         return True
