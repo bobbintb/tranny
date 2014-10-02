@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+from sqlalchemy import create_engine
+from tranny.app import Base
 
 __author__ = "Leigh MacDonald <leigh.macdonald@gmail.com>"
 __license__ = "BSD 3-Clause"
@@ -14,6 +16,7 @@ def parse_args(args=None):
     """ Parse command line argument and launch the appropriate command specifid
     by the user input
     """
+
     def cmd_start(options):
         import gevent
         import signal
@@ -26,19 +29,34 @@ def parse_args(args=None):
 
     def cmd_db_drop(options):
         from tranny.datastore import db_drop
+
         db_drop()
 
     def cmd_db_init(options):
         from tranny.datastore import db_drop, db_init
+
         db_init(username=options.username, password=options.password, wipe=options.wipe)
 
     def cmd_cache_clear(options):
         from tranny import cache
+
         cache.invalidate()
 
     def cmd_imdb(options):
         from tranny.service import imdb
         imdb.load_sql(options.nodownload)
+
+    def cmd_geoip(options):
+        from tranny.service import geoip
+        from tranny.app import Session
+        from tranny.app import config
+
+        engine = create_engine(config.get_db_uri())
+        Session.configure(bind=engine)
+        Base.metadata.create_all(bind=engine)
+
+        db_file_path = geoip.fetch_update(download=options.nodownload)
+        geoip.update(Session(), db_file_path)
 
     parser = argparse.ArgumentParser(prog="tranny-cli.py", description="Tranny torrent management system")
     parser.add_argument("-c", "--config", help="Specify alternate config path", default=False)
@@ -72,6 +90,13 @@ def parse_args(args=None):
                       help="Do not download the datasets before loading (assumes existing data)",
                       action="store_false")
     imdb.set_defaults(func=cmd_imdb)
+
+    geoip = subparsers.add_parser("geoip", help="Load and manage the geoip database")
+    geoip.add_argument("-n", "--nodownload",
+                       help="Do not download the datasets before loading (assumes existing data)",
+                       action="store_false")
+    geoip.set_defaults(func=cmd_geoip)
+
     return parser.parse_args(args=args)
 
 
@@ -83,10 +108,12 @@ def main():
     # This preemptive patching prevents this
     # see: http://stackoverflow.com/questions/8774958/keyerror-in-module-threading-after-a-successful-py-test-run
     import sys
+
     if 'threading' in sys.modules:
         del sys.modules['threading']
     import gevent
     import gevent.monkey
+
     gevent.monkey.patch_all()
 
     # Setup logger & config

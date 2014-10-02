@@ -72,6 +72,7 @@ def client_env(track, live_test=False, **kwargs):
 class TrannyTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(TrannyTestCase, self).__init__(methodName=methodName)
+        self.client_name = ''
         config.initialize()
 
     def run_data_set(self, test_data, fn):
@@ -79,6 +80,8 @@ class TrannyTestCase(unittest.TestCase):
             self.assertEqual(expected, fn(data), data)
 
     def track(self, track_name):
+        if self.client_name:
+            return self.client_name + "/" + track_name + ".pickle"
         return track_name + ".pickle"
 
 

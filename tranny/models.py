@@ -5,6 +5,7 @@ import hashlib
 from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table, \
     UnicodeText, Numeric
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.sqltypes import BigInteger
 from tranny.app import Base
 from tranny.constants import ROLE_USER
 
@@ -266,3 +267,22 @@ class Download(Base, ModelArgs):
         self.release_name = release_name
         self.section_id = section_id
         self.source_id = source_id
+
+
+class GeoIP(Base):
+    """
+    1:1 Mapping of geolite database
+    """
+    __tablename__ = 'geoip'
+
+    range_id = Column(Integer, primary_key=True)
+    ip_start = Column(BigInteger, nullable=False)
+    ip_end = Column(BigInteger, nullable=False)
+    country = Column(Unicode(length=100), nullable=False)
+    code = Column(Unicode(length=2), nullable=False)
+
+    def __init__(self, ip_start, ip_end, code, country):
+        self.ip_start = int(ip_start)
+        self.ip_end = int(ip_end)
+        self.code = code
+        self.country = country

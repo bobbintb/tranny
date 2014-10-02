@@ -382,3 +382,18 @@ class DelugeClient(client.TorrentClient):
     def get_events(self):
         resp = self._request('web.get_events')
         return resp
+
+    def torrent_move_data(self, info_hash, dest):
+        pass
+
+    def torrent_queue_down(self, info_hash):
+        pass
+
+    def torrent_queue_top(self, info_hash):
+        pass
+
+    def torrent_queue_bottom(self, info_hash):
+        pass
+
+    def torrent_queue_up(self, info_hash):
+        pass

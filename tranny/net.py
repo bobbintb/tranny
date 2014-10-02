@@ -4,6 +4,8 @@ Functions used to download data over HTTP connections
 """
 from __future__ import unicode_literals, absolute_import
 import logging
+import socket
+import struct
 from os.path import join
 from requests import get, RequestException, post
 from tranny import app
@@ -111,3 +113,11 @@ def parse_net_speed_value(input_speed):
     value, suffix = input_speed.replace("/s", "").split()
     parsed_value = float(speed_multi[suffix](float(value)))
     return parsed_value
+
+
+def ip2int(addr):
+    return struct.unpack("!I", socket.inet_aton(addr))[0]
+
+
+def int2ip(addr):
+    return socket.inet_ntoa(struct.pack("!I", addr))
