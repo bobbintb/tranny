@@ -44,6 +44,12 @@ class NetTest(TrannyTestCase):
         self.assertEqual(11010048.0, net.parse_net_speed_value(u'10.5 MiB/s'))
         self.assertEqual(10500000.0, net.parse_net_speed_value(u'10.5 mb/s'))
 
+    def test_ip2int(self):
+        self.assertEqual(1010580540, net.ip2int("60.60.60.60"))
+
+    def test_int2ip(self):
+        self.assertEqual("60.60.60.60", net.int2ip(1010580540))
+
 if __name__ == '__main__':
     main()
 

@@ -116,8 +116,22 @@ def parse_net_speed_value(input_speed):
 
 
 def ip2int(addr):
+    """ Convert an ip address into its int form
+
+    :param addr: quad dotted ip address
+    :type addr: unicdoe
+    :return: Integer IP
+    :rtype: int
+    """
     return struct.unpack("!I", socket.inet_aton(addr))[0]
 
 
 def int2ip(addr):
+    """ Convert an integer into an ip form ip
+
+    :param addr:
+    :type addr:
+    :return:
+    :rtype:
+    """
     return socket.inet_ntoa(struct.pack("!I", addr))
