@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from flask import render_template as flask_render_template, request, jsonify, Response
 from six import wraps
+from werkzeug.wrappers import Response as WerkzeugResponse
 
 
 def render_template(template_name, track_next=True, **kwargs):
@@ -30,8 +31,8 @@ def render(tpl=None, section="home", fmt="html"):
             ctx = f(*args, **kwargs)
             if ctx is None:
                 ctx = {}
-            # elif not isinstance(ctx, dict):
-            #     return ctx
+            elif isinstance(ctx, WerkzeugResponse):
+                return ctx
             if fmt == "json":
                 #return Response(json.dumps(ctx), mimetype='application/json')
                 return jsonify(ctx)
