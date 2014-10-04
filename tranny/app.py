@@ -17,6 +17,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 # Setup global configuration
 from tranny import configuration
+
 config = configuration.Configuration()
 config.initialize()
 
@@ -35,6 +36,9 @@ session_factory = sessionmaker()
 # scopefunc determines our current context, we use flasks context for this to allow usage from the
 # flask views and outside of flask interchangeably
 Session = scoped_session(session_factory, scopefunc=_app_ctx_stack.__ident_func__)
+
+from tranny.events import EventManager
+event_manager = EventManager()
 
 torrent_client = None
 
