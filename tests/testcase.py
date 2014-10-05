@@ -39,6 +39,7 @@ class Pickler(object):
 tapedeck = vcr.VCR(
     serializer='pickle',
     cassette_library_dir=get_fixture('cassettes'),
+    record_mode='all'
 )
 tapedeck.register_serializer('pickle', Pickler())
 

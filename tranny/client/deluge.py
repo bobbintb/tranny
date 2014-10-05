@@ -59,7 +59,7 @@ class DelugeClient(client.TorrentClient):
         :param password: Password to the webui (default: deluge)
         :type password: string
         """
-        super(DelugeClient, self).__init__()
+        super(DelugeClient, self).__init__(self.config_key)
         self._host = 'http://{}:{}'.format(host, port)
         self._endpoint = '{}/json'.format(self._host)
         self._session = requests.session()

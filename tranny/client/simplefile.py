@@ -84,9 +84,6 @@ class SimpleFileClient(client.TorrentClient):
     def torrent_files(self, info_hash):
         return []
 
-    def torrent_add(self, info_hash):
-        return True
-
     def torrent_peers(self, info_hash):
         return []
 
@@ -95,3 +92,18 @@ class SimpleFileClient(client.TorrentClient):
 
     def get_events(self):
         return []
+
+    def torrent_queue_top(self, info_hash):
+        return True
+
+    def torrent_queue_bottom(self, info_hash):
+        return True
+
+    def torrent_move_data(self, info_hash, dest):
+        return True
+
+    def torrent_queue_up(self, info_hash):
+        return True
+
+    def torrent_queue_down(self, info_hash):
+        return True

@@ -4,11 +4,14 @@ Base classes and methods shared between torrent client implementations
 """
 from __future__ import unicode_literals, absolute_import
 from abc import ABCMeta, abstractmethod
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import logging
 from tranny import app
 from tranny.app import config
 from tranny.exceptions import ConfigError
+from tranny import events
+from tranny.plugin import BasePlugin
+from tranny import api
 
 client_speed = namedtuple('client_speed', ['up', 'dn'])
 
@@ -21,7 +24,7 @@ class TorrentState(object):
     DOWNLOADING = 'downloading'
 
 
-class TorrentClient(object):
+class TorrentClient(BasePlugin):
     """
     Base class to provide a interface for interacting with backend torrent
     clients.
@@ -32,8 +35,11 @@ class TorrentClient(object):
     config_key = 'undefined'
 
     def __init__(self):
+        super(TorrentClient, self).__init__(self.config_key)
         self.connected = False
         self.log = logging.getLogger(__name__)
+        self._last_state = {}
+        self._last_update = 0
 
     def add(self, data, download_dir=None):
         """ Upload a new torrent to the backend client.
@@ -136,9 +142,48 @@ class TorrentClient(object):
     def disconnect(self):
         pass
 
-    @abstractmethod
+    def get_handlers(self):
+        return [
+            events.EventHandler(events.EVENT_TICK_5, self.update)
+        ]
+
     def get_events(self):
-        pass
+        new_events = defaultdict(list)
+        new_torrents = {t.info_hash: t for t in self.torrent_list()}
+        if not self._last_state:
+            self._last_state = new_torrents
+            return new_events
+        known_hashes = {t.info_hash for k, t in self._last_state.items()}
+        for torrent in self._last_state.values():
+            if torrent.info_hash not in known_hashes:
+                # Torrent not in old, must be new
+                new_events[events.EVENT_TORRENT_NEW].append(torrent)
+                continue
+            if not torrent.info_hash in new_torrents:
+                # Torrent not in new list, must be removed
+                new_events[events.EVENT_TORRENT_REMOVE].append(torrent)
+                continue
+            # Generate a diff of certain keys
+            updates = torrent.changes(self._last_state[torrent.info_hash],
+                                      ['ratio', 'up_rate', 'dn_rate', 'up_total', 'dn_total',
+                                       'size_completed', 'peers', 'total_peers', 'seeders',
+                                       'total_seeders', 'priority'])
+            if updates:
+                new_events[events.EVENT_TORRENT_UPDATE].append(updates)
+        self._last_state = new_torrents
+        return new_events
+
+    def update(self, payload=None):
+        """
+        Update tick handler registered as a plugin
+        """
+        self.log.debug("Fetching new torrent events")
+        new_event = self.get_events()
+        for k, v in new_event:
+            self.log.debug("[{}] {}".format(k, v))
+        if new_event:
+            api.emit(events.EVENT_TORRENT_UPDATE, data=new_event)
+        return payload
 
     @abstractmethod
     def torrent_move_data(self, info_hash, dest):
@@ -196,6 +241,17 @@ class ClientDataStruct(dict):
         :rtype: []unicode
         """
         return self._keys
+
+    def changes(self, old, valid_keys=None):
+        changes = {}
+        if not valid_keys:
+            valid_keys = self.keys()
+        for key, new_value in self.items():
+            if not key in valid_keys:
+                continue
+            if not old[key] == new_value:
+                changes[key] = new_value
+        return changes
 
 
 class ClientPeerData(ClientDataStruct):
@@ -313,7 +369,11 @@ def init_client(client_type=None):
         raise ConfigError("Invalid client type supplied: {0}".format(client_type))
     config_values = config.get_section_values(Client.config_key)
 
-    return Client(**config_values)
+    client = Client(**config_values)
+    from tranny.app import plugin_manager
+    plugin_manager.register(client)
+
+    return client
 
 
 def get():

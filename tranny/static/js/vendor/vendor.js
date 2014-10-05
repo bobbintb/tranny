@@ -24023,7 +24023,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   , 'undefined' != typeof io ? io : module.parent.exports
   , this
 );
-;/* Copyright (c) 2012, 2014 Hyeonje Alex Jun and other contributors
+;/* Copyright (c) 2012, 2014 Hyunje Alex Jun and other contributors
  * Licensed under the MIT License
  */
 (function (factory) {
@@ -24268,9 +24268,13 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 
         updateScrollbarCss();
 
-        // Show scrollbars again after updated
-        $scrollbarXRail.show();
-        $scrollbarYRail.show();
+        // Show scrollbars if needed after updated
+        if (!settings.suppressScrollX) {
+          $scrollbarXRail.show();
+        }
+        if (!settings.suppressScrollY) {
+          $scrollbarYRail.show();
+        }
       };
 
       var bindMouseScrollXHandler = function () {
@@ -25838,7 +25842,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   window.Foundation = {
     name : 'Foundation',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     media_queries : {
       small : S('.foundation-mq-small').css('font-family').replace(/^[\/\\'"]+|(;\s?})+|[\/\\'"]+$/g, ''),
@@ -26190,7 +26194,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.abide = {
     name : 'abide',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       live_validate : true,
@@ -26504,7 +26508,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.accordion = {
     name : 'accordion',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       active_class: 'active',
@@ -26570,7 +26574,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.alert = {
     name : 'alert',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       callback: function (){}
@@ -26614,7 +26618,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.clearing = {
     name : 'clearing',
 
-    version: '5.4.3',
+    version: '5.4.5',
 
     settings : {
       templates : {
@@ -27173,7 +27177,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.dropdown = {
     name : 'dropdown',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       active_class: 'open',
@@ -27496,7 +27500,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.equalizer = {
     name : 'equalizer',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       use_tallest: true,
@@ -27571,7 +27575,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.interchange = {
     name : 'interchange',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     cache : {},
 
@@ -27918,7 +27922,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.joyride = {
     name : 'joyride',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     defaults : {
       expose                   : false,     // turn on or off the expose feature
@@ -28832,7 +28836,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs['magellan-expedition'] = {
     name : 'magellan-expedition',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       active_class: 'active',
@@ -29022,7 +29026,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.offcanvas = {
     name : 'offcanvas',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       open_method: 'move',
@@ -29573,7 +29577,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.orbit = {
     name: 'orbit',
 
-    version: '5.4.3',
+    version: '5.4.5',
 
     settings: {
       animation: 'slide',
@@ -29648,7 +29652,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.reveal = {
     name : 'reveal',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     locked : false,
 
@@ -30093,7 +30097,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.slider = {
     name : 'slider',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings: {
       start: 0,
@@ -30333,7 +30337,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.tab = {
     name : 'tab',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       active_class: 'active',
@@ -30388,14 +30392,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
       S(window).on('hashchange.fndtn.tab', function (e) {
         e.preventDefault();
         self.handle_location_hash_change();
-
-      }).on('keyup', function (e) {
-        if (e.keyword == 9) {
-          // active tab
-          console.log(document.querySelector('[data-tab] .tab-title :focus'))
-        }
-      });
-      ;
+      });
     },
 
     handle_location_hash_change : function () {
@@ -30558,7 +30555,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.tooltip = {
     name : 'tooltip',
 
-    version : '5.4.3',
+    version : '5.4.5',
 
     settings : {
       additional_inheritable_classes : [],
@@ -30859,7 +30856,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
   Foundation.libs.topbar = {
     name : 'topbar',
 
-    version: '5.4.3',
+    version: '5.4.5',
 
     settings : {
       index : 0,
@@ -31606,6 +31603,201 @@ I(this,"mouseOver");this.setState("hover");a.hoverSeries=this},onMouseOut:functi
 function(b){b.setVisible(a,!1)});if(g)d.isDirtyBox=!0;b!==!1&&d.redraw();I(c,f)},setTooltipPoints:function(a){var b=[],c,d,e=this.xAxis,f=e&&e.getExtremes(),g=e?e.tooltipLen||e.len:this.chart.plotSizeX,h,i,j=[];if(!(this.options.enableMouseTracking===!1||this.singularTooltips)){if(a)this.tooltipPoints=null;q(this.segments||this.points,function(a){b=b.concat(a)});e&&e.reversed&&(b=b.reverse());this.orderTooltipPoints&&this.orderTooltipPoints(b);a=b.length;for(i=0;i<a;i++)if(e=b[i],c=e.x,c>=f.min&&
 c<=f.max){h=b[i+1];c=d===u?0:d+1;for(d=b[i+1]?L(t(0,U((e.clientX+(h?h.wrappedClientX||h.clientX:g))/2)),g):g;c>=0&&c<=d;)j[c++]=e}this.tooltipPoints=j}},show:function(){this.setVisible(!0)},hide:function(){this.setVisible(!1)},select:function(a){this.selected=a=a===u?!this.selected:a;if(this.checkbox)this.checkbox.checked=a;I(this,a?"select":"unselect")},drawTracker:T.drawTrackerGraph});r(K,{Axis:na,Chart:Ya,Color:ya,Point:Fa,Tick:Ta,Renderer:Za,Series:O,SVGElement:S,SVGRenderer:ta,arrayMin:Oa,arrayMax:Ca,
 charts:W,dateFormat:cb,format:Ja,pathAnim:vb,getOptions:function(){return E},hasBidiBug:Ob,isTouchDevice:Ib,numberFormat:Ba,seriesTypes:H,setOptions:function(a){E=w(!0,E,a);Bb();return E},addEvent:N,removeEvent:X,createElement:$,discardElement:Qa,css:B,each:q,extend:r,map:Va,merge:w,pick:p,splat:ra,extendClass:ma,pInt:y,wrap:Na,svg:ba,canvas:ga,vml:!ba&&!ga,product:"Highcharts",version:"4.0.4"})})();
+;//@ sourceMappingURL=highcharts-theme.map
+// Generated by CoffeeScript 1.6.1
+(function() {
+
+  Highcharts.theme = {
+    colors: ["#2b908f", "#90ee7e", "#f45b5b", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee", "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+    chart: {
+      backgroundColor: null,
+      style: {
+        fontFamily: '"Helvetica Neue", Helvetica, Roboto, Arial, sans-serif'
+      },
+      plotBorderColor: null
+    },
+    title: {
+      title: {
+        style: {
+          color: '#E0E0E3',
+          textTransform: 'uppercase',
+          fontSize: '20px'
+        }
+      },
+      subtitle: {
+        style: {
+          color: '#E0E0E3',
+          textTransform: 'uppercase'
+        }
+      },
+      xAxis: {
+        gridLineColor: '#707073',
+        labels: {
+          style: {
+            color: '#E0E0E3'
+          }
+        },
+        lineColor: '#707073',
+        minorGridLineColor: '#505053',
+        tickColor: '#707073',
+        title: {
+          style: {
+            color: '#A0A0A3'
+          }
+        }
+      },
+      yAxis: {
+        gridLineColor: '#707073',
+        labels: {
+          style: {
+            color: '#E0E0E3'
+          }
+        },
+        lineColor: '#707073',
+        minorGridLineColor: '#505053',
+        tickColor: '#707073',
+        tickWidth: 1,
+        title: {
+          style: {
+            color: '#A0A0A3'
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        style: {
+          color: '#F0F0F0'
+        }
+      },
+      plotOptions: {
+        pie: {
+          borderColor: "#666"
+        },
+        series: {
+          dataLabels: {
+            color: '#B0B0B3'
+          },
+          marker: {
+            lineColor: '#333'
+          }
+        },
+        'boxplot': {
+          fillColor: '#505053'
+        },
+        candlestick: {
+          lineColor: 'white'
+        },
+        errorbar: {
+          color: 'white'
+        }
+      },
+      legend: {
+        itemStyle: {
+          color: '#E0E0E3'
+        },
+        itemHoverStyle: {
+          color: '#FFF'
+        },
+        itemHiddenStyle: {
+          color: '#606063'
+        }
+      },
+      credits: {
+        style: {
+          color: '#666'
+        }
+      },
+      labels: {
+        style: {
+          color: '#707073'
+        }
+      },
+      drilldown: {
+        activeAxisLabelStyle: {
+          color: '#F0F0F3'
+        },
+        activeDataLabelStyle: {
+          color: '#F0F0F3'
+        }
+      },
+      navigation: {
+        buttonOptions: {
+          symbolStroke: '#DDDDDD',
+          theme: {
+            fill: '#505053'
+          }
+        }
+      },
+      rangeSelector: {
+        buttonTheme: {
+          fill: '#505053',
+          stroke: '#000000',
+          style: {
+            color: '#CCC'
+          },
+          states: {
+            hover: {
+              fill: '#707073',
+              stroke: '#000000',
+              style: {
+                color: 'white'
+              }
+            },
+            select: {
+              fill: '#000003',
+              stroke: '#000000',
+              style: {
+                color: 'white'
+              }
+            }
+          }
+        },
+        inputBoxBorderColor: '#505053',
+        inputStyle: {
+          backgroundColor: '#333',
+          color: 'silver'
+        },
+        labelStyle: {
+          color: 'silver'
+        }
+      },
+      navigator: {
+        handles: {
+          backgroundColor: '#666',
+          borderColor: '#AAA'
+        },
+        outlineColor: '#CCC',
+        maskFill: 'rgba(255,255,255,0.1)',
+        series: {
+          color: '#7798BF',
+          lineColor: '#A6C7ED'
+        },
+        xAxis: {
+          gridLineColor: '#505053'
+        }
+      },
+      scrollbar: {
+        barBackgroundColor: '#808083',
+        barBorderColor: '#808083',
+        buttonArrowColor: '#CCC',
+        buttonBackgroundColor: '#606063',
+        buttonBorderColor: '#606063',
+        rifleColor: '#FFF',
+        trackBackgroundColor: '#404043',
+        trackBorderColor: '#404043'
+      },
+      legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
+      background2: '#505053',
+      dataLabelsColor: '#B0B0B3',
+      textColor: '#C0C0C0',
+      contrastTextColor: '#F0F0F3',
+      maskColor: 'rgba(255,255,255,0.3)'
+    }
+  };
+
+  Highcharts.setOptions(Highcharts.theme);
+
+}).call(this);
 ;var context = context || (function () {
     
 	var options = {

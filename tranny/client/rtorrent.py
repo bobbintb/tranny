@@ -40,6 +40,7 @@ class RTorrentClient(client.TorrentClient):
     config_key = "client_rtorrent"
 
     def __init__(self, uri):
+        super(RTorrentClient, self).__init__()
         self._server = SCGIServerProxy(uri)
 
     def client_version(self):

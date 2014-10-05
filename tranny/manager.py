@@ -24,7 +24,6 @@ class ServiceManager(object):
     """
 
     def __init__(self):
-
         self.feeds = []
         self.services = []
         self.webui = None
@@ -35,6 +34,7 @@ class ServiceManager(object):
         self.watch = None
         self.init_providers()
         app.torrent_client = client.init_client()
+
         if config.getboolean("webui", "enabled"):
             self.init_webui()
 

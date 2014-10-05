@@ -1,4 +1,4 @@
-var OK, STATUS_CLIENT_NOT_AVAILABLE, STATUS_FAIL, STATUS_INCOMPLETE_REQUEST, STATUS_INTERNAL_ERROR, STATUS_INVALID_INFO_HASH, STATUS_OK, TorrentTable, action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, action_torrent_details, action_torrent_peers, action_torrent_speed, add_class, btn_save, bytes_to_iec_size, bytes_to_size, detail_elements, detail_traffic_chart, detail_update_speed, detail_update_timer, endpoint, error_handler, feed_create, feed_delete, feed_reset, feed_save, filter_add, filter_remove, fmt_duration, fmt_timestamp, handle_event_alert, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_files_response, handle_event_torrent_list_response, handle_event_torrent_peers_response, handle_event_torrent_reannounce_response, handle_event_torrent_recheck_response, handle_event_torrent_remove_response, handle_event_torrent_speed_response, handle_event_torrent_stop_response, handle_response, has_class, has_connected, in_url, init_context_menu, init_provider_totals_chart, init_provider_type_totals_chart, init_section_totals_chart, init_traffic_chart, label_formatter, make_pie_chart, msg_cur_id, msg_user, overall_speed_update, overall_speed_update_timer, parse_json, peer_update_timer, rand_int, remove_class, render_peers, render_pie_chart, render_section_totals, render_service_totals, render_service_type_totals, root, row_load_handler, row_remove, selected_class, selected_detail_id, selected_rows, settings_save, show_alert, socket, special_alerts, speed_data, speed_dn, speed_up, speed_update_timer, template, toggle_class, torrent_table, torrent_wrapper, ts, update_speed, user_messages, window_resize_handler, _alert_num, _chart_interval_timer, _iec_sizes, _sizes,
+var OK, STATUS_CLIENT_NOT_AVAILABLE, STATUS_FAIL, STATUS_INCOMPLETE_REQUEST, STATUS_INTERNAL_ERROR, STATUS_INVALID_INFO_HASH, STATUS_OK, TorrentTable, action_reannounce, action_recheck, action_remove, action_remove_data, action_start, action_stop, action_torrent_details, action_torrent_files, action_torrent_peers, action_torrent_speed, add_class, btn_save, bytes_to_iec_size, bytes_to_size, detail_elements, detail_traffic_chart, detail_update_speed, detail_update_timer, endpoint, error_handler, feed_create, feed_delete, feed_reset, feed_save, filter_add, filter_remove, fmt_duration, fmt_timestamp, handle_event_alert, handle_event_speed_overall_response, handle_event_torrent_details_response, handle_event_torrent_files_response, handle_event_torrent_list_response, handle_event_torrent_peers_response, handle_event_torrent_reannounce_response, handle_event_torrent_recheck_response, handle_event_torrent_remove_response, handle_event_torrent_speed_response, handle_event_torrent_stop_response, handle_response, has_class, has_connected, in_url, init_context_menu, init_provider_totals_chart, init_provider_type_totals_chart, init_section_totals_chart, init_traffic_chart, label_formatter, make_pie_chart, msg_cur_id, msg_user, overall_speed_update, overall_speed_update_timer, parse_json, peer_update_timer, rand_int, remove_class, render_files, render_peers, render_pie_chart, render_section_totals, render_service_totals, render_service_type_totals, root, row_load_handler, row_remove, selected_class, selected_detail_id, selected_rows, settings_save, show_alert, socket, special_alerts, speed_data, speed_dn, speed_up, speed_update_timer, template, toggle_class, torrent_table, torrent_wrapper, ts, update_speed, user_messages, window_resize_handler, _alert_num, _chart_interval_timer, _iec_sizes, _sizes,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 OK = 0;
@@ -639,6 +639,7 @@ TorrentTable = (function() {
     action_torrent_details();
     action_torrent_speed();
     action_torrent_peers();
+    action_torrent_files();
     init_traffic_chart();
     if (!has_class(selected_element, selected_class)) {
       return add_class(selected_element, selected_class);
@@ -949,6 +950,14 @@ action_torrent_peers = function() {
   return peer_update_timer = setTimeout(action_torrent_peers, update_speed);
 };
 
+action_torrent_files = function() {
+  if (selected_detail_id) {
+    return socket.emit('event_torrent_files', {
+      info_hash: selected_detail_id
+    });
+  }
+};
+
 special_alerts = {};
 
 
@@ -967,7 +976,7 @@ error_handler = function(func, message) {
 };
 
 handle_event_torrent_files_response = function(message) {
-  return false;
+  return render_files(message['data']);
 };
 
 handle_event_torrent_reannounce_response = function(message) {
@@ -1167,6 +1176,17 @@ render_peers = function(peer_list) {
   return jQuery("#peer_list tbody").html(output_html.join(""));
 };
 
+render_files = function(file_list) {
+  var file, output_html, _i, _len;
+  output_html = [];
+  for (_i = 0, _len = file_list.length; _i < _len; _i++) {
+    file = file_list[_i];
+    output_html.push("<tr>\n    <td>" + file['path'] + "</td>\n    <td><div class=\"progress\"><span class=\"meter\" style=\"" + file['progress'] + "\"></span></div></td>\n    <td>" + (bytes_to_size(file['size'])) + "</td>\n    <td>" + file['priority'] + "</td>\n<tr>");
+  }
+  console.log(output_html.join(""));
+  return jQuery("#file_list tbody").html(output_html.join(""));
+};
+
 
 /* Return the current unix timestamp in seconds */
 
@@ -1258,7 +1278,7 @@ jQuery(function() {
     socket.on('event_torrent_peers_response', handle_event_torrent_peers_response);
     socket.on('event_torrent_speed_response', handle_event_torrent_speed_response);
     socket.on('event_torrent_details_response', handle_event_torrent_details_response);
-    socket.on('event_torrent_files', handle_event_torrent_files_response);
+    socket.on('event_torrent_files_response', handle_event_torrent_files_response);
     socket.on('event_torrent_list_response', (function(_this) {
       return function(message) {
         return error_handler(handle_event_torrent_list_response, message);

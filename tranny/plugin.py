@@ -50,6 +50,7 @@ class PluginManager(object):
         """
         self.event_manager = event_manager
         self.loaded_plugins = {}
+        self.log = logging.getLogger("PluginManager")
 
     def register(self, plugin):
         """
@@ -64,7 +65,9 @@ class PluginManager(object):
         if plugin.name in self.loaded_plugins:
             raise ValueError("Plugin already registered: {}".format(plugin.name))
         self.loaded_plugins[plugin.name] = plugin
-        map(self.event_manager.register_handler, plugin.get_handlers())
+        for handler in plugin.get_handlers():
+            self.event_manager.register_handler(handler)
+        self.log.info("Registered plugin: {}".format(plugin.name))
 
     def unregister(self, plugin):
         pass

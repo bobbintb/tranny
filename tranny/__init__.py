@@ -128,7 +128,7 @@ def main():
             log_level = config.get_default("log", "level")
         else:
             log_level = "INFO"
-        log_fmt = config.get_default("log", "format", "%(levelname)s %(asctime)s %(name)s: %(message)s")
+        log_fmt = "%(levelname)s %(asctime)s %(name)s: %(message)s"
         logging.basicConfig(level=logging.getLevelName(log_level), format=log_fmt)
 
         if arguments.config:

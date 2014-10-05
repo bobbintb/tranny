@@ -4,12 +4,14 @@ Transmission support module
 """
 from __future__ import unicode_literals
 from base64 import b64encode
+from collections import defaultdict
 import functools
 from tranny.app import config, Session
 from tranny import client
 from tranny.service import geoip
 from tranny.torrent import Torrent
 from transmissionrpc.utils import get_arguments
+from tranny import events
 
 try:
     from transmissionrpc import Client, TransmissionError
@@ -144,9 +146,6 @@ class TransmissionClient(client.TorrentClient):
         """
         self.client.remove_torrent(torrent_id, delete_data=remove_data)
 
-    def get_events(self):
-        return []
-
     def torrent_peers(self, info_hash):
         torrent = self.client.get_torrent(info_hash, arguments=['id', 'hashString', 'peers'])
         peers = []
@@ -176,12 +175,12 @@ class TransmissionClient(client.TorrentClient):
         file_set = self.client.get_files(info_hash)
         for v in file_set.values():
             for file_info in [f for f in v.values()]:
-                files.append({
-                    'client': file_info['name'],
-                    'down_speed': file_info['size'],
-                    'up_speed': file_info['priority'],
-                    'progress': file_info['completed']
-                })
+                files.append(client.ClientFileData(
+                    path=file_info['name'],
+                    progress=file_info['size'] - file_info['completed'],
+                    size=file_info['size'],
+                    priority=file_info['priority']
+                ))
                 break
         return files
 

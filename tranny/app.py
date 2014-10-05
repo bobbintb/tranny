@@ -43,9 +43,6 @@ event_manager = EventManager()
 from tranny.plugin import PluginManager
 plugin_manager = PluginManager(event_manager)
 
-from tranny.plugin import ExamplePlugin
-plugin_manager.register(ExamplePlugin())
-
 torrent_client = None
 
 from tranny.util import file_size

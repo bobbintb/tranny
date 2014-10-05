@@ -5,12 +5,16 @@ just overriding the fetch_releases method.
 """
 from __future__ import unicode_literals
 import logging
+from abc import ABCMeta, abstractmethod
 from time import time
 from tranny.app import config, Session
 from tranny.models import Download
 
 
 class TorrentProvider(object):
+
+    __metaclass__ = ABCMeta
+
     """
     Base torrent provider used to download new releases from trackers
     """
@@ -51,6 +55,7 @@ class TorrentProvider(object):
         for torrent, release_info in self.fetch_releases(session):
             yield session, [torrent, release_info]
 
+    @abstractmethod
     def fetch_releases(self, session):
         """
 
