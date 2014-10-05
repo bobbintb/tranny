@@ -3,9 +3,8 @@ from __future__ import unicode_literals, absolute_import
 import datetime
 import hashlib
 from sqlalchemy import CheckConstraint, Column, Integer, String, SmallInteger, DateTime, ForeignKey, Unicode, Table, \
-    UnicodeText, Numeric
+    UnicodeText, Numeric, BigInteger
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import BigInteger
 from tranny.app import Base
 from tranny.constants import ROLE_USER
 

@@ -12,13 +12,15 @@ try:
     from xmlrpc import client as xmlrpclib
 except ImportError:
     import xmlrpclib
-from tranny.app import config
+from tranny.app import Session
 from tranny import client
 from tranny.torrent import Torrent
+from tranny.service import geoip
 
 __all__ = ['RTorrentClient']
 
 log = logging.getLogger(__name__)
+
 
 class RTorrentClient(client.TorrentClient):
     """ rTorrent client support module. This class will talk to rtorrent over its
@@ -41,9 +43,9 @@ class RTorrentClient(client.TorrentClient):
         self._server = SCGIServerProxy(uri)
 
     def client_version(self):
-        client = self._server.system.client_version()
+        client_name = self._server.system.client_version()
         lib = self._server.system.library_version()
-        return "rTorrent {}/{}".format(client, lib)
+        return "rTorrent {}/{}".format(client_name, lib)
 
     def add(self, torrent, download_dir=None):
         payload = xmlrpclib.Binary(torrent.torrent_data)
@@ -184,9 +186,10 @@ class RTorrentClient(client.TorrentClient):
         }
         parray = self._server.p.multicall(info_hash, '+0', *data_mapping.values())
         pdata = []
+        session = Session()
         for peer in parray:
-            # Country data not implemented yet
-            peer_dict = client.ClientPeerData({'country': 'CA'})
+            country_code = geoip.find_country_code(session, peer[3])
+            peer_dict = client.ClientPeerData({'country': country_code})
             for index, value in enumerate(data_mapping.keys()):
                 peer_dict[value] = peer[index]
             pdata.append(peer_dict)

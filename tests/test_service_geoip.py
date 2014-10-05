@@ -16,10 +16,10 @@ class GeoIPTest(TrannyDBTestCase):
         self.assertTrue(geoip.update(session, db_file_path))
         self.assertEqual(10, session.query(geoip.models.GeoIP).count())
 
-        self.assertEqual("AU", geoip.find_country(session, 16777217))
-        self.assertEqual("AU", geoip.find_country(session, net.int2ip(16777217)))
+        self.assertEqual("AU", geoip.find_country_code(session, 16777217))
+        self.assertEqual("AU", geoip.find_country_code(session, net.int2ip(16777217)))
 
-        self.assertIsNone(geoip.find_country(session, 1000))
+        self.assertIsNone(geoip.find_country_code(session, 1000))
 
 
 

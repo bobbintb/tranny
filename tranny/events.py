@@ -71,6 +71,7 @@ class EventManager(object):
         else:
             self._event_handlers[event_handler.event].append(event_handler)
             self._event_handlers[event_handler.event].sort(key=lambda v: v.priority)
+            self.log.debug("Registered event handler [{}]: {}".format(event_handler.event, event_handler.func))
 
     def event_handlers(self, event):
         """
@@ -89,7 +90,7 @@ class EventManager(object):
             if isinstance(event, tuple):
                 _, event = event
             try:
-                resp = event(event.payload)
+                resp = event(event)
             except TrannyException:
                 self.log.exception("Uncaught internal error")
             except Exception:

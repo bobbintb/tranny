@@ -40,6 +40,12 @@ Session = scoped_session(session_factory, scopefunc=_app_ctx_stack.__ident_func_
 from tranny.events import EventManager
 event_manager = EventManager()
 
+from tranny.plugin import PluginManager
+plugin_manager = PluginManager(event_manager)
+
+from tranny.plugin import ExamplePlugin
+plugin_manager.register(ExamplePlugin())
+
 torrent_client = None
 
 from tranny.util import file_size
@@ -242,15 +248,15 @@ def configure_logging(app):
 
 def configure_error_handlers(app):
 
-    @app.errorhandler(403)
+    @app.errorhandler(httplib.FORBIDDEN)
     def forbidden_page(error):
         return ui.render_template("errors/forbidden_page.html", error=error), httplib.FORBIDDEN
 
-    @app.errorhandler(404)
+    @app.errorhandler(httplib.NOT_FOUND)
     def page_not_found(error):
         return ui.render_template("errors/page_not_found.html", error=error), httplib.NOT_FOUND
 
-    @app.errorhandler(500)
+    @app.errorhandler(httplib.INTERNAL_SERVER_ERROR)
     def server_error_page(error):
         return ui.render_template("errors/server_error.html", error=error), httplib.INTERNAL_SERVER_ERROR
 

@@ -5,8 +5,9 @@ Transmission support module
 from __future__ import unicode_literals
 from base64 import b64encode
 import functools
-from tranny.app import config
+from tranny.app import config, Session
 from tranny import client
+from tranny.service import geoip
 from tranny.torrent import Torrent
 from transmissionrpc.utils import get_arguments
 
@@ -53,8 +54,11 @@ class TransmissionClient(client.TorrentClient):
         except TransmissionError as err:
             if err.original.code == 111:
                 self.log.error("Failed to connect to transmission-daemon, is it running?")
+            elif err.original.code == 113:
+                self.log.error("No route to host")
             else:
                 self.log.exception("Error connecting to transmission server")
+            raise
 
     def add(self, data, download_dir=None):
 
@@ -146,6 +150,7 @@ class TransmissionClient(client.TorrentClient):
     def torrent_peers(self, info_hash):
         torrent = self.client.get_torrent(info_hash, arguments=['id', 'hashString', 'peers'])
         peers = []
+        session = Session()
         # TODO country code lookup
         for peer in torrent.peers:
             peers.append({
@@ -154,7 +159,7 @@ class TransmissionClient(client.TorrentClient):
                 'up_speed': peer['rateToPeer'],
                 'progress': peer['progress'],
                 'ip': peer['address'],
-                'country': "CA"
+                'country': geoip.find_country_code(session, peer['address'])
             })
         return peers
 
@@ -212,7 +217,7 @@ class TransmissionClient(client.TorrentClient):
             'time_added': 'addedDate',
             'distributed_copies': lambda t: functools.reduce(lambda a,b: a+b, [p['progress'] for p in t.peers], 0),
             'active_time': '',
-            'seeding_time': 'secondsSeeding',
+            #'seeding_time': 'secondsSeeding', Not found in my version? trans 2.8.4
             'num_files': lambda t: len(torrent.files()),
             'queue_position': 'queue_position'
         }

@@ -58,7 +58,7 @@ def update(session, db_file_path):
 
 
 @cache.cache_on_arguments(expiration_time=3600*7)
-def find_country(session, ip_address):
+def find_country_code(session, ip_address):
     """ Return the 2 letter country code for the ip address provided
 
     :param session:
@@ -80,5 +80,5 @@ def find_country(session, ip_address):
     if cn:
         return cn.code
     else:
-        return None
+        return 'NA'
 
