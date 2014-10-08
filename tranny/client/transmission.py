@@ -65,7 +65,7 @@ class TransmissionClient(client.TorrentClient):
     def add(self, data, download_dir=None):
 
         try:
-            torrent = Torrent.from_str(data)
+            torrent = Torrent.from_str(data.torrent_data)
             try:
                 self.torrent_status(torrent.info_hash)
             except KeyError:
@@ -73,8 +73,8 @@ class TransmissionClient(client.TorrentClient):
             else:
                 self.log.warn("Tried to load duplicate info hash: {}".format(torrent.info_hash))
                 return True
-            encoded_data = b64encode(data)
-            res = self.client.add(encoded_data, download_dir=download_dir)
+            torrent_data = b64encode(data.torrent_data)
+            res = self.client.add_torrent(torrent_data, download_dir=download_dir)
         except TransmissionError as err:
             try:
                 msg = err._message

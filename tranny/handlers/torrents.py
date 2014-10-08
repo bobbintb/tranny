@@ -101,7 +101,7 @@ def handle_details(message):
         api.emit(events.EVENT_TORRENT_DETAILS_RESPONSE, data=data, status=status)
 
 
-@api.on(api.EVENT_TORRENT_SPEED)
+@api.on(events.EVENT_TORRENT_SPEED)
 def handle_speed(message):
     info_hash = message.get('info_hash', None)
     if info_hash:
