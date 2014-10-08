@@ -22,6 +22,7 @@ class Configuration(ConfigParser):
     to tranny's configuration
     """
     _config_path = None
+    _loaded_configs = []
 
     def __init__(self, path="~/.config/tranny"):
         ConfigParser.__init__(self)
@@ -52,9 +53,23 @@ class Configuration(ConfigParser):
         """
         if isinstance(file_names, basestring):
             file_names = [file_names]
-        loaded = ConfigParser.read(self, file_names)
-        #map(logger.debug, loaded)
+        new_configs = [c for c in file_names if c not in self._loaded_configs]
+        if not new_configs:
+            return []
+        loaded = ConfigParser.read(self, new_configs)
+        self._loaded_configs.extend(loaded)
+        log.debug("Read config file: {}".format(file_names))
         return loaded
+
+    def get_default_boolean(self, section, option, default=None):
+        try:
+            value = self.get(section, option)
+        except (NoSectionError, NoOptionError):
+            return default
+        else:
+            if value.lower() not in self._boolean_states:
+                raise ValueError('Not a boolean: {}'.format(value))
+            return self._boolean_states[value.lower()]
 
     def get_default(self, section, option, default=False, cast=None):
         """ Fetch a config value from the database with an optional default value to use

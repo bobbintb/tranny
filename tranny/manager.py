@@ -33,10 +33,15 @@ class ServiceManager(object):
         self._updater.start_later(1)
         self.watch = None
         self.init_providers()
-        app.torrent_client = client.init_client()
+        self.client = client.init_client()
+        app.torrent_client = self.client
 
+        self.wsgi_app = None
+        self.wsgi_socketio = None
+        self.wsgi_server = None
         if config.getboolean("webui", "enabled"):
             self.init_webui()
+            self.wsgi_server.start()
 
         # TODO Watch service is hanging at the moment, needs to be looked into
         # if platform.system() == 'Linux':
@@ -64,9 +69,10 @@ class ServiceManager(object):
         port = config.get_default('flask', 'listen_port', 5000, int)
         from tranny.app import create_app
 
-        wsgi_app = create_app()
-        socketio_app = SocketIOServer((host, port), wsgi_app, resource='socket.io')
-        socketio_app.serve_forever()
+        self.wsgi_app = create_app()
+
+        self.wsgi_socketio = SocketIOServer((host, port), self.wsgi_app, resource='socket.io')
+        self.wsgi_server = gevent.Greenlet(self.wsgi_socketio.serve_forever)
 
     def init_providers(self):
         """ Initialize and return the API based services.
@@ -77,8 +83,7 @@ class ServiceManager(object):
         :rtype: []TorrentProvider
         """
         self.services = []
-        service_list = [s for s in app.config.find_sections("provider_")]
-        service_list += [s for s in app.config.find_sections("rss_")]
+        service_list = set(config.find_sections("rss_") + config.find_sections("provider_"))
         for service_name in service_list:
             if service_name.startswith("rss_"):
                 self.services.append(RSSFeed(service_name))
@@ -96,8 +101,7 @@ class ServiceManager(object):
                 self.services.append(HDBits(service_name))
         return self.services
 
-    @staticmethod
-    def add(session, service, torrent, release_info, dl_path=None):
+    def add(self, session, service, torrent, release_info, dl_path=None):
         """ Handles adding a new torrent to the system. This should be considered the
         main entry point of doing this to make sure things are consistent, this cannot
         be guaranteed otherwise
@@ -116,7 +120,7 @@ class ServiceManager(object):
         try:
             if not dl_path:
                 dl_path = app.config.get_download_path(torrent.section, release_info)
-            res = client.get().add(torrent, download_dir=dl_path)
+            res = self.client.add(torrent, download_dir=dl_path)
             if not res:
                 raise ClientError
             log.info("Added release: {0}".format(torrent.release_name))
@@ -142,7 +146,7 @@ class ServiceManager(object):
     def update_providers(self):
         """ This is the primary process loop used to process TorrentProvider
         classes. It is run independently from the web service inside its own
-        thread """
+        coroutine """
         while True:
             for service in self.services:
                 for session, release_data in service.find_matches():

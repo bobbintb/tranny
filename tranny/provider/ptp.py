@@ -17,6 +17,7 @@ class PTP(provider.TorrentProvider):
 
     TODO retry after a while to login after a failure
     """
+
     def __init__(self, config_section):
         super(PTP, self).__init__(config_section)
         self.endpoint = config.get_default(self._config_section, 'endpoint', 'https://tls.passthepopcorn.me')
@@ -79,3 +80,6 @@ class PTP(provider.TorrentProvider):
                     if not release_key:
                         continue
                     section = parser.validate_section(release_name)
+
+    def fetch_releases(self, session):
+        yield None
