@@ -37,6 +37,7 @@ class RTorrentClient(client.TorrentClient):
     scgi_port = localhost:5000
 
     """
+
     config_key = "client_rtorrent"
 
     def __init__(self, uri):
@@ -251,6 +252,26 @@ class RTorrentClient(client.TorrentClient):
     def get_events(self):
         # Wouldn't be impossible to implement in the future
         return {}
+
+    torrent_add = add
+
+    def disconnect(self):
+        return True
+
+    def torrent_move_data(self, info_hash, dest):
+        pass
+
+    def torrent_queue_bottom(self, info_hash):
+        pass
+
+    def torrent_queue_down(self, info_hash):
+        pass
+
+    def torrent_queue_up(self, info_hash):
+        pass
+
+    def torrent_queue_top(self, info_hash):
+        pass
 
 
 class SCGITransport(xmlrpclib.Transport):

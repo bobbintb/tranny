@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from testcase import TrannyTestCase, tapedeck
+from tranny import constants
 from tranny.service import trakt
 from tranny.app import config
 
@@ -84,6 +85,15 @@ class TraktServiceTest(TrannyTestCase):
         with tapedeck.use_cassette(self.track("test_movie_summary"), before_record=strip_key):
             movie = trakt.movie_summary(self.movie)
         self.assertEqual(movie.get('imdb_id', ''), self.imdb_id)
+
+    def test_find_slug(self):
+        items = [["Shortland Street",  73983]]
+        i = 0
+        for title, slug in items:
+            with tapedeck.use_cassette(self.track("test_find_slug_{}".format(i)), before_record=strip_key):
+                found_slug = trakt._find_slug(title, constants.MEDIA_TV)
+            self.assertEqual(slug, found_slug, title)
+            i += 1
 
     # These require a history on trakt, skip for now.
     # def test_recommend_movies(self):

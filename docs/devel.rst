@@ -14,7 +14,7 @@ describe.
 We require python 2.7 currently, so if you do not have this please install it. You do
 not need to install it system wide, nor should you. The setup for this is outside the scope
 of this doc so please refer to external docs for this. I do however recommend just
-installing it to a custom directory using ./configure --prefix=/home/user/python/2.7 or
+installing it to a custom directory using ``./configure --prefix=/home/user/python/2.7`` or
 something similar. Be sure to reference that specific python executable when running
 any commands.
 
@@ -131,10 +131,14 @@ Testing
 When running unit tests there are 2 environment variables used to configure what
 is tested and loaded. By setting ``TEST=`` you will load the test configuration
 in the fixtures folder. There are additional values used to flag the testing of specific
-clients since we do not currently test them all and do not mock everything yet.
+clients since we do not currently test them all and do not mock everything yet.::
 
+    TEST=1/0
     TEST_TRANSMISSION=1/0
     TEST_DELUGE=1/0
     TEST_RTORRENT=1/0
     TEST_QBITTORRENT=1/0
     TEST_UTORRENT=1/0
+
+.. note:: When running the test suites you don't generally need to set TEST=1 manually as
+    its done automatically when loading the tests/testcase.py module.

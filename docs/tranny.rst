@@ -47,6 +47,14 @@ tranny.datastore module
     :undoc-members:
     :show-inheritance:
 
+tranny.events module
+--------------------
+
+.. automodule:: tranny.events
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 tranny.exceptions module
 ------------------------
 
@@ -107,6 +115,14 @@ tranny.parser module
 --------------------
 
 .. automodule:: tranny.parser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+tranny.plugin module
+--------------------
+
+.. automodule:: tranny.plugin
     :members:
     :undoc-members:
     :show-inheritance:

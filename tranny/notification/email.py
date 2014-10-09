@@ -4,6 +4,8 @@ from contextlib import contextmanager
 import smtplib
 from email.mime.text import MIMEText
 from tranny.app import config
+from tranny import plugin
+from tranny.events import EventHandler, EVENT_NOTIFICATION
 
 _config_key = 'notification_email'
 
@@ -52,3 +54,13 @@ def smtp_client():
     finally:
         if srv and hasattr(srv, 'quit'):
             srv.quit()
+
+
+class NotificationEmail(plugin.BasePlugin):
+    def get_handlers(self):
+        return [
+            EventHandler(EVENT_NOTIFICATION, self.handle_event_notification)
+        ]
+
+    def handle_event_notification(self, payload):
+        pass

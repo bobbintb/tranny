@@ -36,5 +36,19 @@ class AuthenticationError(ApiError):
 class ClientNotAvailable(InvalidResponse):
     pass
 
+
 class ParseError(BotchedTranny):
+    pass
+
+
+class EventHandlerError(TrannyException):
+    pass
+
+
+class EventChainStop(EventHandlerError):
+    """ Raised to stop an event chain in progress """
+    pass
+
+
+class EventChainContinue(EventHandlerError):
     pass

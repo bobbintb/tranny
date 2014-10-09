@@ -46,6 +46,8 @@ EVENT_UPDATE_RESPONSE = "event_update_response"
 # To send a popup alert to the user
 EVENT_ALERT = 'event_alert'
 
+EVENT_NOTIFICATION = 'event_notification'
+
 # Generic response
 EVENT_RESPONSE = 'event_response'
 
@@ -77,6 +79,11 @@ class EventHandler(object):
 
 
 class EventChain(object):
+    """
+    Process multiple events in serial. The returned payload from each event is passed to the next
+    event. This way plugins can make any updated to the payload as required as it passes
+    through the execution chain.
+    """
     def __init__(self, events, payload):
         self.events = events
         self.payload = payload
@@ -88,19 +95,44 @@ class EventChain(object):
 
 
 class EventManager(object):
-
+    """
+    Handle registering and firing registered event handlers when new events are emitted
+    """
     def __init__(self):
         self._event_handlers = defaultdict(list)
         self._queue = queue.PriorityQueue()
         self.log = logging.getLogger("eventmanager")
 
+        # A group of timers to run every N seconds. This could be replaced
+        # by something more intelligent pretty easily.
         self._tickers = {
-            1: gevent.Greenlet.spawn(self.ticker, EVENT_TICK_1, 1),
-            5: gevent.Greenlet.spawn(self.ticker, EVENT_TICK_5, 5),
-            30: gevent.Greenlet.spawn(self.ticker, EVENT_TICK_30, 30),
-            60: gevent.Greenlet.spawn(self.ticker, EVENT_TICK_60, 60)
+            'system_tick_1': gevent.Greenlet.spawn(self.ticker, EVENT_TICK_1, 1),
+            'system_tick_5': gevent.Greenlet.spawn(self.ticker, EVENT_TICK_5, 5),
+            'system_tick_30': gevent.Greenlet.spawn(self.ticker, EVENT_TICK_30, 30),
+            'system_tick_60': gevent.Greenlet.spawn(self.ticker, EVENT_TICK_60, 60)
         }
+
+        # Our main event loop for executing event handlers outside of the periodic handlers
         self._event_runner = gevent.Greenlet.spawn(self.task_runner, self._queue)
+
+    def unregister_handler(self, event_handler):
+        """ Naive approach to removing handlers dynamically based on function id's
+
+
+        :param event_handler: Event handler to unregister
+        :type event_handler: EventHandler
+        :return:
+        :rtype:
+        """
+        for event in self.event_handlers(event_handler.event):
+            if event.func is event_handler.func:
+                try:
+                    self._event_handlers[event_handler.event].remove(event)
+                except ValueError:
+                    self.log.error("Tried to remove event handler that did not exist")
+                else:
+                    self.log.info("Removed handler from event: {}->{}".format(event_handler.event, event))
+
 
     def register_handler(self, event_handler):
         """
