@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
+from os.path import join
 from sqlalchemy import create_engine
 from tranny.app import Base
 
@@ -12,20 +13,30 @@ import argparse
 import logging
 
 
+def run_application(options):
+    import gevent
+    import signal
+    from tranny.manager import ServiceManager
+
+    gevent.signal(signal.SIGQUIT, gevent.kill)
+
+    application = ServiceManager()
+    from tranny.app import event_manager
+
+    from tranny import metadata
+
+    for handler in metadata.get_handlers():
+        event_manager.register_handler(handler)
+    application.start()
+
+
 def parse_args(args=None):
     """ Parse command line argument and launch the appropriate command specifid
     by the user input
     """
 
     def cmd_start(options):
-        import gevent
-        import signal
-        from tranny.manager import ServiceManager
-
-        gevent.signal(signal.SIGQUIT, gevent.kill)
-
-        application = ServiceManager()
-        application.start()
+        run_application(options)
 
     def cmd_db_drop(options):
         from tranny.datastore import db_drop
@@ -44,6 +55,7 @@ def parse_args(args=None):
 
     def cmd_imdb(options):
         from tranny.service import imdb
+
         imdb.load_sql(options.nodownload)
 
     def cmd_geoip(options):
@@ -100,6 +112,77 @@ def parse_args(args=None):
     return parser.parse_args(args=args)
 
 
+def setup_logging(config, log_level):
+    # Disable 3rd party debug messages when in debug mode
+    # TODO make TRACE logging level for 3rd party modules to output debug messages
+    def gen_conf():
+        log_conf = {
+            'version': 1,
+            'disable_existing_loggers': True,
+            'formatters': {
+                'verbose': {
+                    'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+                },
+                'default': {
+                    'format': config.get_default("log", "format", "%(levelname)s %(asctime)s %(name)s: %(message)s")
+                },
+            },
+            'handlers': {
+                'console': {
+                    'level': log_level,
+                    'class': 'logging.StreamHandler',
+                    'formatter': 'default'
+                },
+                'email': {
+                    'level': 'ERROR',
+                    'class': 'logging.handlers.SMTPHandler',
+                    'mailhost': config.get_default("mail", "server", "localhost"),
+                    'fromaddr': config.get_default("mail", 'fromaddr', ""),
+                    'toaddrs': config.get_default("mail", "toaddr", "").split(","),
+                    'subject': "Tranny Application Error",
+                    'credentials': [
+                        config.get_default("mail", "username", ""),
+                        config.get_default("mail", "password")
+                    ]
+                },
+                'file': {
+                    'class': 'logging.handlers.RotatingFileHandler',
+                    'level': log_level,
+                    'filename': join(config.config_path, 'polytorrent.log'),
+                    'mode': 'a',
+                    'maxBytes': 10485760,
+                    'backupCount': 5
+                }
+            },
+            'loggers': {
+                '': {
+                    'level': log_level,
+                    'handlers': ['console']
+                }
+            }
+        }
+
+        def set_log_levels(loggers, level):
+            for logger_name in loggers:
+                log_conf['loggers'][logger_name] = {'level': level}
+
+        set_log_levels(['GuessEpisodeInfoFromPosition', 'GuessProperties',
+                        'GuessEpisodesRexps', 'GuessReleaseGroup',
+                        'guessit.matcher', 'GuessEpisodeDetails',
+                        'GuessEpisodeInfoFromPosition'], logging.ERROR)
+
+        set_log_levels(['requests', 'imdbpy', 'guessit'], logging.WARNING)
+
+        if config.get_default_boolean("log", "email_enabled", False):
+            log_conf['loggers']['']['handlers'].append("email")
+        if config.get_default_boolean("log", "file_enabled", True):
+            log_conf['loggers']['']['handlers'].append("file")
+        return log_conf
+    import logging.config as lc
+
+    lc.dictConfig(gen_conf())
+
+
 def main():
     """ Main entry point for the application. Runs the command parsed from the CLI
     using the argparse func system
@@ -128,8 +211,8 @@ def main():
             log_level = config.get_default("log", "level")
         else:
             log_level = "INFO"
-        log_fmt = "%(levelname)s %(asctime)s %(name)s: %(message)s"
-        logging.basicConfig(level=logging.getLevelName(log_level), format=log_fmt)
+
+        setup_logging(config, log_level)
 
         if arguments.config:
             config.initialize(arguments.config)

@@ -12,16 +12,23 @@ from tranny.service import trakt
 from tranny.service import imdb
 from tranny.util import raise_unless
 from tranny.models import Show, Episode, Movie
+from tranny.events import EventHandler, EVENT_TORRENT_ADDED
 
 log = logging.getLogger(__name__)
 
 
-def update_media_info(release_key):
-    tasks.add_task(tasks.Task(update_metadata, release_key))
+def get_handlers():
+    return (
+        EventHandler(EVENT_TORRENT_ADDED, handle_update_media_event),
+    )
 
 
-def update_metadata(release_key):
-    media_info = update_trakt(release_key)
+def handle_update_media_event(payload):
+    update_metadata(payload['release_info'])
+
+
+def update_metadata(release_info):
+    media_info = update_trakt(release_info)
     if media_info:
         media_info = update_imdb(media_info=media_info)
     return media_info
@@ -44,7 +51,7 @@ def update_imdb(media_info=None, release_key=None):
                     person = get_person_imdb(session,
                                              cast_member['person']['person_id'],
                                              name=cast_member['person']['name'])
-                    if not person in media_info.cast:
+                    if person not in media_info.cast:
                         media_info.cast.append(person)
         session.commit()
     except DBAPIError:

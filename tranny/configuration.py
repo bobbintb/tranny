@@ -149,6 +149,7 @@ class Configuration(ConfigParser):
         """
         if os.environ.get('TEST', False):
             file_path = join(dirname(dirname(__file__)), 'tests', 'fixtures', 'test_config.ini')
+            log.warning("Using TEST config file! [{}]".format(file_path))
         if not file_path:
             # Only create default locations when we are not specifying a config explicitly
             self.create_dirs()

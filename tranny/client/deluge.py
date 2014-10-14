@@ -59,7 +59,7 @@ class DelugeClient(client.TorrentClient):
         :param password: Password to the webui (default: deluge)
         :type password: string
         """
-        super(DelugeClient, self).__init__(self.config_key)
+        super(DelugeClient, self).__init__()
         self._host = 'http://{}:{}'.format(host, port)
         self._endpoint = '{}/json'.format(self._host)
         self._session = requests.session()
@@ -229,9 +229,6 @@ class DelugeClient(client.TorrentClient):
         libtorrent_version = self._request('core.get_libtorrent_version')
         return ", ".join([daemon_version, libtorrent_version])
 
-    def _get_events(self):
-        events = self._request('web.get_events')
-
     def get_capabilities(self):
         """ Return a list of supported methods of the client. This is used to tell the
          webui what the client supports instead of having to hardcode things on a per
@@ -378,10 +375,6 @@ class DelugeClient(client.TorrentClient):
 
     def disconnect(self):
         return self._request('web.disconnect')
-
-    def get_events(self):
-        resp = self._request('web.get_events')
-        return resp
 
     def torrent_move_data(self, info_hash, dest):
         pass

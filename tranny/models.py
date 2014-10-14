@@ -154,17 +154,6 @@ class Genre(Base, ModelArgs):
             self.genre_name = genre_name.title()
 
 
-class MediaInfo(Base, ModelArgs):
-    __tablename__ = 'media_info'
-
-    media_id = Column(Integer, primary_key=True)
-    media_type = Column(Unicode, nullable=False)
-    imdb_id = Column(Integer, nullable=True)
-    tvdb_id = Column(Integer, nullable=True)
-    tmdb_id = Column(Integer, nullable=True)
-    tvrage_id = Column(Integer, nullable=True)
-
-
 class Show(Base, ModelArgs, PropUpdate, GenreUpdate):
     __tablename__ = 'show'
 
@@ -256,8 +245,11 @@ class Download(Base, ModelArgs):
     source_id = Column(Integer, ForeignKey(Source.source_id))
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     updated_on = Column(DateTime, default=datetime.datetime.utcnow)
-    media_id = Column(Integer, ForeignKey(MediaInfo.media_id))
+    movie_id = Column(Integer, ForeignKey(Movie.movie_id), nullable=True)
+    episode_id = Column(Integer, ForeignKey(Episode.episode_id), nullable=True)
 
+    episode = relationship(Episode)
+    movie = relationship(Movie)
     source = relationship(Source, lazy='joined')
     section = relationship(Section, lazy='joined')
 

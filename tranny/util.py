@@ -81,8 +81,10 @@ def redirect_back(endpoint, **values):
 def find_closest_match(string, iterable, key):
     if len(iterable) == 1:
         return iterable[0]
+
     def cmp(item):
         return fuzz.ratio(string.lower(), item.get(key, "").lower())
+
     return sorted(iterable, key=cmp, reverse=True)[0]
 
 

@@ -3,11 +3,13 @@
 Functions used to download data over HTTP connections
 """
 from __future__ import unicode_literals, absolute_import
+from functools import partial
 import logging
 import socket
 import struct
+import gevent
 from os.path import join
-from requests import get, RequestException, post
+from requests import RequestException, Session, HTTPError
 from tranny import app
 from tranny import exceptions
 
@@ -84,20 +86,23 @@ def http_request(url, auth=None, json=True, timeout=30, method='get', data=None,
     try:
         log.debug("Fetching url: {0}".format(url))
         if method == 'get':
-            response = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout, params=params)
+            req = get(url, auth=auth, proxies=app.config.get_proxies(), timeout=timeout, params=params)
         elif method == 'post':
-            response = post(url, data=data, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
-        response.raise_for_status()
-        if not response.content:
+            req = post(url, data=data, auth=auth, proxies=app.config.get_proxies(), timeout=timeout)
+        else:
+            raise RequestException("Unsupported request method type: {}".format(method))
+        req = send(req)
+        req.raise_for_status()
+        if not req.content:
             raise exceptions.InvalidResponse("Empty response body")
-    except (RequestException, exceptions.InvalidResponse) as err:
+    except (HTTPError, RequestException, exceptions.InvalidResponse) as err:
         log.exception(err.message)
         response = {}
     else:
         if json:
-            response = response.json()
+            response = req.json()
         else:
-            response = response.content
+            response = req.content
     finally:
         return response
 
@@ -135,3 +140,62 @@ def int2ip(addr):
     :rtype:
     """
     return socket.inet_ntoa(struct.pack("!I", addr))
+
+
+class AsyncRequest(object):
+    """ Asynchronous request.
+
+    Accept same parameters as ``Session.request`` and some additional:
+
+    :param session: Session which will do request
+    :param callback: Callback called on response.
+                     Same as passing ``hooks={'response': callback}``
+    """
+    def __init__(self, method, url, **kwargs):
+        #: Request method
+        self.method = method
+        #: URL to request
+        self.url = url
+        #: Associated ``Session``
+        self.session = kwargs.pop('session', None)
+        if self.session is None:
+            self.session = Session()
+
+        callback = kwargs.pop('callback', None)
+        if callback:
+            kwargs['hooks'] = {'response': callback}
+
+        #: The rest arguments for ``Session.request``
+        self.kwargs = kwargs
+        #: Resulting ``Response``
+        self.response = None
+
+    def send(self, **kwargs):
+        """
+        Prepares request based on parameter passed to constructor and optional ``kwargs```.
+        Then sends request and saves response to :attr:`response`
+
+        :returns: ``Response``
+        """
+        merged_kwargs = {}
+        merged_kwargs.update(self.kwargs)
+        merged_kwargs.update(kwargs)
+        try:
+            self.response = self.session.request(self.method,
+                                                self.url, **merged_kwargs)
+        except Exception as e:
+            self.exception = e
+        return self.response
+
+
+def send(r, pool=None, stream=False):
+    """Sends the request object usingN the specified pool. If a pool isn't
+    specified this method blocks. Pools are useful because you can specify size
+    and can hence limit concurrency."""
+    if pool is not None:
+        return pool.spawn(r.send, stream=stream)
+
+    return gevent.spawn(r.send, stream=stream).get(block=True)
+
+get = partial(AsyncRequest, 'GET')
+post = partial(AsyncRequest, 'POST')

@@ -6,10 +6,10 @@ from socketio.server import SocketIOServer
 from sqlalchemy.exc import DBAPIError
 from tranny import app
 from tranny import datastore
-from tranny import watch
 from tranny import client
 from tranny import metadata
-from tranny.app import config, Session, engine, Base
+from tranny import events
+from tranny.app import config, Session, engine, Base, event_manager
 from tranny.exceptions import ClientError
 from tranny.models import Download
 from tranny.provider.rss import RSSFeed
@@ -139,7 +139,12 @@ class ServiceManager(object):
         except Exception as err:
             log.exception(err)
         else:
-            metadata.update_media_info(release_key)
+            event_manager.emit(events.Event(events.EVENT_TORRENT_ADDED, {
+                'source': source,
+                'section': section,
+                'release_info': release_info,
+                'download': download
+            }), immediate=False)
             status = True
         return status
 

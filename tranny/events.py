@@ -2,9 +2,11 @@
 from __future__ import unicode_literals, absolute_import
 from collections import defaultdict
 import logging
+import time
 from gevent import queue
 import gevent
 from tranny.exceptions import TrannyException
+
 
 # Torrent events
 EVENT_TORRENT_RECHECK = 'event_torrent_recheck'
@@ -53,6 +55,7 @@ EVENT_RESPONSE = 'event_response'
 
 EVENT_TORRENT_UPDATE = 'torrent_update'
 EVENT_TORRENT_NEW = 'torrent_new'
+EVENT_TORRENT_ADDED = 'torrent_added'
 EVENT_TORRENT_COMPLETE = 'torrent_complete'
 
 EVENT_TICK = 'system_tick_1'
@@ -60,6 +63,16 @@ EVENT_TICK_1 = EVENT_TICK
 EVENT_TICK_5 = 'system_tick_5'
 EVENT_TICK_30 = 'system_tick_30'
 EVENT_TICK_60 = 'system_tick_60'
+
+
+class Event(object):
+    def __init__(self, event_name, payload):
+        self.event_name = event_name
+        self.payload = payload
+        self.created_on = time.time()
+
+    def __unicode__(self):
+        return self.event_name
 
 
 class EventHandler(object):
@@ -76,6 +89,9 @@ class EventHandler(object):
 
     def __unicode__(self):
         return self.func.__name__
+
+    def __str__(self):
+        return self.__unicode__().decode('latin-1')
 
 
 class EventChain(object):
@@ -133,7 +149,6 @@ class EventManager(object):
                 else:
                     self.log.info("Removed handler from event: {}->{}".format(event_handler.event, event))
 
-
     def register_handler(self, event_handler):
         """
 
@@ -173,16 +188,31 @@ class EventManager(object):
             else:
                 return resp
 
-    def emit(self, event, payload, immediate=True, priority=99):
-        if not event:
+    def emit(self, event, immediate=True, priority=99):
+        """
+
+        :param event:
+        :type event: Event
+        :param immediate:
+        :type immediate:
+        :param priority:
+        :type priority:
+        :return:
+        :rtype:
+        """
+        if not isinstance(event, Event):
+            self.log.warn("Tried to sent event with invalid type: {}".format(type(event)))
             return None
-        events = self.event_handlers(event)
-        if events:
-            ec = EventChain(events, payload)
+        event_handlers = self.event_handlers(event.event_name)
+        if event_handlers:
+            self.log.debug("Event emitted: {} [{} handlers]".format(event.event_name, len(event_handlers)))
+            ec = EventChain(event_handlers, event.payload)
             if not immediate:
                 self._queue.put((priority, ec))
             else:
                 return self.task_runner([ec])
+        else:
+            self.log.debug("Event emitted: {} [0 handlers]".format(event.event_name))
 
     def ticker(self, event, sleep=1):
         while True:

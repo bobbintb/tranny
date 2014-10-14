@@ -179,7 +179,7 @@ class TorrentClient(BasePlugin):
         """
         self.log.debug("Fetching new torrent events")
         new_event = self.get_events()
-        for k, v in new_event:
+        for k, v in new_event.items():
             self.log.debug("[{}] {}".format(k, v))
         if new_event:
             api.emit(events.EVENT_TORRENT_UPDATE, data=new_event)

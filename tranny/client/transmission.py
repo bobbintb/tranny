@@ -63,7 +63,15 @@ class TransmissionClient(client.TorrentClient):
             raise
 
     def add(self, data, download_dir=None):
+        """ Add a torrent to the client
 
+        :param data: Torrent data to load in
+        :type data: TorrentData
+        :param download_dir: Path on deluge server to store download
+        :type download_dir: basestring
+        :return: Status of successful load (according to deluge)
+        :rtype: bool
+        """
         try:
             torrent = Torrent.from_str(data.torrent_data)
             try:

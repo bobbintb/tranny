@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import gevent
 from testcase import TrannyTestCase
 from tranny import events
+from tranny.events import Event
 
 
 def e_func(payload):
@@ -34,7 +35,7 @@ class EventsTest(TrannyTestCase):
         em = events.EventManager()
         em.register_handler(self.event_1)
         em.register_handler(self.event_2)
-        resp = em.emit(self.event_1.event, {'a': 1}, immediate=True)
+        resp = em.emit(Event(self.event_1.event, {'a': 1}), immediate=True)
         self.assertEqual(resp['a'], 4)
 
         class A(object):
@@ -47,7 +48,7 @@ class EventsTest(TrannyTestCase):
 
         e = events.EventHandler('test', incr, priority=1)
         em.register_handler(e)
-        em.emit('test', {'a': 1}, immediate=False)
+        em.emit(Event('test', {'a': 1}), immediate=False)
         # wait for executor to run the task
         gevent.sleep(0.1)
         self.assertEqual(incr.a, 2)
