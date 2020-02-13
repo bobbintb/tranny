@@ -19,22 +19,6 @@ class Configuration(ConfigParser):
     """
     _config_path = None
     _loaded_configs = []
-'''
-    def __init__(self, path="~/.config/tranny"):
-        ConfigParser.__init__(self)
-
-        self.config_file = abspath(join(dirname(dirname(__file__)), "tranny.ini"))
-        try:
-            loaded = self.read([self.config_file])
-            if not len(loaded) == 1:
-                raise ConfigError("Failed to load configuration")
-        except IOError:
-            raise ConfigError("No config file found: {}".format(self.config_file))
-        self.config_path = expanduser(path)
-        self.cache_path = join(self.config_path, 'cache_path')
-        self.cache_file = join(self.cache_path, "cache.dbm")
-        self.configured = False
-'''
 
     def rules(self):
         pass
