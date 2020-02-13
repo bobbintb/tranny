@@ -35,6 +35,7 @@ class Configuration(ConfigParser):
         self.cache_file = join(self.cache_path, "cache.dbm")
         self.configured = False
 '''
+
     def rules(self):
         pass
 
