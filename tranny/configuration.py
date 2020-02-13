@@ -16,7 +16,7 @@ except ImportError:
     from configparser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
 
-class Configuration(configparser):
+class Configuration(ConfigParser):
     """
     Extend the built in ConfigParser module to provide some helper functions specific
     to tranny's configuration
