@@ -9,7 +9,7 @@ from tranny import util
 
 log = logging.getLogger(__name__)
 
-rom configparser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
+from configparser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
 
 class Configuration(ConfigParser):
