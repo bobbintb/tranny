@@ -9,11 +9,7 @@ from tranny import util
 
 log = logging.getLogger(__name__)
 
-try:
-    # noinspection PyUnresolvedReferences
-    from configparser import RawConfigParser, NoOptionError, NoSectionError, Error
-except ImportError:
-    from configparser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
+rom configparser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
 
 class Configuration(ConfigParser):
