@@ -11,7 +11,7 @@ from flask import Flask, g, redirect, url_for, session, _app_ctx_stack
 from flask_login import current_user, confirm_login
 from flask_uploads import configure_uploads, patch_request_class
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 
