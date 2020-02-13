@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, with_statement
+
 import unittest
-from testcase import TrannyTestCase, tapedeck
+from .testcase import TrannyTestCase, tapedeck
 from tranny.app import config
 from tranny.provider.broadcastthenet import BroadcastTheNet
 
@@ -23,7 +23,7 @@ class BTNAPITest(TrannyTestCase):
 
     def test_get_torrent_url(self):
         with tapedeck.use_cassette(self.track("test_get_torrent_url_a")):
-            torrent_ids = self.api.get_torrents_browse(1)['torrents'].keys()
+            torrent_ids = list(self.api.get_torrents_browse(1)['torrents'].keys())
         for torrent_id in torrent_ids:
             with tapedeck.use_cassette(self.track("test_get_torrent_url_{}".format(torrent_id))):
                 url = self.api.get_torrent_url(torrent_id)

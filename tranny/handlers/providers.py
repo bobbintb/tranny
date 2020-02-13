@@ -2,13 +2,13 @@
 """
 /service route handlers
 """
-from __future__ import unicode_literals
+
 from functools import partial
 
 try:
     import http.client as httplib
 except ImportError:
-    import httplib
+    import http.client
 import logging
 from flask import Blueprint, abort, request, flash, redirect, url_for
 from flask.ext.login import login_required
@@ -48,11 +48,11 @@ def save(provider):
     :rtype: Response
     """
     try:
-        for k, v in request.values.items():
+        for k, v in list(request.values.items()):
             config.set(provider, k.replace(provider + "_", ""), v)
     except (KeyError, TypeError):
         log.warning("Malformed request received")
-        abort(httplib.BAD_REQUEST)
+        abort(http.client.BAD_REQUEST)
     else:
         if config.save():
             flash("Saved configuration successfully")

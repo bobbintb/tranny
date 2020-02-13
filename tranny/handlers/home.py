@@ -2,7 +2,7 @@
 """
 /home handlers
 """
-from __future__ import unicode_literals
+
 from functools import partial
 import platform
 import time
@@ -37,9 +37,9 @@ def index():
     """
     session = Session()
     downloads = session.query(Download).filter(Download.source_id > 0).all()
-    provider_totals = stats.count_totals(downloads, lambda v: v.source.source_name).items()
-    section_totals = stats.count_totals(downloads, lambda v: v.section.section_name).items()
-    provider_type_totals = stats.provider_type_counter(downloads).items()
+    provider_totals = list(stats.count_totals(downloads, lambda v: v.source.source_name).items())
+    section_totals = list(stats.count_totals(downloads, lambda v: v.section.section_name).items())
+    provider_type_totals = list(stats.provider_type_counter(downloads).items())
     newest = Session.query(Download).order_by(Download.entity_id.desc()).limit(25).all()
     return dict(
         newest=newest,

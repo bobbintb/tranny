@@ -2,7 +2,7 @@
 """
 Basic endpoints for the /torrent sections and the websocket api
 """
-from __future__ import unicode_literals
+
 from functools import partial
 import logging
 from flask import Blueprint

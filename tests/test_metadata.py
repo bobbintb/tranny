@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from testcase import TrannyDBTestCase
+
+from .testcase import TrannyDBTestCase
 from tranny import metadata
 from tranny import datastore
 

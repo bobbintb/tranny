@@ -2,10 +2,10 @@
 """
 
 """
-from __future__ import unicode_literals
+
 import unittest
 import os
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 from tranny.client import qbittorrent
 
 

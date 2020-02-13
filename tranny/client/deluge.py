@@ -6,7 +6,7 @@ Deluge JSON-RPC client interface
     This was the first complete implementation of the backend client, thus the other backends have been
     somewhat molded to fit deluge's definition of data structures
 """
-from __future__ import unicode_literals, absolute_import, with_statement
+
 import json
 import time
 import gevent
@@ -269,7 +269,7 @@ class DelugeClient(client.TorrentClient):
         torrent_data = list()
         if not resp:
             return torrent_data
-        for info_hash, detail in resp.get('torrents', {}).items():
+        for info_hash, detail in list(resp.get('torrents', {}).items()):
             torrent_info = client.ClientTorrentData(
                 info_hash=info_hash,
                 name=detail['name'],
@@ -332,7 +332,7 @@ class DelugeClient(client.TorrentClient):
         resp = self._request('web.get_torrent_status', [info_hash, detail_array + list(detail_map.keys())])
         detail = client.ClientTorrentDataDetail(info_hash=info_hash)
         detail.update({k: resp[k] for k in detail_array})
-        detail.update({v: resp[k] for k, v in detail_map.items()})
+        detail.update({v: resp[k] for k, v in list(detail_map.items())})
         return detail
 
     def torrent_pause(self, info_hash):
@@ -360,7 +360,7 @@ class DelugeClient(client.TorrentClient):
     def torrent_files(self, info_hash):
         resp = self._request('web.get_torrent_files', [info_hash])
         file_data = []
-        for f in resp['contents'].values():
+        for f in list(resp['contents'].values()):
             file_data.append(client.ClientFileData(
                 path = f['path'],
                 progress = int(f['progress']) * 100,

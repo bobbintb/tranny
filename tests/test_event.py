@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import gevent
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 from tranny import events
 from tranny.events import Event
 

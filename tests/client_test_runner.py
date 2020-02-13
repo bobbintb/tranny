@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import tempfile
 import time
 import unittest
 import os
-from testcase import TrannyTestCase, get_fixture, client_env
+from .testcase import TrannyTestCase, get_fixture, client_env
 from tranny.client import TorrentState
 from tranny.torrent import Torrent
 

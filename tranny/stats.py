@@ -2,7 +2,7 @@
 """
 Functions used to retrieve statistics from historical data.
 """
-from __future__ import unicode_literals, absolute_import
+
 from collections import Counter
 from tranny import app
 from tranny import datastore

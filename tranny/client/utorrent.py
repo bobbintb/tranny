@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import re
 try:
     import http.client as httplib
 except ImportError:
-    import httplib
+    import http.client
 from collections import namedtuple
 from logging import getLogger
 from requests import Session
@@ -24,7 +24,7 @@ class InvalidToken(uTorrentException):
 
 class url_args(dict):
     def __str__(self):
-        return "&".join(["{0}={1}".format(k, v) for k, v in self.items()])
+        return "&".join(["{0}={1}".format(k, v) for k, v in list(self.items())])
 
 
 UTSetting = namedtuple("UTSetting", ["name", "int", "str", "access"])
@@ -103,7 +103,7 @@ class UTorrentClient(client.TorrentClient):
             auth=HTTPBasicAuth(self.user, self.password),
             proxies=self.config.get_proxies()
         )
-        if result.status_code == httplib.MULTIPLE_CHOICES:  # 300
+        if result.status_code == http.client.MULTIPLE_CHOICES:  # 300
             if resend:
                 raise InvalidToken("Unable to fetch new AuthToken")
             return self._fetch(url, args=args, json=json, token=token, resend=True)
@@ -175,7 +175,7 @@ class UTorrentClient(client.TorrentClient):
         :return:
         :rtype:
         """
-        for setting, value in settings.items():
+        for setting, value in list(settings.items()):
             self.log.debug("Updating setting: {} = {}".format(setting, value))
             self._action("setsetting", args={"s": setting, "v": value})
 
@@ -193,7 +193,7 @@ class UTorrentClient(client.TorrentClient):
             files={'torrent_file': ('torrent_file.torrent', data)},
             proxies=self.config.get_proxies()
         )
-        if response.status_code != httplib.OK:
+        if response.status_code != http.client.OK:
 
             self.log.error("Got invalid request from client: {0}".format(response.json.error))
         else:
@@ -201,5 +201,5 @@ class UTorrentClient(client.TorrentClient):
                 self.log.warning(response.json['error'])
             except KeyError:
                 pass
-        return response.status_code == httplib.OK
+        return response.status_code == http.client.OK
 

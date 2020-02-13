@@ -2,7 +2,7 @@
 """
 
 """
-from __future__ import unicode_literals, absolute_import
+
 from zipfile import ZipFile
 import logging
 from os.path import join

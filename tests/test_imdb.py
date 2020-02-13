@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from testcase import TrannyTestCase, get_fixture, tapedeck
+
+from .testcase import TrannyTestCase, get_fixture, tapedeck
 from tranny.service import imdb
 
 
@@ -23,6 +23,6 @@ class TestIMDB(TrannyTestCase):
 
     def test_get_movie(self):
         show = imdb.get_movie("tt1844624")
-        print(dir(show))
+        print((dir(show)))
         show2 = imdb.get_movie("American Horror Story")
         self.assertEqual(show['imdb_id'], show2['imdb_id'])

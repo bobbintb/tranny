@@ -6,7 +6,7 @@ Basic CLI script to manually upload a torrent to the configured backend client
 ./tranny-add torrent1.torrent torrent2.torrent..
 
 """
-from __future__ import unicode_literals
+
 from os.path import dirname
 from sys import argv, path, exit
 
@@ -44,10 +44,10 @@ def add_torrents_from_cli(args):
     else:
         if torrent_data:
             client = init_client()
-            print("> Connected to {}".format(client))
+            print(("> Connected to {}".format(client)))
             for raw_torrent in torrent_data:
                 torrent_struct = Torrent.from_str(raw_torrent)
-                print("-> {} @ {}".format(torrent_struct['info']['name'].decode('utf8'), torrent_struct.size(human=True)))
+                print(("-> {} @ {}".format(torrent_struct['info']['name'].decode('utf8'), torrent_struct.size(human=True))))
                 if client.add(raw_torrent):
                     print("--> Upload successful")
                     return 0

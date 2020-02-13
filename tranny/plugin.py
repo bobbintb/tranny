@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
 import logging
 from abc import ABCMeta, abstractmethod
 from tranny import events
 
 
-class BasePlugin(object):
-    __metaclass__ = ABCMeta
-
+class BasePlugin(object, metaclass=ABCMeta):
     def __init__(self, name):
         self.name = name
         self.log = logging.getLogger('plugin.{}'.format(name))

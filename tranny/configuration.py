@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
 import logging
 import os
 from os.path import exists, dirname, join, expanduser, abspath
@@ -13,7 +13,7 @@ try:
     # noinspection PyUnresolvedReferences
     from configparser import RawConfigParser, NoOptionError, NoSectionError, Error
 except ImportError:
-    from ConfigParser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
+    from configparser import RawConfigParser as ConfigParser, NoOptionError, NoSectionError
 
 
 class Configuration(ConfigParser):
@@ -51,7 +51,7 @@ class Configuration(ConfigParser):
         :return: Return list of successfully read files.
         :rtype: []unicode
         """
-        if isinstance(file_names, basestring):
+        if isinstance(file_names, str):
             file_names = [file_names]
         new_configs = [c for c in file_names if c not in self._loaded_configs]
         if not new_configs:
@@ -169,7 +169,7 @@ class Configuration(ConfigParser):
 
     @property
     def rss_feeds(self):
-        return map(self.get_feed_config, self.find_sections("rss_"))
+        return list(map(self.get_feed_config, self.find_sections("rss_")))
 
     def get_feed_config(self, section, def_interval=300):
         try:
@@ -282,7 +282,7 @@ class Configuration(ConfigParser):
         return self.save()
 
     def _normalize_filter_names(self, titles):
-        return map(self.normalize_title, titles)
+        return list(map(self.normalize_title, titles))
 
     @staticmethod
     def normalize_title(title):
@@ -355,6 +355,6 @@ class Configuration(ConfigParser):
             if k in ['sqlalchemy_echo']:
                 return v.lower() != 'false'
             return v
-        config_values = {k.upper(): conv_value(k, v) for k, v in self.get_section_values("flask").items()}
+        config_values = {k.upper(): conv_value(k, v) for k, v in list(self.get_section_values("flask").items())}
         app.config.update(config_values)
         log.info("Loaded flask config successfully")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 from flask import render_template as flask_render_template, request, jsonify, Response
 from six import wraps
 from werkzeug.wrappers import Response as WerkzeugResponse

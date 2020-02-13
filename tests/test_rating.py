@@ -1,5 +1,5 @@
 import unittest
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 # Make sure to import rating after config has been setup
 from tranny.service import rating
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
 from collections import defaultdict
 import logging
 from sqlalchemy.exc import DBAPIError
@@ -42,7 +42,7 @@ def get_source(session, source_name=None, source_id=None):
             source = session.query(Source).filter_by(source_name=source_name).first()
             cache_source[source_name] = source
     elif source_id:
-        for source in cache_source.values():
+        for source in list(cache_source.values()):
             if source.source_id == source_id:
                 break
         else:

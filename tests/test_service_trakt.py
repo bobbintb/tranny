@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from testcase import TrannyTestCase, tapedeck
+
+from .testcase import TrannyTestCase, tapedeck
 from tranny import constants
 from tranny.service import trakt
 from tranny.app import config

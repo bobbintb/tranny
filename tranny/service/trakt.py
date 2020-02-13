@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
 from functools import partial
 import re
 import hashlib
@@ -97,7 +97,7 @@ def _get_request(method, *args, **kwargs):
     key = config.get_default('service_trakt', 'api_key', None)
     if not key:
         return {}
-    full_url = "".join([_make_url(method, key), '/' if args else "", '/'.join(map(unicode, args))])
+    full_url = "".join([_make_url(method, key), '/' if args else "", '/'.join(map(str, args))])
     return net.http_request(full_url, params=params, method='get')
 
 

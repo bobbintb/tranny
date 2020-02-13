@@ -1,5 +1,5 @@
 from unittest import main
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 from tranny.provider.rss import RSSFeed
 
 

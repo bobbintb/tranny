@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, with_statement
+
 import tempfile
 from shutil import rmtree
 from os.path import exists, join
 from os import remove
-from testcase import tapedeck, TrannyTestCase
+from .testcase import tapedeck, TrannyTestCase
 from unittest import main
 from tranny import net
 
@@ -40,9 +40,9 @@ class NetTest(TrannyTestCase):
         self.assertFalse(status)
 
     def test_parse_net_speed_value(self):
-        self.assertEqual(10752.0, net.parse_net_speed_value(u'10.5 KiB/s'))
-        self.assertEqual(11010048.0, net.parse_net_speed_value(u'10.5 MiB/s'))
-        self.assertEqual(10500000.0, net.parse_net_speed_value(u'10.5 mb/s'))
+        self.assertEqual(10752.0, net.parse_net_speed_value('10.5 KiB/s'))
+        self.assertEqual(11010048.0, net.parse_net_speed_value('10.5 MiB/s'))
+        self.assertEqual(10500000.0, net.parse_net_speed_value('10.5 mb/s'))
 
     def test_ip2int(self):
         self.assertEqual(1010580540, net.ip2int("60.60.60.60"))

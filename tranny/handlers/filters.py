@@ -2,9 +2,9 @@
 """
 Filter settings handlers
 """
-from __future__ import unicode_literals
+
 from functools import partial
-from ConfigParser import NoOptionError, NoSectionError
+from configparser import NoOptionError, NoSectionError
 from flask import Blueprint, request
 from flask.ext.login import login_required
 from tranny.app import config

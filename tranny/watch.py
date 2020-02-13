@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import logging
-from ConfigParser import NoOptionError, NoSectionError
+from configparser import NoOptionError, NoSectionError
 from os.path import exists, isdir, dirname, basename, splitext, expanduser
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer

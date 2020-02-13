@@ -2,7 +2,7 @@
 """
 RSS backend provider functionality
 """
-from __future__ import unicode_literals
+
 import feedparser
 from tranny import app
 from tranny import provider

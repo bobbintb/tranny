@@ -2,7 +2,7 @@
 """
 Settings routes for settings outside of providers/services/filters
 """
-from __future__ import unicode_literals
+
 from functools import partial
 from collections import OrderedDict
 from flask import request, Blueprint
@@ -33,7 +33,7 @@ def index():
                      'client_rTorrent', 'client_Deluge']),
     ])
     settings_data = OrderedDict()
-    for group, sections in groups.items():
+    for group, sections in list(groups.items()):
         settings_data[group] = {}
         for s in sections:
             settings_data[group][s] = config.get_section_values(s.lower())
@@ -58,7 +58,7 @@ def save():
     :return: Save status response
     :rtype: dict
     """
-    for name, value in request.values.items():
+    for name, value in list(request.values.items()):
         section, key = name.split("__")
         if value == "on":
             value = "true"

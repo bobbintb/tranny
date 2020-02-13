@@ -6,7 +6,7 @@ Deluge JSON-RPC client interface
     This was the first complete implementation of the backend client, thus the other backends have been
     somewhat molded to fit deluge's definition of data structures
 """
-from __future__ import unicode_literals, absolute_import, with_statement
+
 import json
 import requests
 from requests import auth
@@ -16,7 +16,7 @@ from tranny.exceptions import AuthenticationError, ApiError
 try:
     from http import client as httplib
 except ImportError:
-    import httplib
+    import http.client
 
 ERROR_AUTH = 1
 ERROR_UNKNOWN_METHOD = 2
@@ -89,9 +89,9 @@ class QBittorrentClient(client.TorrentClient):
             resp = self._session.post(method_endpoint, data=args)
         resp_data = None
         try:
-            if resp.status_code == httplib.OK:
+            if resp.status_code == http.client.OK:
                 resp_data = json.loads(resp.text)
-            elif resp.status_code == httplib.UNAUTHORIZED:
+            elif resp.status_code == http.client.UNAUTHORIZED:
                 raise AuthenticationError("Authorization unaccepted")
             else:
                 raise ApiError("blah..")

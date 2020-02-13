@@ -2,7 +2,7 @@
 """
 
 """
-from __future__ import unicode_literals, absolute_import
+
 import logging
 from dogpile.cache import make_region
 

@@ -2,7 +2,7 @@
 """
 
 """
-from __future__ import unicode_literals, absolute_import, with_statement
+
 from contextlib import contextmanager
 import unittest
 # This env var tells the config loader to use the special test config located at:

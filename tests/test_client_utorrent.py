@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import unittest
 import os
 from os.path import join, dirname
 from requests.exceptions import ConnectionError
 from tranny.client.utorrent import UTorrentClient
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 
 
 @unittest.skipUnless(os.environ.get('TEST_UTORRENT', False), "Not configured for live tests")

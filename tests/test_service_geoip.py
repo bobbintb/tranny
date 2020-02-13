@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, with_statement
-from testcase import get_fixture, TrannyDBTestCase
+
+from .testcase import get_fixture, TrannyDBTestCase
 from unittest import main
 from tranny import net
 from tranny.app import Session

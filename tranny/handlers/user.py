@@ -2,7 +2,7 @@
 """
 User handling functions
 """
-from __future__ import unicode_literals
+
 from functools import partial
 import hashlib
 from flask import Blueprint, redirect, url_for, request, flash

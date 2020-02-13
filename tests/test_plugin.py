@@ -2,8 +2,8 @@
 """
 
 """
-from __future__ import unicode_literals
-from testcase import TrannyTestCase
+
+from .testcase import TrannyTestCase
 from tranny import events
 from tranny import plugin
 

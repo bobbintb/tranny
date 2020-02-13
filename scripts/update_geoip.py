@@ -2,7 +2,7 @@
 """
 
 """
-from __future__ import unicode_literals, absolute_import
+
 import requests
 import hashlib
 import zipfile
@@ -26,4 +26,4 @@ def fetch_database():
 
 if __name__ == "__main__":
     files = fetch_database()
-    print(len(files))
+    print((len(files)))

@@ -5,7 +5,7 @@ torrent files to a configured directory. This can be used for example to output
 the files to a non-supported torrent clients watch folder for at least some
 basic type of integration support
 """
-from __future__ import unicode_literals, absolute_import, with_statement
+
 from os.path import exists, expanduser, join, isdir
 from tranny import client
 from tranny.util import mkdirp

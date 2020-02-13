@@ -2,8 +2,8 @@
 """
 RSS Configuration routes
 """
-from __future__ import unicode_literals
-from ConfigParser import NoOptionError
+
+from configparser import NoOptionError
 from functools import partial
 import logging
 import re

@@ -2,10 +2,10 @@
 """
 Tests for the parser module
 """
-from __future__ import unicode_literals
+
 from datetime import datetime, date
 import unittest
-from testcase import TrannyTestCase, get_fixture
+from .testcase import TrannyTestCase, get_fixture
 from tranny import parser
 from tranny import constants
 from tranny.app import config
@@ -116,13 +116,13 @@ class ReleaseTest(TrannyTestCase):
 
     def test_parse_release(self):
         args = [
-            [u"f1-{}".format(datetime.now().isocalendar()[1]),
-             u"F1.2012.Canadian.Grand.Prix.Qualifying.720p.HDTV.x264-XX", parser.TVSingleReleaseKey],
-            [u"first.snow-2006", u'First Snow 2006 BRRip XvidHD 720p-XX', parser.MovieReleaseKey],
-            [u"conan-2013_04_15", u"Conan.2013.4.15.Chelsea.Handler.HDTV.x264-XX", parser.TVDailyReleaseKey],
-            [u"conan-2013_04_15", u"Conan.2013.04.15.Chelsea.Handler.HDTV.x264-XX", parser.TVDailyReleaseKey],
-            [u"game.of.kitties-3_3", u"Game.of.Kitties.S03E03.720p.HDTV.x264-XX", parser.TVReleaseKey],
-            [u"homeland-2", "Homeland.S02.HDTV.x264-EVOLVE", parser.TVSeasonReleaseKey],
+            ["f1-{}".format(datetime.now().isocalendar()[1]),
+             "F1.2012.Canadian.Grand.Prix.Qualifying.720p.HDTV.x264-XX", parser.TVSingleReleaseKey],
+            ["first.snow-2006", 'First Snow 2006 BRRip XvidHD 720p-XX', parser.MovieReleaseKey],
+            ["conan-2013_04_15", "Conan.2013.4.15.Chelsea.Handler.HDTV.x264-XX", parser.TVDailyReleaseKey],
+            ["conan-2013_04_15", "Conan.2013.04.15.Chelsea.Handler.HDTV.x264-XX", parser.TVDailyReleaseKey],
+            ["game.of.kitties-3_3", "Game.of.Kitties.S03E03.720p.HDTV.x264-XX", parser.TVReleaseKey],
+            ["homeland-2", "Homeland.S02.HDTV.x264-EVOLVE", parser.TVSeasonReleaseKey],
         ]
         for i in args:
             release = parser.parse_release(i[1])

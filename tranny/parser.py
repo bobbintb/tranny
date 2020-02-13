@@ -2,7 +2,7 @@
 """
 File name parser/tokenizer functions
 """
-from __future__ import unicode_literals, absolute_import
+
 import logging
 import re
 from datetime import date, datetime
@@ -462,7 +462,7 @@ class ReleaseInfo(dict):
         :return: :rtype:
         """
         args = dict()
-        for key, value in guess_info.items():
+        for key, value in list(guess_info.items()):
             if key == 'series':
                 args['title'] = value
             elif key == 'episodeNumber':

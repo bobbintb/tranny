@@ -2,7 +2,7 @@
 """
 Transmission support module
 """
-from __future__ import unicode_literals
+
 from base64 import b64encode
 from collections import defaultdict
 import functools
@@ -181,8 +181,8 @@ class TransmissionClient(client.TorrentClient):
     def torrent_files(self, info_hash):
         files = []
         file_set = self.client.get_files(info_hash)
-        for v in file_set.values():
-            for file_info in [f for f in v.values()]:
+        for v in list(file_set.values()):
+            for file_info in [f for f in list(v.values())]:
                 files.append(client.ClientFileData(
                     path=file_info['name'],
                     progress=file_info['size'] - file_info['completed'],

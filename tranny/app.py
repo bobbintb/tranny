@@ -3,8 +3,8 @@
 Main application entry point. Defines several global vars which are used throughout the
 application.
 """
-from __future__ import unicode_literals, absolute_import
-import httplib
+
+import http.client
 import os
 from json import dumps
 from flask import Flask, g, redirect, url_for, session, _app_ctx_stack
@@ -178,10 +178,10 @@ def configure_blueprints(app):
     from tranny.handlers.user import usr
     from tranny.handlers.upload import upload
     from tranny.handlers.torrents import torrents
-    map(
+    list(map(
         app.register_blueprint,
         [filters, home, rss, providers, settings, usr, upload, torrents]
-    )
+    ))
 
 
 def configure_template_filters(app):
@@ -245,17 +245,17 @@ def configure_logging(app):
 
 def configure_error_handlers(app):
 
-    @app.errorhandler(httplib.FORBIDDEN)
+    @app.errorhandler(http.client.FORBIDDEN)
     def forbidden_page(error):
-        return ui.render_template("errors/forbidden_page.html", error=error), httplib.FORBIDDEN
+        return ui.render_template("errors/forbidden_page.html", error=error), http.client.FORBIDDEN
 
-    @app.errorhandler(httplib.NOT_FOUND)
+    @app.errorhandler(http.client.NOT_FOUND)
     def page_not_found(error):
-        return ui.render_template("errors/page_not_found.html", error=error), httplib.NOT_FOUND
+        return ui.render_template("errors/page_not_found.html", error=error), http.client.NOT_FOUND
 
-    @app.errorhandler(httplib.INTERNAL_SERVER_ERROR)
+    @app.errorhandler(http.client.INTERNAL_SERVER_ERROR)
     def server_error_page(error):
-        return ui.render_template("errors/server_error.html", error=error), httplib.INTERNAL_SERVER_ERROR
+        return ui.render_template("errors/server_error.html", error=error), http.client.INTERNAL_SERVER_ERROR
 
 
 def response(status=0, msg=None):

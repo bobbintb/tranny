@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from urlparse import urlparse, urljoin
+
+from urllib.parse import urlparse, urljoin
 from time import time
 from os.path import isdir
 from os import getpid, makedirs

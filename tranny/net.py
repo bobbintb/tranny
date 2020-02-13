@@ -2,7 +2,7 @@
 """
 Functions used to download data over HTTP connections
 """
-from __future__ import unicode_literals, absolute_import
+
 from functools import partial
 import logging
 import socket

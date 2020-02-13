@@ -2,7 +2,7 @@
 """
 Base classes and methods shared between torrent client implementations
 """
-from __future__ import unicode_literals, absolute_import
+
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple, defaultdict
 import logging
@@ -24,13 +24,11 @@ class TorrentState(object):
     DOWNLOADING = 'downloading'
 
 
-class TorrentClient(BasePlugin):
+class TorrentClient(BasePlugin, metaclass=ABCMeta):
     """
     Base class to provide a interface for interacting with backend torrent
     clients.
     """
-
-    __metaclass__ = ABCMeta
 
     config_key = 'undefined'
 
@@ -153,8 +151,8 @@ class TorrentClient(BasePlugin):
         if not self._last_state:
             self._last_state = new_torrents
             return new_events
-        known_hashes = {t.info_hash for k, t in self._last_state.items()}
-        for torrent in self._last_state.values():
+        known_hashes = {t.info_hash for k, t in list(self._last_state.items())}
+        for torrent in list(self._last_state.values()):
             if torrent.info_hash not in known_hashes:
                 # Torrent not in old, must be new
                 new_events[events.EVENT_TORRENT_NEW].append(torrent)
@@ -179,7 +177,7 @@ class TorrentClient(BasePlugin):
         """
         self.log.debug("Fetching new torrent events")
         new_event = self.get_events()
-        for k, v in new_event.items():
+        for k, v in list(new_event.items()):
             self.log.debug("[{}] {}".format(k, v))
         if new_event:
             api.emit(events.EVENT_TORRENT_UPDATE, data=new_event)
@@ -245,8 +243,8 @@ class ClientDataStruct(dict):
     def changes(self, old, valid_keys=None):
         changes = {}
         if not valid_keys:
-            valid_keys = self.keys()
-        for key, new_value in self.items():
+            valid_keys = list(self.keys())
+        for key, new_value in list(self.items()):
             if not key in valid_keys:
                 continue
             if not old[key] == new_value:

@@ -3,7 +3,7 @@
 Base implementation of a torrent provider. New providers should mostly be ok
 just overriding the fetch_releases method.
 """
-from __future__ import unicode_literals
+
 import logging
 from abc import ABCMeta, abstractmethod
 from time import time
@@ -11,9 +11,7 @@ from tranny.app import config, Session
 from tranny.models import Download
 
 
-class TorrentProvider(object):
-
-    __metaclass__ = ABCMeta
+class TorrentProvider(object, metaclass=ABCMeta):
 
     """
     Base torrent provider used to download new releases from trackers

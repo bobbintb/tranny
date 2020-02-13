@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import, with_statement
+
 from contextlib import contextmanager
 import smtplib
 from email.mime.text import MIMEText

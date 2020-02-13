@@ -2,7 +2,7 @@
 """
 Contains functionality related to the websocket API used to communicate with the webui
 """
-from __future__ import unicode_literals, absolute_import
+
 from functools import partial
 from flask.ext.socketio import emit as sio_emit
 from tranny import events

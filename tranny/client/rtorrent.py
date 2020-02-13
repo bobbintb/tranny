@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import os
 import os.path
 import re
 import socket
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import logging
 import shutil
 
 try:
     from xmlrpc import client as xmlrpclib
 except ImportError:
-    import xmlrpclib
+    import xmlrpc.client
 from tranny.app import Session
 from tranny import client
 from tranny.torrent import Torrent
@@ -50,7 +50,7 @@ class RTorrentClient(client.TorrentClient):
         return "rTorrent {}/{}".format(client_name, lib)
 
     def add(self, torrent, download_dir=None):
-        payload = xmlrpclib.Binary(torrent.torrent_data)
+        payload = xmlrpc.client.Binary(torrent.torrent_data)
         info_hash = Torrent.from_str(torrent.torrent_data).info_hash.upper()
         # Make sure the xml-rpc size limit doesnt overflow
         self._server.set_xmlrpc_size_limit(len(torrent.torrent_data) * 2)
@@ -71,7 +71,7 @@ class RTorrentClient(client.TorrentClient):
         :param args: Arguments to pass in
         :type args: list
         """
-        if 'view' in kwargs.keys():
+        if 'view' in list(kwargs.keys()):
             view = kwargs['view']
         else:
             view = 'main'
@@ -106,7 +106,7 @@ class RTorrentClient(client.TorrentClient):
                 total_seeders = '0'
             )
             # Do all the easy stuff first
-            tdata.update(dict(zip([
+            tdata.update(dict(list(zip([
                 'info_hash',
                 'name',
                 'ratio',
@@ -120,7 +120,7 @@ class RTorrentClient(client.TorrentClient):
                 'total_peers',
                 'priority',
                 'private'
-            ], t[:13])))
+            ], t[:13]))))
 
             if t[17]:
                 tdata['state'] = 'Error'
@@ -174,7 +174,7 @@ class RTorrentClient(client.TorrentClient):
             'seeding_time': '0',
             'eta': 0
         })
-        for field, call in status_map.items():
+        for field, call in list(status_map.items()):
             data[field] = getattr(self._server, call)(info_hash)
         return data
 
@@ -186,7 +186,7 @@ class RTorrentClient(client.TorrentClient):
             'ip': 'p.address=',
             'up_speed': 'p.get_up_rate=',
         }
-        parray = self._server.p.multicall(info_hash, '+0', *data_mapping.values())
+        parray = self._server.p.multicall(info_hash, '+0', *list(data_mapping.values()))
         pdata = []
         session = Session()
         for peer in parray:
@@ -274,17 +274,17 @@ class RTorrentClient(client.TorrentClient):
         pass
 
 
-class SCGITransport(xmlrpclib.Transport):
+class SCGITransport(xmlrpc.client.Transport):
     def single_request(self, host, handler, request_body, verbose=0):
         # Add SCGI headers to the request.
         headers = {'CONTENT_LENGTH': str(len(request_body)), 'SCGI': '1'}
-        header = '\x00'.join(('%s\x00%s' % item for item in headers.items())) + '\x00'
+        header = '\x00'.join(('%s\x00%s' % item for item in list(headers.items()))) + '\x00'
         header = '%d:%s' % (len(header), header)
         request_body = '%s,%s' % (header, request_body)
         sock = None
         try:
             if host:
-                host, port = urllib.splitport(host)
+                host, port = urllib.parse.splitport(host)
                 addrinfo = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
                 sock = socket.socket(*addrinfo[0][:3])
                 sock.connect(addrinfo[0][4])
@@ -319,12 +319,12 @@ class SCGITransport(xmlrpclib.Transport):
         return u.close()
 
 
-class SCGIServerProxy(xmlrpclib.ServerProxy):
+class SCGIServerProxy(xmlrpc.client.ServerProxy):
     def __init__(self, uri, transport=None, encoding=None, verbose=False, allow_none=False, use_datetime=False):
-        uri_type, uri = urllib.splittype(uri)
+        uri_type, uri = urllib.parse.splittype(uri)
         if not uri_type == 'scgi':
             raise IOError('unsupported XML-RPC protocol')
-        self.__host, self.__handler = urllib.splithost(uri)
+        self.__host, self.__handler = urllib.parse.splithost(uri)
         if not self.__handler:
             self.__handler = '/'
 
@@ -342,7 +342,7 @@ class SCGIServerProxy(xmlrpclib.ServerProxy):
     def __request(self, method_name, params):
         # call a method on the remote server
 
-        request = xmlrpclib.dumps(params, method_name, encoding=self.__encoding, allow_none=self.__allow_none)
+        request = xmlrpc.client.dumps(params, method_name, encoding=self.__encoding, allow_none=self.__allow_none)
         response = self.__transport.request(self.__host, self.__handler, request, verbose=self.__verbose)
         if len(response) == 1:
             response = response[0]
@@ -355,7 +355,7 @@ class SCGIServerProxy(xmlrpclib.ServerProxy):
 
     def __getattr__(self, name):
         # magic method dispatcher
-        return xmlrpclib._Method(self.__request, name)
+        return xmlrpc.client._Method(self.__request, name)
 
     # note: to call a remote object with an non-standard name, use
     # result getattr(server, "strange-python-name")(args)

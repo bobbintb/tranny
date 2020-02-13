@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import unittest
 import os
-from client_test_runner import TorrentTests
+from .client_test_runner import TorrentTests
 from tranny.app import config
 from tranny.client.transmission import TransmissionClient
 

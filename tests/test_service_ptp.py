@@ -1,5 +1,5 @@
 import unittest
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 from tranny.provider import ptp
 
 

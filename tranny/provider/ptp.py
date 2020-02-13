@@ -2,7 +2,7 @@
 """
 
 """
-from __future__ import unicode_literals, absolute_import
+
 import requests
 from tranny import provider
 from tranny import parser

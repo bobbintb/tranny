@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
 from os.path import join, dirname
 from flask.ext.wtf import Form
 from tranny import constants

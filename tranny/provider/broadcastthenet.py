@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
 import socket
 from time import time
 from jsonrpclib import Server
@@ -104,7 +104,7 @@ class BroadcastTheNet(provider.TorrentProvider):
         """
         found = []
         try:
-            releases = self.get_torrents_browse(50)['torrents'].values()
+            releases = list(self.get_torrents_browse(50)['torrents'].values())
         except (TypeError, KeyError) as err:
             self.log.debug("Failed to fetch releases")
         else:

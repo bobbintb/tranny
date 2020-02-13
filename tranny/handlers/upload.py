@@ -39,7 +39,7 @@ def handler():
         except exceptions.TrannyException as err:
             flash(err.message, "alert")
     elif form.errors:
-        for field, error in form.errors.items():
+        for field, error in list(form.errors.items()):
             try:
                 flash("[{}] {}".format(field, ' && '.join(error)), "alert")
             except:

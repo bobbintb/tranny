@@ -3,11 +3,11 @@
 Provides a basic api for looking up media information using any installed and
 configured services.
 """
-from __future__ import unicode_literals
+
 try:
     import configparser  # py3
 except ImportError:
-    import ConfigParser as configparser
+    import configparser as configparser
 from tranny import app
 
 # Config section names
@@ -18,7 +18,7 @@ _imdb_cache = {}
 
 # Try and load imdb
 try:
-    import imdb
+    from . import imdb
 
     _imdb_enabled = True
 except (ImportError, configparser.Error):

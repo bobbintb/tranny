@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, with_statement
+
 from mock import patch
-from testcase import TrannyTestCase
+from .testcase import TrannyTestCase
 import smtplib
 from unittest import main
 from tranny.notification import email
