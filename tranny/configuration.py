@@ -19,7 +19,7 @@ class Configuration(ConfigParser):
     """
     _config_path = None
     _loaded_configs = []
-
+'''
     def __init__(self, path="~/.config/tranny"):
         ConfigParser.__init__(self)
 
@@ -34,7 +34,7 @@ class Configuration(ConfigParser):
         self.cache_path = join(self.config_path, 'cache_path')
         self.cache_file = join(self.cache_path, "cache.dbm")
         self.configured = False
-
+'''
     def rules(self):
         pass
 
